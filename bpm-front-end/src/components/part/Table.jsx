@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function Table({
-  arrHeader,
+  arrHeader,  
   data,
   actions = [], // Array to determine which icons to display
   onDelete = () => {},
