@@ -4,17 +4,15 @@
 import Icon from "./Icon";
 
 export default function Table({
+  arrHeader,
   data,
-  onCancel = () => {},
   onDelete = () => {},
   onDetail = () => {},
   onEdit = () => {},
-  onApprove = () => {},
-  onReject = () => {},
-  onSent = () => {},
-  onUpload = () => {},
   onFinal = () => {},
   onPrint = () => {},
+  onPrintHistory = () => {},
+  onUpdateHistory = () => {}
 }) {
   let colPosition;
   let colCount = 0;
@@ -185,18 +183,7 @@ export default function Table({
               data.map((value, rowIndex) => {
                 colPosition = -1;
                 return (
-                  <tr
-                    key={value["Key"]}
-                    className={
-                      value["Status"] &&
-                      (value["Status"] === "Draft" ||
-                        value["Status"] === "Revisi" ||
-                        value["Status"] === "Belum Dikonversi" ||
-                        value["Status"] === "Belum Dibuat Penjadwalan")
-                        ? "fw-bold"
-                        : undefined
-                    }
-                  >
+                  <tr >
                     {Object.keys(value).map((column, colIndex) => {
                       if (
                         column !== "Key" &&
