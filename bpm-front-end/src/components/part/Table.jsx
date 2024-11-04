@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function Table({
-  arrHeader,  
+  arrHeader,
   data,
   actions = [], // Array to determine which icons to display
   onDelete = () => {},
@@ -13,8 +13,6 @@ export default function Table({
   onUpdateHistory = () => {},
 }) {
   function generateActionButton(actionType, id) {
-    console.log("Generating button for action:", actionType); // Debugging log
-
     switch (actionType) {
       case "Delete":
         return (
@@ -59,7 +57,7 @@ export default function Table({
       case "PrintHistory":
         return (
           <i
-            className="fi fi-rr-file-circle-info btn px-1 py-0 text-warning" // Use a different icon class for testing
+            className="fi fi-rr-file-circle-info btn px-1 py-0 text-warning"
             title="Riwayat Unduhan"
             onClick={() => onPrintHistory(id)}
           />
@@ -79,15 +77,30 @@ export default function Table({
 
   return (
     <div className="table-responsive">
-      <table className="table table-hover table-striped table-bordered">
-        <thead className="table-light">
+      <table className="table table-hover table-striped" style={{ borderCollapse: 'collapse' }}>
+        <thead>
           <tr>
             {arrHeader.map((header, index) => (
-              <th key={`header-${index}`} className="text-center align-middle">
+              <th
+                key={`header-${index}`}
+                className="text-center align-middle"
+                style={{
+                  backgroundColor: "#2654A1",
+                  color: "#fff", // Optional for white text
+                }}
+              >
                 {header}
               </th>
             ))}
-            <th className="text-center align-middle">Aksi</th>
+            <th
+              className="text-center align-middle"
+              style={{
+                backgroundColor: "#2654A1",
+                color: "#fff",
+              }}
+            >
+              Aksi
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -117,4 +130,4 @@ export default function Table({
       </table>
     </div>
   );
-}  
+}
