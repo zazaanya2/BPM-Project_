@@ -1,11 +1,19 @@
 export default function Icon({
-  type = "Reguler",
+  type = "Reguler", 
   name,
   cssClass = "",
   ...props
 }) {
-  const iconClass =
-    "fi fi-" + (type === "Bold" ? "b" : "r") + "r-" + name + " " + cssClass;
+ 
+  const prefix = 
+    type === "Bold" ? "fi fi-br" : 
+    type === "Reguler" ? "fi fi-rr" : 
+    type === "Brands" ? "fi fi-brands" : 
+    type === "Block" ? "fi fi-block" : 
+    "fi fi-rr"; 
+
+  
+  const iconClass = `${prefix}-${name} ${cssClass}`;
 
   return <i className={iconClass} {...props}></i>;
 }
