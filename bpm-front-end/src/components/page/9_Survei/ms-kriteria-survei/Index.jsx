@@ -1,25 +1,19 @@
-import { useEffect, useRef, useState } from "react";
-import { PAGE_SIZE, API_LINK } from "../../util/Constants";
-import SweetAlert from "../../util/SweetAlert";
-import UseFetch from "../../util/UseFetch";
+import { useState, useRef } from "react";
 import Button from "../../part/Button";
 import Input from "../../part/Input";
 import Table from "../../part/Table";
 import Paging from "../../part/Paging";
 import Filter from "../../part/Filter";
 import DropDown from "../../part/Dropdown";
-import Alert from "../../part/Alert";
-import Loading from "../../part/Loading";
 
-const inisialisasiData = [
-  {
-    Key: null,
-    No: null,
-    "ID Kriteria Survei": null,
-    "Kriteria Survei": null,
-    Status: null,
-    Count: 0,
-  },
+const PAGE_SIZE = 10; // Assuming PAGE_SIZE is 10
+
+const staticData = [
+  { Key: "1", No: 1, "ID Kriteria Survei": "K001", "Kriteria Survei": "Kualitas Layanan", Status: "Aktif" },
+  { Key: "2", No: 2, "ID Kriteria Survei": "K002", "Kriteria Survei": "Kecepatan Respon", Status: "Aktif" },
+  { Key: "3", No: 3, "ID Kriteria Survei": "K003", "Kriteria Survei": "Keramahan Petugas", Status: "Tidak Aktif" },
+  { Key: "4", No: 4, "ID Kriteria Survei": "K004", "Kriteria Survei": "Kebersihan Fasilitas", Status: "Aktif" },
+  { Key: "5", No: 5, "ID Kriteria Survei": "K005", "Kriteria Survei": "Kenyamanan Ruangan", Status: "Aktif" },
 ];
 
 const dataFilterSort = [
@@ -33,9 +27,7 @@ const dataFilterStatus = [
 ];
 
 export default function KriteriaKuesionerIndex({ onChangePage }) {
-  const [isError, setIsError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentData, setCurrentData] = useState(inisialisasiData);
+  const [currentData, setCurrentData] = useState(staticData);
   const [currentFilter, setCurrentFilter] = useState({
     page: 1,
     query: "",
@@ -48,7 +40,6 @@ export default function KriteriaKuesionerIndex({ onChangePage }) {
   const searchFilterStatus = useRef();
 
   function handleSetCurrentPage(newCurrentPage) {
-    setIsLoading(true);
     setCurrentFilter((prevFilter) => ({
       ...prevFilter,
       page: newCurrentPage,
@@ -56,79 +47,60 @@ export default function KriteriaKuesionerIndex({ onChangePage }) {
   }
 
   function handleSearch() {
-    setIsLoading(true);
-    setCurrentFilter((prevFilter) => ({
-      ...prevFilter,
+    const newFilter = {
+      ...currentFilter,
       page: 1,
       query: searchQuery.current.value,
       sort: searchFilterSort.current.value,
       status: searchFilterStatus.current.value,
-    }));
+    };
+    setCurrentFilter(newFilter);
+    applyFilter(newFilter);
   }
 
   function handleSetStatus(id) {
-    setIsLoading(true);
-    setIsError(false);
-    UseFetch(API_LINK + "KriteriaKuesioner/SetStatusKriteria", {
-      idKriteria: id,
-    })
-      .then((data) => {
-        if (data === "ERROR" || data.length === 0) setIsError(true);
-        else {
-          SweetAlert(
-            "Sukses",
-            "Status kriteria berhasil diubah menjadi " + data[0].Status,
-            "success"
-          );
-          handleSetCurrentPage(currentFilter.page);
-        }
-      })
-      .then(() => setIsLoading(false));
+    const updatedData = currentData.map(item => {
+      if (item["ID Kriteria Survei"] === id) {
+        return { ...item, Status: item.Status === "Aktif" ? "Tidak Aktif" : "Aktif" };
+      }
+      return item;
+    });
+    setCurrentData(updatedData);
+    alert(`Status kriteria ${id} berhasil diubah`);
   }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsError(false);
+  function applyFilter(filter) {
+    let filteredData = staticData;
 
-      try {
-        const data = await UseFetch(
-          API_LINK + "KriteriaKuesioner/GetDataKriteria",
-          currentFilter
-        );
+    // Apply status filter
+    if (filter.status !== "") {
+      filteredData = filteredData.filter(item => item.Status === filter.status);
+    }
 
-        if (data === "ERROR") {
-          setIsError(true);
-        } else if (data.length === 0) {
-          setCurrentData(inisialisasiData);
-        } else {
-          const formattedData = data.map((value) => ({
-            ...value,
-            Aksi: ["Toggle"],
-            Alignment: ["center", "left", "center", "center"],
-          }));
-          setCurrentData(formattedData);
-        }
-      } catch {
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
+    // Apply search query
+    if (filter.query !== "") {
+      const lowercaseQuery = filter.query.toLowerCase();
+      filteredData = filteredData.filter(item => 
+        item["Kriteria Survei"].toLowerCase().includes(lowercaseQuery) ||
+        item["ID Kriteria Survei"].toLowerCase().includes(lowercaseQuery)
+      );
+    }
+
+    // Apply sorting
+    filteredData.sort((a, b) => {
+      if (filter.sort === "[Kriteria Survei] asc") {
+        return a["Kriteria Survei"].localeCompare(b["Kriteria Survei"]);
+      } else {
+        return b["Kriteria Survei"].localeCompare(a["Kriteria Survei"]);
       }
-    };
+    });
 
-    fetchData();
-  }, [currentFilter]);
+    setCurrentData(filteredData);
+  }
 
   return (
     <>
       <div className="d-flex flex-column">
-        {isError && (
-          <div className="flex-fill">
-            <Alert
-              type="warning"
-              message="Terjadi kesalahan: Gagal mengambil data kriteria."
-            />
-          </div>
-        )}
         <div className="flex-fill">
           <div className="input-group">
             <Button
@@ -139,7 +111,7 @@ export default function KriteriaKuesionerIndex({ onChangePage }) {
             />
             <Input
               ref={searchQuery}
-              forInput ="pencarianKriteria"
+              forInput="pencarianKriteria"
               placeholder="Cari"
             />
             <Button
@@ -169,19 +141,15 @@ export default function KriteriaKuesionerIndex({ onChangePage }) {
           </div>
         </div>
         <div className="mt-3">
-          {isLoading ? (
-            <Loading />
-          ) : (
-            <div className="d-flex flex-column">
-              <Table data={currentData} onToggle={handleSetStatus} />
-              <Paging
-                pageSize={PAGE_SIZE}
-                pageCurrent={currentFilter.page}
-                totalData={currentData[0]["Count"]}
-                navigation={handleSetCurrentPage}
-              />
-            </div>
-          )}
+          <div className="d-flex flex-column">
+            <Table data={currentData} onToggle={handleSetStatus} />
+            <Paging
+              pageSize={PAGE_SIZE}
+              pageCurrent={currentFilter.page}
+              totalData={currentData.length}
+              navigation={handleSetCurrentPage}
+            />
+          </div>
         </div>
       </div>
     </>

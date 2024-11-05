@@ -1,17 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { object, string } from "yup";
-import { API_LINK } from "../../util/Constants";
 import { validateAllInputs, validateInput } from "../../util/ValidateForm";
-import SweetAlert from "../../util/SweetAlert";
-import UseFetch from "../../util/UseFetch";
 import Button from "../../part/Button";
-import Loading from "../../part/Loading";
 import Alert from "../../part/Alert";
 
 export default function KriteriaSurveiAdd({ onChangePage }) {
   const [errors, setErrors] = useState({});
   const [isError, setIsError] = useState({ error: false, message: "" });
-  const [isLoading, setIsLoading] = useState(false);
+
+  // Data statis untuk simulasi ID yang sudah ada
+  const existingIds = ["K001", "K002", "K003"];
 
   const formDataRef = useRef({
     id_kriteria_survei: "",
@@ -43,40 +41,23 @@ export default function KriteriaSurveiAdd({ onChangePage }) {
     );
 
     if (Object.values(validationErrors).every((error) => !error)) {
-      setIsLoading(true);
       setIsError((prevError) => ({ ...prevError, error: false }));
       setErrors({});
 
-      try {
-        const data = await UseFetch(
-          API_LINK + "KriteriaSurvei/CreateKriteria",
-          formDataRef.current
-        );
-
-        if (data === "ERROR") {
-          throw new Error("Terjadi kesalahan: Gagal menyimpan data kriteria.");
-        } else {
-          if (data[0].hasil === "OK") {
-            SweetAlert("Sukses", "Data kriteria berhasil disimpan", "success");
-            onChangePage("index");
-          } else {
-            SweetAlert("Gagal", "ID Kriteria sudah ada", "error");
-          }
-        }
-      } catch (error) {
-        window.scrollTo(0, 0);
-        setIsError((prevError) => ({
-          ...prevError,
-          error: true,
-          message: error.message,
-        }));
-      } finally {
-        setIsLoading(false);
+      // Cek apakah ID sudah ada
+      if (existingIds.includes(formDataRef.current.id_kriteria_survei)) {
+        alert("Gagal: ID Kriteria sudah ada");
+        return;
       }
-    } else window.scrollTo(0, 0);
-  };
 
-  if (isLoading) return <Loading />;
+      // Simulasi penyimpanan data
+      console.log("Data yang akan disimpan:", formDataRef.current);
+      alert("Data kriteria berhasil disimpan");
+      onChangePage("index");
+    } else {
+      window.scrollTo(0, 0);
+    }
+  };
 
   return (
     <>
@@ -99,13 +80,17 @@ export default function KriteriaSurveiAdd({ onChangePage }) {
                   </label>
                   <input
                     type="text"
-                    className={`form-control ${errors.id_kriteria_survei ? 'is-invalid' : ''}`}
+                    className={`form-control ${
+                      errors.id_kriteria_survei ? "is-invalid" : ""
+                    }`}
                     id="id_kriteria_survei"
                     name="id_kriteria_survei"
                     onChange={handleInputChange}
                   />
                   {errors.id_kriteria_survei && (
-                    <div className="invalid-feedback">{errors.id_kriteria_survei}</div>
+                    <div className="invalid-feedback">
+                      {errors.id_kriteria_survei}
+                    </div>
                   )}
                 </div>
               </div>
@@ -116,13 +101,17 @@ export default function KriteriaSurveiAdd({ onChangePage }) {
                   </label>
                   <input
                     type="text"
-                    className={`form-control ${errors.kriteria_survei ? 'is-invalid' : ''}`}
+                    className={`form-control ${
+                      errors.kriteria_survei ? "is-invalid" : ""
+                    }`}
                     id="kriteria_survei"
                     name="kriteria_survei"
                     onChange={handleInputChange}
                   />
                   {errors.kriteria_survei && (
-                    <div className="invalid-feedback">{errors.kriteria_survei}</div>
+                    <div className="invalid-feedback">
+                      {errors.kriteria_survei}
+                    </div>
                   )}
                 </div>
               </div>
