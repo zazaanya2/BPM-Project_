@@ -1,6 +1,5 @@
 import { useState } from "react";
-import "./App.css";
-import "./assets/Styles.css";
+// import "./App.css";
 import Header from "./components/backbone/Header";
 
 function App() {
