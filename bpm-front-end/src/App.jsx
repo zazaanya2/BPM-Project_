@@ -5,6 +5,7 @@ import Table from './components/part/Table';
 import Paging from './components/part/Paging'; // Make sure to import the Paging component
 import PageTitleNav from './components/part/PageTitleNav';
 import TextField from './components/part/TextField';
+import Header from './components/backbone/Header';
 
 function App() {
   const [pageSize] = useState(10); // Set the page size to 10
@@ -49,9 +50,9 @@ function App() {
 
   return ( 
     <div className="d-flex flex-column min-vh-100">
-      <main className="flex-grow-1">
+      <Header />
+      <main className="flex-grow-1" style={{ marginTop: '60px' }}>
         <div className="d-flex flex-column">
-          
           {/* Breadcrumbs and Page Title */}
           <div className="m-5">
             <PageTitleNav 
@@ -64,7 +65,7 @@ function App() {
               onClick={() => console.log("Icon clicked")}
             />
           </div>
-  
+
           {/* Main Content Section */}
           <div className="shadow p-5 m-5 mt-0 bg-white rounded">
             <TextField label="Nama" />
@@ -72,10 +73,11 @@ function App() {
           
         </div>
       </main>
-  
+
       {/* Footer Component */}
       <Footer />
     </div>
+
   );
   
 }
