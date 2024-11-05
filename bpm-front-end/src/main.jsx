@@ -7,6 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import "@flaticon/flaticon-uicons/css/regular/rounded.css";
 import "@flaticon/flaticon-uicons/css/bold/rounded.css";
+import "@flaticon/flaticon-uicons/css/brands/all.css";
 
 
 createRoot(document.getElementById('root')).render(
