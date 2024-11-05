@@ -16,6 +16,21 @@ const UploadFoto = ({ id, label = "", isRequired = false, errorMsg }) => {
 
   return (
     <div className="mb-3">
+      {/* Preview Container */}
+      <div className="form-control m-3 p-3" style={{ border: "2px dashed #ddd", borderRadius: "8px", minHeight: "150px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        {preview ? (
+          <img
+            src={preview}
+            alt="Preview"
+            className="img-thumbnail"
+            style={{ maxWidth: "100%", maxHeight: "150px", borderRadius: "8px" }}
+          />
+        ) : (
+          <span className="text-muted">No Image Selected</span>
+        )}
+      </div>
+
+      {/* Label Input File */}
       {label && (
         <label htmlFor={id} className="form-label fw-bold">
           {label}
@@ -23,19 +38,28 @@ const UploadFoto = ({ id, label = "", isRequired = false, errorMsg }) => {
           {errorMsg && <span className="fw-normal text-danger"> {errorMsg}</span>}
         </label>
       )}
+
+      {/* File Input */}
       <input
         type="file"
         id={id}
         name={id}
-        className="form-control"
+        className="form-control mt-2"
         accept="image/*"
         onChange={handleFileChange}
+        style={{ cursor: "pointer" }}
       />
-      {preview && (
-        <div className="mt-3">
-          <img src={preview} alt="Preview" className="img-thumbnail" style={{ maxWidth: "200px" }} />
-        </div>
-      )}
+
+      {/* Custom Styling */}
+      <style jsx>{`
+        .form-control:hover {
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .img-thumbnail {
+          border-radius: 8px;
+          object-fit: cover;
+        }
+      `}</style>
     </div>
   );
 };
