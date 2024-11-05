@@ -1,5 +1,3 @@
-import Icon from "./Icon";
-
 export default function Button({
   classType,
   iconName,
@@ -7,6 +5,8 @@ export default function Button({
   title = "",
   type = "button",
   isDisabled = false,
+  width = "auto",  // Default width
+  boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)",  // Example shadow
   ...props
 }) {
   return (
@@ -16,6 +16,7 @@ export default function Button({
       {...props}
       title={title}
       disabled={isDisabled}
+      style={{ width: width, boxShadow }}
     >
       {iconName && (
         <Icon name={iconName} cssClass={label === "" ? undefined : "pe-2"} />

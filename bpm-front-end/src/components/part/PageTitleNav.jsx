@@ -12,16 +12,16 @@ const PageTitleNav = ({
     <header>
         <div className="row" style={{ display: "flex", alignItems: "center" }}>
             
-            <h1 style={{ color: "#2654A1", margin: "0" }}>
+            <h2 style={{ color: "#2654A1", margin: "0", }}>
                 <Icon
                     type="Bold"
                     name="angle-left"
                     cssClass="btn px-1 py-0 text" 
                     onClick={onClick} 
-                    style={{ fontSize: "28px", margin: "10px 5px", cursor: "pointer", color: "#2654A1" }}
+                    style={{ fontSize: "22px", margin: "10px 5px", cursor: "pointer", color: "#2654A1" }}
                 />
                 {title}
-            </h1>
+            </h2>
         </div>
 
         <nav>
