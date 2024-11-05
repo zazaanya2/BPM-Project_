@@ -1,9 +1,10 @@
 import React from "react";
+import Icon from "./Icon"; 
 
 export default function Table({
   arrHeader,
   data,
-  actions = [], // Array to determine which icons to display
+  actions = [], 
   onDelete = () => {},
   onDetail = () => {},
   onEdit = () => {},
@@ -16,56 +17,70 @@ export default function Table({
     switch (actionType) {
       case "Delete":
         return (
-          <i
-            className="fi fi-rr-trash btn px-1 py-0 text-danger"
+          <Icon
+            type="Reguler"
+            name="trash"
+            cssClass="btn px-1 py-0 text-danger"
             title="Hapus"
             onClick={() => onDelete(id)}
           />
         );
       case "Detail":
         return (
-          <i
-            className="fi fi-rr-eye btn px-1 py-0 text-info"
+          <Icon
+            type="Reguler"
+            name="eye"
+            cssClass="btn px-1 py-0 text-info"
             title="Lihat Detail"
             onClick={() => onDetail(id)}
           />
         );
       case "Edit":
         return (
-          <i
-            className="fi fi-rr-edit btn px-1 py-0 text-success"
+          <Icon
+            type="Reguler"
+            name="edit"
+            cssClass="btn px-1 py-0 text-success"
             title="Ubah"
             onClick={() => onEdit(id)}
           />
         );
       case "Final":
         return (
-          <i
-            className="fi fi-rr-flag btn px-1 py-0 text-primary"
+          <Icon
+            type="Reguler"
+            name="flag"
+            cssClass="btn px-1 py-0 text-primary"
             title="Finalkan"
             onClick={() => onFinal(id)}
           />
         );
       case "Print":
         return (
-          <i
-            className="fi fi-rr-download btn px-1 py-0 text-secondary"
+          <Icon
+            type="Reguler"
+            name="download"
+            cssClass="btn px-1 py-0 text-secondary"
             title="Unduh File"
             onClick={() => onPrint(id)}
           />
         );
       case "PrintHistory":
         return (
-          <i
-            className="fi fi-rr-file-circle-info btn px-1 py-0 text-warning"
+          <Icon
+            type="Reguler"
+            name="file-circle-info"
+            cssClass="btn px-1 py-0 text-warning"
             title="Riwayat Unduhan"
             onClick={() => onPrintHistory(id)}
           />
         );
       case "UpdateHistory":
         return (
-          <i
-            className="fi fi-rr-user-time btn px-1 py-0 text-primary"
+          <Icon
+            type="Reguler"
+            name="user-time"
+            cssClass="btn px-1 py-0 text-primary"
             title="Riwayat Pembaruan"
             onClick={() => onUpdateHistory(id)}
           />
@@ -86,7 +101,7 @@ export default function Table({
                 className="text-center align-middle"
                 style={{
                   backgroundColor: "#2654A1",
-                  color: "#fff", // Optional for white text
+                  color: "#fff",
                 }}
               >
                 {header}
