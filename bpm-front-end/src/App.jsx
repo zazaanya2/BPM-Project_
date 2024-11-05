@@ -10,11 +10,11 @@ import UploadFoto from './components/part/UploadFoto'
 function App() {
   return (
     <> 
-    <TextArea></TextArea>
-    <TextField></TextField>
-    <TextFieldAngka></TextFieldAngka>
-    <DatePicker></DatePicker>
-    <UploadFoto></UploadFoto>
+    <TextArea label="Ini Text Area"></TextArea>
+    <TextField label="Ini Text Field"></TextField>
+    <TextFieldAngka label="Ini Text Field Number"></TextFieldAngka>
+    <DatePicker label="Ini DatePicker"></DatePicker>
+    <UploadFoto label="Ini Upload Foto"></UploadFoto>
     </>
   )
 }
