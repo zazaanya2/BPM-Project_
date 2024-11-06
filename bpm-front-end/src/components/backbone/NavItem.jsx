@@ -39,6 +39,13 @@ export default function NavItem() {
                 </Link>
             </li>
 
+            {/* Berita */}
+            <li className="nav-item">
+                <Link className="nav-link" aria-current="page" to="/berita">
+                    Berita
+                </Link>
+            </li>
+
             {/* Kegiatan */}
             <li className="nav-item dropdown">
                 <button

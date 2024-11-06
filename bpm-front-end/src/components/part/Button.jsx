@@ -1,3 +1,5 @@
+import Icon from "./Icon";
+
 export default function Button({
   classType,
   iconName,
@@ -21,7 +23,7 @@ export default function Button({
       {iconName && (
         <Icon name={iconName} cssClass={label === "" ? undefined : "pe-2"} />
       )}
-      {label}
+      <span style={{ fontWeight: '600' }}>{label}</span>
     </button>
   );
 }

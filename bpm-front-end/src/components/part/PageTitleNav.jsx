@@ -1,30 +1,31 @@
-
 import React from "react";
 import PropTypes from "prop-types";
 import Icon from "./Icon";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const PageTitleNav = ({ 
     title, 
     breadcrumbs, 
     onClick = () => {} 
 }) => {
+  const navigate = useNavigate(); // Initialize navigate function
+
   return (
     <header>
         <div className="row" style={{ display: "flex", alignItems: "center" }}>
-            
             <h2 style={{ color: "#2654A1", margin: "0", }}>
                 <Icon
                     type="Bold"
                     name="angle-left"
                     cssClass="btn px-1 py-0 text" 
                     onClick={onClick} 
-                    style={{ fontSize: "22px", margin: "10px 5px", cursor: "pointer", color: "#2654A1" }}
+                    style={{ fontSize: "22px", margin: "10px 10px", cursor: "pointer", color: "#2654A1" }}
                 />
                 {title}
             </h2>
         </div>
 
-        <nav>
+        <nav className="ms-1">
             <ol className="breadcrumb ms-5">
                 {breadcrumbs.map((breadcrumb, index) => (
                     <li
@@ -33,13 +34,16 @@ const PageTitleNav = ({
                         aria-current={breadcrumb.href ? undefined : "page"}
                     >
                         {breadcrumb.href ? (
-                            <a href={breadcrumb.href} 
-                            style={{
-                                color: '#575050',
-                                textDecoration: 'none', 
-                            }}>
+                            <span
+                                style={{
+                                    color: '#575050',
+                                    textDecoration: 'none', 
+                                    cursor: "pointer"
+                                }}
+                                onClick={() => navigate(breadcrumb.href)} // Use navigate for programmatic routing
+                            >
                                 {breadcrumb.label}
-                            </a>
+                            </span>
                         ) : (
                             <span>{breadcrumb.label}</span>
                         )}

@@ -1,14 +1,14 @@
-import React, { useState } from "react"; // Pastikan React diimport
-import Table from "../../part/Table"; // Mengakses Table yang ada di src/components
-import Paging from "../../part/Paging"; // Mengakses Paging di src/components/part
-import PageTitleNav from "../../part/PageTitleNav"; // Mengakses PageTitleNav di src/components/part
-import TextField from "../../part/TextField"; // Mengakses TextField di src/components/part
-import TextArea from "../../part/TextArea"; // Mengakses TextArea di src/components/part
-import DatePicker from "../../part/DatePicker"; // Mengakses DatePicker di src/components/part
-import UploadFoto from "../../part/UploadFoto"; // Mengakses UploadFoto di src/components/part
-import HeaderForm from "../../part/HeaderForm"; // Mengakses HeaderForm di src/components/part
-import Button from "../../part/Button"; // Mengakses Button di src/components/part
-import DetailData from "../../part/DetailData"; // Mengakses DetailData di src/components/part
+import React, { useState } from "react"; 
+import Table from "../../part/Table"; 
+import Paging from "../../part/Paging"; 
+import PageTitleNav from "../../part/PageTitleNav"; 
+import TextField from "../../part/TextField"; 
+import TextArea from "../../part/TextArea"; 
+import DatePicker from "../../part/DatePicker"; 
+import UploadFoto from "../../part/UploadFoto"; 
+import HeaderForm from "../../part/HeaderForm"; 
+import Button from "../../part/Button";
+import DetailData from "../../part/DetailData"; 
 
 function Coba() {
   const [pageSize] = useState(10); // Set the page size to 10
@@ -107,7 +107,7 @@ function Coba() {
             <Table
               arrHeader={["Nama", "Email", "Alamat"]}
               data={currentData} // Pass currentData to Table
-              actions={["Detail", "Edit", "Delete", "Print", "Final", "PrintHistory", "UpdateHistory"]}
+              actions={["Detail", "Edit", "Delete", "Print", "Final", "PrintHistory", "UpdateHistory", "Responden"]}
               onDelete={(id) => console.log("Delete", id)}
               onDetail={(id) => console.log("Detail", id)}
               onEdit={(id) => console.log("Edit", id)}
@@ -115,6 +115,8 @@ function Coba() {
               onPrint={(id) => console.log("Print", id)}
               onPrintHistory={(id) => console.log("Print History", id)}
               onUpdateHistory={(id) => console.log("Update History", id)}
+              onResponden={(id) => console.log("Update Responden", id)}
+
             />
 
             {/* Paging Component */}

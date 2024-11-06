@@ -16,7 +16,7 @@ export default function Header() {
   };
 
   const checkIsMobile = () => {
-    setIsMobile(window.innerWidth < 1200);
+    setIsMobile(window.innerWidth < 1250);
   };
 
   const handleMenuItemClick = () => {

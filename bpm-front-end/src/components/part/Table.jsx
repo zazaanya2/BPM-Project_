@@ -12,6 +12,8 @@ export default function Table({
   onPrint = () => {},
   onPrintHistory = () => {},
   onUpdateHistory = () => {},
+  onSurveyor = () => {},
+  onResponden = () => {},
 }) {
   function generateActionButton(actionType, id) {
     switch (actionType) {
@@ -83,6 +85,26 @@ export default function Table({
             cssClass="btn px-1 py-0 text-primary"
             title="Riwayat Pembaruan"
             onClick={() => onUpdateHistory(id)}
+          />
+        );
+      case "Surveyor":
+        return (
+          <Icon
+            type="Reguler"
+            name="meeting"
+            cssClass="btn px-1 py-0 text-info"
+            title="Edit Surveyor"
+            onClick={() => onSurveyor(id)}
+          />
+        );
+      case "Responden":
+        return (
+          <Icon
+            type="Reguler"
+            name="users"
+            cssClass="btn px-1 py-0 text-warning"
+            title="Edit Responden"
+            onResponden={() => onResponden(id)}
           />
         );
       default:

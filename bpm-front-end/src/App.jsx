@@ -1,8 +1,12 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/backbone/Header'; 
-import Coba from './components/page/1_Beranda/Coba';        
 import Footer from './components/backbone/Footer';
+
+import Coba from './components/page/1_Beranda/Coba'; 
+
+import Tentang from './components/page/2_Tentang/Root';
+import Berita from './components/page/3_Berita/Root';
 
 function App() {
   return (
@@ -12,14 +16,9 @@ function App() {
         <Header />
 
         <main className="flex-grow-1" >
-          {/* The main content is here */}
+          <Tentang/>
+          <Berita/>
         </main>
-
-        {/* Define your routes within the Routes component */}
-        <Routes>
-          <Route path="/kegiatan/rencana" element={<Coba />} /> {/* Map "/" to Coba component */}
-          {/* Other Routes can be added here if needed */}
-        </Routes>
 
         {/* Footer Component */}
         <Footer />
