@@ -2,9 +2,6 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/backbone/Header'; 
 import Footer from './components/backbone/Footer';
-
-import Coba from './components/page/1_Beranda/Coba'; 
-
 import Tentang from './components/page/2_Tentang/Root';
 import Berita from './components/page/3_Berita/Root';
 
