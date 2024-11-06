@@ -9,7 +9,7 @@ function Footer() {
       style={{ backgroundColor: "rgb(38, 84, 161)", color: "white" }}
     >
       <div className="container">
-        <div className="row text-white">
+        <div className="row text-white m-3">
           {/* Column 1: About BPM */}
           <div className="col-lg-5 col-md-6 mb-4">
             <img 

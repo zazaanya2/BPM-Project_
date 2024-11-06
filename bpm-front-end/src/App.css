@@ -1,3 +1,53 @@
 body {
     font-family: 'Poppins', sans-serif;
   }
+
+ .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Pastikan header berada di atas konten lainnya */
+  }
+
+  .navmenu .nav-item {
+    margin-right: 5px; /* Mengurangi jarak antar menu item */
+  }
+  
+  .navmenu .nav-link {
+    padding: 5px 8px; /* Mengurangi padding dalam setiap item */
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .nav li {
+    margin-right: 10px;
+  }
+  
+  .navmenu {
+    align-items: center;
+  }
+  
+  .mobile-menu {
+    background-color: #2654A1;
+  }
+  
+  @media (max-width: 991px) {
+    .nav {
+      flex-direction: column;
+    }
+  
+    .nav li {
+      margin-bottom: 5px;
+      margin-right: 0;
+    }
+  }
+
+  
+  
