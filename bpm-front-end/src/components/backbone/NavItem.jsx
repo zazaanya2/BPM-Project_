@@ -1,143 +1,223 @@
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+
 export default function NavItem() {
+    const [openDropdown, setOpenDropdown] = useState(null);
+    const [openSubmenu, setOpenSubmenu] = useState(null);
+
+    const toggleDropdown = (menu) => {
+        setOpenDropdown(openDropdown === menu ? null : menu);
+        setOpenSubmenu(null); // Reset submenu saat dropdown utama di-toggle
+    };
+
+    const toggleSubmenu = (submenu) => {
+        setOpenSubmenu(openSubmenu === submenu ? null : submenu);
+    };
+
+
     return (
         <>
             {/* Beranda */}
             <li className="nav-item" style={{ marginRight: '10px' }}>
-                <a className="nav-link" aria-current="page" href="#">
+                <Link className="nav-link" aria-current="page" to="/">
                     Beranda
-                </a>
+                </Link>
             </li>
+
             {/* Tentang */}
             <li className="nav-item">
-                <a className="nav-link" aria-current="page" href="#">
+                <Link className="nav-link" aria-current="page" to="/tentang">
                     Tentang
-                </a>
+                </Link>
             </li>
-            {/* Berita */}
-            <li className="nav-item">
-                <a className="nav-link" aria-current="page" href="#">
-                    Berita
-                </a>
-            </li>
+
             {/* Kegiatan */}
             <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button
+                    className="nav-link dropdown-toggle"
+                    onClick={() => toggleDropdown('kegiatan')}
+                >
                     Kegiatan
-                </a>
-                <ul className="dropdown-menu">
-                    <li>
-                        <a className="dropdown-item" href="#">
-                            Rencana Kegiatan BPM
-                        </a>
-                    </li>
-                    <li>
-                        <a className="dropdown-item" href="#">
-                            Kegiatan BPM
-                        </a>
-                    </li>
-                </ul>
+                </button>
+                {openDropdown === 'kegiatan' && (
+                    <ul className="dropdown-menu">
+                        <li>
+                            <Link className="dropdown-item" to="/kegiatan/rencana">
+                                Rencana Kegiatan BPM
+                            </Link>
+                        </li>
+                        <li>
+                            <Link className="dropdown-item" to="/kegiatan/bpm">
+                                Kegiatan BPM
+                            </Link>
+                        </li>
+                    </ul>
+                )}
             </li>
+
+            {/* SPMI */}
             {/* SPMI */}
             <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button
+                    className="nav-link dropdown-toggle"
+                    aria-expanded={openDropdown === 'spmi'}
+                    onClick={() => toggleDropdown('spmi')}
+                >
                     SPMI
-                </a>
-                <ul className="dropdown-menu">
-                    <li className="dropdown-submenu">
-                        <a className="dropdown-item dropdown-toggle" href="#">
-                            Siklus SPMI
-                        </a>
-                        <ul className="dropdown-menu">
-                            <li><a className="dropdown-item" href="#">Penetapan</a></li>
-                            <li><a className="dropdown-item" href="#">Pelaksanaan</a></li>
-                            <li><a className="dropdown-item" href="#">Evaluasi</a></li>
-                            <li><a className="dropdown-item" href="#">Pengendalian</a></li>
-                            <li><a className="dropdown-item" href="#">Peningkatan</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a className="dropdown-item" href="#">
-                            Pernyataan dan Kebijakan Mutu
-                        </a>
-                    </li>
-                    <li className="dropdown-submenu">
-                        <a className="dropdown-item dropdown-toggle" href="#">
-                            Dokumen SPMI
-                        </a>
-                        <ul className="dropdown-menu">
-                            <li><a className="dropdown-item" href="#">Kebijakan SPMI</a></li>
-                            <li><a className="dropdown-item" href="#">Manual SPMI</a></li>
-                            <li><a className="dropdown-item" href="#">Standar SPMI</a></li>
-                            <li><a className="dropdown-item" href="#">Formulir SPMI</a></li>
-                            <li><a className="dropdown-item" href="#">SOP</a></li>
-                            <li><a className="dropdown-item" href="#">Template Dokumen SPMI</a></li>
-                        </ul>
-                    </li>
-                </ul>
+                </button>
+                {openDropdown === 'spmi' && (
+                    <ul className="dropdown-menu">
+                        <li className="dropdown-submenu">
+                            <button
+                                className="dropdown-item dropdown-toggle"
+                                aria-expanded={openSubmenu === 'siklus'}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleSubmenu('siklus');
+                                }}
+                            >
+                                Siklus SPMI
+                            </button>
+                            {openSubmenu === 'siklus' && (
+                                <ul className="dropdown-menu">
+                                    <li><Link className="dropdown-item" to="/spmi/siklus/penetapan">Penetapan</Link></li>
+                                    <li><Link className="dropdown-item" to="/spmi/siklus/pelaksanaan">Pelaksanaan</Link></li>
+                                    <li><Link className="dropdown-item" to="/spmi/siklus/evaluasi">Evaluasi</Link></li>
+                                    <li><Link className="dropdown-item" to="/spmi/siklus/pengendalian">Pengendalian</Link></li>
+                                    <li><Link className="dropdown-item" to="/spmi/siklus/peningkatan">Peningkatan</Link></li>
+                                </ul>
+                            )}
+                        </li>
+                        <li>
+                            <Link className="dropdown-item" to="/spmi/kebijakan-mutu">
+                                Pernyataan dan Kebijakan Mutu
+                            </Link>
+                        </li>
+                        <li className="dropdown-submenu">
+                            <button
+                                className="dropdown-item dropdown-toggle"
+                                aria-expanded={openSubmenu === 'dokumen-spmi'}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleSubmenu('dokumen-spmi');
+                                }}
+                            >
+                                Dokumen SPMI
+                            </button>
+                            {openSubmenu === 'dokumen-spmi' && (
+                                <ul className="dropdown-menu">
+                                    <li><Link className="dropdown-item" to="/spmi/dokumen/kebijakan">Kebijakan SPMI</Link></li>
+                                    <li><Link className="dropdown-item" to="/spmi/dokumen/manual">Manual SPMI</Link></li>
+                                    <li><Link className="dropdown-item" to="/spmi/dokumen/standar">Standar SPMI</Link></li>
+                                    <li><Link className="dropdown-item" to="/spmi/dokumen/formulir">Formulir SPMI</Link></li>
+                                    <li><Link className="dropdown-item" to="/spmi/dokumen/sop">SOP</Link></li>
+                                    <li><Link className="dropdown-item" to="/spmi/dokumen/template">Template Dokumen SPMI</Link></li>
+                                </ul>
+                            )}
+                        </li>
+                    </ul>
+                )}
             </li>
+
             {/* SPME */}
             <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button
+                    className="nav-link dropdown-toggle"
+                    onClick={() => toggleDropdown('spme')}
+                    aria-expanded={openDropdown === 'spme'}
+                >
                     SPME
-                </a>
-                <ul className="dropdown-menu">
-                    <li className="dropdown-submenu">
-                        <a className="dropdown-item dropdown-toggle" href="#">
-                            Status Akreditasi
-                        </a>
-                        <ul className="dropdown-menu">
-                            <li><a className="dropdown-item" href="#">Tabel Ringkasan Status Akreditasi</a></li>
-                            <li><a className="dropdown-item" href="#">Akreditasi Program Studi</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a className="dropdown-item" href="#">
-                            Panduan Akreditasi
-                        </a>
-                    </li>
-                </ul>
+                </button>
+                {openDropdown === 'spme' && (
+                    <ul className="dropdown-menu">
+                        <li className="dropdown-submenu">
+                            <button
+                                className="dropdown-item dropdown-toggle"
+                                aria-expanded={openSubmenu === 'status'}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleSubmenu('status');
+                                }}
+                            >
+                                Status Akreditasi
+                            </button>
+                            {openSubmenu === 'status' && (
+                                <ul className="dropdown-menu">
+                                    <li><Link className="dropdown-item" to="/spme/status/tabel">Tabel Ringkasan Status Akreditasi</Link></li>
+                                    <li><Link className="dropdown-item" to="/spme/status/program-studi">Akreditasi Program Studi</Link></li>
+                                </ul>
+                            )}
+                        </li>
+                        <li>
+                            <Link className="dropdown-item" to="/spme/panduan">
+                                Panduan Akreditasi
+                            </Link>
+                        </li>
+                    </ul>
+                )}
             </li>
+
             {/* IKU & IKT */}
             <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button
+                    className="nav-link dropdown-toggle"
+                    aria-expanded={openDropdown === 'iku-ikt'}
+                    onClick={() => toggleDropdown('iku-ikt')}
+                >
                     IKU & IKT
-                </a>
-                <ul className="dropdown-menu">
-                    <li><a className="dropdown-item" href="#">Surat Keputusan</a></li>
-                    <li><a className="dropdown-item" href="#">Lampiran SK</a></li>
-                </ul>
+                </button>
+                {openDropdown === 'iku-ikt' && (
+                    <ul className="dropdown-menu">
+                        <li><Link className="dropdown-item" to="/iku/sk">Surat Keputusan</Link></li>
+                        <li><Link className="dropdown-item" to="/iku/lampiran">Lampiran SK</Link></li>
+                    </ul>
+                )}
             </li>
+
             {/* Jadwal */}
             <li className="nav-item">
-                <a className="nav-link" aria-current="page" href="#">
+                <Link className="nav-link" aria-current="page" to="/jadwal">
                     Jadwal
-                </a>
+                </Link>
             </li>
+
             {/* Survei */}
             <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button
+                    className="nav-link dropdown-toggle"
+                    onClick={() => toggleDropdown('survei')}
+                >
                     Survei
-                </a>
-                <ul className="dropdown-menu">
-                    <li><a className="dropdown-item" href="#">Kriteria Survei</a></li>
-                    <li><a className="dropdown-item" href="#">Skala Penilaian</a></li>
-                    <li><a className="dropdown-item" href="#">Pertanyaan Survei</a></li>
-                    <li><a className="dropdown-item" href="#">Template Survei</a></li>
-                    <li><a className="dropdown-item" href="#">Survei</a></li>
-                    <li><a className="dropdown-item" href="#">Daftar Survei</a></li>
-                </ul>
+                </button>
+                {openDropdown === 'survei' && (
+                    <ul className="dropdown-menu">
+                        <li><Link className="dropdown-item" to="/survei/kriteria">Kriteria Survei</Link></li>
+                        <li><Link className="dropdown-item" to="/survei/skala">Skala Penilaian</Link></li>
+                        <li><Link className="dropdown-item" to="/survei/pertanyaan">Pertanyaan Survei</Link></li>
+                        <li><Link className="dropdown-item" to="/survei/template">Template Survei</Link></li>
+                        <li><Link className="dropdown-item" to="/survei">Survei</Link></li>
+                        <li><Link className="dropdown-item" to="/survei/daftar">Daftar Survei</Link></li>
+                    </ul>
+                )}
             </li>
+
             {/* Peraturan */}
             <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button
+                    className="nav-link dropdown-toggle"
+                    onClick={() => toggleDropdown('peraturan')}
+                >
                     Peraturan
-                </a>
-                <ul className="dropdown-menu">
-                    <li><a className="dropdown-item" href="#">Kebijakan Peraturan</a></li>
-                    <li><a className="dropdown-item" href="#">Peraturan Eksternal</a></li>
-                    <li><a className="dropdown-item" href="#">Instrumen APS</a></li>
-                </ul>
+                </button>
+                {openDropdown === 'peraturan' && (
+                    <ul className="dropdown-menu">
+                        <li><Link className="dropdown-item" to="/peraturan/kebijakan">Kebijakan Peraturan</Link></li>
+                        <li><Link className="dropdown-item" to="/peraturan/eksternal">Peraturan Eksternal</Link></li>
+                        <li><Link className="dropdown-item" to="/peraturan/aps">Instrumen APS</Link></li>
+                    </ul>
+                )}
             </li>
+
             {/* Masuk Button */}
             <li className="nav-item ms-3">
                 <button className="btn bg-white">Masuk</button>
