@@ -5,14 +5,22 @@ export default function NavItem() {
     const [openDropdown, setOpenDropdown] = useState(null);
     const [openSubmenu, setOpenSubmenu] = useState(null);
 
+    // Fungsi untuk toggle dropdown menu
     const toggleDropdown = (menu) => {
-        setOpenDropdown(openDropdown === menu ? null : menu);
-        setOpenSubmenu(null); // Reset submenu saat dropdown utama di-toggle
+        if (openDropdown === menu) {
+            setOpenDropdown(null);  // Reset dropdown jika menu yang sama di-klik
+            setOpenSubmenu(null);    // Reset submenu ketika dropdown ditutup
+        } else {
+            setOpenDropdown(menu);  // Buka dropdown untuk menu yang dipilih
+            setOpenSubmenu(null);    // Reset submenu saat dropdown baru dibuka
+        }
     };
 
+    // Fungsi untuk toggle submenu
     const toggleSubmenu = (submenu) => {
-        setOpenSubmenu(openSubmenu === submenu ? null : submenu);
+        setOpenSubmenu(openSubmenu === submenu ? null : submenu);  // Toggle submenu
     };
+
 
 
     return (
@@ -55,7 +63,6 @@ export default function NavItem() {
                 )}
             </li>
 
-            {/* SPMI */}
             {/* SPMI */}
             <li className="nav-item dropdown">
                 <button

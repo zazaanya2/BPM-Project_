@@ -92,7 +92,7 @@ export default function Table({
 
   return (
     <div className="table-responsive">
-      <table className="table table-hover table-striped" style={{ borderCollapse: 'collapse' }}>
+      <table className="table table-hover table-striped table-bordered" style={{ borderCollapse: 'collapse', minWidth: '1000px' }}>
         <thead>
           <tr>
             {arrHeader.map((header, index) => (
@@ -112,6 +112,7 @@ export default function Table({
               style={{
                 backgroundColor: "#2654A1",
                 color: "#fff",
+                width: '250px',  // Reduce the width of the "Aksi" column
               }}
             >
               Aksi
@@ -127,10 +128,8 @@ export default function Table({
                     {row[column]}
                   </td>
                 ))}
-                <td className="text-center align-middle">
-                  {actions.map((action) =>
-                    generateActionButton(action, row.Key)
-                  )}
+                <td className="text-center align-middle" style={{ width: '250px' }}> {/* Reduce the width for each action cell */}
+                  {actions.map((action) => generateActionButton(action, row.Key))}
                 </td>
               </tr>
             ))
@@ -143,6 +142,7 @@ export default function Table({
           )}
         </tbody>
       </table>
+
     </div>
   );
 }
