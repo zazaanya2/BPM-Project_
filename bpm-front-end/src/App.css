@@ -50,4 +50,21 @@ body {
   }
 
   
+.dropdown-menu {
+    display: block;
+    position: absolute;
+}
+
+.dropdown-submenu > .dropdown-menu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: 0;
+}
+
+.dropdown-submenu .dropdown-menu.show {
+    display: block;
+}
+
+
   
