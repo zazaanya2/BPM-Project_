@@ -188,10 +188,10 @@ export default function NavItem() {
                 )}
             </li>
 
-            {/* Jadwal */}
+            {/* Audit */}
             <li className="nav-item">
-                <Link className="nav-link" aria-current="page" to="/jadwal">
-                    Jadwal
+                <Link className="nav-link" aria-current="page" to="/audit">
+                    Audit
                 </Link>
             </li>
 
