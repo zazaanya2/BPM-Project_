@@ -66,5 +66,61 @@ body {
     display: block;
 }
 
+/* Tambahkan ini di file CSS kamu */
+dialog {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 0;
+  overflow: hidden;
+}
+
+.modal-header {
+  background-color: #1e3a8a; /* Biru untuk header */
+  color: #ffffff; /* Teks putih */
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+button.primary {
+  background-color: #1e3a8a; /* Warna biru untuk tombol Simpan */
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button.primary:hover {
+  background-color: #3b82f6;
+}
+
+button.secondary {
+  background-color: #ef4444; /* Warna merah untuk tombol Batal */
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button.secondary:hover {
+  background-color: #f87171;
+}
+
+
 
   
