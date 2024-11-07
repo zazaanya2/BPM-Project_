@@ -38,26 +38,18 @@ export default function Add() {
             <HeaderForm label="Formulir Berita"/>
             <div className="row">
               <div className="col-lg-6 col-md-6 ">
-                <TextField label="Nama" isRequired="true" />
-                <DetailData label="Dibuat Oleh" isi="Retno Widiastuti"/>
+                <TextField label="Judul Berita" isRequired="true" />
+                <DetailData label="Penulis" isi="Retno Widiastuti"/>
               </div>
               <div className="col-lg-6 col-md-6">
                 <DatePicker label="Tanggal"/>
               </div>
             </div>
             
-            <TextArea label="Deskripsi"/>
+            <TextArea label="Isi Berita"/>
 
             <div className="row">
-              <div className="col-lg-4 col-md-6 mb-4">
-                <UploadFoto label="Masukkan Foto"/>
-              </div>
-              <div className="col-lg-4 col-md-6 mb-4">
-                <UploadFoto label="Masukkan Foto"/>
-              </div>
-              <div className="col-lg-4 col-md-6 mb-4">
-                <UploadFoto label="Masukkan Foto"/>
-              </div>
+              <UploadFoto label="Masukkan Foto"/>
             </div>
 
             <div className="d-flex justify-content-between align-items-center">
