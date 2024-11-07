@@ -9,7 +9,7 @@ import UploadFoto from "../../part/UploadFoto"; // Mengakses UploadFoto di src/c
 import HeaderForm from "../../part/HeaderForm"; // Mengakses HeaderForm di src/components/part
 import Button from "../../part/Button"; // Mengakses Button di src/components/part
 import DetailData from "../../part/DetailData"; // Mengakses DetailData di src/components/part
-
+import SearchField from "../../part/SearchField";
 function Coba() {
   const [pageSize] = useState(10); // Set the page size to 10
   const [pageCurrent, setPageCurrent] = useState(1); // Current page state
@@ -64,9 +64,10 @@ function Coba() {
               onClick={() => console.log("Icon clicked")}
             />
           </div>
-
+          
           {/* Main Content Section */}
           <div className="shadow p-5 m-5 mt-0 bg-white rounded">
+          <SearchField></SearchField>
             <HeaderForm label="Formulir Sasmito"/>
             <div className="row">
               <div className="col-lg-6 col-md-6 ">
