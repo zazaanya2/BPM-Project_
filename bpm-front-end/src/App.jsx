@@ -4,6 +4,8 @@ import Header from './components/backbone/Header';
 import Footer from './components/backbone/Footer';
 import Tentang from './components/page/2_Tentang/Root';
 import Berita from './components/page/3_Berita/Root';
+import Kegiatan from './components/page/4_Kegiatan/Root';
+
 
 function App() {
   return (
@@ -15,6 +17,7 @@ function App() {
         <main className="flex-grow-1" >
           <Tentang/>
           <Berita/>
+          <Kegiatan/>
         </main>
 
         {/* Footer Component */}
