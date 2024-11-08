@@ -4,9 +4,8 @@ import Header from './components/backbone/Header';
 import Footer from './components/backbone/Footer';
 import Tentang from './components/page/2_Tentang/Root';
 import Berita from './components/page/3_Berita/Root';
-import Kegiatan from './components/page/4_Kegiatan/Root';
-
-
+import RencanaKegiatan from './components/page/4_Kegiatan/Root'
+import Survei from './components/page/9_Survei/Root';
 function App() {
   return (
     <Router> {/* Wrap the entire app in Router */}
@@ -17,7 +16,8 @@ function App() {
         <main className="flex-grow-1" >
           <Tentang/>
           <Berita/>
-          <Kegiatan/>
+          <RencanaKegiatan/>
+          <Survei/>
         </main>
 
         {/* Footer Component */}

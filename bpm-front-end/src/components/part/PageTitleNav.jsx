@@ -59,7 +59,7 @@ PageTitleNav.propTypes = {
   title: PropTypes.string.isRequired,
   breadcrumbs: PropTypes.arrayOf(
     PropTypes.shape({
-      label: PropTypes.string.isRequired,
+      label: PropTypes.string,
       href: PropTypes.string
     })
   ).isRequired,
