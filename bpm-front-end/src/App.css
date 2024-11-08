@@ -67,6 +67,28 @@ body {
 }
 
 /* Tambahkan ini di file CSS kamu */
+
+
+
+/* Styling tombol close (X) di pojok kanan atas */
+.modal-close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  
+  background: none;
+  border: none;
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.2s ease; /* Tambahkan transisi untuk efek halus */
+}
+
+.modal-close-button:hover {
+  transform: scale(1.2); /* Membuat tombol sedikit membesar saat di-hover */
+}
+
 dialog {
   border: none;
   border-radius: 8px;
@@ -93,33 +115,8 @@ dialog {
   gap: 10px;
 }
 
-button.primary {
-  background-color: #1e3a8a; /* Warna biru untuk tombol Simpan */
-  color: #ffffff;
-  border: none;
-  padding: 10px 20px;
-  font-size: 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-}
 
-button.primary:hover {
-  background-color: #3b82f6;
-}
 
-button.secondary {
-  background-color: #ef4444; /* Warna merah untuk tombol Batal */
-  color: #ffffff;
-  border: none;
-  padding: 10px 20px;
-  font-size: 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button.secondary:hover {
-  background-color: #f87171;
-}
 
 
 
