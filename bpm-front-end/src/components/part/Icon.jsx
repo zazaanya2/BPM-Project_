@@ -2,6 +2,8 @@ export default function Icon({
   type = "Reguler", 
   name,
   cssClass = "",
+  ukuran = "16px", // default ukuran
+  margin = "0px",  // default margin
   ...props
 }) {
  
@@ -12,8 +14,7 @@ export default function Icon({
     type === "Block" ? "fi fi-block" : 
     "fi fi-rr"; 
 
-  
   const iconClass = `${prefix}-${name} ${cssClass}`;
 
-  return <i className={iconClass} {...props}></i>;
+  return <i className={iconClass} style={{ fontSize: ukuran, margin }} {...props}></i>;
 }

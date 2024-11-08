@@ -5,6 +5,7 @@ import App from './App.jsx'
 import "bootstrap/dist/js/bootstrap.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./assets/css/Styles.css";
+import "./assets/css/Tampilan.css";
 import "./assets/js/Main.js";
 
 import "@flaticon/flaticon-uicons/css/regular/rounded.css";

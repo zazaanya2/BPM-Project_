@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react"; 
 import { useParams, useNavigate, Link } from "react-router-dom";
 import PageTitleNav from "../../part/PageTitleNav"; 
 import TextField from "../../part/TextField"; 
 import TextArea from "../../part/TextArea"; 
 import DatePicker from "../../part/DatePicker"; 
+import UploadFoto from "../../part/UploadFotoMulti"; 
 import HeaderForm from "../../part/HeaderText"; 
 import Button from "../../part/Button";
 import DetailData from "../../part/DetailData"; 
@@ -12,11 +13,11 @@ export default function Edit() {
     const { id } = useParams(); // Retrieve the ID from the URL
     const navigate = useNavigate();
 
-    const title = "Edit Tentang";
+    const title = "Edit Berita";
     const breadcrumbs = [
-        { label: "Tentang", href: "/tentang" }, 
-        { label: "Kelola Tentang", href: "/kelolaTentang" }, 
-        { label: "Edit Tentang" } 
+        { label: "Berita", href: "/berita" }, 
+        { label: "Kelola Berita", href: "/kelolaBerita" }, 
+        { label: "Edit Berita" } 
     ];
 
     return (
@@ -29,20 +30,29 @@ export default function Edit() {
                 <PageTitleNav 
                     title={title}
                     breadcrumbs={breadcrumbs}
-                    onClick={() => navigate("/kelolaTentang")} // Corrected usage
+                    onClick={() => navigate("/kelolaBerita")} // Corrected usage
                 />
             </div>
 
 
           {/* Main Content Section */}
           <div className="shadow p-5 m-5 mt-0 bg-white rounded">
-            <HeaderForm label="Formulir Tentang"/>
+            <HeaderForm label="Formulir Berita"/>
             <div className="row">
-                <TextField label="Nama" isRequired="true" />
-                <DetailData label="Dibuat Oleh" isi="Retno Widiastuti"/>
+              <div className="col-lg-6 col-md-6 ">
+                <TextField label="Judul Berita" isRequired="true" />
+                <DetailData label="Penulis" isi="Retno Widiastuti"/>
+              </div>
+              <div className="col-lg-6 col-md-6">
+                <DatePicker label="Tanggal"/>
+              </div>
             </div>
             
-            <TextArea label="Deskripsi"/>
+            <TextArea label="Isi Berita"/>
+
+            <div className="row">
+              <UploadFoto label="Masukkan Foto"/>
+            </div>
 
             <div className="d-flex justify-content-between align-items-center">
               <div className="flex-grow-1 m-2">
@@ -54,8 +64,6 @@ export default function Edit() {
             </div>
 
           </div>
-
-          
         </div>
       </main>
 

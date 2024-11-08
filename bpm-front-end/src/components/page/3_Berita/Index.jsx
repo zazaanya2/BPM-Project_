@@ -9,12 +9,18 @@ export default function Index() {
   };
 
   return (
-    <div className="position-absolute top-0 end-0 p-5 m-5">
+    <>
+      <div>
+      <div className="position-absolute top-0 end-0 p-5 m-5">
       <Button
         class="btn btn-primary"
         label="Kelola Berita"
         onClick={handleClick}
       />
     </div>
+    </div>
+    </>
+    
+    
   );
 }
