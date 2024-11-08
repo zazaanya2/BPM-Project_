@@ -3,6 +3,7 @@ import Icon from "./Icon";
 
 export default function Table({
   arrHeader,
+  headerToDataMap,  // Menambahkan peta header ke data
   data,
   actions = [], 
   onDelete = () => {},
@@ -145,12 +146,12 @@ export default function Table({
           {data.length > 0 ? (
             data.map((row, rowIndex) => (
               <tr key={`row-${rowIndex}`}>
-                {arrHeader.map((column, colIndex) => (
+                {arrHeader.map((header, colIndex) => (
                   <td key={`cell-${rowIndex}-${colIndex}`} className="align-middle text-start">
-                    {row[column]}
+                    {row[headerToDataMap[header]]}  {/* Mengambil data berdasarkan peta */}
                   </td>
                 ))}
-                <td className="text-center align-middle" style={{ width: '250px' }}> {/* Reduce the width for each action cell */}
+                <td className="text-center align-middle" style={{ width: '250px' }}>
                   {actions.map((action) => generateActionButton(action, row.Key))}
                 </td>
               </tr>
@@ -164,7 +165,6 @@ export default function Table({
           )}
         </tbody>
       </table>
-
     </div>
   );
 }

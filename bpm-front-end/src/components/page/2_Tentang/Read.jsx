@@ -49,6 +49,11 @@ export default function Read() {
                     <div className="table-container bg-white p-3 m-5 mt-0 rounded">
                         <Table
                             arrHeader={["Nama", "Email", "Alamat"]}
+                            headerToDataMap={{
+                                "Nama" : "Nama",
+                                "Email" : "Email",
+                                "Alamat" : "Alamat"
+                            }}
                             data={currentData}
                             actions={["Detail", "Edit", "UpdateHistory"]}
                             onDetail={(id) => console.log("Detail", id)}
