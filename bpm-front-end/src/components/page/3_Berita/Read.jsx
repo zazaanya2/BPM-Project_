@@ -10,15 +10,18 @@ export default function Read() {
     const [pageCurrent, setPageCurrent] = useState(1);
     const navigate = useNavigate(); // Hook for navigation
 
+    // Menambahkan data menjadi 10 item dengan URL gambar
     const data = [
-        { Key: 1, Nama: "Tentang BPM", Email: "budi@example.com", Alamat: "Jakarta" },
-        { Key: 2, Nama: "Sejarah BPM", Email: "ani@example.com", Alamat: "Bandung" },
-        { Key: 3, Nama: "Sasaran BPM", Email: "cici@example.com", Alamat: "Surabaya" },
-        { Key: 4, Nama: "Strategi BPM", Email: "dodi@example.com", Alamat: "Medan" },
-        { Key: 5, Nama: "Visi", Email: "eka@example.com", Alamat: "Semarang" },
-        { Key: 6, Nama: "Misi", Email: "feri@example.com", Alamat: "Malang" },
-        { Key: 7, Nama: "Struktur BPM", Email: "gina@example.com", Alamat: "Yogyakarta" },
-        { Key: 8, Nama: "SK Pendirian", Email: "hani@example.com", Alamat: "Solo" },
+        { Key: 1, JudulBerita: "Tentang BPM", Tanggal: "27/11/2024", Foto: "https://via.placeholder.com/100" },
+        { Key: 2, JudulBerita: "Berita A", Tanggal: "26/11/2024", Foto: "https://via.placeholder.com/100" },
+        { Key: 3, JudulBerita: "Berita B", Tanggal: "25/11/2024", Foto: "https://via.placeholder.com/100" },
+        { Key: 4, JudulBerita: "Berita C", Tanggal: "24/11/2024", Foto: "https://via.placeholder.com/100" },
+        { Key: 5, JudulBerita: "Berita D", Tanggal: "23/11/2024", Foto: "https://via.placeholder.com/100" },
+        { Key: 6, JudulBerita: "Berita E", Tanggal: "22/11/2024", Foto: "https://via.placeholder.com/100" },
+        { Key: 7, JudulBerita: "Berita F", Tanggal: "21/11/2024", Foto: "https://via.placeholder.com/100" },
+        { Key: 8, JudulBerita: "Berita G", Tanggal: "20/11/2024", Foto: "https://via.placeholder.com/100" },
+        { Key: 9, JudulBerita: "Berita H", Tanggal: "19/11/2024", Foto: "https://via.placeholder.com/100" },
+        { Key: 10, JudulBerita: "Berita I", Tanggal: "18/11/2024", Foto: "https://via.placeholder.com/100" }
     ];
 
     const indexOfLastData = pageCurrent * pageSize;
@@ -46,7 +49,7 @@ export default function Read() {
                             onClick={() => navigate("/berita")}
                         />
                     </div>
-                    <div className="  p-3 m-5 mt-2 mb-0" style={{ marginLeft: '50px' }}>
+                    <div className="p-3 m-5 mt-2 mb-0" style={{ marginLeft: '50px' }}>
                         <Button 
                             iconName="add"
                             classType="primary"
@@ -56,13 +59,25 @@ export default function Read() {
                     </div>
                     <div className="table-container bg-white p-3 m-5 mt-0 rounded">
                         <Table
-                            arrHeader={["Nama", "Email", "Alamat"]}
-                            data={currentData}
+                            arrHeader={["No", "Judul Berita", "Tanggal", "Foto"]}
+                            headerToDataMap={{
+                                "No": "No",
+                                "Judul Berita": "JudulBerita",
+                                "Tanggal": "Tanggal",
+                                "Foto": "Foto"
+                            }}
+                            data={currentData.map((item, index) => ({
+                                key: item.Key || index,
+                                No: indexOfFirstData + index + 1,
+                                JudulBerita: item.JudulBerita,
+                                Tanggal: item.Tanggal,
+                                Foto: <img src={item.Foto} alt="Foto Berita" width="50" height="50" />
+                            }))}
                             actions={["Detail", "Edit", "UpdateHistory"]}
-                            onDetail={(id) => console.log("Detail", id)}
-                            onEdit={(id) => navigate(`/edit/${id}`)} // Navigate to Edit page with ID
-                            onUpdateHistory={(id) => console.log("Update History", id)}
                         />
+
+
+
                         <Paging
                             pageSize={pageSize}
                             pageCurrent={pageCurrent}
