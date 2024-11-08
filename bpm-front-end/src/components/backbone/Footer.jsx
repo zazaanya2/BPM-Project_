@@ -1,5 +1,5 @@
 import React from "react";
-
+import Icon from "../part/Icon";
 
 
 function Footer() {
@@ -9,11 +9,11 @@ function Footer() {
       style={{ backgroundColor: "rgb(38, 84, 161)", color: "white" }}
     >
       <div className="container">
-        <div className="row text-white">
+        <div className="row text-white m-3">
           {/* Column 1: About BPM */}
           <div className="col-lg-5 col-md-6 mb-4">
             <img 
-              src="./src/assets/bpm-logo.png" 
+              src="../src/assets/bpm-logo.png" 
               alt="Logo BPM" 
               style={{ width: "200px", height: "auto" }} 
             />
@@ -76,30 +76,39 @@ function Footer() {
               <br />
               Cibatu, Kec. Cikarang Selatan, Kab. Bekasi
             </p>
-            <i
-                className="fi fi-brands-instagram btn px-1 py-0 text-white"
-                title="Visit our Instagram"
-                onClick={() => window.open('https://www.instagram.com/astrapolytechnic/', '_blank')}
-                style={{ fontSize: "20px", margin: "10px 5px", cursor: "pointer" }}
+            <Icon
+              type="Brands"
+              name="instagram"
+              cssClass="btn px-1 py-0 text-white"
+              title="Visit our Instagram"
+              onClick={() => window.open('https://www.instagram.com/astrapolytechnic/', '_blank')}
+              style={{ fontSize: "20px", margin: "10px 5px", cursor: "pointer" }}
             />
-            <i
-                className="fi fi-brands-youtube btn px-1 py-0 text-white"
-                title="Visit our YouTube channel"
-                onClick={() => window.open('https://www.youtube.com/c/PolmanAstrachannel', '_blank')}
-                style={{ fontSize: "20px", margin: "10px 5px", cursor: "pointer" }}
+            <Icon
+              type="Brands"
+              name="youtube"
+              cssClass="btn px-1 py-0 text-white"
+              title="Visit our YouTube channel"
+              onClick={() => window.open('https://www.youtube.com/c/PolmanAstrachannel', '_blank')}
+              style={{ fontSize: "20px", margin: "10px 5px", cursor: "pointer" }}
             />
-            <i
-                className="fi fi-brands-facebook btn px-1 py-0 text-white"
-                title="Visit our YouTube channel"
-                onClick={() => window.open('https://www.facebook.com/Astrapolytechnic/', '_blank')}
-                style={{ fontSize: "20px", margin: "10px 5px", cursor: "pointer" }}
+            <Icon
+              type="Brands"
+              name="facebook"
+              cssClass="btn px-1 py-0 text-white"
+              title="Visit our Facebook page"
+              onClick={() => window.open('https://www.facebook.com/Astrapolytechnic/', '_blank')}
+              style={{ fontSize: "20px", margin: "10px 5px", cursor: "pointer" }}
             />
-            <i
-                className="fi fi-brands-whatsapp btn px-1 py-0 text-white"
-                title="Visit our YouTube channel"
-                onClick={() => window.open('https://api.whatsapp.com/send/?phone=6281295582134', '_blank')}
-                style={{ fontSize: "20px", margin: "10px 5px", cursor: "pointer" }}
+            <Icon
+              type="Brands"
+              name="whatsapp"
+              cssClass="btn px-1 py-0 text-white"
+              title="Contact us on WhatsApp"
+              onClick={() => window.open('https://api.whatsapp.com/send/?phone=6281295582134', '_blank')}
+              style={{ fontSize: "20px", margin: "10px 5px", cursor: "pointer" }}
             />
+            
             
           </div>
         </div>

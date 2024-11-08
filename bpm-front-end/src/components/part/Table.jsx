@@ -1,225 +1,170 @@
-//dibenerin sama reva
-//hapus, detail, update, riwayatdownload, riwayatperbarui, download, flag
-
-import Icon from "./Icon";
+import React from "react";
+import Icon from "./Icon"; 
 
 export default function Table({
   arrHeader,
+  headerToDataMap,  // Menambahkan peta header ke data
   data,
-  actions = [], // Array to determine which icons to display
+  actions = [], 
   onDelete = () => {},
-  onCancel = () => {},
+  onDetail = () => {},
+  onEdit = () => {},
   onFinal = () => {},
   onPrint = () => {},
   onPrintHistory = () => {},
-  onUpdateHistory = () => {}
+  onUpdateHistory = () => {},
+  onSurveyor = () => {},
+  onResponden = () => {},
 }) {
-  let colPosition;
-  let colCount = 0;
-
-  function generateActionButton(columnName, value, key, id, status) {
-    if (columnName !== "Aksi") return value;
-
-    const listButton = value.map((action) => {
-      switch (action) {
-        case "Cancel":
-          return (
-            <Icon
-              key={key + action}
-              name="delete-document"
-              type="Bold"
-              cssClass="btn px-1 py-0 text-danger"
-              title="Batalkan"
-              onClick={() => onCancel(id)}
-            />
-          );
-        case "Delete":
-          return (
-            <Icon
-              key={key + action}
-              name="trash"
-              type="Bold"
-              cssClass="btn px-1 py-0 text-danger"
-              title="Hapus"
-              onClick={() => onDelete(id)}
-            />
-          );
-        case "Detail":
-          return (
-            <Icon
-              key={key + action}
-              name="overview"
-              type="Bold"
-              cssClass="btn px-1 py-0 text-primary"
-              title="Lihat Detail"
-              onClick={() => onDetail("detail", id)}
-            />
-          );
-        case "Edit":
-          return (
-            <Icon
-              key={key + action}
-              name="edit"
-              type="Bold"
-              cssClass="btn px-1 py-0 text-primary"
-              title="Ubah"
-              onClick={() => onEdit("edit", id)}
-            />
-          );
-        case "Approve":
-          return (
-            <Icon
-              key={key + action}
-              name="check"
-              type="Bold"
-              cssClass="btn px-1 py-0 text-success"
-              title="Setujui Pengajuan"
-              onClick={() => onApprove(id)}
-            />
-          );
-        case "Reject":
-          return (
-            <Icon
-              key={key + action}
-              name="cross"
-              type="Bold"
-              cssClass="btn px-1 py-0 text-danger"
-              title="Tolak Pengajuan"
-              onClick={() => onReject(id)}
-            />
-          );
-        case "Sent":
-          return (
-            <Icon
-              key={key + action}
-              name="paper-plane"
-              type="Bold"
-              cssClass="btn px-1 py-0 text-primary"
-              title="Kirim"
-              onClick={() => onSent(id)}
-            />
-          );
-        case "Upload":
-          return (
-            <Icon
-              key={key + action}
-              name="file-upload"
-              type="Bold"
-              cssClass="btn px-1 py-0 text-primary"
-              title="Unggah Berkas"
-              onClick={() => onUpload(id)}
-            />
-          );
-        case "Final":
-          return (
-            <Icon
-              key={key + action}
-              name="gavel"
-              type="Bold"
-              cssClass="btn px-1 py-0 text-primary"
-              title="Finalkan"
-              onClick={() => onFinal(id)}
-            />
-          );
-        case "Print":
-          return (
-            <Icon
-              key={key + action}
-              name="print"
-              type="Bold"
-              cssClass="btn px-1 py-0 text-primary"
-              title="Cetak"
-              onClick={() => onPrint(id)}
-            />
-          );
-        default: {
-          try {
-            if (typeof action === "object") {
-              return (
-                <Icon
-                  key={key + "Custom" + action.IconName}
-                  name={action.IconName}
-                  type="Bold"
-                  cssClass="btn px-1 py-0 text-primary"
-                  title={action.Title}
-                  onClick={action.Function}
-                />
-              );
-            } else return null;
-          } catch (err) {
-            return null;
-          }
-        }
-      }
-    });
-
-    return listButton;
+  function generateActionButton(actionType, id) {
+    switch (actionType) {
+      case "Delete":
+        return (
+          <Icon
+            type="Reguler"
+            name="trash"
+            cssClass="btn px-1 py-0 text-danger"
+            title="Hapus"
+            onClick={() => onDelete(id)}
+          />
+        );
+      case "Detail":
+        return (
+          <Icon
+            type="Reguler"
+            name="eye"
+            cssClass="btn px-1 py-0 text-info"
+            title="Lihat Detail"
+            onClick={() => onDetail(id)}
+          />
+        );
+      case "Edit":
+        return (
+          <Icon
+            type="Reguler"
+            name="edit"
+            cssClass="btn px-1 py-0 text-success"
+            title="Ubah"
+            onClick={() => onEdit(id)}
+          />
+        );
+      case "Final":
+        return (
+          <Icon
+            type="Reguler"
+            name="flag"
+            cssClass="btn px-1 py-0 text-primary"
+            title="Finalkan"
+            onClick={() => onFinal(id)}
+          />
+        );
+      case "Print":
+        return (
+          <Icon
+            type="Reguler"
+            name="download"
+            cssClass="btn px-1 py-0 text-secondary"
+            title="Unduh File"
+            onClick={() => onPrint(id)}
+          />
+        );
+      case "PrintHistory":
+        return (
+          <Icon
+            type="Reguler"
+            name="file-circle-info"
+            cssClass="btn px-1 py-0 text-warning"
+            title="Riwayat Unduhan"
+            onClick={() => onPrintHistory(id)}
+          />
+        );
+      case "UpdateHistory":
+        return (
+          <Icon
+            type="Reguler"
+            name="user-time"
+            cssClass="btn px-1 py-0 text-primary"
+            title="Riwayat Pembaruan"
+            onClick={() => onUpdateHistory(id)}
+          />
+        );
+      case "Surveyor":
+        return (
+          <Icon
+            type="Reguler"
+            name="meeting"
+            cssClass="btn px-1 py-0 text-info"
+            title="Edit Surveyor"
+            onClick={() => onSurveyor(id)}
+          />
+        );
+      case "Responden":
+        return (
+          <Icon
+            type="Reguler"
+            name="users"
+            cssClass="btn px-1 py-0 text-warning"
+            title="Edit Responden"
+            onResponden={() => onResponden(id)}
+          />
+        );
+      default:
+        return null;
+    }
   }
 
   return (
-    <div className="overflow-x-auto">
-      <div className="flex-fill">
-        <table className="table table-hover table-striped table table-light border">
-          <thead>
-            <tr>
-              {Object.keys(data[0]).map((value, index) => {
-                if (
-                  value !== "Key" &&
-                  value !== "Count" &&
-                  value !== "Alignment"
-                ) {
-                  colCount++;
-                  return (
-                    <th key={"Header" + index} className="text-center">
-                      {value}
-                    </th>
-                  );
-                }
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            {data[0].Count !== 0 &&
-              data.map((value, rowIndex) => {
-                colPosition = -1;
-                return (
-                  <tr >
-                    {Object.keys(value).map((column, colIndex) => {
-                      if (
-                        column !== "Key" &&
-                        column !== "Count" &&
-                        column !== "Alignment"
-                      ) {
-                        colPosition++;
-                        return (
-                          <td
-                            key={rowIndex + "" + colIndex}
-                            style={{
-                              textAlign: value["Alignment"][colPosition],
-                            }}
-                          >
-                            {generateActionButton(
-                              column,
-                              value[column],
-                              "Action" + rowIndex + colIndex,
-                              value["Key"],
-                              value["Status"]
-                            )}
-                          </td>
-                        );
-                      }
-                    })}
-                  </tr>
-                );
-              })}
-            {data[0].Count === 0 && (
-              <tr>
-                <td colSpan={colCount}>Tidak ada data.</td>
+    <div className="table-responsive">
+      <table className="table table-hover table-striped table-bordered" style={{ borderCollapse: 'collapse', minWidth: '1000px' }}>
+        <thead>
+          <tr>
+            {arrHeader.map((header, index) => (
+              <th
+                key={header-${index}}
+                className="text-center align-middle"
+                style={{
+                  backgroundColor: "#2654A1",
+                  color: "#fff",
+                }}
+              >
+                {header}
+              </th>
+            ))}
+            <th
+              className="text-center align-middle"
+              style={{
+                backgroundColor: "#2654A1",
+                color: "#fff",
+                width: '250px',  // Reduce the width of the "Aksi" column
+              }}
+            >
+              Aksi
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.length > 0 ? (
+            data.map((row, rowIndex) => (
+              <tr key={row-${rowIndex}}>
+                {arrHeader.map((header, colIndex) => (
+                  <td key={cell-${rowIndex}-${colIndex}} className="align-middle text-start">
+                    {row[headerToDataMap[header]]}  {/* Mengambil data berdasarkan peta */}
+                  </td>
+                ))}
+                <td className="text-center align-middle" style={{ width: '250px' }}>
+                  {actions.map((action) => generateActionButton(action, row.Key))}
+                </td>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={arrHeader.length + 1} className="text-center">
+                Tidak ada data.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }
