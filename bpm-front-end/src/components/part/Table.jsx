@@ -135,7 +135,7 @@ export default function Table({
               style={{
                 backgroundColor: "#2654A1",
                 color: "#fff",
-                width: '250px',
+                width: '250px',  // Reduce the width of the "Aksi" column
               }}
             >
               Aksi
@@ -148,11 +148,11 @@ export default function Table({
               <tr key={`row-${rowIndex}`}>
                 {arrHeader.map((header, colIndex) => (
                   <td key={`cell-${rowIndex}-${colIndex}`} className="align-middle text-start">
-                    {row[headerToDataMap[header]]}
+                    {row[headerToDataMap[header]]}  {/* Mengambil data berdasarkan peta */}
                   </td>
                 ))}
                 <td className="text-center align-middle" style={{ width: '250px' }}>
-                  {actions.map((action) => generateActionButton(action, row.Key))}
+                  {actions.map((action) => generateActionButton(action, row.key))}
                 </td>
               </tr>
             ))

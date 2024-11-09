@@ -9,7 +9,7 @@ export default function Tentang(){
             <Routes>
                 <Route path="/tentang" element={<Index />} />
                 <Route path="/kelolaTentang" element={<Read />} />
-                <Route path="/edit/:id" element={<Edit />} />
+                <Route path="/editTentang/:id" element={<Edit />} />
             </Routes>
         </>
     )

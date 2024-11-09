@@ -66,5 +66,58 @@ body {
     display: block;
 }
 
+/* Tambahkan ini di file CSS kamu */
+
+
+
+/* Styling tombol close (X) di pojok kanan atas */
+.modal-close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  
+  background: none;
+  border: none;
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.2s ease; /* Tambahkan transisi untuk efek halus */
+}
+
+.modal-close-button:hover {
+  transform: scale(1.2); /* Membuat tombol sedikit membesar saat di-hover */
+}
+
+dialog {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 0;
+  overflow: hidden;
+}
+
+.modal-header {
+  background-color: #1e3a8a; /* Biru untuk header */
+  color: #ffffff; /* Teks putih */
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+
+
+
+
 
   

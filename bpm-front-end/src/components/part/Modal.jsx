@@ -23,19 +23,26 @@ const Modal = forwardRef(function Modal(
       break;
   }
 
-  useImperativeHandle(ref, () => {
-    return {
-      open() {
-        dialog.current.showModal();
-      },
-      close() {
-        dialog.current.close();
-      },
-    };
-  });
+  useImperativeHandle(ref, () => ({
+    open() {
+      dialog.current.showModal();
+    },
+    close() {
+      dialog.current.close();
+    },
+  }));
 
   return (
-    <dialog ref={dialog} style={{ maxWidth: maxSize }}>
+    <dialog ref={dialog} style={{ maxWidth: maxSize }} className="modal-container">
+      {/* Tombol X di pojok kanan atas */}
+      <button
+        className="modal-close-button ml-2"
+        onClick={() => dialog.current.close()}
+      >
+        &times;
+      </button>
+      
+
       <div className="modal-header lead fw-medium p-3">{title}</div>
       <hr className="m-0" />
       <div className="modal-body p-3">{children}</div>
@@ -45,11 +52,8 @@ const Modal = forwardRef(function Modal(
           {Button1}
           {Button2}
           <Button
-            classType="secondary"
-            label="Tutup"
-            onClick={() => {
-              dialog.current.close();
-            }}
+            classType="danger"
+            label="Batal"
           />
         </form>
       </div>

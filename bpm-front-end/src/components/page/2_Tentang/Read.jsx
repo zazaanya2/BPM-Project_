@@ -57,7 +57,7 @@ export default function Read() {
                             data={currentData}
                             actions={["Detail", "Edit", "UpdateHistory"]}
                             onDetail={(id) => console.log("Detail", id)}
-                            onEdit={(id) => navigate(`/edit/${id}`)} // Navigate to Edit page with ID
+                            onEdit={(id) => navigate(`/editTentang/${id}`)} // Navigate to Edit page with ID
                             onUpdateHistory={(id) => console.log("Update History", id)}
                         />
                         <Paging

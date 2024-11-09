@@ -12,7 +12,7 @@ export default function Read() {
 
     // Menambahkan data menjadi 10 item dengan URL gambar
     const data = [
-        { Key: 1, JudulBerita: "Tentang BPM", Tanggal: "27/11/2024", Foto: "https://via.placeholder.com/100" },
+        { Key: 1, JudulBerita: "Tentang BPM", Tanggal: "27/11/2024", Foto: "https://www.polytechnic.astra.ac.id/storage/2024/04/mahasiswa-4-Kontribusi-kepada-bangsa.png" },
         { Key: 2, JudulBerita: "Berita A", Tanggal: "26/11/2024", Foto: "https://via.placeholder.com/100" },
         { Key: 3, JudulBerita: "Berita B", Tanggal: "25/11/2024", Foto: "https://via.placeholder.com/100" },
         { Key: 4, JudulBerita: "Berita C", Tanggal: "24/11/2024", Foto: "https://via.placeholder.com/100" },
@@ -71,9 +71,10 @@ export default function Read() {
                                 No: indexOfFirstData + index + 1,
                                 JudulBerita: item.JudulBerita,
                                 Tanggal: item.Tanggal,
-                                Foto: <img src={item.Foto} alt="Foto Berita" width="50" height="50" />
+                                Foto: <img src={item.Foto} alt="Foto Berita" width="100" height="100" />
                             }))}
                             actions={["Detail", "Edit", "UpdateHistory"]}
+                            onEdit={(id) => navigate(`/editBerita/${id}`)}
                         />
 
 
