@@ -1,11 +1,11 @@
 import React from "react";
-import Icon from "./Icon"; 
+import Icon from "./Icon";
 
 export default function Table({
   arrHeader,
-  headerToDataMap,  // Menambahkan peta header ke data
+  headerToDataMap,
   data,
-  actions = [], 
+  actions = [],
   onDelete = () => {},
   onDetail = () => {},
   onEdit = () => {},
@@ -105,7 +105,7 @@ export default function Table({
             name="users"
             cssClass="btn px-1 py-0 text-warning"
             title="Edit Responden"
-            onResponden={() => onResponden(id)}
+            onClick={() => onResponden(id)}
           />
         );
       default:
@@ -120,7 +120,7 @@ export default function Table({
           <tr>
             {arrHeader.map((header, index) => (
               <th
-                key={header-${index}}
+                key={`header-${index}`}
                 className="text-center align-middle"
                 style={{
                   backgroundColor: "#2654A1",
@@ -135,7 +135,7 @@ export default function Table({
               style={{
                 backgroundColor: "#2654A1",
                 color: "#fff",
-                width: '250px',  // Reduce the width of the "Aksi" column
+                width: '250px',
               }}
             >
               Aksi
@@ -145,10 +145,10 @@ export default function Table({
         <tbody>
           {data.length > 0 ? (
             data.map((row, rowIndex) => (
-              <tr key={row-${rowIndex}}>
+              <tr key={`row-${rowIndex}`}>
                 {arrHeader.map((header, colIndex) => (
-                  <td key={cell-${rowIndex}-${colIndex}} className="align-middle text-start">
-                    {row[headerToDataMap[header]]}  {/* Mengambil data berdasarkan peta */}
+                  <td key={`cell-${rowIndex}-${colIndex}`} className="align-middle text-start">
+                    {row[headerToDataMap[header]]}
                   </td>
                 ))}
                 <td className="text-center align-middle" style={{ width: '250px' }}>
