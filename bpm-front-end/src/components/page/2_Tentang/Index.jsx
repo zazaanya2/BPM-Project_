@@ -76,7 +76,7 @@ export default function Index() {
   return (
     <>
       <div className="latarGradasi mt-5">
-        <div className="position-absolute top-0 end-0 p-5 ">
+        <div className="position-absolute top-0 end-0 p-5">
           <Button
             className="btn btn-primary"
             title="Kelola Tentang"
@@ -85,18 +85,67 @@ export default function Index() {
           />
         </div>
 
-        <div className="d-flex flex-column align-items-center justify-content-start m-3 p-5" style={{ minHeight: '100vh', width: '800px' }}>
-          <img src={Logo} alt="Logo" style={{ width: '200px', height: 'auto', marginBottom: '25px' }} />
+        <img 
+          src={Bangunan} 
+          alt="Bangunan" 
+          style={{
+            position: 'absolute',
+            bottom: '0',
+            width: '100%',
+            left: '0',
+            zIndex: 1
+          }} 
+        />
+        
+        <img 
+          src={Orang} 
+          alt="Orang" 
+          style={{
+            position: 'absolute',
+            bottom: '-30px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '100%',      
+            maxWidth: '33vw',    
+            minWidth: '380px',  
+            zIndex: 2
+          }} 
+        />
+
+
+
+        <div 
+          style={{
+            position: 'relative',
+            zIndex: 3,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'start',
+            margin: '1rem',
+            padding: '2rem',
+            minHeight: '100vh',
+            width: '800px'
+          }}
+        >
+          <img 
+            src={Logo} 
+            alt="Logo" 
+            style={{
+              width: '200px', 
+              height: 'auto', 
+              marginBottom: '25px'
+            }} 
+          />
+          
           <Text 
-            isi={data[0].isi} // Corrected index here
+            isi={data[0].isi} 
             alignText="center"
             ukuran="18px"
           />
         </div>
-
-        <img src={Bangunan} alt="Bangunan" className="bangunan" />
-        <img src={Orang} alt="Orang" className="orang" />
       </div>
+
 
       <div className="shadow p-5 m-5 bg-white rounded">
         <HeaderText
@@ -109,7 +158,7 @@ export default function Index() {
         <div className="row align-items-center">
             
             <div className="col-lg-4 col-md-6">
-              <img src={OrangLaptop} alt="Logo" style={{ width: '100%', height: 'auto', marginBottom: '25px' }} />
+              <img src={OrangLaptop} alt="Logo" style={{ width: '80%', height: 'auto', marginBottom: '25px' }} />
           
             </div>   
             <div className="col-lg-8 col-md-6 ">
@@ -124,7 +173,7 @@ export default function Index() {
 
         <div className="row ">
             <div className="col-lg-5 col-md-6 mt-5">
-              <div className="shadow p-5 m-3 mt-5 bg-white rounded">
+              <div className="shadow p-4 mt-5 bg-white rounded">
                 <HeaderText
                   label="SK Pendirian BPM"
                   warna="#2654A1"
@@ -134,7 +183,7 @@ export default function Index() {
                 />
                 <Text 
                   isi={data[2].isi} 
-                  alignText="justify"
+                  alignText="left"
                   ukuran="16px"
                   warna="grey"
                 />

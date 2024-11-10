@@ -1,6 +1,6 @@
 .latarGradasi {
     background: linear-gradient(to bottom, #2654A1, #2654A1, #4989C2, #42ABDC); /* Gradasi warna */
-    height: 93vh; /* Atur tinggi latar sesuai kebutuhan, contoh ini 40% tinggi layar */
+    height: 95vh; /* Atur tinggi latar sesuai kebutuhan, contoh ini 40% tinggi layar */
     width: 100%; /* 100% lebar layar */
     display: flex; /* Agar konten bisa diatur menggunakan flexbox */
     justify-content: center; /* Memposisikan konten horizontal di tengah */
@@ -27,23 +27,6 @@
 }
 
 
-  .bangunan {
-    position: absolute;
-    bottom: 0; /* Agar bangunan berada di bagian bawah latar */
-    width: 100%; /* Sesuaikan lebar bangunan */
-    left: 0; /* Menempatkan gambar agak di tengah */
-    z-index: 1;
-  }
-  
-  .orang {
-    position: absolute;
-    bottom: -30px;;
-    left: 48%; /* Sesuaikan posisi horizontal */
-    transform: translateX(-50%); /* Agar orang tepat di tengah */
-    width: 33vw; /* Ukuran orang yang responsif */
-    z-index: 2;
-  }
-  
 
   .content {
     position: absolute;

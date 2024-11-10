@@ -1,4 +1,4 @@
-export default function Header({
+export default function HeaderText({
   label,
   warna = "#5F5858",
   ukuran = "30px",
@@ -6,6 +6,7 @@ export default function Header({
   marginBottom = "40px",
   fontWeight = "600", // Default ketebalan teks adalah normal
   marginTop = "10px",
+  width = "auto", // Default lebar jika tidak ditentukan
 }) {
   return (
     <h3
@@ -15,7 +16,8 @@ export default function Header({
         textAlign: alignText,
         marginBottom: marginBottom,
         fontWeight: fontWeight, // Mengatur ketebalan teks
-        marginTop : marginTop,
+        marginTop: marginTop,
+        width: width, // Mengatur lebar elemen
       }}
     >
       {label}

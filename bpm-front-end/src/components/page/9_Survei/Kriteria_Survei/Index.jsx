@@ -135,7 +135,7 @@ export default function Index() {
                 Button1={<Button classType="primary" label="Simpan" onClick={handleAddEvent} />}
             >
                 <form>
-                    <TextField label="Kriteria Survei" isRequired="true"></TextField>
+                    <TextField label="Kriteria Survei" isRequired="true" ></TextField>
                 </form>
             </Modal>
             {/* Update Event Modal */}

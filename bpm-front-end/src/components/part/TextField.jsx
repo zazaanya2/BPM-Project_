@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 
 const TextField = forwardRef(function TextField(
   {
@@ -13,6 +13,15 @@ const TextField = forwardRef(function TextField(
   },
   ref
 ) {
+  const [value, setValue] = useState(""); // State untuk nilai input
+
+  // Fungsi reset untuk mengatur nilai kembali ke kondisi awal
+  useImperativeHandle(ref, () => ({
+    reset() {
+      setValue(""); // Reset nilai input ke kosong
+    }
+  }));
+
   // Tentukan kelas ukuran input berdasarkan prop `size`
   const sizeClass = size === "lg" ? "form-control-lg" : size === "sm" ? "form-control-sm" : "";
 
@@ -33,8 +42,9 @@ const TextField = forwardRef(function TextField(
             type="text"  // Tipe input statis sebagai "text"
             className={`form-control ${sizeClass}`}
             placeholder={placeHolder}
-            ref={ref}
             disabled={isDisabled}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
             {...props}
           />
         </div>
@@ -47,8 +57,9 @@ const TextField = forwardRef(function TextField(
             type="text"  // Tipe input statis sebagai "text"
             className={`form-control ${sizeClass} mb-3`}
             placeholder={placeHolder}
-            ref={ref}
             disabled={isDisabled}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
             {...props}
           />
           {errorMsg && (
