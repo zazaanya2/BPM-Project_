@@ -40,12 +40,6 @@ export default function Edit({ onChangePage }) {
     }, [location.state?.idData]);
     
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-      };
-      
-
     const handleSave = () => {
         // Implementasi fungsi simpan
         onChangePage("read");
@@ -61,48 +55,33 @@ export default function Edit({ onChangePage }) {
                 <div className="d-flex flex-column">
                     <div className="m-3 mb-0">
                         <PageTitleNav 
-                            title="Edit Tentang"
+                            title="Detail Tentang"
                             breadcrumbs={[
                                 { label: "Tentang", href: "/tentang" }, 
                                 { label: "Kelola Tentang", href: "/tentang/kelola" }, 
-                                { label: "Edit Tentang" }
+                                { label: "Detail Tentang" }
                             ]}
                             onClick={() => onChangePage("read")}
                         />
                     </div>
                     
                     <div className="shadow p-5 m-5 mt-4 bg-white rounded">
-                        <HeaderForm label="Formulir Tentang"/>
+                        <HeaderForm label="Formulir Tentang"/>    
+                        <DetailData label="Kategori" isi={formData.Kategori} />
+                        <DetailData label="Isi" isi={formData.Isi}/>
+
                         <div className="row">
-                            <DetailData label="Kategori" isi={formData.Kategori} />
-                            <DetailData label="Dibuat Oleh" isi="Retno Widiastuti" />
-                        </div>
-                        <TextArea 
-                            label="Isi"
-                            name="Isi"
-                            value={formData.Isi} 
-                            onChange={handleInputChange} 
-                        />
-                        <div className="d-flex justify-content-between align-items-center mt-4">
-                            <div className="flex-grow-1 m-2">
-                                <Button 
-                                    classType="primary" 
-                                    type="submit" 
-                                    label="Simpan" 
-                                    width="100%" 
-                                    onClick={handleSave}
-                                />
+                            <div className="col-lg-6 col-md-6 ">
+                                <DetailData label="Dibuat Oleh" isi="Retno Widiastuti"/>
+                                <DetailData label="Dibuat Tanggal" isi="5 Januari 2005"/>
                             </div>
-                            <div className="flex-grow-1 m-2">
-                                <Button 
-                                    classType="danger" 
-                                    type="button" 
-                                    label="Batal" 
-                                    width="100%" 
-                                    onClick={handleCancel}
-                                />
+                            <div className="col-lg-6 col-md-6 ">
+                                <DetailData label="Dimodifikasi Oleh" isi="Retno Widiastuti"/>
+                                <DetailData label="Dimodifikasi Tanggal" isi="5 Januari 2005"/>
                             </div>
-                        </div>
+                        </div>    
+                        
+                        
                     </div>
                 </div>
             </main>

@@ -57,12 +57,12 @@ export default function NavItem() {
                 {openDropdown === 'kegiatan' && (
                     <ul className="dropdown-menu">
                         <li>
-                            <Link className="dropdown-item" to="/kegiatan/rencana">
+                            <Link className="dropdown-item" to="/kegiatan/jadwal">
                                 Rencana Kegiatan BPM
                             </Link>
                         </li>
                         <li>
-                            <Link className="dropdown-item" to="/kegiatan/bpm">
+                            <Link className="dropdown-item" to="/kegiatan/dokumentasi">
                                 Kegiatan BPM
                             </Link>
                         </li>
