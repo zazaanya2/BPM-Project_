@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import CardBerita from './CardBerita';
-import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import { useNavigate } from 'react-router-dom';
 
 const SliderBerita = ({ beritaItems }) => {
@@ -21,29 +21,43 @@ const SliderBerita = ({ beritaItems }) => {
     navigate('/lihatBerita', { state: item });
   };
 
+  const navButtonStyle = {
+    backgroundColor: "#2654A1",
+    color:"white",
+    fontSize: "20px",
+    padding: "15px",
+    margin: "10px",
+    borderRadius: "100%",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)",
+    transition: "all 0.3s ease",
+    border: "none",
+    height:"58px",
+    width:"58px"
+  };
+
+  const iconStyle = {
+    fontSize: "20px", // Ukuran simbol
+    fontWeight: "bold", // Menambah ketebalan simbol
+    transform: "scale(1.5)", // Membesarkan simbol
+  };
+
   return (
     <div style={{
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      maxWidth: '788px', // Membatasi lebar keseluruhan slider
+      maxWidth: '785px', 
       width: '100%',
       margin: '0 auto',
       position: 'relative',
+      marginBottom: '30px'
     }}>
       {/* Button Prev */}
       <button
         onClick={handlePrev}
-        style={{
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          fontSize: '24px',
-          color: '#007bff',
-          marginRight: '10px'
-        }}
+        style={navButtonStyle}
       >
-        <FaArrowLeft />
+        <BsChevronLeft color="white" style={iconStyle} />
       </button>
 
       {/* Slider Wrapper */}
@@ -59,7 +73,7 @@ const SliderBerita = ({ beritaItems }) => {
             <div 
               key={index} 
               style={{ 
-                minWidth: '100%', // Menjaga agar setiap CardBerita mengambil 100% lebar tampilan slider
+                minWidth: '100%', 
                 boxSizing: 'border-box',
                 
               }}
@@ -81,16 +95,9 @@ const SliderBerita = ({ beritaItems }) => {
       {/* Button Next */}
       <button
         onClick={handleNext}
-        style={{
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          fontSize: '24px',
-          color: '#007bff',
-          marginLeft: '10px'
-        }}
+        style={navButtonStyle}
       >
-        <FaArrowRight />
+        <BsChevronRight color="white" style={iconStyle} />
       </button>
     </div>
   );

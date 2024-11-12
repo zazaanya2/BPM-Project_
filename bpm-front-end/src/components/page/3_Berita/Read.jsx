@@ -3,13 +3,11 @@ import Table from "../../part/Table";
 import Paging from "../../part/Paging";
 import PageTitleNav from "../../part/PageTitleNav";
 import Button from "../../part/Button";
-import { useNavigate } from "react-router-dom";
 
-export default function Read() {
+export default function Read({onChangePage}) {
     const [pageSize] = useState(10);
     const [pageCurrent, setPageCurrent] = useState(1);
-    const navigate = useNavigate(); // Hook for navigation
-
+   
     // Menambahkan data menjadi 10 item dengan URL gambar
     const data = [
         { Key: 1, JudulBerita: "Tentang BPM", Tanggal: "27/11/2024", Foto: "https://www.polytechnic.astra.ac.id/storage/2024/04/mahasiswa-4-Kontribusi-kepada-bangsa.png" },
@@ -38,15 +36,20 @@ export default function Read() {
         { label: "Kelola Berita" },
     ];
 
+    const handleEdit = (item) => {
+        onChangePage("edit", { state: { editData: item } });
+    }; 
+
+
     return (
         <div className="d-flex flex-column min-vh-100">
-            <main className="flex-grow-1" style={{ marginTop: '80px' }}>
+            <main className="flex-grow-1 p-3" style={{ marginTop: '80px' }}>
                 <div className="d-flex flex-column">
                     <div className="m-3 mb-0">
                         <PageTitleNav 
                             title={title} 
                             breadcrumbs={breadcrumbs} 
-                            onClick={() => navigate("/berita")}
+                            onClick={() => onChangePage("index")}
                         />
                     </div>
                     <div className="p-3 m-5 mt-2 mb-0" style={{ marginLeft: '50px' }}>
@@ -54,7 +57,7 @@ export default function Read() {
                             iconName="add"
                             classType="primary"
                             label="Tambah Data"
-                            onClick={() => navigate("/tambahBerita")}
+                            onClick={() => onChangePage("add")}
                         />
                     </div>
                     <div className="table-container bg-white p-3 m-5 mt-0 rounded">
@@ -74,7 +77,7 @@ export default function Read() {
                                 Foto: <img src={item.Foto} alt="Foto Berita" width="100" height="100" />
                             }))}
                             actions={["Detail", "Edit", "UpdateHistory"]}
-                            onEdit={(id) => navigate(`/editBerita/${id}`)}
+                            onEdit={handleEdit}
                         />
 
 

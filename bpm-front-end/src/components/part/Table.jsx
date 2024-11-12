@@ -155,7 +155,7 @@ export default function Table({
                   </td>
                 ))}
                 <td className="text-center align-middle" style={{ width: '250px' }}>
-                  {actions.map((action) => generateActionButton(action, row.key))}
+                  {actions.map((action) => generateActionButton(action, row.Key))}
                 </td>
               </tr>
             ))

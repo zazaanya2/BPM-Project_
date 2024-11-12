@@ -1,5 +1,4 @@
 import React, { useState } from "react"; 
-import { useParams, useNavigate, Link } from "react-router-dom";
 import PageTitleNav from "../../part/PageTitleNav"; 
 import TextField from "../../part/TextField"; 
 import TextArea from "../../part/TextArea"; 
@@ -9,27 +8,26 @@ import HeaderForm from "../../part/HeaderText";
 import Button from "../../part/Button";
 import DetailData from "../../part/DetailData"; 
 
-export default function Add() {
-    const navigate = useNavigate();
+export default function Add({onChangePage}) {
 
     const title = "Tambah Berita";
     const breadcrumbs = [
         { label: "Berita", href: "/berita" }, 
-        { label: "Kelola Berita", href: "/kelolaBerita" }, 
+        { label: "Kelola Berita", href: "/berita/kelola" }, 
         { label: "Tambah Berita" } 
     ];
 
   return ( 
     <div className="d-flex flex-column min-vh-100">
      
-      <main className="flex-grow-1" style={{ marginTop: '80px' }}>
+      <main className="flex-grow-1 p-3" style={{ marginTop: '80px' }}>
         <div className="d-flex flex-column">
           {/* Breadcrumbs and Page Title */}
           <div className="m-3">
             <PageTitleNav 
                 title={title}
                 breadcrumbs={breadcrumbs}
-                onClick={() => navigate("/kelolaBerita")} 
+                onClick={() => onChangePage("read")} 
             />
           </div>
 
@@ -38,7 +36,7 @@ export default function Add() {
             <HeaderForm label="Formulir Berita"/>
             <div className="row">
               <div className="col-lg-6 col-md-6 ">
-                <TextField label="Judul Berita" isRequired="true" />
+                <TextField label="Judul Berita" isRequired="true"/>
                 <DetailData label="Penulis" isi="Retno Widiastuti"/>
               </div>
               <div className="col-lg-6 col-md-6">
@@ -46,7 +44,7 @@ export default function Add() {
               </div>
             </div>
             
-            <TextArea label="Isi Berita"/>
+            <TextArea label="Isi Berita" maxChar="5"/>
 
             <div className="row">
               <UploadFoto label="Masukkan Foto"/>

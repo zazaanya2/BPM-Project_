@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 
 import Orang from "../../../assets/element/orang.png";
 import Logo from "../../../assets/bpm-logo.png";
@@ -14,9 +13,7 @@ import HeaderText from "../../part/HeaderText";
 import Button from "../../part/Button";
 import Icon from "../../part/Icon";
 
-export default function Index() {
-  const navigate = useNavigate();
-
+export default function Index({onChangePage}) {
   const data = [
     {
       Key: 1,
@@ -69,10 +66,6 @@ export default function Index() {
   ];
   
 
-  const handleClick = () => {
-    navigate("/kelolaTentang"); // Route ke kelolaTentang sesuai dengan definisi di App.js
-  };
-
   return (
     <>
       <div className="latarGradasi mt-5">
@@ -81,7 +74,7 @@ export default function Index() {
             className="btn btn-primary"
             title="Kelola Tentang"
             label="Kelola Tentang"
-            onClick={handleClick}
+            onClick={() => onChangePage("read")}
           />
         </div>
 
@@ -191,7 +184,7 @@ export default function Index() {
                   className="btn btn-primary"
                   title="Unduh SK Pendirian"
                   label="Unduh SK Pendirian"
-                  onClick={handleClick}
+                  
                   iconName="download"
                 />
               

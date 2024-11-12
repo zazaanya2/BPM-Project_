@@ -1,14 +1,12 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import HeaderText from '../../part/HeaderText';
 import PageTitleNav from '../../part/PageTitleNav';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SliderBerita from '../../part/SliderBerita';
-import ScrollToTop from '../../part/ScrollToTop';
 
-const LihatBerita = () => {
+const LihatBerita = ({onChangePage}) => {
   const location = useLocation();
-  const navigate = useNavigate();
 
   // Data berita
   const beritaData = [
@@ -16,29 +14,43 @@ const LihatBerita = () => {
       title: "Pelaksanaan AMI Departemen Kemahasiswaan dan Alumni",
       author: "Retno Widiastuti",
       date: "12 Jun 2024",
-      description: "Sesuai Peraturan Menteri Pendidikan...",
-      images: ["https://i.pinimg.com/564x/71/cf/08/71cf0817e3beafe5da5651283a988cb3.jpg"]
+      description: "Sesuai Peraturan Menteri Pendidikan, Kebudayaan, Riset, dan Teknologi Nomor 53 Tahun 2023 tentang Penjaminan Mutu Pendidikan Tinggi, di mana setiap perguruan tinggi harus mengimplementasikan SPMI Sesuai Peraturan Menteri Pendidikan, Kebudayaan, Riset, dan Teknologi Nomor 53 Tahun 2023 tentang Penjaminan Mutu Pendidikan Tinggi, di mana setiap perguruan tinggi harus mengimplementasikan SPMI",
+      images: [
+        "https://i.pinimg.com/564x/71/cf/08/71cf0817e3beafe5da5651283a988cb3.jpg",
+        "https://via.placeholder.com/150",
+        "https://via.placeholder.com/150"
+      ]
     },
     {
       title: "Workshop Penjaminan Mutu Internal",
       author: "Andi Surya",
       date: "5 Jul 2024",
-      description: "Sesuai Peraturan Menteri Pendidikan...",
-      images: ["https://i.pinimg.com/564x/71/cf/08/71cf0817e3beafe5da5651283a988cb3.jpg"]
+      description: "Sesuai Peraturan Menteri Pendidikan, Kebudayaan, Riset, dan Teknologi Nomor 53 Tahun 2023 tentang Penjaminan Mutu Pendidikan Tinggi, di mana setiap perguruan tinggi harus mengimplementasikan SPMI...",
+      images: [
+        "https://i.pinimg.com/564x/71/cf/08/71cf0817e3beafe5da5651283a988cb3.jpg"
+      ]
     },
     {
       title: "Rapat Koordinasi BPM Politeknik Astra",
       author: "Siti Nurhaliza",
       date: "15 Agu 2024",
-      description: "Sesuai Peraturan Menteri Pendidikan...",
-      images: ["https://i.pinimg.com/564x/71/cf/08/71cf0817e3beafe5da5651283a988cb3.jpg"]
+      description: "Sesuai Peraturan Menteri Pendidikan, Kebudayaan, Riset, dan Teknologi Nomor 53 Tahun 2023 tentang Penjaminan Mutu Pendidikan Tinggi, di mana setiap perguruan tinggi harus mengimplementasikan SPMI...",
+      images: [
+        "https://i.pinimg.com/564x/71/cf/08/71cf0817e3beafe5da5651283a988cb3.jpg",
+        "https://via.placeholder.com/150",
+        "https://via.placeholder.com/150"
+      ]
     },
     {
       title: "Evaluasi dan Pengembangan SPMI",
       author: "Budi Santoso",
       date: "20 Sep 2024",
-      description: "Sesuai Peraturan Menteri Pendidikan...",
-      images: ["https://i.pinimg.com/564x/71/cf/08/71cf0817e3beafe5da5651283a988cb3.jpg"]
+      description: "Sesuai Peraturan Menteri Pendidikan, Kebudayaan, Riset, dan Teknologi Nomor 53 Tahun 2023 tentang Penjaminan Mutu Pendidikan Tinggi, di mana setiap perguruan tinggi harus mengimplementasikan SPMI...",
+      images: [
+        "https://i.pinimg.com/564x/71/cf/08/71cf0817e3beafe5da5651283a988cb3.jpg",
+        "https://via.placeholder.com/150",
+        "https://via.placeholder.com/150"
+      ]
     }
   ];
 
@@ -101,7 +113,7 @@ const LihatBerita = () => {
           <div className="position-absolute top-0 start-0 p-5 m-5 ms-0" style={{ zIndex: 1 }}>
             <PageTitleNav 
               title="Baca Berita"
-              onClick={() => navigate("/berita")} 
+              onClick={() => onChangePage("index")} 
               color="white"
             />
           </div>

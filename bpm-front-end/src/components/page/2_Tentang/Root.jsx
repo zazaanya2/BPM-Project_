@@ -1,18 +1,37 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Index from './Index'
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import Index from './Index';
 import Read from './Read';
 import Edit from './Edit';
 import ScrollToTop from '../../part/ScrollToTop';
 
-export default function Tentang(){
-    return(
+export default function Tentang() {
+    const navigate = useNavigate();
+
+    const handlePageChange = (page, withState = {}) => {
+        switch (page) {
+            case "index":
+                navigate("/tentang");
+                break;
+            case "read":
+                navigate("/tentang/kelola");
+                break;
+            case "edit":
+                navigate("/tentang/kelola/edit", withState); 
+                break;
+            default:
+                console.warn(`Halaman "${page}" tidak dikenali.`);
+                break;
+        }
+    };
+
+    return (
         <>
-            <ScrollToTop/>
+            <ScrollToTop />
             <Routes>
-                <Route path="/tentang" element={<Index />} />
-                <Route path="/kelolaTentang" element={<Read />} />
-                <Route path="/editTentang/:id" element={<Edit />} />
+                <Route path="/tentang" element={<Index onChangePage={handlePageChange} />} />
+                <Route path="/tentang/kelola" element={<Read onChangePage={handlePageChange} />} />
+                <Route path="/tentang/kelola/edit" element={<Edit onChangePage={handlePageChange} />} />
             </Routes>
         </>
-    )
+    );
 }

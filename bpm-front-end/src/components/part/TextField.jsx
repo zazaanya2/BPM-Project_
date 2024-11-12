@@ -9,6 +9,7 @@ const TextField = forwardRef(function TextField(
     errorMsg,
     isRequired = false,
     isDisabled = false,
+    maxChar, 
     ...props
   },
   ref
@@ -24,6 +25,16 @@ const TextField = forwardRef(function TextField(
 
   // Tentukan kelas ukuran input berdasarkan prop `size`
   const sizeClass = size === "lg" ? "form-control-lg" : size === "sm" ? "form-control-sm" : "";
+
+  // Fungsi untuk menangani perubahan input dan membatasi panjang karakter
+  const handleChange = (e) => {
+    const newValue = e.target.value;
+    if (maxChar && newValue.length <= maxChar) {
+      setValue(newValue); // Set nilai hanya jika panjangnya sesuai dengan maxChar
+    } else if (!maxChar) {
+      setValue(newValue); // Jika maxChar tidak ada, biarkan input bebas
+    }
+  };
 
   return (
     <>
@@ -44,9 +55,16 @@ const TextField = forwardRef(function TextField(
             placeholder={placeHolder}
             disabled={isDisabled}
             value={value}
-            onChange={(e) => setValue(e.target.value)}
+            onChange={handleChange} // Menggunakan handleChange untuk memantau panjang input
+            maxLength={maxChar} // Menambahkan maxLength ke input
             {...props}
           />
+          {/* Menampilkan sisa karakter jika maxChar diberikan */}
+          {maxChar && (
+            <div className="small text-muted mt-1">
+              {value.length}/{maxChar} characters
+            </div>
+          )}
         </div>
       )}
       {label === "" && (
@@ -59,7 +77,8 @@ const TextField = forwardRef(function TextField(
             placeholder={placeHolder}
             disabled={isDisabled}
             value={value}
-            onChange={(e) => setValue(e.target.value)}
+            onChange={handleChange} // Menggunakan handleChange untuk memantau panjang input
+            maxLength={maxChar} // Menambahkan maxLength ke input
             {...props}
           />
           {errorMsg && (
@@ -69,6 +88,12 @@ const TextField = forwardRef(function TextField(
                 " " +
                 errorMsg}
             </span>
+          )}
+          {/* Menampilkan sisa karakter jika maxChar diberikan */}
+          {maxChar && (
+            <div className="small text-muted mt-1">
+              {value.length}/{maxChar} characters
+            </div>
           )}
         </>
       )}

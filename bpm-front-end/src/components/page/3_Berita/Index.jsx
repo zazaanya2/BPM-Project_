@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Button from "../../part/Button";
 import HeaderText from "../../part/HeaderText";
@@ -9,8 +8,7 @@ import CardBerita from "../../part/CardBerita";
 import Paging from "../../part/Paging";
 
 
-export default function Index() {
-  const navigate = useNavigate();
+export default function Index({onChangePage}) {
   const [pageCurrent, setPageCurrent] = useState(1);
   const pageSize = 2; // Display 2 items per page
 
@@ -63,12 +61,9 @@ export default function Index() {
   const startIndex = (pageCurrent - 1) * pageSize;
   const currentData = beritaData.slice(startIndex, startIndex + pageSize);
 
-  const handleClick = () => {
-    navigate("/kelolaBerita");
-  };
 
   const handleDetailClick = (newsItem) => {
-    navigate("/lihatBerita", { state: newsItem });
+    onChangePage("news", { state: newsItem });
   };
 
   return (
@@ -88,7 +83,7 @@ export default function Index() {
             classType="btn btn-primary"
             title="Kelola Berita"
             label="Kelola Berita"
-            onClick={handleClick}
+            onClick={() => onChangePage("read")}
           />
         </div>
 

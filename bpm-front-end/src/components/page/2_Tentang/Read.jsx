@@ -2,13 +2,11 @@ import React, { useState } from "react";
 import Table from "../../part/Table";
 import Paging from "../../part/Paging";
 import PageTitleNav from "../../part/PageTitleNav";
-import Button from "../../part/Button";
-import { useNavigate } from "react-router-dom";
 
-export default function Read() {
+export default function Read({ onChangePage }) {
     const [pageSize] = useState(10);
     const [pageCurrent, setPageCurrent] = useState(1);
-    const navigate = useNavigate(); // Hook for navigation
+    
 
     const data = [
         { Key: 1, Nama: "Tentang BPM", Email: "budi@example.com", Alamat: "Jakarta" },
@@ -29,11 +27,9 @@ export default function Read() {
         setPageCurrent(page);
     };
 
-    const title = "Kelola Tentang";
-    const breadcrumbs = [
-        { label: "Tentang", href: "/tentang" },
-        { label: "Kelola Tentang" },
-    ];
+    const handleEdit = (item) => {
+        onChangePage("edit", { state: { editData: item } });
+    };      
 
     return (
         <div className="d-flex flex-column min-vh-100">
@@ -41,11 +37,12 @@ export default function Read() {
                 <div className="d-flex flex-column">
                     <div className="m-3 mb-0">
                         <PageTitleNav 
-                            title={title} 
-                            breadcrumbs={breadcrumbs} 
-                            onClick={() => navigate("/tentang")}
-                        />
+                            title="Kelola Tentang" 
+                            breadcrumbs={[{ label: "Tentang", href: "/tentang" }, { label: "Kelola Tentang" }]}
+                            onClick={() => onChangePage("index")}
+                            />
                     </div>
+                    
                     <div className="table-container bg-white p-3 m-5 mt-0 rounded">
                         <Table
                             arrHeader={["Nama", "Email", "Alamat"]}
@@ -56,9 +53,7 @@ export default function Read() {
                             }}
                             data={currentData}
                             actions={["Detail", "Edit", "UpdateHistory"]}
-                            onDetail={(id) => console.log("Detail", id)}
-                            onEdit={(id) => navigate(`/editTentang/${id}`)} // Navigate to Edit page with ID
-                            onUpdateHistory={(id) => console.log("Update History", id)}
+                            onEdit={handleEdit}  
                         />
                         <Paging
                             pageSize={pageSize}

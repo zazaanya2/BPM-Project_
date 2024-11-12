@@ -2,10 +2,15 @@ import Button from "./Button";
 import HeaderText from "./HeaderText";
 
 const CardBerita = ({ title, author, date, description, image, size = "large", onClick }) => {
-  const maxDescriptionLength = size === "small" ? 100 : 280;
+  const maxDescriptionLength = size === "small" ? 140 : 280;
+  const maxTitleLength = size === "small" ? 50 : 93; // Menentukan batasan panjang karakter judul
   const truncatedDescription = description.length > maxDescriptionLength 
     ? description.slice(0, maxDescriptionLength) + '...' 
     : description;
+  
+  const truncatedTitle = title.length > maxTitleLength 
+    ? title.slice(0, maxTitleLength) + '...'  // Potong judul jika melebihi maxTitleLength
+    : title;
 
   const cardStyle = {
     borderRadius: '15px', 
@@ -14,11 +19,12 @@ const CardBerita = ({ title, author, date, description, image, size = "large", o
     maxWidth: '99%',
     padding: '20px',
     position: 'relative',
+    height: size === 'small' ? '98%' : '100%',
   };
 
   const imgStyle = {
-    width: size === 'small' ? '300px' : '200px', 
-    height: '100%',
+    width: '100%', 
+    height: size === 'small' ? '235px':'100%',
     objectFit: 'cover', 
     borderRadius: '15px',
   };
@@ -28,22 +34,21 @@ const CardBerita = ({ title, author, date, description, image, size = "large", o
     flexDirection: 'column',
     justifyContent: 'space-between',
     position: 'relative',
-    paddingBottom: size === 'small' ? '40px' : '60px', 
-    marginBottom: '30px'
+    paddingBottom: '10px', 
+    marginBottom: '20px'
   };
 
   const buttonStyle = {
     alignSelf: 'flex-start',
     position: size === 'small' ? 'relative' : 'absolute',
-    bottom: size === 'small' ? '0px' : '-10px', // Lower button on large size
-    left: size === 'small' ? '0px' : '15px',
-    bottom:'-28px'
+    bottom: size === 'small' ? '-15px' : '-15px',
+    left: size === 'small' ? '0' : '15px',
   };
 
   return (
     <div style={cardStyle}>
       <div className="row g-0">
-        <div className={size === 'small' ? 'col-md-4 p-3' : 'col-md-2 p-3'}>
+        <div className={size === 'small' ? 'col-md-5 p-1 pb-0': 'col-md-2 p-1'}>
           <img 
             src={image} 
             alt={title}
@@ -52,15 +57,15 @@ const CardBerita = ({ title, author, date, description, image, size = "large", o
           />
         </div>
         
-        <div className={size === 'small' ? 'col-md-8 p-3' : 'col-md-10 p-3 '} style={textContainerStyle}>
+        <div className={size === 'small' ? 'col-md-7 p-2 pb-0' : 'col-md-10 p-3 pt-0 pb-4 '} style={textContainerStyle}>
           <HeaderText
-              label={title}
+              label={truncatedTitle} // Menampilkan judul yang telah dipotong
               ukuran="18px"
               warna="black"
               fontWeight="700"
               alignText="left"
               marginBottom="10px"
-              marginTop="0px"
+              marginTop="10px"
           />
           
           <p style={{ color: '#007bff', fontSize: '14px' , marginBottom:'10px'}}>

@@ -1,5 +1,4 @@
 import React, { useState } from "react"; 
-import { useParams, useNavigate, Link } from "react-router-dom";
 import PageTitleNav from "../../part/PageTitleNav"; 
 import TextField from "../../part/TextField"; 
 import TextArea from "../../part/TextArea"; 
@@ -8,29 +7,29 @@ import UploadFoto from "../../part/UploadFotoMulti";
 import HeaderForm from "../../part/HeaderText"; 
 import Button from "../../part/Button";
 import DetailData from "../../part/DetailData"; 
+import { useLocation } from "react-router-dom";
 
-export default function Edit() {
-    const { id } = useParams(); // Retrieve the ID from the URL
-    const navigate = useNavigate();
+export default function Edit({onChangePage}) {
+    const location = useLocation();
 
     const title = "Edit Berita";
     const breadcrumbs = [
         { label: "Berita", href: "/berita" }, 
-        { label: "Kelola Berita", href: "/kelolaBerita" }, 
+        { label: "Kelola Berita", href: "/berita/kelola" }, 
         { label: "Edit Berita" } 
     ];
 
     return (
         <div className="d-flex flex-column min-vh-100">
      
-      <main className="flex-grow-1" style={{ marginTop: '80px' }}>
+      <main className="flex-grow-1 p-3" style={{ marginTop: '80px' }}>
         <div className="d-flex flex-column">
           {/* Breadcrumbs and Page Title */}
             <div className="m-3">
                 <PageTitleNav 
                     title={title}
                     breadcrumbs={breadcrumbs}
-                    onClick={() => navigate("/kelolaBerita")} // Corrected usage
+                    onClick={() => onChangePage("read")} // Corrected usage
                 />
             </div>
 
