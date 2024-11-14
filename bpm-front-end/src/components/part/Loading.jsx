@@ -5,11 +5,11 @@ export default function Loading() {
     <div
       style={{
         display: "flex",
-        justifyContent: "center", // Menjajarkan secara horizontal
-        alignItems: "center", // Menjajarkan secara vertikal
-        backgroundColor: "white", // Latar belakang putih
-        minHeight: "95vh", // Tinggi 95% dari viewport
-        margin: 0, // Menghilangkan margin default
+        justifyContent: "center",
+        alignItems: "center", 
+        backgroundColor: "white", 
+        minHeight: "95vh",
+        margin: 0,
       }}
     >
       <SyncLoader color="#0d6efd" loading={true} />
