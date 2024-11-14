@@ -16,10 +16,11 @@ const TextArea = ({ id, label, name, isRequired = false, errorMsg, onChange, val
       )}
       <Editor
         apiKey='8aan1jhdusk13xws06e13w6e3igg00kygp1xubuhymmmg4r2'
-        initialValue={value} 
+        value={value} 
         name={name}  // Pass the name prop to the editor
         onEditorChange={handleEditorChange}
         init={{
+          plugins: 'lists',
           toolbar: 'undo redo | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
           tinycomments_mode: 'embedded',
           tinycomments_author: 'Author name',

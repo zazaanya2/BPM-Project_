@@ -1,22 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Table from "../../part/Table";
 import Paging from "../../part/Paging";
 import PageTitleNav from "../../part/PageTitleNav";
+import Loading from "../../part/Loading";
+import { API_LINK } from "../../util/Constants";
 
 export default function Read({ onChangePage }) {
     const [pageSize] = useState(10);
     const [pageCurrent, setPageCurrent] = useState(1);
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const data = [
-        { Key: 1, Kategori: "Tentang BPM", Isi: "Badan Penjamin Mutu (BPM) melaksanakan proses penetapan dan pemenuhan standar mutu pengelolaan Politeknik Astra secara berkelanjutan guna menjaga dan meningkatkan mutu penyelenggaraan program pendidikan dan kegiatan akademik di Politeknik Astra, dalam mewujudkan visi dan misi institusi, serta memenuhi kebutuhan stakeholders" },
-        { Key: 2, Kategori: "Sejarah BPM", Isi: "Ani - Bandung" },
-        { Key: 3, Kategori: "Sasaran BPM", Isi: "Cici - Surabaya" },
-        { Key: 4, Kategori: "Strategi BPM", Isi: "Dodi - Medan" },
-        { Key: 5, Kategori: "Visi", Isi: "Eka - Semarang" },
-        { Key: 6, Kategori: "Misi", Isi: "Feri - Malang" },
-        { Key: 7, Kategori: "Struktur BPM", Isi: "Gina - Yogyakarta" },
-        { Key: 8, Kategori: "SK Pendirian", Isi: "Hani - Solo" },
-    ];
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                console.log('Fetching data with:', { pageCurrent, pageSize }); // Log request data
+        
+                const response = await fetch(API_LINK +'/api/MasterTentang/GetDataTentang', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        page: pageCurrent,
+                        pageSize: pageSize,
+                    }),
+                });
+        
+                console.log('Response status:', response.status); // Log response status
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+        
+                const result = await response.json();
+                console.log('Fetched data:', result); // Log the result
+                setData(result); // Set the fetched data
+                setLoading(false);
+            } catch (err) {
+                console.error('Fetch error:', err); // Log errors
+                setError("Gagal mengambil data");
+                setLoading(false);
+            }
+        };
+        
+
+        fetchData();
+    }, []);
 
     const indexOfLastData = pageCurrent * pageSize;
     const indexOfFirstData = indexOfLastData - pageSize;
@@ -26,13 +56,8 @@ export default function Read({ onChangePage }) {
         setPageCurrent(page);
     };
 
-    
-    
-
-    // Fungsi untuk membatasi karakter teks di kolom Isi
-    const truncateText = (text, maxLength) => {
-        return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-    };
+    if (loading) return <Loading />;
+    if (error) return <div>{error}</div>;
 
     return (
         <div className="d-flex flex-column min-vh-100">
@@ -51,20 +76,18 @@ export default function Read({ onChangePage }) {
                             arrHeader={["No", "Kategori"]}
                             headerToDataMap={{
                                 "No": "No",
-                                "Kategori" : "Kategori",
-                                
+                                "Kategori": "ten_category",
                             }}
                             data={currentData.map((item, index) => ({
-                                Key: item.Key || index,
+                                Key: item.ten_id, // Use ten_id directly as the key
                                 No: indexOfFirstData + index + 1,
-                                Kategori : item.Kategori,
-
+                                ten_category: item.ten_category,
                             }))}
                             actions={["Detail", "Edit"]}
                             onEdit={(item) => onChangePage("edit", { state: { idData: item } })}
                             onDetail={(item) => onChangePage("detail", { state: { idData: item } })}
-                            
                         />
+
                         <Paging
                             pageSize={pageSize}
                             pageCurrent={pageCurrent}

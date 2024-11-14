@@ -1,53 +1,92 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { format } from "date-fns"; // Import format from date-fns
+import { id } from "date-fns/locale"; // Import Indonesian locale
 import PageTitleNav from "../../part/PageTitleNav"; 
-import TextArea from "../../part/TextArea"; 
 import HeaderForm from "../../part/HeaderText"; 
-import Button from "../../part/Button";
 import DetailData from "../../part/DetailData"; 
+import { API_LINK, FILE_LINK } from "../../util/Constants";
+import Loading from "../../part/Loading";
 
-export default function Edit({ onChangePage }) {
+
+export default function Detail({ onChangePage }) {
     const location = useLocation();
-
-    const data = [
-        { Key: 1, Kategori: "Tentang BPM", Isi: "Badan Penjamin Mutu (BPM) melaksanakan proses penetapan dan pemenuhan standar mutu pengelolaan Politeknik Astra secara berkelanjutan guna menjaga dan meningkatkan mutu penyelenggaraan program pendidikan dan kegiatan akademik di Politeknik Astra, dalam mewujudkan visi dan misi institusi, serta memenuhi kebutuhan stakeholders" },
-        { Key: 2, Kategori: "Sejarah BPM", Isi: "Ani - Bandung" },
-        { Key: 3, Kategori: "Sasaran BPM", Isi: "Cici - Surabaya" },
-        { Key: 4, Kategori: "Strategi BPM", Isi: "Dodi - Medan" },
-        { Key: 5, Kategori: "Visi", Isi: "Eka - Semarang" },
-        { Key: 6, Kategori: "Misi", Isi: "Feri - Malang" },
-        { Key: 7, Kategori: "Struktur BPM", Isi: "Gina - Yogyakarta" },
-        { Key: 8, Kategori: "SK Pendirian", Isi: "Hani - Solo" },
-    ];
 
     const [formData, setFormData] = useState({
         Kategori: "",
         Isi: "",
+        Createby: "",
+        CreateDate: "",
+        Modifby: "",
+        ModifDate: "",
     });
 
-    // Fetch data matching `idData` ID from location.state
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         if (location.state?.idData) {
             const editId = location.state.idData;
-            const selectedData = data.find(item => item.Key === editId);
-            if (selectedData) {
-                setFormData({
-                    Kategori: selectedData.Kategori,
-                    Isi: selectedData.Isi,
-                });
-            }
+            fetch(API_LINK + `/api/MasterTentang/GetDataTentangById`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ten_id: editId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data && data[0]) {
+                    setFormData({
+                        Kategori: data[0].ten_category,
+                        Isi: data[0].ten_isi,
+                        Createby: data[0].ten_created_by,
+                        CreateDate: format(new Date(data[0].ten_created_date), 'EEEE, dd MMMM yyyy', { locale: id }),
+                        Modifby: data[0].ten_modif_by,
+                        ModifDate: format(new Date(data[0].ten_modif_date), 'EEEE, dd MMMM yyyy', { locale: id }),
+                    });
+                } else {
+                    console.error("Data not found or format mismatch.");
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            })
+            .finally(() => setLoading(false));
         }
     }, [location.state?.idData]);
+
+    if (loading) {
+        return <Loading />;
+    }
+
+    // Render photo or file based on the content type
+    const renderContent = () => {
+        const id = location.state?.idData;
+        const baseURL = FILE_LINK;
     
-
-    const handleSave = () => {
-        // Implementasi fungsi simpan
-        onChangePage("read");
+        if (id === 7) {
+            return  <div>
+                        <label htmlFor={id} className="form-label fw-bold">Foto Struktur</label> 
+                        <img src={`${baseURL}${formData.Isi}`} alt="Uploaded" className="img-fluid mb-3" />
+                    </div>
+            
+        } else if (id === 8) {
+            return (
+                <div className="mb-3">
+                    
+                    <label htmlFor={id} className="form-label fw-bold">File SK</label> <br></br>
+                    <a href={`${baseURL}${formData.Isi}`} target="_blank" rel="noopener noreferrer">
+                        Lihat Pratinjau
+                    </a>
+                </div>
+                
+            );
+        } else {
+            return <DetailData label="Isi" isi={formData.Isi} />;
+        }
     };
-
-    const handleCancel = () => {
-        onChangePage("read");
-    };
+    
+    
 
     return (
         <div className="d-flex flex-column min-vh-100">
@@ -68,20 +107,19 @@ export default function Edit({ onChangePage }) {
                     <div className="shadow p-5 m-5 mt-4 bg-white rounded">
                         <HeaderForm label="Formulir Tentang"/>    
                         <DetailData label="Kategori" isi={formData.Kategori} />
-                        <DetailData label="Isi" isi={formData.Isi}/>
+                        
+                        {renderContent()}
 
                         <div className="row">
-                            <div className="col-lg-6 col-md-6 ">
-                                <DetailData label="Dibuat Oleh" isi="Retno Widiastuti"/>
-                                <DetailData label="Dibuat Tanggal" isi="5 Januari 2005"/>
+                            <div className="col-lg-6 col-md-6">
+                                <DetailData label="Dibuat Oleh" isi={formData.Createby}/>
+                                <DetailData label="Dibuat Tanggal" isi={formData.CreateDate}/>
                             </div>
-                            <div className="col-lg-6 col-md-6 ">
-                                <DetailData label="Dimodifikasi Oleh" isi="Retno Widiastuti"/>
-                                <DetailData label="Dimodifikasi Tanggal" isi="5 Januari 2005"/>
+                            <div className="col-lg-6 col-md-6">
+                                <DetailData label="Dimodifikasi Oleh" isi={formData.Modifby}/>
+                                <DetailData label="Dimodifikasi Tanggal" isi={formData.ModifDate}/>
                             </div>
                         </div>    
-                        
-                        
                     </div>
                 </div>
             </main>
