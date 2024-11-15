@@ -1,54 +1,56 @@
-import { forwardRef } from "react";
-import { FILE_LINK } from "../util/Constants";
+import React, { forwardRef } from "react";
+import PropTypes from "prop-types";
 
-const FileUpload = forwardRef(function FileUpload(
-  {
-    formatFile = "",
-    label = "",
-    forInput = "",
-    isRequired = false,
-    isDisabled = false,
-    errorMessage,
-    hasExisting,
-    ...props
-  },
-  ref
-) {
-  return (
-    <>
-      <div className="mb-3">
+
+const FileUpload = forwardRef(
+  (
+    {
+      formatFile = "",
+      label = "",
+      forInput = "",
+      isRequired = false,
+      isDisabled = false,
+      errorMessage = "",
+      hasExisting = "",
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <div>
         <label htmlFor={forInput} className="form-label fw-bold">
           {label}
-          {isRequired ? <span className="text-danger"> *</span> : ""}
-          {errorMessage ? (
-            <span className="fw-normal text-danger">
-              <br />
-              {errorMessage}
-            </span>
-          ) : (
-            ""
-          )}
+          {isRequired && <span className="text-danger"> *</span>}
         </label>
-        {!isDisabled && (
+        {errorMessage && (
+          <span className="fw-normal text-danger">
+            <br />
+            {errorMessage}
+          </span>
+        )}
+
+        {!isDisabled ? (
           <>
             <input
-              className="form-control"
               type="file"
               id={forInput}
               name={forInput}
               accept={formatFile}
+              className="form-control"
               ref={ref}
               {...props}
             />
             <sub>Maksimum ukuran berkas adalah 10 MB</sub>
+
             {hasExisting && (
               <sub>
                 <br />
                 Berkas saat ini:{" "}
                 <a
-                  href={FILE_LINK + hasExisting}
+                  href={hasExisting} // langsung gunakan `hasExisting` sebagai URL
                   className="text-decoration-none"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   [Unduh Berkas]
                 </a>
@@ -57,25 +59,26 @@ const FileUpload = forwardRef(function FileUpload(
               </sub>
             )}
           </>
-        )}
-        {isDisabled && (
+        ) : (
           <>
             <br />
-            {hasExisting && (
+            {hasExisting ? (
               <a
-                href={FILE_LINK + hasExisting}
+                href={hasExisting} // gunakan `hasExisting` sebagai URL
                 className="text-decoration-none"
                 target="_blank"
+                rel="noopener noreferrer"
               >
                 Unduh berkas
               </a>
+            ) : (
+              "-"
             )}
-            {!hasExisting && "-"}
           </>
         )}
       </div>
-    </>
-  );
-});
+    );
+  }
+);
 
 export default FileUpload;

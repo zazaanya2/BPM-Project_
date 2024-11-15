@@ -3,105 +3,103 @@ import Table from "../../../part/Table";
 import Paging from "../../../part/Paging";
 import PageTitleNav from "../../../part/PageTitleNav";
 import Button from "../../../part/Button";
-import TextField from "../../../part/TextField"
+import TextField from "../../../part/TextField";
 import Modal from "../../../part/Modal";
-import SearchField from "../../../part/SearchField"
+import Filter from "../../../part/Filter";
+import SearchField from "../../../part/SearchField";
+import FileUpload from "../../../part/FileUpload";
+import DropDown from "../../../part/Dropdown";
 import { useNavigate } from "react-router-dom";
 
 export default function Index() {
     const [pageSize] = useState(10);
     const [pageCurrent, setPageCurrent] = useState(1);
-    const navigate = useNavigate(); // Hook for navigation
+    const [selectedkriteria, setSelectedkriteria] = useState(null);
+    const [formData, setFormData] = useState({ name: '' });
     const addModalRef = useRef();
     const updateModalRef = useRef();
-    const [events, setEvents] = useState([
-        // Example event data, replace this with actual data
-        { id: 1, Nama: 'Dosen'},
-        { id: 2, Nama: 'Tenaga Pendidik'},
-        { id: 3, Nama: 'Mahasiswa'}
+    const detailModalRef = useRef();
+    const navigate = useNavigate();
+
+    const dataOptions = [
+        { Value: "1", Text: "Pria" },
+        { Value: "2", Text: "Wanita" },
+        { Value: "3", Text: "Tidak Ingin Disebutkan" },
+    ];
+
+    const [kriteria, setkriteria] = useState([
+        { id: 1, Nama: 'Dosen' },
+        { id: 2, Nama: 'Tenaga Pendidik' },
+        { id: 3, Nama: 'Mahasiswa' }
     ]);
-    const handleAddEvent = () => {
-        const newEvent = {
-            id: events.length + 1,
+
+    const handleAddkriteria = () => {
+        const newkriteria = {
+            id: kriteria.length + 1,
             Nama: formData.name,
         };
-        setEvents([...events, newEvent]);
-        setFormData({ nama: ''});
+        setkriteria([...kriteria, newkriteria]);
+        setFormData({ name: '' });
         addModalRef.current.close();
     };
 
-    const handleUpdateEvent = () => {
-        const updatedEvent = {
-            ...selectedEvent,
-            id: events.length + 1,
+    const handleUpdatekriteria = () => {
+        if (!selectedkriteria) return; // Check if selectedkriteria is set
+        const updatedkriteria = {
+            ...selectedkriteria,
             Nama: formData.name,
         };
-        setEvents(events.map(event => event.id === selectedEvent.id ? updatedEvent : event));
-        setSelectedEvent(null);
+        setkriteria(kriteria.map(kriteria => kriteria.id === selectedkriteria.id ? updatedkriteria : kriteria));
+        setSelectedkriteria(null);
+        setFormData({ name: '' }); // Reset form data
         updateModalRef.current.close();
     };
-        // Menambahkan data menjadi 10 item dengan URL gambar
-        const data = [
-            { Key: 1, Nama: "Dosen"},
-            { Key: 2, Nama: "Mahasiswa" },
-            { Key: 3, Nama: "Mahasiswa" },
-            { Key: 4, Nama: "Mahasiswa" },
-            { Key: 5, Nama: "Mahasiswa" },
-            { Key: 6, Nama: "Mahasiswa" },
-            { Key: 7, Nama: "Mahasiswa" },
-            { Key: 8, Nama: "Mahasiswa" },
-            { Key: 9, Nama: "Mahasiswa" },
-            { Key: 10,Nama: "Mahasiswa" }
-        ];
-        const handleSelectEvent = (event) => {
-            setSelectedEvent(event);
-            setFormData({
-                name: event.title,
-            });
-        };    
-    
+
+    const handleSelectkriteria = (kriteria) => {
+        setSelectedkriteria(kriteria);
+        setFormData({
+            name: kriteria.Nama,
+        });
+        updateModalRef.current.open();
+    };
+
+    const handleDetailkriteria = (kriteria) => {
+        setSelectedkriteria(kriteria);
+        detailModalRef.current.open();
+    };
 
     const indexOfLastData = pageCurrent * pageSize;
     const indexOfFirstData = indexOfLastData - pageSize;
-    const currentData = data.slice(indexOfFirstData, indexOfLastData);
+    const currentData = kriteria.slice(indexOfFirstData, indexOfLastData);
 
     const handlePageNavigation = (page) => {
         setPageCurrent(page);
     };
 
     const title = "Kriteria Survei";
-    const breadcrumbs = [
-        { label: "Kriteria Survei" },
-    ];
+    const breadcrumbs = [{ label: "Kriteria Survei" }];
 
     return (
         <div className="d-flex flex-column min-vh-100">
             <main className="flex-grow-1" style={{ marginTop: '80px' }}>
                 <div className="d-flex flex-column">
                     <div className="m-3 mb-0">
-                        <PageTitleNav 
-                            title={title} 
-                            breadcrumbs={breadcrumbs} 
+                        <PageTitleNav
+                            title={title}
+                            breadcrumbs={breadcrumbs}
                             onClick={() => navigate("/beranda")}
                         />
                     </div>
                     <div className="p-3 m-5 mt-2 mb-0" style={{ marginLeft: '50px' }}>
-                                        
-                    <Button iconName="add" classType="primary" label="Tambah Kriteria Survei" onClick={() => addModalRef.current.open()} />
-                    <div className="row mt-5 ">
-                        <div className="col-lg-10 col-md-6 ">
-                            <SearchField ></SearchField>
+                        <Button iconName="add" classType="primary" label="Tambah Kriteria Survei" onClick={() => addModalRef.current.open()} />
+                        <div className="row mt-5 ">
+                            <div className="col-lg-10 col-md-6 ">
+                                <SearchField />
+                            </div>
+                            <div className="col-lg-2 col-md-6">
+                                <Filter />
+                            </div>
                         </div>
-                        <div className="col-lg-2 col-md-6">
-                            <Button 
-                                iconName="settings-sliders" 
-                                classType="primary" 
-                                label="Filter" 
-                                onClick={() => addModalRef.current.open()} />
-                    
-                        </div>
-                    </div>
-                    
                     </div>
                     <div className="table-container bg-white p-3 m-5 mt-0 rounded">
                         <Table
@@ -111,43 +109,56 @@ export default function Index() {
                                 "Nama Kriteria Survei": "Nama",
                             }}
                             data={currentData.map((item, index) => ({
-                                key: item.Key || index,
+                                key: item.id,
                                 No: indexOfFirstData + index + 1,
-                                Nama: item.Nama 
+                                Nama: item.Nama
                             }))}
-                            actions={["Detail", "Edit"]}
+                            actions={["Detail", "Edit", "Surveyor", "Responden"]}
+                            onDetail={handleDetailkriteria}
+                            onEdit={handleSelectkriteria}
                         />
-
                         <Paging
                             pageSize={pageSize}
                             pageCurrent={pageCurrent}
-                            totalData={data.length}
+                            totalData={kriteria.length}
                             navigation={handlePageNavigation}
                         />
                     </div>
                 </div>
             </main>
-            {/* Add Event Modal */}
+
+            {/* ADD MODAL */}
             <Modal
                 ref={addModalRef}
                 title="Tambah Kriteria Survei"
                 size="full"
-                Button1={<Button classType="primary" label="Simpan" onClick={handleAddEvent} />}
+                Button1={<Button classType="primary" label="Simpan" onClick={handleAddkriteria} />}
             >
-                <form>
-                    <TextField label="Kriteria Survei" isRequired="true" ></TextField>
-                </form>
+                <TextField label="Kriteria Survei" isRequired={true} onChange={(e) => setFormData({ ...formData, name: e.target.value })} value={formData.name} />
+                <FileUpload />
+                <DropDown label="Jenis Kelamin" type="pilih" arrData={dataOptions} />
             </Modal>
-            {/* Update Event Modal */}
+
+            {/* EDIT MODAL */}
             <Modal
                 ref={updateModalRef}
-                title="Update Rencana"
+                title="Update Kriteria Survei"
                 size="medium"
-                Button1={<Button label="Update" onClick={handleUpdateEvent} />}
+                Button1={<Button label="Update" onClick={handleUpdatekriteria} />}
             >
-                <form>
-                    <TextField label></TextField>
-                </form>
+                <TextField label="Kriteria Survei" isRequired={true} onChange={(e) => setFormData({ ...formData, name: e.target.value })} value={formData.name} />
+            </Modal>
+
+            {/* DETAIL MODAL */}
+            <Modal
+                ref={detailModalRef}
+                title="Detail Kriteria Survei"
+                size="medium"
+                Button1={<Button classType="secondary" label="Tutup" onClick={() => detailModalRef.current.close()} />}
+            >
+                <label htmlFor="" className="fw-bold">Nama Kriteria Survei</label>
+                <br />
+                <p>{selectedkriteria ? selectedkriteria.Nama : "Data tidak tersedia"}</p>
             </Modal>
         </div>
     );
