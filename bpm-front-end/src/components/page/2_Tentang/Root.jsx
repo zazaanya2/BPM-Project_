@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 import Index from './Index';
 import Read from './Read';
 import Edit from './Edit';
+import Detail from './Detail';
 import ScrollToTop from '../../part/ScrollToTop';
 
 export default function Tentang() {
@@ -18,6 +19,9 @@ export default function Tentang() {
             case "edit":
                 navigate("/tentang/kelola/edit", withState); 
                 break;
+            case "detail":
+                navigate("/tentang/kelola/detail", withState); 
+                break;
             default:
                 console.warn(`Halaman "${page}" tidak dikenali.`);
                 break;
@@ -31,6 +35,7 @@ export default function Tentang() {
                 <Route path="/tentang" element={<Index onChangePage={handlePageChange} />} />
                 <Route path="/tentang/kelola" element={<Read onChangePage={handlePageChange} />} />
                 <Route path="/tentang/kelola/edit" element={<Edit onChangePage={handlePageChange} />} />
+                <Route path="/tentang/kelola/detail" element={<Detail onChangePage={handlePageChange} />} />
             </Routes>
         </>
     );
