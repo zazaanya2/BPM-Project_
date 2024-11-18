@@ -1,70 +1,168 @@
-import React, { useState } from "react"; 
-import PageTitleNav from "../../part/PageTitleNav"; 
-import TextField from "../../part/TextField"; 
-import TextArea from "../../part/TextArea"; 
-import DatePicker from "../../part/DatePicker"; 
-import UploadFoto from "../../part/UploadFotoMulti"; 
-import HeaderForm from "../../part/HeaderText"; 
+import React, { useRef, useState } from "react";
+import PageTitleNav from "../../part/PageTitleNav";
+import TextField from "../../part/TextField";
+import TextArea from "../../part/TextArea";
+import DatePicker from "../../part/DatePicker";
+import UploadFoto from "../../part/UploadFotoMulti";
+import HeaderForm from "../../part/HeaderText";
 import Button from "../../part/Button";
-import DetailData from "../../part/DetailData"; 
+import DetailData from "../../part/DetailData";
+import { API_LINK } from "../../util/Constants";
+import SweetAlert from "../../util/SweetAlert";
+import { useIsMobile } from "../../util/useIsMobile";
 
-export default function Add({onChangePage}) {
+export default function Add({ onChangePage }) {
+  const title = "Tambah Berita";
+  const breadcrumbs = [
+    { label: "Berita", href: "/berita" },
+    { label: "Kelola Berita", href: "/berita/kelola" },
+    { label: "Tambah Berita" },
+  ];
+  const isMobile = useIsMobile();
 
-    const title = "Tambah Berita";
-    const breadcrumbs = [
-        { label: "Berita", href: "/berita" }, 
-        { label: "Kelola Berita", href: "/berita/kelola" }, 
-        { label: "Tambah Berita" } 
-    ];
+  const [images, setImages] = useState([]);
+  const author = "Retno Widiastuti";
 
-  return ( 
+  // Refs untuk input
+  const judulRef = useRef();
+  const tanggalRef = useRef();
+  const isiRef = useRef();
+  const fotoRef = useRef();
+
+  const handleUploadChange = (file) => {
+    setImages((prevImages) => {
+      const uniqueFiles = file.filter(
+        (newFile) => !prevImages.some((prevFile) => prevFile.name === newFile.name)
+      );
+      return [...prevImages, ...uniqueFiles];
+    });
+  };
+
+  const handleSubmit = async () => {
+    // Validasi semua field
+     console.log(judulRef.current); // Pastikan ini bukan `undefined`.
+    const isJudulValid = judulRef.current.validate();
+    const isTanggalValid = tanggalRef.current.validate();
+    const isIsiValid = isiRef.current.validate();
+    const isFotoValid = fotoRef.current.validate();
+   
+    // Jika ada field yang tidak valid, fokuskan ke field tersebut dan hentikan submit
+    if (!isJudulValid) {
+      judulRef.current?.focus();
+      return;
+    }
+    if (!isTanggalValid) {
+      tanggalRef.current?.focus();
+      return;
+    }
+    if (!isIsiValid) {
+      isiRef.current?.focus();
+      return;
+    }
+    if (!isFotoValid) {
+      fotoRef.current?.focus();
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      images.forEach((file) => formData.append("files", file));
+
+      const uploadResponse = await fetch(`${API_LINK}/api/MasterBerita/UploadFiles`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error("Gagal mengunggah gambar");
+      }
+
+      const uploadedFileNames = await uploadResponse.json();
+
+      const beritaData = {
+        title: judulRef.current.value,
+        date: tanggalRef.current.value,
+        description: isiRef.current.value,
+        author,
+        images: uploadedFileNames,
+      };
+
+      const createResponse = await fetch(`${API_LINK}/api/MasterBerita/CreateBerita`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(beritaData),
+      });
+
+      if (!createResponse.ok) {
+        throw new Error("Gagal menambahkan berita");
+      }
+
+      SweetAlert("Berhasil!", "Data berhasil ditambahkan.", "success", "OK").then(() =>
+        onChangePage("read")
+      );
+    } catch (error) {
+      console.error("Error:", error.message);
+    }
+  };
+
+  return (
     <div className="d-flex flex-column min-vh-100">
-     
-      <main className="flex-grow-1 p-3" style={{ marginTop: '80px' }}>
+      <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
         <div className="d-flex flex-column">
-          {/* Breadcrumbs and Page Title */}
-          <div className="m-3">
-            <PageTitleNav 
-                title={title}
-                breadcrumbs={breadcrumbs}
-                onClick={() => onChangePage("read")} 
-            />
+          <div className={isMobile ? "m-0" : "m-3"}>
+            <PageTitleNav title={title} breadcrumbs={breadcrumbs} onClick={() => onChangePage("read")} />
           </div>
-
-          {/* Main Content Section */}
-          <div className="shadow p-5 m-5 mt-0 bg-white rounded">
-            <HeaderForm label="Formulir Berita"/>
+          <div className={isMobile ? "shadow p-4 m-2 mt-0 bg-white rounded" : "shadow p-5 m-5 mt-0 bg-white rounded"}>
+            <HeaderForm label="Formulir Berita" />
             <div className="row">
-              <div className="col-lg-6 col-md-6 ">
-                <TextField label="Judul Berita" isRequired="true"/>
-                <DetailData label="Penulis" isi="Retno Widiastuti"/>
+              <div className="col-lg-6 col-md-6">
+                <TextField
+                  ref={judulRef}
+                  label="Judul Berita"
+                  isRequired={true}
+                />
+                <DetailData label="Penulis" isi={author} />
               </div>
               <div className="col-lg-6 col-md-6">
-                <DatePicker label="Tanggal"/>
+                <DatePicker
+                  ref={tanggalRef}
+                  label="Tanggal"
+                  isRequired={true}
+                />
               </div>
             </div>
-            
-            <TextArea label="Isi Berita" maxChar="5"/>
-
+            <TextArea
+              ref={isiRef}
+              label="Isi Berita"
+              isRequired={true}
+              initialValue="" 
+            />
             <div className="row">
-              <UploadFoto label="Masukkan Foto"/>
+              <UploadFoto ref={fotoRef} label="Masukkan Foto" onChange={handleUploadChange} multiple isRequired={true} />
             </div>
-
             <div className="d-flex justify-content-between align-items-center">
-              <div className="flex-grow-1 m-2">
-                <Button classType="primary" type="submit" label="Simpan" width="100%" />
+              <div className="flex-grow-1 m-2"> 
+                <Button
+                  classType="primary"
+                  type="button"
+                  label="Simpan"
+                  width="100%"
+                  onClick={handleSubmit}
+                />
               </div>
               <div className="flex-grow-1 m-2">
-                <Button classType="danger" type="button" label="Batal" width="100%" />
+                <Button
+                  classType="danger"
+                  type="button"
+                  label="Batal"
+                  width="100%"
+                  onClick={() => onChangePage("read")}
+                />
               </div>
             </div>
-
           </div>
         </div>
       </main>
-
     </div>
   );
 }
-
-
