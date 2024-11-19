@@ -6,9 +6,9 @@ import Tentang from "./components/page/2_Tentang/Root";
 import Berita from "./components/page/3_Berita/Root";
 import RencanaKegiatan from "./components/page/4_Kegiatan/Root";
 import Survei from "./components/page/9_Survei/Root";
-import Peraturan from "./components/page/10_Peraturan/KebijakanPeraturan/Root";
-import PeraturanEksternal from "./components/page/10_Peraturan/PeraturanEksternal/Root";
-import InstrumenAps from "./components/page/10_Peraturan/InstrumenAps/Root";
+import Peraturan from "./components/page/10_Peraturan/ms_kebijakanPeraturan/Root";
+import PeraturanEksternal from "./components/page/10_Peraturan/ms_peraturanEksternal/Root";
+import InstrumenAps from "./components/page/10_Peraturan/ms_instrumenAps/Root";
 
 function App() {
   return (
