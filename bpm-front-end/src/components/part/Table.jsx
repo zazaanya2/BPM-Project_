@@ -120,7 +120,7 @@ export default function Table({
           <tr>
             {arrHeader.map((header, index) => (
               <th
-                key={`header-${index}`}
+                key={header}
                 className="text-center align-middle"
                 style={{
                   backgroundColor: "#2654A1",
@@ -148,14 +148,19 @@ export default function Table({
               <tr key={`row-${rowIndex}`}>
                 {arrHeader.map((column, colIndex) => (
                   <td 
-                    key={`cell-${rowIndex}-${colIndex}`} 
+                    key={`cell-${row.Key}-${colIndex}`}
                     className={`align-middle ${column === "No" ? "text-center" : "text-start"}`}
                   >
                     {row[headerToDataMap[column]]}
                   </td>
                 ))}
                 <td className="text-center align-middle" style={{ width: '250px' }}>
-                  {actions.map((action) => generateActionButton(action, row.Key))}
+                {actions.map((action, actionIndex) => (
+                  <React.Fragment key={`${action}-${row.Key || rowIndex}`}>
+                    {generateActionButton(action, row.Key)}
+                  </React.Fragment>
+                ))}
+
                 </td>
               </tr>
             ))

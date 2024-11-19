@@ -1,77 +1,155 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import PageTitleNav from "../../part/PageTitleNav";
-import TextField from "../../part/TextField";
 import TextArea from "../../part/TextArea";
 import HeaderForm from "../../part/HeaderText";
 import Button from "../../part/Button";
 import DetailData from "../../part/DetailData";
+import { API_LINK } from "../../util/Constants";
+import Loading from "../../part/Loading";
+import FileUpload from "../../part/FileUpload";
+import UploadFoto from "../../part/UploadFoto";
+import SweetAlert from "../../util/SweetAlert";
+import uploadFile from "../../util/UploadFile";
 
 export default function Edit({ onChangePage }) {
   const location = useLocation();
 
-  const data = [
-    {
-      Key: 1,
-      Nama: "Tentang BPM",
-      Email: "budi@example.com",
-      Alamat: "Jakarta",
-    },
-    {
-      Key: 2,
-      Nama: "Sejarah BPM",
-      Email: "ani@example.com",
-      Alamat: "Bandung",
-    },
-    {
-      Key: 3,
-      Nama: "Sasaran BPM",
-      Email: "cici@example.com",
-      Alamat: "Surabaya",
-    },
-    {
-      Key: 4,
-      Nama: "Strategi BPM",
-      Email: "dodi@example.com",
-      Alamat: "Medan",
-    },
-    { Key: 5, Nama: "Visi", Email: "eka@example.com", Alamat: "Semarang" },
-    { Key: 6, Nama: "Misi", Email: "feri@example.com", Alamat: "Malang" },
-    {
-      Key: 7,
-      Nama: "Struktur BPM",
-      Email: "gina@example.com",
-      Alamat: "Yogyakarta",
-    },
-    { Key: 8, Nama: "SK Pendirian", Email: "hani@example.com", Alamat: "Solo" },
-  ];
-
   const [formData, setFormData] = useState({
-    Nama: "",
-    Email: "",
-    Alamat: "",
-    Deskripsi: "",
+    Kategori: "",
+    Isi: "",
+    Createby: "",
   });
 
-  // Fetch data matching `editData` ID from location.state
+  const [loading, setLoading] = useState(false);
+  const [imagePath, setImagePath] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+
   useEffect(() => {
-    if (location.state?.editData) {
-      const editId = location.state.editData;
-      const selectedData = data.find((item) => item.Key === editId);
-      if (selectedData) {
-        setFormData({
-          Nama: selectedData.Nama,
-          Email: selectedData.Email,
-          Alamat: selectedData.Alamat,
-          Deskripsi: selectedData.Deskripsi || "",
-        });
-      }
+    if (location.state?.idData) {
+      const editId = location.state.idData;
+      setLoading(true);
+      fetch(API_LINK + `/api/MasterTentang/GetDataTentangById`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ten_id: editId }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data && data.length > 0) {
+            setFormData({
+              Kategori: data[0].ten_category,
+              Isi: data[0].ten_isi,
+              Createby: data[0].ten_created_by,
+            });
+          }
+        })
+        .catch((error) => console.error("Error fetching data:", error))
+        .finally(() => setLoading(false));
     }
-  }, [location.state?.editData]);
+  }, [location.state?.idData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleFileChange = (file) => {
+    setSelectedFile(file); // Store file in state
+  };
+
+  const renderContent = () => {
+    const id = location.state?.idData;
+
+    if (id === 7) {
+      return (
+        <UploadFoto
+          id="upload-foto"
+          label="Upload Foto"
+          onChange={(file) => handleFileChange(file)}
+          hasExisting={formData.Isi}
+          isRequired="true"
+        />
+      );
+    } else if (id === 8) {
+      return (
+        <FileUpload
+          label="Upload File"
+          forInput="upload-file"
+          formatFile=".pdf"
+          onChange={(e) => handleFileChange(e.target.files[0])}
+          hasExisting={formData.Isi}
+          isRequired="true"
+        />
+      );
+    } else {
+      return (
+        <TextArea
+          label="Isi"
+          name="Isi"
+          value={formData.Isi}
+          onChange={handleInputChange}
+          isRequired="true"
+        />
+      );
+    }
+  };
+
+  const handleSave = async () => {
+    const currentTimestamp = new Date().toISOString();
+    setLoading(true);
+
+    try {
+      let ten_isi = formData.Isi;
+
+      if (selectedFile) {
+        const uploadResult = await uploadFile(selectedFile);
+        if (uploadResult === "ERROR") {
+          throw new Error("File upload failed");
+        }
+        ten_isi = uploadResult.hasil || ten_isi; // Use the result from upload
+      }
+
+      const response = await fetch(
+        API_LINK + "/api/MasterTentang/EditTentang",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ten_id: location.state.idData,
+            ten_category: formData.Kategori,
+            ten_isi,
+            ten_status: 1,
+            ten_modif_by: "User",
+            ten_modif_date: currentTimestamp,
+          }),
+        }
+      );
+
+      const text = await response.text();
+      const data = JSON.parse(text);
+
+      SweetAlert(
+        "Berhasil!",
+        "Data berhasil diperbarui.",
+        "success",
+        "OK"
+      ).then(() => onChangePage("read"));
+    } catch (error) {
+      console.error("Error saving data:", error);
+      SweetAlert(
+        "Terjadi Kesalahan!",
+        "Terjadi kesalahan saat menyimpan data.",
+        "error",
+        "OK"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -93,59 +171,24 @@ export default function Edit({ onChangePage }) {
           <div className="shadow p-5 m-5 mt-4 bg-white rounded">
             <HeaderForm label="Formulir Tentang" />
             <div className="row">
-              <TextField
-                label="Nama"
-                isRequired={true}
-                name="Nama"
-                value={formData.Nama}
-                onChange={handleInputChange}
-              />
-              <TextField
-                label="Email"
-                isRequired={true}
-                name="Email"
-                value={formData.Email}
-                onChange={handleInputChange}
-              />
-              <TextField
-                label="Alamat"
-                isRequired={true}
-                name="Alamat"
-                value={formData.Alamat}
-                onChange={handleInputChange}
-              />
-              <DetailData label="Dibuat Oleh" isi="Retno Widiastuti" />
+              <DetailData label="Kategori" isi={formData.Kategori} />
+              <DetailData label="Dibuat Oleh" isi={formData.Createby} />
             </div>
-            <TextArea
-              label="Deskripsi"
-              name="Deskripsi"
-              value={formData.Deskripsi || ""}
-              onChange={handleInputChange}
-            />
-            <div className="d-flex justify-content-between align-items-center">
-              <div className="flex-grow-1 m-2">
-                <Button
-                  classType="primary"
-                  type="submit"
-                  label="Simpan"
-                  width="100%"
-                  onClick={() => {
-                    onChangePage("read");
-                  }}
-                />
-              </div>
-              <div className="flex-grow-1 m-2">
-                <Button
-                  classType="danger"
-                  type="button"
-                  label="Batal"
-                  width="100%"
-                />
-              </div>
+            {renderContent()}
+            <div className="d-flex justify-content-between align-items-center mt-4">
+              <Button
+                classType="primary"
+                type="submit"
+                label="Simpan"
+                width="100%"
+                onClick={handleSave}
+              />
             </div>
           </div>
         </div>
       </main>
+
+      {loading && <Loading />}
     </div>
   );
 }

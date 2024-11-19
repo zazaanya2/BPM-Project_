@@ -49,6 +49,7 @@ const FileUpload = forwardRef(function FileUpload(
                   href={FILE_LINK + hasExisting}
                   className="text-decoration-none"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   [Unduh Berkas]
                 </a>
@@ -66,6 +67,7 @@ const FileUpload = forwardRef(function FileUpload(
                 href={FILE_LINK + hasExisting}
                 className="text-decoration-none"
                 target="_blank"
+                rel="noopener noreferrer"
               >
                 Unduh berkas
               </a>

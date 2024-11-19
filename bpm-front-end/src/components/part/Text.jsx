@@ -5,13 +5,14 @@ const Text = ({ isi, ukuran = '15px', alignText = 'left', warna = 'white', style
     <p 
       style={{
         fontFamily: 'Poppins, sans-serif', 
-        color: warna,  // Mengatur warna teks berdasarkan props
+        color: warna,  
         fontSize: ukuran, 
-        textAlign: alignText, // Mengatur perataan teks berdasarkan props
-        ...style // Untuk menggabungkan dengan style lain yang ditambahkan
+        textAlign: alignText, 
+        ...style 
       }}
+      dangerouslySetInnerHTML={{ __html: isi }}
     >
-      {isi}
+      
     </p>
   );
 };
