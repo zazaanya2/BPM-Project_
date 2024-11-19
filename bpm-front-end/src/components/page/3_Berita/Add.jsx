@@ -30,25 +30,18 @@ export default function Add({ onChangePage }) {
   const isiRef = useRef();
   const fotoRef = useRef();
 
-  const handleUploadChange = (files) => {
-    setImages((prevImages) => {
-      const uniqueFiles = files.filter(
-        (newFile) => !prevImages.some((prevFile) => prevFile.name === newFile.name)
-      );
-      return [...prevImages, ...uniqueFiles];
-    });
+  const handleUploadChange = (updatedFiles) => {
+    setImages(updatedFiles); 
   };
   
 
   const handleSubmit = async () => {
     // Validasi semua field
-     console.log(judulRef.current); // Pastikan ini bukan `undefined`.
-    const isJudulValid = judulRef.current.validate();
-    const isTanggalValid = tanggalRef.current.validate();
-    const isIsiValid = isiRef.current.validate();
-    const isFotoValid = fotoRef.current.validate();
-   
-    // Jika ada field yang tidak valid, fokuskan ke field tersebut dan hentikan submit
+    const isJudulValid = judulRef.current?.validate();
+    const isTanggalValid = tanggalRef.current?.validate();
+    const isIsiValid = isiRef.current?.validate();
+    const isFotoValid = fotoRef.current?.validate();
+  
     if (!isJudulValid) {
       judulRef.current?.focus();
       return;
@@ -65,49 +58,53 @@ export default function Add({ onChangePage }) {
       fotoRef.current?.focus();
       return;
     }
-
+  
     try {
+      // Upload foto
       const formData = new FormData();
       images.forEach((file) => formData.append("files", file));
-
+  
       const uploadResponse = await fetch(`${API_LINK}/api/MasterBerita/UploadFiles`, {
         method: "POST",
         body: formData,
       });
-
+  
       if (!uploadResponse.ok) {
         throw new Error("Gagal mengunggah gambar");
       }
-
+  
       const uploadedFileNames = await uploadResponse.json();
-
+  
+      // Data berita sesuai backend
       const beritaData = {
-        title: judulRef.current.value,
-        date: tanggalRef.current.value,
-        description: isiBerita,
-        author,
-        images: uploadedFileNames,
+        ber_judul: judulRef.current.value,
+        ber_tgl: tanggalRef.current.value,
+        ber_isi: isiBerita,
+        ber_status: 1, // Status default aktif
+        ber_created_by: author,
+        fotoList: uploadedFileNames, // Sesuai format backend
       };
-
-      console.log("data to sent: ", beritaData)
-
+  
+      // Kirim data berita ke backend
       const createResponse = await fetch(`${API_LINK}/api/MasterBerita/CreateBerita`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(beritaData),
       });
-
+  
       if (!createResponse.ok) {
         throw new Error("Gagal menambahkan berita");
       }
-
+  
       SweetAlert("Berhasil!", "Data berhasil ditambahkan.", "success", "OK").then(() =>
         onChangePage("read")
       );
     } catch (error) {
       console.error("Error:", error.message);
+      SweetAlert("Gagal!", error.message, "error", "OK");
     }
   };
+  
 
   const handleIsiChange = (e) => {
     setIsiBerita(e.target.value); // Update nilai state saat isi berita berubah

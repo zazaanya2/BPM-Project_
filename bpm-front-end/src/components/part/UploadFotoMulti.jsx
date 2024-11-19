@@ -47,7 +47,7 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
   
     if (validFiles.length === 0) return; // Tidak ada file valid
   
-    // Proses file baru
+    // Proses file baru menggunakan Promise
     const newPreviews = await Promise.all(
       validFiles.map((file) => {
         return new Promise((resolve, reject) => {
@@ -55,8 +55,8 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
           reader.onloadend = () => {
             resolve({
               type: "file",
-              value: file, // Gunakan file asli untuk pengiriman ke backend
-              preview: reader.result, // Untuk preview gambar
+              value: file,
+              preview: reader.result,
             });
           };
           reader.onerror = () => reject(new Error("File read error"));
@@ -65,27 +65,24 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
       })
     );
   
-    // Perbarui state secara konsisten
-    setPreviews((prev) => [...prev, ...newPreviews]);
-    onChange(newPreviews.map((item) => item.value)); // Kirim file mentah ke parent
+    // Pastikan pembaruan state konsisten
+    setPreviews((prev) => {
+      const updatedPreviews = [...prev, ...newPreviews];
+      onChange(updatedPreviews.map((item) => item.value)); // Panggil onChange di sini
+      return updatedPreviews;
+    });
+  
+    if (isRequired) setError(false); // Reset error jika file valid
   };
-  
-  
-
-  useEffect(() => {
-      console.log("Previews updated in UploadFotoMulti:", previews);
-      onChange(previews);
-  }, [previews]);
-
   
 
   const handleRemovePreview = (index) => {
     setPreviews((prev) => {
       const updatedPreviews = prev.filter((_, i) => i !== index);
-      onChange(updatedPreviews.map((item) => item.value)); // Update hanya file mentah
+      onChange(updatedPreviews.map((item) => item.value)); // Kirim seluruh daftar baru ke onChange
       return updatedPreviews;
     });
-  };
+  };  
   
 
   return (
@@ -112,7 +109,7 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
             {previews.map((item, index) => (
               <div key={index} className="preview-item">
                 <img
-                  src={item.type === "path" ? item.value : item.preview} 
+                  src={item.type === "path" ? item.value : item.preview}
                   alt={`Preview ${index + 1}`}
                   className="img-thumbnail"
                   style={{
