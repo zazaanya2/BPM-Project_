@@ -20,13 +20,10 @@ const TextArea = React.forwardRef(({
   // Sync initialValue with editorValue when initialValue changes
   useEffect(() => {
     setEditorValue(initialValue);
-    if (editorInstanceRef.current) {
-      editorInstanceRef.current.setContent(initialValue); // Update TinyMCE content directly
-    }
   }, [initialValue]);
 
-  const handleEditorChange = useCallback((content) => {
-    setEditorValue(content); // Update local state
+  const handleEditorChange = useCallback((content, editor) => {
+    setEditorValue(content); // Update local state with the editor content
     onChange && onChange({ target: { name, value: content } }); // Trigger onChange callback
     if (isRequired) {
       setError(!content.trim()); // Validate input if required

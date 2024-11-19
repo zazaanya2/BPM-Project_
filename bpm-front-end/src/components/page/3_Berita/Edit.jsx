@@ -9,7 +9,7 @@ import HeaderForm from "../../part/HeaderText";
 import Button from "../../part/Button";
 import DetailData from "../../part/DetailData";
 import { useIsMobile } from "../../util/useIsMobile";
-import { API_LINK, BERITAFOTO_LINK } from "../../util/Constants";  // Pastikan BERITAFOTO_LINK di-import
+import { API_LINK, BERITAFOTO_LINK } from "../../util/Constants";
 import { format } from "date-fns";
 
 export default function Edit({ onChangePage }) {
@@ -19,8 +19,8 @@ export default function Edit({ onChangePage }) {
     title: "",
     date: "",
     description: "",
-    author: "Retno Widiastuti", // Default author
-    images: [], // Array untuk gambar
+    author: "Retno Widiastuti",
+    images: [], // Hanya akan menyimpan path gambar
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -32,13 +32,13 @@ export default function Edit({ onChangePage }) {
     { label: "Edit Berita" },
   ];
 
-  console.log(location.state.idData)
+  console.log(location.state.idData);
   useEffect(() => {
     if (!location.state?.idData) return;
-  
+
     const editId = location.state.idData;
     setLoading(true);
-  
+
     const fetchData = async () => {
       try {
         const response = await fetch(`${API_LINK}/api/MasterBerita/GetDataBeritaById`, {
@@ -48,33 +48,20 @@ export default function Edit({ onChangePage }) {
           },
           body: JSON.stringify({ ber_id: editId }),
         });
-  
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-  
+
         const data = await response.json();
         console.log("Data API:", data);
-  
+
         if (data?.berita?.length > 0) {
           const berita = data.berita[0];
-  
-          const images = await Promise.all(
-            data.foto?.map(async (foto) => {
-              try {
-                const imageUrl = `${BERITAFOTO_LINK}${foto.foto_path}`;
-                const imageBlob = await fetch(imageUrl).then(res => {
-                  if (!res.ok) throw new Error(`Failed to fetch image: ${res.status}`);
-                  return res.blob();
-                });
-                return new File([imageBlob], foto.foto_path, { type: imageBlob.type });
-              } catch (error) {
-                console.error("Error fetching image:", foto.foto_path, error);
-                return null;
-              }
-            }) || []
-          ).filter(Boolean);
-  
+
+          // Ambil hanya path gambar
+          const images = data.foto?.map((foto) => `${BERITAFOTO_LINK}${foto.foto_path}`) || [];
+
           setFormData({
             title: berita.ber_judul,
             date: format(new Date(berita.ber_tgl), "yyyy-MM-dd"),
@@ -92,13 +79,13 @@ export default function Edit({ onChangePage }) {
         setLoading(false);
       }
     };
-  
+
     fetchData();
   }, [location.state?.idData]);
-  
 
-  const handleSubmit = () => {
-    // Implement logic for form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Data yang akan dikirim:", formData);
   };
 
   return (
@@ -155,28 +142,19 @@ export default function Edit({ onChangePage }) {
                 }
               />
               <div className="row">
-                <UploadFoto
-                  label="Masukkan Foto"
-                  value={formData.images}  // Kirimkan gambar yang sudah ada
-                  onChange={(images) =>
-                    setFormData({ ...formData, images: images })
-                  }
-                  initialImages={formData.images}  // Kirim gambar yang sudah ada sebagai preview
-                />
+              <UploadFoto
+                label="Masukkan Foto"
+                initialImages={formData.images} // Contoh data awal: [{ type: "path", value: "url/to/image.jpg" }]
+                onChange={(updatedImages) => setFormData({ ...formData, images: updatedImages })}
+              />
+
               </div>
-              <div className="d-flex justify-content-between align-items-center">
+              <div className="d-flex justify-content-between align-items-center mt-3">
                 <Button
                   classType="primary"
                   type="submit"
                   label="Simpan"
                   width="100%"
-                />
-                <Button
-                  classType="danger"
-                  type="button"
-                  label="Batal"
-                  width="100%"
-                  onClick={() => onChangePage("read")}
                 />
               </div>
             </form>

@@ -77,7 +77,7 @@ export default function Index({ onChangePage }) {
         }} />
 
         <img src={Orang} alt="Orang" style={{
-          position: 'absolute', bottom: '-30px', left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '33vw', minWidth: '380px', zIndex: 2
+          position: 'absolute', bottom: '-2rem', left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '33vw', minWidth: isMobile?'50%':'37%', zIndex: 2
         }} />
 
         <div style={{

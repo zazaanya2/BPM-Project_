@@ -21,6 +21,7 @@ export default function Add({ onChangePage }) {
   const isMobile = useIsMobile();
 
   const [images, setImages] = useState([]);
+  const [isiBerita, setIsiBerita] = useState("");
   const author = "Retno Widiastuti";
 
   // Refs untuk input
@@ -29,14 +30,15 @@ export default function Add({ onChangePage }) {
   const isiRef = useRef();
   const fotoRef = useRef();
 
-  const handleUploadChange = (file) => {
+  const handleUploadChange = (files) => {
     setImages((prevImages) => {
-      const uniqueFiles = file.filter(
+      const uniqueFiles = files.filter(
         (newFile) => !prevImages.some((prevFile) => prevFile.name === newFile.name)
       );
       return [...prevImages, ...uniqueFiles];
     });
   };
+  
 
   const handleSubmit = async () => {
     // Validasi semua field
@@ -82,10 +84,12 @@ export default function Add({ onChangePage }) {
       const beritaData = {
         title: judulRef.current.value,
         date: tanggalRef.current.value,
-        description: isiRef.current.value,
+        description: isiBerita,
         author,
         images: uploadedFileNames,
       };
+
+      console.log("data to sent: ", beritaData)
 
       const createResponse = await fetch(`${API_LINK}/api/MasterBerita/CreateBerita`, {
         method: "POST",
@@ -104,6 +108,11 @@ export default function Add({ onChangePage }) {
       console.error("Error:", error.message);
     }
   };
+
+  const handleIsiChange = (e) => {
+    setIsiBerita(e.target.value); // Update nilai state saat isi berita berubah
+  };
+
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -134,8 +143,9 @@ export default function Add({ onChangePage }) {
             <TextArea
               ref={isiRef}
               label="Isi Berita"
+              value={isiBerita} 
+              onChange={handleIsiChange} 
               isRequired={true}
-              initialValue="" 
             />
             <div className="row">
               <UploadFoto ref={fotoRef} label="Masukkan Foto" onChange={handleUploadChange} multiple isRequired={true} />

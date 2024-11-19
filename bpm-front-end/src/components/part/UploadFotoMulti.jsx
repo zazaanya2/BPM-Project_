@@ -5,13 +5,22 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
   ref
 ) {
   const [previews, setPreviews] = useState([]);
-  const [files, setFiles] = useState([]);
   const [error, setError] = useState(false);
   const inputRef = useRef();
 
+  useEffect(() => {
+    if (initialImages?.length > 0) {
+      const mappedImages = initialImages.map((img) => ({
+        type: "path",
+        value: img,
+      }));
+      setPreviews(mappedImages);
+    }
+  }, [initialImages]);
+
   useImperativeHandle(ref, () => ({
     validate() {
-      if (isRequired && files.length === 0) {
+      if (isRequired && previews.length === 0) {
         setError(true);
         return false;
       }
@@ -20,60 +29,64 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
     },
     reset() {
       setPreviews([]);
-      setFiles([]);
       setError(false);
-      onChange([]); // Inform parent about reset
+      onChange([]);
     },
     focus() {
       inputRef.current?.focus();
     },
   }));
 
-  // Handle initial images (fetch from database)
-  useEffect(() => {
-    if (initialImages && initialImages.length > 0) {
-      const initialPreviews = initialImages.map((image) => {
-        const imageUrl = `${BERITAFOTO_LINK}${image}`; // Path gambar
-        return {
-          preview: imageUrl, // Menyimpan URL gambar untuk preview
-          file: new File([], image, { type: 'image/jpeg' }), // Anda bisa mengganti tipe gambar sesuai dengan format
-        };
-      });
-      setPreviews(initialPreviews.map(item => item.preview));
-      setFiles(initialPreviews.map(item => item.file));
-    }
-  }, [initialImages]);
+  const handleFileChange = async (event) => {
+    const selectedFiles = Array.from(event.target.files);
+  
+    // Filter hanya file bertipe image
+    const validFiles = selectedFiles.filter((file) =>
+      file.type.startsWith("image/")
+    );
+  
+    if (validFiles.length === 0) return; // Tidak ada file valid
+  
+    // Proses file baru
+    const newPreviews = await Promise.all(
+      validFiles.map((file) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            resolve({
+              type: "file",
+              value: file, // Gunakan file asli untuk pengiriman ke backend
+              preview: reader.result, // Untuk preview gambar
+            });
+          };
+          reader.onerror = () => reject(new Error("File read error"));
+          reader.readAsDataURL(file);
+        });
+      })
+    );
+  
+    // Perbarui state secara konsisten
+    setPreviews((prev) => [...prev, ...newPreviews]);
+    onChange(newPreviews.map((item) => item.value)); // Kirim file mentah ke parent
+  };
+  
   
 
-  const handleFileChange = (event) => {
-    const selectedFiles = Array.from(event.target.files);
-    const previewUrls = [];
+  useEffect(() => {
+      console.log("Previews updated in UploadFotoMulti:", previews);
+      onChange(previews);
+  }, [previews]);
 
-    selectedFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        previewUrls.push(reader.result);
-
-        if (previewUrls.length === selectedFiles.length) {
-          setPreviews((prev) => [...prev, ...previewUrls]);
-          setFiles((prev) => [...prev, ...selectedFiles]);
-          onChange([...files, ...selectedFiles]);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-
-    if (isRequired) setError(false); // Reset error state when a file is selected
-  };
+  
 
   const handleRemovePreview = (index) => {
-    setPreviews((prev) => prev.filter((_, i) => i !== index));
-    setFiles((prev) => {
-      const updatedFiles = prev.filter((_, i) => i !== index);
-      onChange(updatedFiles);
-      return updatedFiles;
+    setPreviews((prev) => {
+      const updatedPreviews = prev.filter((_, i) => i !== index);
+      onChange(updatedPreviews.map((item) => item.value)); // Update hanya file mentah
+      return updatedPreviews;
     });
   };
+  
 
   return (
     <div className="mb-3">
@@ -85,7 +98,9 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
       )}
 
       <div
-        className={`preview-container form-control ms-0 m-3 p-3 ${error ? "border-danger" : ""}`}
+        className={`preview-container form-control ms-0 m-3 p-3 ${
+          error ? "border-danger" : ""
+        }`}
         style={{
           border: "2px dashed #ddd",
           borderRadius: "8px",
@@ -94,10 +109,10 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
       >
         {previews.length > 0 ? (
           <div className="preview-grid">
-            {previews.map((preview, index) => (
+            {previews.map((item, index) => (
               <div key={index} className="preview-item">
                 <img
-                  src={preview}
+                  src={item.type === "path" ? item.value : item.preview} 
                   alt={`Preview ${index + 1}`}
                   className="img-thumbnail"
                   style={{

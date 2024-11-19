@@ -5,28 +5,25 @@ export default function NavItem() {
     const [openDropdown, setOpenDropdown] = useState(null);
     const [openSubmenu, setOpenSubmenu] = useState(null);
 
-    // Fungsi untuk toggle dropdown menu
     const toggleDropdown = (menu) => {
         if (openDropdown === menu) {
-            setOpenDropdown(null);  // Reset dropdown jika menu yang sama di-klik
-            setOpenSubmenu(null);    // Reset submenu ketika dropdown ditutup
+            setOpenDropdown(null);  
+            setOpenSubmenu(null);    
         } else {
-            setOpenDropdown(menu);  // Buka dropdown untuk menu yang dipilih
-            setOpenSubmenu(null);    // Reset submenu saat dropdown baru dibuka
+            setOpenDropdown(menu);  
+            setOpenSubmenu(null);   
         }
     };
 
-    // Fungsi untuk toggle submenu
     const toggleSubmenu = (submenu) => {
         setOpenSubmenu(openSubmenu === submenu ? null : submenu);  // Toggle submenu
     };
 
 
-
     return (
         <>
             {/* Beranda */}
-            <li className="nav-item" style={{ marginRight: '10px' }}>
+            <li className="nav-item">
                 <Link className="nav-link" aria-current="page" to="/">
                     Beranda
                 </Link>
