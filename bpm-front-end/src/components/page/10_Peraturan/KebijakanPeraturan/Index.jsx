@@ -80,7 +80,7 @@ export default function Read({ onChangePage }) {
                 No: indexOfFirstData + index + 1,
                 JudulDokumen: item.JudulDokumen,
               }))}
-              actions={["Detail", "Edit", "UpdateHistory"]}
+              actions={["Detail", "Edit", "Delete", "UpdateHistory"]}
               onEdit={handleEdit}
             />
 
