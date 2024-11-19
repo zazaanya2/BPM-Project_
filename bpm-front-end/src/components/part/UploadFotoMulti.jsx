@@ -39,14 +39,14 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
 
   const handleFileChange = async (event) => {
     const selectedFiles = Array.from(event.target.files);
-  
+
     // Filter hanya file bertipe image
     const validFiles = selectedFiles.filter((file) =>
       file.type.startsWith("image/")
     );
-  
+
     if (validFiles.length === 0) return; // Tidak ada file valid
-  
+
     // Proses file baru menggunakan Promise
     const newPreviews = await Promise.all(
       validFiles.map((file) => {
@@ -59,31 +59,32 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
               preview: reader.result,
             });
           };
-          reader.onerror = () => reject(new Error("File read error"));
+          reader.onerror = () => {
+            console.error("File read error");
+            reject(new Error("File read error"));
+          };
           reader.readAsDataURL(file);
         });
       })
     );
-  
-    // Pastikan pembaruan state konsisten
+
+    // Perbarui state secara konsisten
     setPreviews((prev) => {
-      const updatedPreviews = [...prev, ...newPreviews];
-      onChange(updatedPreviews.map((item) => item.value)); // Panggil onChange di sini
+      const updatedPreviews = [...prev, ...newPreviews]; // Gabungkan file lama dan baru
+      onChange(updatedPreviews.map((item) => item.type === "path" ? item.value : item.preview));
       return updatedPreviews;
     });
-  
+
     if (isRequired) setError(false); // Reset error jika file valid
   };
-  
 
   const handleRemovePreview = (index) => {
     setPreviews((prev) => {
       const updatedPreviews = prev.filter((_, i) => i !== index);
-      onChange(updatedPreviews.map((item) => item.value)); // Kirim seluruh daftar baru ke onChange
+      onChange(updatedPreviews.map((item) => item.value));
       return updatedPreviews;
     });
-  };  
-  
+  };
 
   return (
     <div className="mb-3">
@@ -95,9 +96,7 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
       )}
 
       <div
-        className={`preview-container form-control ms-0 m-3 p-3 ${
-          error ? "border-danger" : ""
-        }`}
+        className={`preview-container form-control ms-0 m-3 p-3 ${error ? "border-danger" : ""}`}
         style={{
           border: "2px dashed #ddd",
           borderRadius: "8px",
