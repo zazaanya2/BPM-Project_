@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { FILE_LINK } from "../util/Constants";
+import { TENTANGFILE_LINK } from "../util/Constants";
 
 const UploadFoto = ({ id, label = "", isRequired = false, errorMsg = "", onChange, hasExisting }) => {
   const [preview, setPreview] = useState(null);
-
+  
   // useEffect(() => {
   //   // Jika hasExisting ada, tampilkan gambar yang ada sebagai preview
   //   if (hasExisting) {
@@ -74,7 +74,7 @@ const UploadFoto = ({ id, label = "", isRequired = false, errorMsg = "", onChang
           <br />
           Gambar saat ini:{" "}
           <a
-            href={FILE_LINK + hasExisting}
+            href={TENTANGFILE_LINK + hasExisting}
             className="text-decoration-none"
             target="_blank"
             rel="noopener noreferrer"

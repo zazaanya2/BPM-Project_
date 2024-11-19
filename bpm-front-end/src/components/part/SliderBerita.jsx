@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import CardBerita from './CardBerita';
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import { useNavigate } from 'react-router-dom';
+import { BERITAFOTO_LINK } from '../util/Constants';
 
 const SliderBerita = ({ beritaItems }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -25,8 +26,8 @@ const SliderBerita = ({ beritaItems }) => {
     backgroundColor: "#2654A1",
     color:"white",
     fontSize: "20px",
-    padding: "15px",
-    margin: "10px",
+    padding: "5px",
+    margin: "5px",
     borderRadius: "100%",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)",
     transition: "all 0.3s ease",
@@ -36,7 +37,7 @@ const SliderBerita = ({ beritaItems }) => {
   };
 
   const iconStyle = {
-    fontSize: "20px", // Ukuran simbol
+    fontSize: "23px", // Ukuran simbol
     fontWeight: "bold", // Menambah ketebalan simbol
     transform: "scale(1.5)", // Membesarkan simbol
   };
@@ -83,7 +84,7 @@ const SliderBerita = ({ beritaItems }) => {
                 author={item.author}
                 date={item.date}
                 description={item.description}
-                image={item.images[0]} // Only the first image is used
+                image={BERITAFOTO_LINK+item.images[0]} // Only the first image is used
                 size="small"
                 onClick={() => handleCardClick(item)}
               />
