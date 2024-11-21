@@ -5,8 +5,8 @@ import PageTitleNav from '../../part/PageTitleNav';
 import Text from '../../part/Text';
 import SliderBerita from '../../part/SliderBerita';
 import { API_LINK, BERITAFOTO_LINK } from '../../util/Constants';
-import Loading from '../../part/Loading'; // Import loading component
-import { format } from "date-fns"; // Import format from date-fns
+import Loading from '../../part/Loading'; 
+import { format } from "date-fns"; 
 import { id } from "date-fns/locale";
 import { useIsMobile } from '../../util/useIsMobile';
 
@@ -32,7 +32,6 @@ const LihatBerita = ({ onChangePage }) => {
 
         const result = await response.json();
 
-        // Mengelompokkan data berita berdasarkan ber_id, jika ada lebih dari 1 foto
         const groupedBerita = result.reduce((acc, item) => {
           if (!acc[item.ber_id]) {
             acc[item.ber_id] = {
@@ -62,7 +61,7 @@ const LihatBerita = ({ onChangePage }) => {
     fetchBerita();
   }, []);
 
-  // Data berita yang sedang dilihat
+
   const {
     title = 'Judul Tidak Tersedia',
     author = 'Penulis Tidak Diketahui',
@@ -71,7 +70,6 @@ const LihatBerita = ({ onChangePage }) => {
     images = []
   } = location.state || {};
 
-  // Filter beritaData agar tidak menampilkan berita yang sedang dilihat
   const filteredBeritaData = beritaData.filter(berita => berita.title !== title);
 
   if (loading) return <Loading />;
@@ -163,7 +161,7 @@ const LihatBerita = ({ onChangePage }) => {
           lebar="310px"
           marginBottom="30px"
         />
-        {/* Kirim data yang sudah difilter ke SliderBerita */}
+        
         <SliderBerita beritaItems={filteredBeritaData} />
       </div>
     </div>

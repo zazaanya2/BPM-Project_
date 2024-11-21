@@ -14,15 +14,15 @@ const TextField = forwardRef(function TextField(
   },
   ref
 ) {
-  const [value, setValue] = useState(""); // State untuk nilai input
-  const [error, setError] = useState(false); // State untuk validasi error
-  const inputRef = useRef(null); // Referensi ke elemen input
+  const [value, setValue] = useState(""); 
+  const [error, setError] = useState(false); 
+  const inputRef = useRef(null); 
 
-  // Fungsi reset untuk mengatur nilai kembali ke kondisi awal
+  
   useImperativeHandle(ref, () => ({
     reset() {
-      setValue(""); // Reset nilai input ke kosong
-      setError(false); // Reset error state
+      setValue("");
+      setError(false); 
     },
     validate() {
       if (isRequired && !value.trim()) {
@@ -32,22 +32,24 @@ const TextField = forwardRef(function TextField(
       setError(false);
       return true;
     },
+    get value() {
+      return value;
+    },
     focus() {
-      inputRef.current.focus(); // Gunakan ref untuk memfokuskan elemen input
+      inputRef.current.focus(); 
     },
     value,
   }));
+  
 
-  // Tentukan kelas ukuran input berdasarkan prop `size`
   const sizeClass = size === "lg" ? "form-control-lg" : size === "sm" ? "form-control-sm" : "";
 
-  // Fungsi untuk menangani perubahan input dan membatasi panjang karakter
   const handleChange = (e) => {
     const newValue = e.target.value;
     if (maxChar && newValue.length <= maxChar) {
-      setValue(newValue); // Set nilai hanya jika panjangnya sesuai dengan maxChar
+      setValue(newValue);
     } else if (!maxChar) {
-      setValue(newValue); // Jika maxChar tidak ada, biarkan input bebas
+      setValue(newValue); 
     }
     if (isRequired) setError(!newValue.trim());
   };
@@ -61,7 +63,7 @@ const TextField = forwardRef(function TextField(
         </label>
       )}
       <input
-        ref={inputRef} // Hubungkan ref ke elemen input
+        ref={inputRef} 
         id={id}
         name={id}
         type="text"

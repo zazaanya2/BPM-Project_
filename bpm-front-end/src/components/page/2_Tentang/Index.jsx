@@ -24,7 +24,6 @@ export default function Index({ onChangePage }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Fetching data...");
         const response = await fetch(API_LINK + '/api/MasterTentang/GetDataTentang', {
           method: 'POST',
           headers: {
@@ -35,12 +34,10 @@ export default function Index({ onChangePage }) {
           }),
         });
 
-        console.log("Response status:", response.status);
         if (!response.ok) throw new Error("Network response was not ok");
 
         const result = await response.json();
-        console.log("Fetched data:", result);
-        setData(result); // Store fetched data here
+        setData(result); 
       } catch (err) {
         console.error("Fetch error:", err);
         setError("Gagal mengambil data");

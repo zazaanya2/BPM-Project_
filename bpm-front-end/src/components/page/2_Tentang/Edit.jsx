@@ -102,7 +102,7 @@ export default function Edit({ onChangePage }) {
     };
     
       
-    const handleSave = async () => {
+    const handleSubmit = async () => {
         const currentTimestamp = new Date().toISOString();
         setLoading(true);
     
@@ -168,14 +168,25 @@ export default function Edit({ onChangePage }) {
                             <DetailData label="Dibuat Oleh" isi={formData.Createby}/>
                         </div>
                         {renderContent()}
-                        <div className="d-flex justify-content-between align-items-center mt-4">
-                            <Button 
-                                classType="primary" 
-                                type="submit" 
-                                label="Simpan" 
-                                width="100%" 
-                                onClick={handleSave}
-                            />
+                        <div className="d-flex justify-content-between align-items-center">
+                            <div className="flex-grow-1 m-2"> 
+                                <Button
+                                classType="primary"
+                                type="button"
+                                label="Simpan"
+                                width="100%"
+                                onClick={handleSubmit}
+                                />
+                            </div>
+                            <div className="flex-grow-1 m-2">
+                                <Button
+                                classType="danger"
+                                type="button"
+                                label="Batal"
+                                width="100%"
+                                onClick={() => onChangePage("read")}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

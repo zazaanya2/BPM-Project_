@@ -8,6 +8,7 @@ import Loading from "../../part/Loading";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { useIsMobile } from "../../util/useIsMobile";
+import SweetAlert from "../../util/SweetAlert";
 
 export default function Read({ onChangePage }) {
     const [pageSize] = useState(10);
@@ -31,7 +32,6 @@ export default function Read({ onChangePage }) {
 
                 const result = await response.json();
 
-                // Mengelompokkan data berita berdasarkan ber_id, jika ada lebih dari 1 foto
                 const groupedBerita = result.reduce((acc, item) => {
                     if (!acc[item.ber_id]) {
                         acc[item.ber_id] = {
@@ -50,7 +50,7 @@ export default function Read({ onChangePage }) {
                     return acc;
                 }, {});
 
-                setData(Object.values(groupedBerita)); // Set data here
+                setData(Object.values(groupedBerita));
             } catch (err) {
                 console.error('Fetch error:', err);
                 setError('Gagal mengambil data');
@@ -76,6 +76,40 @@ export default function Read({ onChangePage }) {
         { label: "Kelola Berita" },
     ];
 
+    const handleDelete = async (id) => {
+        const confirm = await SweetAlert(
+            "Konfirmasi",
+            "Apakah Anda yakin ingin menghapus berita ini?",
+            "warning",
+            "Ya, Hapus",
+            null,
+            "",
+            true 
+        );
+    
+        if (confirm) {
+            try {
+                const response = await fetch(`${API_LINK}/api/MasterBerita/DeleteBerita`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ ber_id: id }),
+                });
+    
+                if (!response.ok) throw new Error("Gagal menghapus berita");
+    
+                const result = await response.text();
+                SweetAlert("Berhasil", result, "success");
+    
+                setData((prevData) => prevData.filter((item) => item.id !== id));
+            } catch (err) {
+                console.error(err);
+                SweetAlert("Gagal", "Terjadi kesalahan saat menghapus berita", "error");
+            }
+        }
+    };
+    
 
     if (loading) return <Loading />;
     if (error) return <p>{error}</p>;
@@ -134,10 +168,9 @@ export default function Read({ onChangePage }) {
                                 
                             } ))}
                             actions={["Detail", "Edit","Delete"]}
-                            onEdit={(item) => {
-                                console.log("State dari read", item);  
-                                onChangePage("edit", { state: { idData: item } })
-                            }}
+                            onEdit={(item) => { onChangePage("edit", { state: { idData: item } })}}
+                            onDetail={(item) => { onChangePage("detail", { state: { idData: item } })}}
+                            onDelete={(item) => handleDelete(item)}
                         />
                         <Paging
                             pageSize={pageSize}

@@ -1,4 +1,5 @@
 import { useState, forwardRef, useImperativeHandle, useRef, useEffect } from "react";
+import { BERITAFOTO_LINK } from "../util/Constants";
 
 const UploadFotoMulti = forwardRef(function UploadFotoMulti(
   { id, label = "", isRequired = false, errorMsg = "Field ini wajib diisi.", onChange, initialImages = [] },
@@ -13,6 +14,7 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
       const mappedImages = initialImages.map((img) => ({
         type: "path",
         value: img,
+        preview: BERITAFOTO_LINK+img,
       }));
       setPreviews(mappedImages);
     }
@@ -39,15 +41,13 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
 
   const handleFileChange = async (event) => {
     const selectedFiles = Array.from(event.target.files);
-
-    // Filter hanya file bertipe image
+  
     const validFiles = selectedFiles.filter((file) =>
       file.type.startsWith("image/")
     );
-
-    if (validFiles.length === 0) return; // Tidak ada file valid
-
-    // Proses file baru menggunakan Promise
+  
+    if (validFiles.length === 0) return;
+  
     const newPreviews = await Promise.all(
       validFiles.map((file) => {
         return new Promise((resolve, reject) => {
@@ -59,24 +59,22 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
               preview: reader.result,
             });
           };
-          reader.onerror = () => {
-            console.error("File read error");
-            reject(new Error("File read error"));
-          };
+          reader.onerror = () => reject(new Error("File read error"));
           reader.readAsDataURL(file);
         });
       })
     );
-
-    // Perbarui state secara konsisten
+  
+    
     setPreviews((prev) => {
-      const updatedPreviews = [...prev, ...newPreviews]; // Gabungkan file lama dan baru
-      onChange(updatedPreviews.map((item) => item.type === "path" ? item.value : item.preview));
+      const updatedPreviews = [...prev, ...newPreviews];
+      onChange(updatedPreviews.map((item) => item.value)); 
       return updatedPreviews;
     });
-
-    if (isRequired) setError(false); // Reset error jika file valid
+  
+    if (isRequired) setError(false); 
   };
+  
 
   const handleRemovePreview = (index) => {
     setPreviews((prev) => {
@@ -85,6 +83,9 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
       return updatedPreviews;
     });
   };
+  
+  
+  
 
   return (
     <div className="mb-3">
@@ -96,7 +97,9 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
       )}
 
       <div
-        className={`preview-container form-control ms-0 m-3 p-3 ${error ? "border-danger" : ""}`}
+        className={`preview-container form-control ms-0 m-3 p-3 ${
+          error ? "border-danger" : ""
+        }`}
         style={{
           border: "2px dashed #ddd",
           borderRadius: "8px",
@@ -108,7 +111,7 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
             {previews.map((item, index) => (
               <div key={index} className="preview-item">
                 <img
-                  src={item.type === "path" ? item.value : item.preview}
+                  src={item.preview}
                   alt={`Preview ${index + 1}`}
                   className="img-thumbnail"
                   style={{
@@ -120,6 +123,7 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
                 <button
                   className="remove-btn"
                   onClick={() => handleRemovePreview(index)}
+                  type="button"
                 >
                   &times;
                 </button>

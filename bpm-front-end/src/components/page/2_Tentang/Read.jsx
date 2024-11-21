@@ -17,8 +17,6 @@ export default function Read({ onChangePage }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log('Fetching data with:', { pageCurrent, pageSize }); // Log request data
-        
                 const response = await fetch(API_LINK +'/api/MasterTentang/GetDataTentang', {
                     method: 'POST',
                     headers: {
@@ -30,17 +28,15 @@ export default function Read({ onChangePage }) {
                     }),
                 });
         
-                console.log('Response status:', response.status); // Log response status
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
         
                 const result = await response.json();
-                console.log('Fetched data:', result); // Log the result
-                setData(result); // Set the fetched data
+                setData(result);
                 setLoading(false);
             } catch (err) {
-                console.error('Fetch error:', err); // Log errors
+                console.error('Fetch error:', err);
                 setError("Gagal mengambil data");
                 setLoading(false);
             }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { format } from "date-fns"; // Import format from date-fns
-import { id } from "date-fns/locale"; // Import Indonesian locale
+import { format } from "date-fns"; 
+import { id } from "date-fns/locale"; 
 import PageTitleNav from "../../part/PageTitleNav"; 
 import HeaderForm from "../../part/HeaderText"; 
 import DetailData from "../../part/DetailData"; 
@@ -43,8 +43,11 @@ export default function Detail({ onChangePage }) {
                         Isi: data[0].ten_isi,
                         Createby: data[0].ten_created_by,
                         CreateDate: format(new Date(data[0].ten_created_date), 'EEEE, dd MMMM yyyy', { locale: id }),
-                        Modifby: data[0].ten_modif_by,
-                        ModifDate: format(new Date(data[0].ten_modif_date), 'EEEE, dd MMMM yyyy', { locale: id }),
+                        Modifby: data[0].ten_modif_by?data[0].ten_modif_by:"-",
+                        ModifDate: data[0].ten_modif_date
+                                    ? format(new Date(data[0].ten_modif_date), 'EEEE, dd MMMM yyyy', { locale: id })
+                                    : "-",
+
                     });
                 } else {
                     console.error("Data not found or format mismatch.");
@@ -61,7 +64,6 @@ export default function Detail({ onChangePage }) {
         return <Loading />;
     }
 
-    // Render photo or file based on the content type
     const renderContent = () => {
         const id = location.state?.idData;
         const baseURL = TENTANGFILE_LINK;

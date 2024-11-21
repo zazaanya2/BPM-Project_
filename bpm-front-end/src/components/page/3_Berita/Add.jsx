@@ -6,7 +6,6 @@ import DatePicker from "../../part/DatePicker";
 import UploadFoto from "../../part/UploadFotoMulti";
 import HeaderForm from "../../part/HeaderText";
 import Button from "../../part/Button";
-import DetailData from "../../part/DetailData";
 import { API_LINK } from "../../util/Constants";
 import SweetAlert from "../../util/SweetAlert";
 import { useIsMobile } from "../../util/useIsMobile";
@@ -22,10 +21,10 @@ export default function Add({ onChangePage }) {
 
   const [images, setImages] = useState([]);
   const [isiBerita, setIsiBerita] = useState("");
-  const author = "Retno Widiastuti";
 
   // Refs untuk input
   const judulRef = useRef();
+  const penulisRef = useRef();
   const tanggalRef = useRef();
   const isiRef = useRef();
   const fotoRef = useRef();
@@ -36,14 +35,18 @@ export default function Add({ onChangePage }) {
   
 
   const handleSubmit = async () => {
-    // Validasi semua field
     const isJudulValid = judulRef.current?.validate();
+    const isPenulisValid = penulisRef.current?.validate();
     const isTanggalValid = tanggalRef.current?.validate();
     const isIsiValid = isiRef.current?.validate();
     const isFotoValid = fotoRef.current?.validate();
   
     if (!isJudulValid) {
       judulRef.current?.focus();
+      return;
+    }
+    if (!isPenulisValid) {
+      penulisRef.current?.focus();
       return;
     }
     if (!isTanggalValid) {
@@ -75,17 +78,15 @@ export default function Add({ onChangePage }) {
   
       const uploadedFileNames = await uploadResponse.json();
   
-      // Data berita sesuai backend
       const beritaData = {
         ber_judul: judulRef.current.value,
         ber_tgl: tanggalRef.current.value,
         ber_isi: isiBerita,
-        ber_status: 1, // Status default aktif
-        ber_created_by: author,
-        fotoList: uploadedFileNames, // Sesuai format backend
+        ber_status: 1, 
+        ber_created_by: penulisRef.current.value,
+        fotoList: uploadedFileNames, 
       };
   
-      // Kirim data berita ke backend
       const createResponse = await fetch(`${API_LINK}/api/MasterBerita/CreateBerita`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -107,7 +108,7 @@ export default function Add({ onChangePage }) {
   
 
   const handleIsiChange = (e) => {
-    setIsiBerita(e.target.value); // Update nilai state saat isi berita berubah
+    setIsiBerita(e.target.value); 
   };
 
 
@@ -127,12 +128,17 @@ export default function Add({ onChangePage }) {
                   label="Judul Berita"
                   isRequired={true}
                 />
-                <DetailData label="Penulis" isi={author} />
+                <TextField
+                  ref={penulisRef}
+                  label="Penulis"
+                  isRequired={true}
+                />
+                
               </div>
               <div className="col-lg-6 col-md-6">
                 <DatePicker
                   ref={tanggalRef}
-                  label="Tanggal"
+                  label="Tanggal Berita"
                   isRequired={true}
                 />
               </div>

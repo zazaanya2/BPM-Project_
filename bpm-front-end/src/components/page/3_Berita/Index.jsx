@@ -23,7 +23,6 @@ export default function Index({ onChangePage }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Fetching data...");
         const response = await fetch(`${API_LINK}/api/MasterBerita/GetDataBerita`, {
           method: 'POST',
           headers: {
@@ -32,15 +31,10 @@ export default function Index({ onChangePage }) {
           body: JSON.stringify({ /* Request body jika diperlukan */ }),
         });
 
-        console.log("Response status:", response.status);
         if (!response.ok) throw new Error("Gagal mengambil data");
 
         const result = await response.json();
-        console.log("Fetched data:", result);
-        
-        // Mengelompokkan berita berdasarkan ber_id
         const groupedBerita = result.reduce((acc, item) => {
-          // Cek apakah berita sudah ada dalam accumulator berdasarkan ber_id
           if (!acc[item.ber_id]) {
             acc[item.ber_id] = {
               id: item.ber_id,
@@ -51,14 +45,14 @@ export default function Index({ onChangePage }) {
               images: [],
             };
           }
-          // Menambahkan foto ke berita yang sesuai
+          
           if (item.dbr_foto) {
             acc[item.ber_id].images.push(item.dbr_foto);
           }
           return acc;
         }, {});
 
-        // Mengubah object menjadi array
+        
         const formattedData = Object.values(groupedBerita);
         setBeritaData(formattedData);
       } catch (err) {
