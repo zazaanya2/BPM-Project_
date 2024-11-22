@@ -6,26 +6,30 @@ import HeaderForm from "../../part/HeaderText";
 import Button from "../../part/Button";
 import DetailData from "../../part/DetailData";
 import { API_LINK } from "../../util/Constants";
-import Loading from "../../part/Loading"; 
-import FileUpload from '../../part/FileUpload';
-import UploadFoto from '../../part/UploadFoto';
+import Loading from "../../part/Loading";
+import FileUpload from "../../part/FileUpload";
+import UploadFoto from "../../part/UploadFoto";
 import SweetAlert from "../../util/SweetAlert";
 import uploadFile from "../../util/UploadFile";
+import { useIsMobile } from "../../util/useIsMobile";
 
 export default function Edit({ onChangePage }) {
     const location = useLocation();
+    const isMobile = useIsMobile();
 
-    const [formData, setFormData] = useState({
-        Kategori: "",
-        Isi: "",
-        Createby: "",
-    });
+  const [formData, setFormData] = useState({
+    Kategori: "",
+    Isi: "",
+    Createby: "",
+  });
 
     const [loading, setLoading] = useState(false);
     const [imagePath, setImagePath] = useState(""); 
     const [selectedFile, setSelectedFile] = useState(null); 
 
+
     useEffect(() => {
+        
         if (location.state?.idData) {
             const editId = location.state.idData;
             setLoading(true);
@@ -51,14 +55,14 @@ export default function Edit({ onChangePage }) {
         }
     }, [location.state?.idData]);
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-    const handleFileChange = (file) => {
-        setSelectedFile(file); // Store file in state
-    };
+  const handleFileChange = (file) => {
+    setSelectedFile(file); // Store file in state
+  };
 
     const renderContent = () => {
         const id = location.state?.idData;
@@ -89,7 +93,7 @@ export default function Edit({ onChangePage }) {
             <TextArea
               label="Isi"
               name="Isi"
-              value={formData.Isi}
+              initialValue={formData.Isi}
               onChange={handleInputChange}
               isRequired="true"
             />
@@ -145,7 +149,7 @@ export default function Edit({ onChangePage }) {
         <div className="d-flex flex-column min-vh-100">
             <main className="flex-grow-1 p-3" style={{ marginTop: '80px' }}>
                 <div className="d-flex flex-column">
-                    <div className="m-3 mb-0">
+                    <div className={isMobile?"m-0":"m-3"}>
                         <PageTitleNav 
                             title="Edit Tentang"
                             breadcrumbs={[ 
@@ -157,7 +161,7 @@ export default function Edit({ onChangePage }) {
                         />
                     </div>
                     
-                    <div className="shadow p-5 m-5 mt-4 bg-white rounded">
+                    <div className={isMobile?"shadow p-3 m-2 mt-0 bg-white rounded":"shadow p-5 m-5 mt-0 bg-white rounded"}>
                         <HeaderForm label="Formulir Tentang"/>
                         <div className="row">
                             <DetailData label="Kategori" isi={formData.Kategori} />

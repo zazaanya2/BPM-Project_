@@ -1,23 +1,41 @@
-import React, { forwardRef } from "react";
-import PropTypes from "prop-types";
+import { forwardRef, useState } from "react";
+import { TENTANGFILE_LINK } from "../util/Constants";
 
+const FileUpload = forwardRef(function FileUpload(
+  {
+    formatFile = "",
+    label = "",
+    forInput = "",
+    isRequired = false,
+    isDisabled = false,
+    errorMessage,
+    hasExisting,
+    maxSizeFile = 10 * 1024 * 1024, // Default 10 MB
+    ...props
+  },
+  ref
+) {
+  const [fileError, setFileError] = useState(""); // Untuk menyimpan pesan error ukuran file
 
-const FileUpload = forwardRef(
-  (
-    {
-      formatFile = "",
-      label = "",
-      forInput = "",
-      isRequired = false,
-      isDisabled = false,
-      errorMessage = "",
-      hasExisting = "",
-      ...props
-    },
-    ref
-  ) => {
-    return (
-      <div>
+  // Fungsi untuk menangani perubahan file
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+
+    if (file) {
+      // Validasi ukuran file
+      if (file.size > maxSizeFile) {
+        setFileError(`Ukuran berkas tidak boleh lebih dari ${maxSizeFile / (1024 * 1024)} MB`);
+        // Mengosongkan file input agar file yang lebih besar tidak tetap dipilih
+        event.target.value = null; 
+      } else {
+        setFileError(""); // Reset error jika ukuran file valid
+      }
+    }
+  };
+
+  return (
+    <>
+      <div className="mb-3">
         <label htmlFor={forInput} className="form-label fw-bold">
           {label}
           {isRequired && <span className="text-danger"> *</span>}
@@ -38,16 +56,23 @@ const FileUpload = forwardRef(
               accept={formatFile}
               className="form-control"
               ref={ref}
+              onChange={handleFileChange}
               {...props}
             />
-            <sub>Maksimum ukuran berkas adalah 10 MB</sub>
-
+            {/* Menampilkan pesan error jika ukuran file lebih besar */}
+            {fileError && (
+              <span className="fw-normal text-danger">
+                <br />
+                {fileError}
+              </span>
+            )}
+            <sub>Maksimum ukuran berkas adalah {maxSizeFile / (1024 * 1024)} MB</sub>
             {hasExisting && (
               <sub>
                 <br />
                 Berkas saat ini:{" "}
                 <a
-                  href={hasExisting} // langsung gunakan `hasExisting` sebagai URL
+                  href={TENTANGFILE_LINK + hasExisting}
                   className="text-decoration-none"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -64,7 +89,7 @@ const FileUpload = forwardRef(
             <br />
             {hasExisting ? (
               <a
-                href={hasExisting} // gunakan `hasExisting` sebagai URL
+                href={TENTANGFILE_LINK + hasExisting}
                 className="text-decoration-none"
                 target="_blank"
                 rel="noopener noreferrer"
