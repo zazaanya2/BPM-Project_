@@ -5,38 +5,6 @@ import HeaderText from "./HeaderText";
 
 const CardBerita = ({ title, author, date, description, image, size = "large", onClick }) => {
   const isMobile = useIsMobile();
-  const [maxDescriptionLength, setMaxDescriptionLength] = useState(
-    size === "small" ? 140 : 280
-  );
-
-  const maxTitleLength = size === "small" ? 50 : 93; // Menentukan batasan panjang karakter judul
-
-  // Hook untuk mendeteksi perubahan ukuran layar
-  useEffect(() => {
-    const handleResize = () => {
-      const isMobile = window.innerWidth <= 768; // Threshold untuk mobile
-      setMaxDescriptionLength(isMobile ? 70 : size === "small" ? 140 : 280);
-    };
-
-    // Set nilai awal berdasarkan ukuran layar
-    handleResize();
-
-    // Tambahkan event listener untuk mendeteksi perubahan
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [size]);
-
-  const truncatedDescription =
-    description.length > maxDescriptionLength
-      ? description.slice(0, maxDescriptionLength) + "..."
-      : description;
-
-  const truncatedTitle =
-    title.length > maxTitleLength
-      ? title.slice(0, maxTitleLength) + "..."
-      : title;
 
   const cardStyle = {
     borderRadius: "15px",
@@ -44,13 +12,14 @@ const CardBerita = ({ title, author, date, description, image, size = "large", o
     marginBottom: "20px",
     maxWidth: "99%",
     padding: "20px",
+    paddingBottom: size === "small"? "5px": "20px",
     position: "relative",
     height: size === "small" ? "98%" : "100%",
   };
 
   const imgStyle = {
     width: "100%",
-    height: isMobile?size === "small" ? "120px" : "100%" : size === "small" ? "235px" : "100%",
+    height: isMobile?size === "small" ? "100%" : "100%" : size === "small" ? "100%" : "100%",
     objectFit: "cover",
     borderRadius: "15px",
   };
@@ -90,7 +59,7 @@ const CardBerita = ({ title, author, date, description, image, size = "large", o
           style={textContainerStyle}
         >
           <HeaderText
-            label={truncatedTitle} // Menampilkan judul yang telah dipotong
+            label={title} 
             ukuran="18px"
             warna="black"
             fontWeight="700"
@@ -106,7 +75,7 @@ const CardBerita = ({ title, author, date, description, image, size = "large", o
           <p
             className="card-text"
             style={{ fontSize: "14px", color: "#555" }}
-            dangerouslySetInnerHTML={{ __html: truncatedDescription }}
+            dangerouslySetInnerHTML={{ __html: description }}
           ></p>
 
           <div style={buttonStyle}>

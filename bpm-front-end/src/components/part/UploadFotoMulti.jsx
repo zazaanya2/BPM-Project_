@@ -1,21 +1,39 @@
-import { useState, forwardRef, useImperativeHandle, useRef, useEffect } from "react";
+import {
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useEffect,
+} from "react";
 import { BERITAFOTO_LINK } from "../util/Constants";
 
 const UploadFotoMulti = forwardRef(function UploadFotoMulti(
-  { id, label = "", isRequired = false, errorMsg = "Field ini wajib diisi.", onChange, initialImages = [] },
+  {
+    id,
+    label = "",
+    isRequired = false,
+    errorMsg = "Field ini wajib diisi.",
+    onChange,
+    initialImages = [],
+  },
   ref
 ) {
   const [previews, setPreviews] = useState([]);
   const [error, setError] = useState(false);
   const inputRef = useRef();
 
+  const isInitialImagesProcessed = useRef(false);
+
   useEffect(() => {
-    if (initialImages?.length > 0) {
+    if (initialImages?.length > 0 && !isInitialImagesProcessed.current) {
+      isInitialImagesProcessed.current = true;
+
       const mappedImages = initialImages.map((img) => ({
         type: "path",
         value: img,
-        preview: BERITAFOTO_LINK+img,
+        preview: BERITAFOTO_LINK + img,
       }));
+
       setPreviews(mappedImages);
     }
   }, [initialImages]);
@@ -41,13 +59,13 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
 
   const handleFileChange = async (event) => {
     const selectedFiles = Array.from(event.target.files);
-  
+
     const validFiles = selectedFiles.filter((file) =>
       file.type.startsWith("image/")
     );
-  
+
     if (validFiles.length === 0) return;
-  
+
     const newPreviews = await Promise.all(
       validFiles.map((file) => {
         return new Promise((resolve, reject) => {
@@ -64,17 +82,15 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
         });
       })
     );
-  
-    
+
     setPreviews((prev) => {
       const updatedPreviews = [...prev, ...newPreviews];
-      onChange(updatedPreviews.map((item) => item.value)); 
+      onChange(updatedPreviews.map((item) => item.value));
       return updatedPreviews;
     });
-  
-    if (isRequired) setError(false); 
+
+    if (isRequired) setError(false);
   };
-  
 
   const handleRemovePreview = (index) => {
     setPreviews((prev) => {
@@ -83,9 +99,6 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
       return updatedPreviews;
     });
   };
-  
-  
-  
 
   return (
     <div className="mb-3">

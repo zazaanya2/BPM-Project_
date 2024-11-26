@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { FaSearch } from "react-icons/fa"; // pastikan sudah install react-icons: npm install react-icons
+import { FaSearch } from "react-icons/fa"; 
 
 const SearchField = forwardRef(function SearchField(
   {

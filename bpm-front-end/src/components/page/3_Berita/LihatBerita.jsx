@@ -32,13 +32,17 @@ const LihatBerita = ({ onChangePage }) => {
 
         const result = await response.json();
 
+        const truncateText = (text, maxLength) => {
+          return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+        };
+
         const groupedBerita = result.reduce((acc, item) => {
           if (!acc[item.ber_id]) {
             acc[item.ber_id] = {
               id: item.ber_id,
               title: item.ber_judul,
               date: format(new Date(item.ber_tgl), 'EEEE, dd MMMM yyyy', { locale: id }),
-              description: item.ber_isi,
+              description: item.ber_isi, 
               author: item.ber_created_by,
               images: [],
             };
@@ -60,7 +64,6 @@ const LihatBerita = ({ onChangePage }) => {
 
     fetchBerita();
   }, []);
-
 
   const {
     title = 'Judul Tidak Tersedia',
@@ -118,12 +121,11 @@ const LihatBerita = ({ onChangePage }) => {
             </>
           )}
 
-          <div className="position-absolute top-0 start-0 m-5  ms-0" 
+          <div className="position-absolute top-0 start-0 m-5 ms-0" 
                style={{ 
                         zIndex: 1,
                         paddingTop:'3rem',
-                        paddingLeft: isMobile? '1rem' : '4rem'
-
+                        paddingLeft: isMobile ? '0rem' : '4rem'
                       }}>
             <PageTitleNav 
               title="Baca Berita"
@@ -132,7 +134,7 @@ const LihatBerita = ({ onChangePage }) => {
             />
           </div>
 
-          <div className="position-absolute bottom-0 start-0 m-4" style={{paddingLeft: isMobile? '1rem':'4rem'}}>
+          <div className="position-absolute bottom-0 start-0 m-4" style={{paddingLeft: isMobile ? '0rem' : '4rem'}}>
             <HeaderText
               label={title}
               warna="white"
@@ -148,7 +150,7 @@ const LihatBerita = ({ onChangePage }) => {
         </div>
       </div>
 
-      <div className="bg-white rounded-3" style={{padding: isMobile? '2rem':'2rem', margin:isMobile? '1rem':'3rem'}}>
+      <div className="bg-white rounded-3" style={{ padding: isMobile ? '2rem' : '2rem', margin: isMobile ? '0rem' : '3rem' }}>
         <Text isi={description} warna="gray"/>
       </div>
 

@@ -3,10 +3,17 @@ import CardBerita from './CardBerita';
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import { useNavigate } from 'react-router-dom';
 import { BERITAFOTO_LINK } from '../util/Constants';
+import { useIsMobile } from '../util/useIsMobile';
 
 const SliderBerita = ({ beritaItems }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
+
+  // Function to truncate description to 150 characters
+  const truncateDescription = (description, maxLength = 90) => {
+    return description.length > maxLength ? description.substring(0, maxLength) + '...' : description;
+  };
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % beritaItems.length);
@@ -24,7 +31,7 @@ const SliderBerita = ({ beritaItems }) => {
 
   const navButtonStyle = {
     backgroundColor: "#2654A1",
-    color:"white",
+    color: "white",
     fontSize: "20px",
     padding: "5px",
     margin: "5px",
@@ -32,8 +39,8 @@ const SliderBerita = ({ beritaItems }) => {
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)",
     transition: "all 0.3s ease",
     border: "none",
-    height:"58px",
-    width:"58px"
+    height: "58px",
+    width: "58px",
   };
 
   const iconStyle = {
@@ -47,7 +54,7 @@ const SliderBerita = ({ beritaItems }) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      maxWidth: '785px', 
+      maxWidth: '785px',
       width: '100%',
       margin: '0 auto',
       position: 'relative',
@@ -76,15 +83,14 @@ const SliderBerita = ({ beritaItems }) => {
               style={{ 
                 minWidth: '100%', 
                 boxSizing: 'border-box',
-                
               }}
             >
               <CardBerita
                 title={item.title}
                 author={item.author}
                 date={item.date}
-                description={item.description}
-                image={BERITAFOTO_LINK+item.images[0]} // Only the first image is used
+                description={!isMobile ? truncateDescription(item.description) : ''} // Truncated description
+                image={BERITAFOTO_LINK + item.images[0]} // Only the first image is used
                 size="small"
                 onClick={() => handleCardClick(item)}
               />

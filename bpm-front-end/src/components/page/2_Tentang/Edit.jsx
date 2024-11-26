@@ -10,7 +10,6 @@ import Loading from "../../part/Loading";
 import FileUpload from "../../part/FileUpload";
 import UploadFoto from "../../part/UploadFoto";
 import SweetAlert from "../../util/SweetAlert";
-import uploadFile from "../../util/UploadFile";
 import { useIsMobile } from "../../util/useIsMobile";
 
 export default function Edit({ onChangePage }) {
@@ -24,7 +23,6 @@ export default function Edit({ onChangePage }) {
   });
 
     const [loading, setLoading] = useState(false);
-    const [imagePath, setImagePath] = useState(""); 
     const [selectedFile, setSelectedFile] = useState(null); 
 
 
@@ -109,41 +107,58 @@ export default function Edit({ onChangePage }) {
         try {
             let ten_isi = formData.Isi;
     
+            // Upload file jika ada file yang dipilih
             if (selectedFile) {
-                const uploadResult = await uploadFile(selectedFile);
-                if (uploadResult === "ERROR") {
-                    throw new Error("File upload failed");
+                const formData = new FormData();
+                formData.append("file", selectedFile);
+    
+                const uploadResponse = await fetch(`${API_LINK}/api/MasterTentang/UploadFile`, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+                    },
+                });
+    
+                if (!uploadResponse.ok) {
+                    throw new Error("Gagal mengunggah file");
                 }
-                ten_isi = uploadResult.hasil || ten_isi; // Use the result from upload
+    
+                const uploadResult = await uploadResponse.json();
+                ten_isi = uploadResult.hasil || ten_isi; // Gunakan nama file yang diunggah
             }
     
-            const response = await fetch(API_LINK + '/api/MasterTentang/EditTentang', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ten_id: location.state.idData,
-                    ten_category: formData.Kategori,
-                    ten_isi,
-                    ten_status: 1,
-                    ten_modif_by: "User",
-                    ten_modif_date: currentTimestamp,
-                }),
+            // Kirim data edit ke server
+            const editData = {
+                ten_id: location.state.idData,
+                ten_category: formData.Kategori,
+                ten_isi,
+                ten_status: 1,
+                ten_modif_by: "User",
+                ten_modif_date: currentTimestamp,
+            };
+    
+            const editResponse = await fetch(`${API_LINK}/api/MasterTentang/EditTentang`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(editData),
             });
     
-            const text = await response.text();
-            const data = JSON.parse(text);
+            if (!editResponse.ok) {
+                throw new Error("Gagal memperbarui data");
+            }
     
-            SweetAlert("Berhasil!", "Data berhasil diperbarui.", "success", "OK")
-                .then(() => onChangePage("read"));
+            SweetAlert("Berhasil!", "Data berhasil diperbarui.", "success", "OK").then(() =>
+                onChangePage("read")
+            );
         } catch (error) {
-            console.error("Error saving data:", error);
-            SweetAlert("Terjadi Kesalahan!", "Terjadi kesalahan saat menyimpan data.", "error", "OK");
+            console.error("Error:", error.message);
+            SweetAlert("Terjadi Kesalahan!", error.message, "error", "OK");
         } finally {
             setLoading(false);
         }
     };
+    
     
     return (
         <div className="d-flex flex-column min-vh-100">

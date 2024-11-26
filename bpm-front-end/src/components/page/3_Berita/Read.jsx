@@ -3,6 +3,8 @@ import Table from "../../part/Table";
 import Paging from "../../part/Paging";
 import PageTitleNav from "../../part/PageTitleNav";
 import Button from "../../part/Button";
+import SearchField from "../../part/SearchField";
+import Filter from "../../part/Filter";
 import { API_LINK, BERITAFOTO_LINK } from "../../util/Constants";
 import Loading from "../../part/Loading";
 import { format } from "date-fns";
@@ -17,6 +19,7 @@ export default function Read({ onChangePage }) {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchKeyword, setSearchKeyword] = useState(""); // State to hold the search keyword
 
     useEffect(() => {
         const fetchBerita = async () => {
@@ -46,7 +49,7 @@ export default function Read({ onChangePage }) {
                     if (item.dbr_foto) {
                         acc[item.ber_id].images.push(item.dbr_foto);
                     }
-                    
+
                     return acc;
                 }, {});
 
@@ -62,9 +65,14 @@ export default function Read({ onChangePage }) {
         fetchBerita();
     }, []);
 
+    // Filter data based on the search keyword
+    const filteredData = data.filter(item =>
+        item.title.toLowerCase().includes(searchKeyword.toLowerCase())
+    );
+
     const indexOfLastData = pageCurrent * pageSize;
     const indexOfFirstData = indexOfLastData - pageSize;
-    const currentData = data.slice(indexOfFirstData, indexOfLastData);
+    const currentData = filteredData.slice(indexOfFirstData, indexOfLastData);
 
     const handlePageNavigation = (page) => {
         setPageCurrent(page);
@@ -86,7 +94,7 @@ export default function Read({ onChangePage }) {
             "",
             true 
         );
-    
+
         if (confirm) {
             try {
                 const response = await fetch(`${API_LINK}/api/MasterBerita/DeleteBerita`, {
@@ -96,12 +104,12 @@ export default function Read({ onChangePage }) {
                     },
                     body: JSON.stringify({ ber_id: id }),
                 });
-    
+
                 if (!response.ok) throw new Error("Gagal menghapus berita");
-    
+
                 const result = await response.text();
                 SweetAlert("Berhasil", result, "success");
-    
+
                 setData((prevData) => prevData.filter((item) => item.id !== id));
             } catch (err) {
                 console.error(err);
@@ -109,7 +117,6 @@ export default function Read({ onChangePage }) {
             }
         }
     };
-    
 
     if (loading) return <Loading />;
     if (error) return <p>{error}</p>;
@@ -118,14 +125,14 @@ export default function Read({ onChangePage }) {
         <div className="d-flex flex-column min-vh-100">
             <main className="flex-grow-1 p-3" style={{ marginTop: '80px' }}>
                 <div className="d-flex flex-column">
-                    <div className= {isMobile? "m-0 p-0" :"m-3 mb-0"}>
+                    <div className={isMobile ? "m-0 p-0" : "m-3 mb-0"}>
                         <PageTitleNav
                             title={title}
                             breadcrumbs={breadcrumbs}
                             onClick={() => onChangePage("index")}
                         />
                     </div>
-                    <div className={isMobile?"p-2 m-2 mt-2 mb-0":"p-3 m-5 mt-2 mb-0"} style={{ marginLeft: '50px' }}>
+                    <div className={isMobile ? "p-2 m-2 mt-2 mb-0" : "p-3 m-5 mt-2 mb-0"} style={{ marginLeft: '50px' }}>
                         <Button
                             iconName="add"
                             classType="primary"
@@ -133,7 +140,23 @@ export default function Read({ onChangePage }) {
                             onClick={() => onChangePage("add")}
                         />
                     </div>
-                    <div className={isMobile? "table-container bg-white p-2 m-2 mt-0 rounded":"table-container bg-white p-3 m-5 mt-0 rounded"}>
+                    <div className={isMobile ? "table-container bg-white p-2 m-2 mt-0 rounded" : "table-container bg-white p-3 m-5 mt-0 rounded"}>
+                        <div className="row m-5 ms-0 mb-3 mt-0">
+                            <div className="col-lg-11 col-md-6">
+                                <SearchField onChange={(value) => setSearchKeyword(value)} />
+                            </div>
+                            <div className="col-lg-1 col-md-6">
+                                <Filter>
+                                    {/* Pass content inside the Filter component here */}
+                                    <div>Option 1</div>
+                                    <div>Option 2</div>
+                                    <div>Option 3</div>
+                                </Filter>
+                            </div>
+
+                        </div>
+                        
+                        
                         <Table
                             arrHeader={["No", "Judul Berita", "Tanggal", "Foto"]}
                             headerToDataMap={{
@@ -155,27 +178,25 @@ export default function Read({ onChangePage }) {
                                 Foto: (
                                     <div>
                                         {item.images.length > 0 && (
-                                            <img 
-                                                src={BERITAFOTO_LINK+item.images[0]}
-                                                alt={`Foto Berita 1`} 
-                                                width="100" 
-                                                height="100" 
+                                            <img
+                                                src={BERITAFOTO_LINK + item.images[0]}
+                                                alt={`Foto Berita 1`}
+                                                width="100"
+                                                height="100"
                                             />
                                         )}
                                     </div>
                                 )
-                                
-                                
-                            } ))}
-                            actions={["Detail", "Edit","Delete"]}
-                            onEdit={(item) => { onChangePage("edit", { state: { idData: item } })}}
-                            onDetail={(item) => { onChangePage("detail", { state: { idData: item } })}}
+                            }))}
+                            actions={["Detail", "Edit", "Delete"]}
+                            onEdit={(item) => { onChangePage("edit", { state: { idData: item } }) }}
+                            onDetail={(item) => { onChangePage("detail", { state: { idData: item } }) }}
                             onDelete={(item) => handleDelete(item)}
                         />
                         <Paging
                             pageSize={pageSize}
                             pageCurrent={pageCurrent}
-                            totalData={data.length}
+                            totalData={filteredData.length}
                             navigation={handlePageNavigation}
                         />
                     </div>
