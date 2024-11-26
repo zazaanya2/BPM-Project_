@@ -11,18 +11,19 @@ import Text from "../../part/Text";
 import HeaderText from "../../part/HeaderText";
 import Button from "../../part/Button";
 import Icon from "../../part/Icon";
-import { API_LINK, FILE_LINK } from "../../util/Constants";
+import { API_LINK, TENTANGFILE_LINK } from "../../util/Constants";
 import Loading from "../../part/Loading";
+import { useIsMobile } from "../../util/useIsMobile";
 
 export default function Index({ onChangePage }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const isMobile = useIsMobile(); 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Fetching data...");
         const response = await fetch(API_LINK + '/api/MasterTentang/GetDataTentang', {
           method: 'POST',
           headers: {
@@ -33,12 +34,10 @@ export default function Index({ onChangePage }) {
           }),
         });
 
-        console.log("Response status:", response.status);
         if (!response.ok) throw new Error("Network response was not ok");
 
         const result = await response.json();
-        console.log("Fetched data:", result);
-        setData(result); // Store fetched data here
+        setData(result); 
       } catch (err) {
         console.error("Fetch error:", err);
         setError("Gagal mengambil data");
@@ -54,7 +53,7 @@ export default function Index({ onChangePage }) {
   if (error) return <p>{error}</p>;
 
   const handleDownloadClick = () => {
-    const url = `${FILE_LINK}${data[7].ten_isi}`;
+    const url = `${TENTANGFILE_LINK}${data[7].ten_isi}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
@@ -75,7 +74,7 @@ export default function Index({ onChangePage }) {
         }} />
 
         <img src={Orang} alt="Orang" style={{
-          position: 'absolute', bottom: '-30px', left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '33vw', minWidth: '380px', zIndex: 2
+          position: 'absolute', bottom: '-2rem', left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '33vw', minWidth: isMobile?'50%':'37%', zIndex: 2
         }} />
 
         <div style={{
@@ -93,7 +92,12 @@ export default function Index({ onChangePage }) {
         </div>
       </div>
 
-      <div className="shadow p-5 m-5 bg-white rounded">
+      <div  className="shadow bg-white rounded" 
+            style={{
+              padding: isMobile ? "2rem" : "5rem", // Padding lebih kecil di mobile
+              margin: isMobile ? "2rem" : "5rem", // Margin lebih kecil di mobile
+              marginTop: "3rem",
+            }}>
         <HeaderText
           label="Sejarah BPM"
           warna="#2654A1"
@@ -150,10 +154,10 @@ export default function Index({ onChangePage }) {
         </div>
       </div>
 
-      <div className="flex-grow-1 p-5" style={{ backgroundColor: '#193756' }}>
+      <div className="flex-grow-1" style={{ backgroundColor: '#193756', padding: isMobile ? "2rem" : "4rem" }}>
         <div className="row">
-          <div className="col-lg-6 col-md-6 p-4">
-            <div className="card">
+          <div className="col-lg-6 col-md-6" style={{padding: isMobile ? "1rem" : "2rem"}}>
+            <div className="card" style={{padding: isMobile ? "2rem" : "3rem"}}>
               <HeaderText
                 label="Sasaran Badan Penjamin Mutu"
                 warna="white"
@@ -171,8 +175,8 @@ export default function Index({ onChangePage }) {
               )}
             </div>
           </div>
-          <div className="col-lg-6 col-md-6 p-4">
-            <div className="card">
+          <div className="col-lg-6 col-md-6" style={{padding: isMobile ? "1rem" : "2rem"}}>
+            <div className="card" style={{padding: isMobile ? "2rem" : "3rem"}}>
               <HeaderText
                 label="Strategi Badan Penjamin Mutu"
                 warna="white"
@@ -201,7 +205,7 @@ export default function Index({ onChangePage }) {
           fontWeight="700"
           marginBottom="50px"
         />
-        <img src={`${FILE_LINK}${data[6].ten_isi}`} alt="Logo" style={{ width: '100%', height: 'auto', marginBottom: '25px' }} />
+        <img src={`${TENTANGFILE_LINK}${data[6].ten_isi}`} alt="Logo" style={{ width: '100%', height: 'auto', marginBottom: '25px' }} />
       </div>
 
       <div className="latarGradasi2">

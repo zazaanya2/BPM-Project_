@@ -20,7 +20,6 @@ export default function Header() {
   };
 
   const handleMenuItemClick = () => {
-    // Tutup menu saat item menu diklik
     setMobileMenuOpen(false);
   };
 
@@ -30,12 +29,12 @@ export default function Header() {
     return () => window.removeEventListener("resize", checkIsMobile);
   }, []);
 
-  // Menutup menu saat routing berubah (di mobile)
+ 
   useEffect(() => {
     if (isMobile) {
-      setMobileMenuOpen(false); // Menutup menu saat rute berubah di mobile
+      setMobileMenuOpen(false); 
     }
-  }, [location]); // Efek akan dijalankan setiap kali lokasi (rute) berubah
+  }, [location]); 
 
   return (
     <header className="header">
@@ -45,7 +44,7 @@ export default function Header() {
             src={brand}
             alt="Logo AstraTech"
             className="navbar-brand"
-            style={{ height: "60px", marginLeft: "30px" }}
+            style={{ height: "4rem", marginLeft: "2rem" }}
           />
         </div>
         <div className={`navmenu ${isMobile ? "d-none" : "d-flex"}`}>
@@ -74,7 +73,7 @@ export default function Header() {
       </div>
       {isMobile && isMobileMenuOpen && (
         <div className="mobile-menu">
-          <ul className="nav flex-column p-3" style={{ marginTop: "65px" }}>
+          <ul className="nav flex-column p-3" style={{ marginTop: "4rem" }}>
             <NavItem onClick={handleMenuItemClick} />
           </ul>
         </div>

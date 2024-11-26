@@ -1,26 +1,66 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Table from "../../part/Table";
 import Paging from "../../part/Paging";
 import PageTitleNav from "../../part/PageTitleNav";
 import Button from "../../part/Button";
+import { API_LINK, BERITAFOTO_LINK } from "../../util/Constants";
+import Loading from "../../part/Loading";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
+import { useIsMobile } from "../../util/useIsMobile";
+import SweetAlert from "../../util/SweetAlert";
 
-export default function Read({onChangePage}) {
+export default function Read({ onChangePage }) {
     const [pageSize] = useState(10);
+    const isMobile = useIsMobile();
     const [pageCurrent, setPageCurrent] = useState(1);
-   
-    // Menambahkan data menjadi 10 item dengan URL gambar
-    const data = [
-        { Key: 1, JudulBerita: "Tentang BPM", Tanggal: "27/11/2024", Foto: "https://www.polytechnic.astra.ac.id/storage/2024/04/mahasiswa-4-Kontribusi-kepada-bangsa.png" },
-        { Key: 2, JudulBerita: "Berita A", Tanggal: "26/11/2024", Foto: "https://via.placeholder.com/100" },
-        { Key: 3, JudulBerita: "Berita B", Tanggal: "25/11/2024", Foto: "https://via.placeholder.com/100" },
-        { Key: 4, JudulBerita: "Berita C", Tanggal: "24/11/2024", Foto: "https://via.placeholder.com/100" },
-        { Key: 5, JudulBerita: "Berita D", Tanggal: "23/11/2024", Foto: "https://via.placeholder.com/100" },
-        { Key: 6, JudulBerita: "Berita E", Tanggal: "22/11/2024", Foto: "https://via.placeholder.com/100" },
-        { Key: 7, JudulBerita: "Berita F", Tanggal: "21/11/2024", Foto: "https://via.placeholder.com/100" },
-        { Key: 8, JudulBerita: "Berita G", Tanggal: "20/11/2024", Foto: "https://via.placeholder.com/100" },
-        { Key: 9, JudulBerita: "Berita H", Tanggal: "19/11/2024", Foto: "https://via.placeholder.com/100" },
-        { Key: 10, JudulBerita: "Berita I", Tanggal: "18/11/2024", Foto: "https://via.placeholder.com/100" }
-    ];
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchBerita = async () => {
+            try {
+                const response = await fetch(`${API_LINK}/api/MasterBerita/GetDataBerita`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) throw new Error('Gagal mengambil data');
+
+                const result = await response.json();
+
+                const groupedBerita = result.reduce((acc, item) => {
+                    if (!acc[item.ber_id]) {
+                        acc[item.ber_id] = {
+                            id: item.ber_id,
+                            title: item.ber_judul,
+                            date: format(new Date(item.ber_tgl), 'EEEE, dd MMMM yyyy', { locale: id }),
+                            description: item.ber_isi,
+                            author: item.ber_created_by,
+                            images: [],
+                        };
+                    }
+                    if (item.dbr_foto) {
+                        acc[item.ber_id].images.push(item.dbr_foto);
+                    }
+                    
+                    return acc;
+                }, {});
+
+                setData(Object.values(groupedBerita));
+            } catch (err) {
+                console.error('Fetch error:', err);
+                setError('Gagal mengambil data');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBerita();
+    }, []);
 
     const indexOfLastData = pageCurrent * pageSize;
     const indexOfFirstData = indexOfLastData - pageSize;
@@ -36,31 +76,64 @@ export default function Read({onChangePage}) {
         { label: "Kelola Berita" },
     ];
 
-    const handleEdit = (item) => {
-        onChangePage("edit", { state: { editData: item } });
-    }; 
+    const handleDelete = async (id) => {
+        const confirm = await SweetAlert(
+            "Konfirmasi",
+            "Apakah Anda yakin ingin menghapus berita ini?",
+            "warning",
+            "Ya, Hapus",
+            null,
+            "",
+            true 
+        );
+    
+        if (confirm) {
+            try {
+                const response = await fetch(`${API_LINK}/api/MasterBerita/DeleteBerita`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ ber_id: id }),
+                });
+    
+                if (!response.ok) throw new Error("Gagal menghapus berita");
+    
+                const result = await response.text();
+                SweetAlert("Berhasil", result, "success");
+    
+                setData((prevData) => prevData.filter((item) => item.id !== id));
+            } catch (err) {
+                console.error(err);
+                SweetAlert("Gagal", "Terjadi kesalahan saat menghapus berita", "error");
+            }
+        }
+    };
+    
 
+    if (loading) return <Loading />;
+    if (error) return <p>{error}</p>;
 
     return (
         <div className="d-flex flex-column min-vh-100">
             <main className="flex-grow-1 p-3" style={{ marginTop: '80px' }}>
                 <div className="d-flex flex-column">
-                    <div className="m-3 mb-0">
-                        <PageTitleNav 
-                            title={title} 
-                            breadcrumbs={breadcrumbs} 
+                    <div className= {isMobile? "m-0 p-0" :"m-3 mb-0"}>
+                        <PageTitleNav
+                            title={title}
+                            breadcrumbs={breadcrumbs}
                             onClick={() => onChangePage("index")}
                         />
                     </div>
-                    <div className="p-3 m-5 mt-2 mb-0" style={{ marginLeft: '50px' }}>
-                        <Button 
+                    <div className={isMobile?"p-2 m-2 mt-2 mb-0":"p-3 m-5 mt-2 mb-0"} style={{ marginLeft: '50px' }}>
+                        <Button
                             iconName="add"
                             classType="primary"
                             label="Tambah Data"
                             onClick={() => onChangePage("add")}
                         />
                     </div>
-                    <div className="table-container bg-white p-3 m-5 mt-0 rounded">
+                    <div className={isMobile? "table-container bg-white p-2 m-2 mt-0 rounded":"table-container bg-white p-3 m-5 mt-0 rounded"}>
                         <Table
                             arrHeader={["No", "Judul Berita", "Tanggal", "Foto"]}
                             headerToDataMap={{
@@ -70,18 +143,35 @@ export default function Read({onChangePage}) {
                                 "Foto": "Foto"
                             }}
                             data={currentData.map((item, index) => ({
-                                key: item.Key || index,
+                                Key: item.id,
                                 No: indexOfFirstData + index + 1,
-                                JudulBerita: item.JudulBerita,
-                                Tanggal: item.Tanggal,
-                                Foto: <img src={item.Foto} alt="Foto Berita" width="100" height="100" />
-                            }))}
-                            actions={["Detail", "Edit", "UpdateHistory"]}
-                            onEdit={handleEdit}
+                                JudulBerita: item.title,
+                                Tanggal: new Date(item.date).toLocaleDateString('id-ID', {
+                                    weekday: 'long',
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric'
+                                }),
+                                Foto: (
+                                    <div>
+                                        {item.images.length > 0 && (
+                                            <img 
+                                                src={BERITAFOTO_LINK+item.images[0]}
+                                                alt={`Foto Berita 1`} 
+                                                width="100" 
+                                                height="100" 
+                                            />
+                                        )}
+                                    </div>
+                                )
+                                
+                                
+                            } ))}
+                            actions={["Detail", "Edit","Delete"]}
+                            onEdit={(item) => { onChangePage("edit", { state: { idData: item } })}}
+                            onDetail={(item) => { onChangePage("detail", { state: { idData: item } })}}
+                            onDelete={(item) => handleDelete(item)}
                         />
-
-
-
                         <Paging
                             pageSize={pageSize}
                             pageCurrent={pageCurrent}

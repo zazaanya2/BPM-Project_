@@ -4,6 +4,7 @@ import Paging from "../../part/Paging";
 import PageTitleNav from "../../part/PageTitleNav";
 import Loading from "../../part/Loading";
 import { API_LINK } from "../../util/Constants";
+import { useIsMobile } from "../../util/useIsMobile";
 
 export default function Read({ onChangePage }) {
     const [pageSize] = useState(10);
@@ -11,12 +12,11 @@ export default function Read({ onChangePage }) {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const isMobile = useIsMobile();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log('Fetching data with:', { pageCurrent, pageSize }); // Log request data
-        
                 const response = await fetch(API_LINK +'/api/MasterTentang/GetDataTentang', {
                     method: 'POST',
                     headers: {
@@ -28,17 +28,15 @@ export default function Read({ onChangePage }) {
                     }),
                 });
         
-                console.log('Response status:', response.status); // Log response status
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
         
                 const result = await response.json();
-                console.log('Fetched data:', result); // Log the result
-                setData(result); // Set the fetched data
+                setData(result);
                 setLoading(false);
             } catch (err) {
-                console.error('Fetch error:', err); // Log errors
+                console.error('Fetch error:', err);
                 setError("Gagal mengambil data");
                 setLoading(false);
             }
@@ -61,9 +59,9 @@ export default function Read({ onChangePage }) {
 
     return (
         <div className="d-flex flex-column min-vh-100">
-            <main className="flex-grow-1" style={{ marginTop: '80px' }}>
+            <main className="flex-grow-1 p-3" style={{ marginTop: '80px' }}>
                 <div className="d-flex flex-column">
-                    <div className="m-3 mb-0">
+                    <div  className= {isMobile? "m-0 p-0" :"m-3 mb-0"}>
                         <PageTitleNav 
                             title="Kelola Tentang" 
                             breadcrumbs={[{ label: "Tentang", href: "/tentang" }, { label: "Kelola Tentang" }]}
@@ -71,7 +69,7 @@ export default function Read({ onChangePage }) {
                         />
                     </div>
                     
-                    <div className="table-container bg-white p-3 m-5 mt-0 rounded">
+                    <div className={isMobile? "table-container bg-white p-2 m-2 mt-0 rounded":"table-container bg-white p-3 m-5 mt-0 rounded"}>
                         <Table
                             arrHeader={["No", "Kategori"]}
                             headerToDataMap={{
@@ -79,13 +77,13 @@ export default function Read({ onChangePage }) {
                                 "Kategori": "ten_category",
                             }}
                             data={currentData.map((item, index) => ({
-                                Key: item.ten_id, // Use ten_id directly as the key
+                                Key: item.ten_id,
                                 No: indexOfFirstData + index + 1,
                                 ten_category: item.ten_category,
                             }))}
                             actions={["Detail", "Edit"]}
                             onEdit={(item) => onChangePage("edit", { state: { idData: item } })}
-                            onDetail={(item) => onChangePage("detail", { state: { idData: item } })}
+                            onDetail={(item) => onChangePage("detail", { state: { idData: item} })}
                         />
 
                         <Paging
