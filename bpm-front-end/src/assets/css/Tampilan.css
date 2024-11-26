@@ -37,4 +37,29 @@
     color: #fff; /* Warna teks agar kontras dengan latar belakang */
   }
   
+
   
+  /* SPMI */
+  .carousel-inner {
+    border-radius: 20px;
+  }
+  .carousel-control-left {
+    background-color: #2654A1;
+    border-radius: 30px;
+    height: 50px;
+    width: 50px;
+    transform: translateX(-200%);
+    opacity: 100%;
+  }
+  .carousel-control-right {
+    background-color: #2654A1;
+    border-radius: 30px;
+    height: 50px;
+    width: 50px;
+    transform: translateX(200%);
+    opacity: 100%;
+  }
+  .carousel-img {
+    height: 50vh;
+    object-fit: cover;
+  }
