@@ -156,7 +156,7 @@ const LihatBerita = ({ onChangePage }) => {
             style={{
               zIndex: 1,
               paddingTop: "3rem",
-              paddingLeft: isMobile ? "0rem" : "4rem",
+              paddingLeft: isMobile ? "0rem" : "8rem",
             }}
           >
             <PageTitleNav
@@ -168,7 +168,10 @@ const LihatBerita = ({ onChangePage }) => {
 
           <div
             className="position-absolute bottom-0 start-0 m-4"
-            style={{ paddingLeft: isMobile ? "0rem" : "4rem" }}
+            style={{
+              paddingLeft: isMobile ? "1rem" : "9rem",
+              paddingRight: isMobile ? "0rem" : "8rem",
+            }}
           >
             <HeaderText
               label={title}
@@ -186,26 +189,33 @@ const LihatBerita = ({ onChangePage }) => {
       </div>
 
       <div
-        className="bg-white rounded-3"
         style={{
-          padding: isMobile ? "2rem" : "2rem",
-          margin: isMobile ? "0rem" : "3rem",
+          paddingLeft: isMobile ? "0rem" : "7rem",
+          paddingRight: isMobile ? "0rem" : "8rem",
         }}
       >
-        <Text isi={description} warna="gray" />
-      </div>
+        <div
+          className="bg-white rounded-3"
+          style={{
+            padding: isMobile ? "2rem" : "0rem",
+            margin: isMobile ? "0rem" : "3rem",
+          }}
+        >
+          <Text isi={description} warna="gray" />
+        </div>
 
-      <div>
-        <HeaderText
-          label="Berita Lainnya"
-          warna="#2654A1"
-          alignText="center"
-          fontWeight="650"
-          lebar="310px"
-          marginBottom="30px"
-        />
+        <div>
+          <HeaderText
+            label="Berita Lainnya"
+            warna="#2654A1"
+            alignText="center"
+            fontWeight="650"
+            lebar="310px"
+            marginBottom="30px"
+          />
 
-        <SliderBerita beritaItems={filteredBeritaData} />
+          <SliderBerita beritaItems={filteredBeritaData} />
+        </div>
       </div>
     </div>
   );

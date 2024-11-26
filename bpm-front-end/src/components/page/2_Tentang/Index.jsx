@@ -130,7 +130,7 @@ export default function Index({ onChangePage }) {
         className="shadow bg-white rounded"
         style={{
           padding: isMobile ? "2rem" : "5rem", // Padding lebih kecil di mobile
-          margin: isMobile ? "2rem" : "5rem", // Margin lebih kecil di mobile
+          margin: isMobile ? "2rem" : "8rem", // Margin lebih kecil di mobile
           marginTop: "3rem",
         }}
       >

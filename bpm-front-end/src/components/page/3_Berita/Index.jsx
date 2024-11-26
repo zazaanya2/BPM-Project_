@@ -148,7 +148,7 @@ export default function Index({ onChangePage }) {
           <div className="col-lg-4 col-md-6">
             <div
               className="position-absolute"
-              style={{ top: "10%", padding: "3rem", margin: "3rem" }}
+              style={{ top: "10%", padding: "3rem", margin: "5rem" }}
             >
               <HeaderText
                 label={
@@ -185,12 +185,12 @@ export default function Index({ onChangePage }) {
         className="shadow bg-white rounded-5"
         style={{
           position: "relative",
-          top: "-210px",
+          top: "-18rem",
           zIndex: "1",
           height: "100%",
           padding: isMobile ? "2rem" : "3rem",
-          margin: isMobile ? "1rem" : "4rem",
-          marginBottom: "-10rem",
+          margin: isMobile ? "1rem" : "7rem",
+          marginBottom: "-13rem",
         }}
       >
         <div className="row mb-3">
