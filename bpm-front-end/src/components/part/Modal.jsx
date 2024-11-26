@@ -1,4 +1,10 @@
-import React, { forwardRef, useImperativeHandle, useRef, useState, useEffect } from "react";
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+  useEffect,
+} from "react";
 import Button from "./Button";
 
 const Modal = forwardRef(function Modal(
@@ -58,7 +64,11 @@ const Modal = forwardRef(function Modal(
   }, [children]);
 
   return (
-    <dialog ref={dialog} style={{ maxWidth: maxSize }} className="modal-container">
+    <dialog
+      ref={dialog}
+      style={{ maxWidth: maxSize }}
+      className="modal-container"
+    >
       <div className="row">
         <div className="col-lg-0 col-md-6 ">
           <button

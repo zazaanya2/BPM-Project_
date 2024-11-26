@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import CardBerita from './CardBerita';
+import React, { useState } from "react";
+import CardBerita from "./CardBerita";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
-import { useNavigate } from 'react-router-dom';
-import { BERITAFOTO_LINK } from '../util/Constants';
-import { useIsMobile } from '../util/useIsMobile';
+import { useNavigate } from "react-router-dom";
+import { BERITAFOTO_LINK } from "../util/Constants";
+import { useIsMobile } from "../util/useIsMobile";
 
 const SliderBerita = ({ beritaItems }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -12,7 +12,9 @@ const SliderBerita = ({ beritaItems }) => {
 
   // Function to truncate description to 150 characters
   const truncateDescription = (description, maxLength = 90) => {
-    return description.length > maxLength ? description.substring(0, maxLength) + '...' : description;
+    return description.length > maxLength
+      ? description.substring(0, maxLength) + "..."
+      : description;
   };
 
   const handleNext = () => {
@@ -26,7 +28,7 @@ const SliderBerita = ({ beritaItems }) => {
   };
 
   const handleCardClick = (item) => {
-    navigate('/lihatBerita', { state: item });
+    navigate("/lihatBerita", { state: item });
   };
 
   const navButtonStyle = {
@@ -50,46 +52,47 @@ const SliderBerita = ({ beritaItems }) => {
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      maxWidth: '785px',
-      width: '100%',
-      margin: '0 auto',
-      position: 'relative',
-      marginBottom: '30px'
-    }}>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        maxWidth: "785px",
+        width: "100%",
+        margin: "0 auto",
+        position: "relative",
+        marginBottom: "30px",
+      }}
+    >
       {/* Button Prev */}
-      <button
-        onClick={handlePrev}
-        style={navButtonStyle}
-      >
+      <button onClick={handlePrev} style={navButtonStyle}>
         <BsChevronLeft color="white" style={iconStyle} />
       </button>
 
       {/* Slider Wrapper */}
-      <div style={{ overflow: 'hidden', width: '90%' , padding:'3px'}}>
+      <div style={{ overflow: "hidden", width: "90%", padding: "3px" }}>
         <div
           style={{
-            display: 'flex',
+            display: "flex",
             transform: `translateX(-${currentIndex * 100}%)`,
-            transition: 'transform 0.5s ease-in-out',
+            transition: "transform 0.5s ease-in-out",
           }}
         >
           {beritaItems.map((item, index) => (
-            <div 
-              key={index} 
-              style={{ 
-                minWidth: '100%', 
-                boxSizing: 'border-box',
+            <div
+              key={index}
+              style={{
+                minWidth: "100%",
+                boxSizing: "border-box",
               }}
             >
               <CardBerita
                 title={item.title}
                 author={item.author}
                 date={item.date}
-                description={!isMobile ? truncateDescription(item.description) : ''} // Truncated description
+                description={
+                  !isMobile ? truncateDescription(item.description) : ""
+                } // Truncated description
                 image={BERITAFOTO_LINK + item.images[0]} // Only the first image is used
                 size="small"
                 onClick={() => handleCardClick(item)}
@@ -100,10 +103,7 @@ const SliderBerita = ({ beritaItems }) => {
       </div>
 
       {/* Button Next */}
-      <button
-        onClick={handleNext}
-        style={navButtonStyle}
-      >
+      <button onClick={handleNext} style={navButtonStyle}>
         <BsChevronRight color="white" style={iconStyle} />
       </button>
     </div>

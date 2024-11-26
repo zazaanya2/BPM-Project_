@@ -24,9 +24,13 @@ const FileUpload = forwardRef(function FileUpload(
     if (file) {
       // Validasi ukuran file
       if (file.size > maxSizeFile) {
-        setFileError(`Ukuran berkas tidak boleh lebih dari ${maxSizeFile / (1024 * 1024)} MB`);
+        setFileError(
+          `Ukuran berkas tidak boleh lebih dari ${
+            maxSizeFile / (1024 * 1024)
+          } MB`
+        );
         // Mengosongkan file input agar file yang lebih besar tidak tetap dipilih
-        event.target.value = null; 
+        event.target.value = null;
       } else {
         setFileError(""); // Reset error jika ukuran file valid
       }
@@ -67,7 +71,9 @@ const FileUpload = forwardRef(function FileUpload(
                 {fileError}
               </span>
             )}
-            <sub>Maksimum ukuran berkas adalah {maxSizeFile / (1024 * 1024)} MB</sub>
+            <sub>
+              Maksimum ukuran berkas adalah {maxSizeFile / (1024 * 1024)} MB
+            </sub>
             {hasExisting && (
               <sub>
                 <br />

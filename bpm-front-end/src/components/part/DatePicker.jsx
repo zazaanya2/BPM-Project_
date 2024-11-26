@@ -12,12 +12,12 @@ const DatePicker = forwardRef(function DatePicker(
   },
   ref
 ) {
-  const [value, setValue] = useState(""); 
-  const [error, setError] = useState(false); 
+  const [value, setValue] = useState("");
+  const [error, setError] = useState(false);
 
   useImperativeHandle(ref, () => ({
     reset() {
-      setValue(""); 
+      setValue("");
       setError(false);
     },
     validate() {
@@ -36,7 +36,8 @@ const DatePicker = forwardRef(function DatePicker(
     },
   }));
 
-  const sizeClass = size === "lg" ? "form-control-lg" : size === "sm" ? "form-control-sm" : "";
+  const sizeClass =
+    size === "lg" ? "form-control-lg" : size === "sm" ? "form-control-sm" : "";
 
   const handleChange = (e) => {
     const newValue = e.target.value;
@@ -57,7 +58,7 @@ const DatePicker = forwardRef(function DatePicker(
       <input
         id={id}
         name={id}
-        type="date" 
+        type="date"
         className={`form-control ${sizeClass} ${error ? "is-invalid" : ""}`}
         value={value}
         onChange={handleChange}
@@ -67,9 +68,7 @@ const DatePicker = forwardRef(function DatePicker(
         disabled={isDisabled}
         {...props}
       />
-      {error && (
-        <span className="text-danger small">{errorMsg}</span>
-      )}
+      {error && <span className="text-danger small">{errorMsg}</span>}
     </div>
   );
 });

@@ -3,7 +3,15 @@ import { useIsMobile } from "../util/useIsMobile";
 import Button from "./Button";
 import HeaderText from "./HeaderText";
 
-const CardBerita = ({ title, author, date, description, image, size = "large", onClick }) => {
+const CardBerita = ({
+  title,
+  author,
+  date,
+  description,
+  image,
+  size = "large",
+  onClick,
+}) => {
   const isMobile = useIsMobile();
 
   const cardStyle = {
@@ -12,14 +20,20 @@ const CardBerita = ({ title, author, date, description, image, size = "large", o
     marginBottom: "20px",
     maxWidth: "99%",
     padding: "20px",
-    paddingBottom: size === "small"? "5px": "20px",
+    paddingBottom: size === "small" ? "5px" : "20px",
     position: "relative",
     height: size === "small" ? "98%" : "100%",
   };
 
   const imgStyle = {
     width: "100%",
-    height: isMobile?size === "small" ? "100%" : "100%" : size === "small" ? "100%" : "100%",
+    height: isMobile
+      ? size === "small"
+        ? "100%"
+        : "100%"
+      : size === "small"
+      ? "100%"
+      : "100%",
     objectFit: "cover",
     borderRadius: "15px",
   };
@@ -43,13 +57,10 @@ const CardBerita = ({ title, author, date, description, image, size = "large", o
   return (
     <div style={cardStyle}>
       <div className="row g-0">
-        <div className={size === "small" ? "col-md-5 p-1 pb-0" : "col-md-3 p-1"}>
-          <img
-            src={image}
-            alt={title}
-            style={imgStyle}
-            className="img-fluid"
-          />
+        <div
+          className={size === "small" ? "col-md-5 p-1 pb-0" : "col-md-3 p-1"}
+        >
+          <img src={image} alt={title} style={imgStyle} className="img-fluid" />
         </div>
 
         <div
@@ -59,7 +70,7 @@ const CardBerita = ({ title, author, date, description, image, size = "large", o
           style={textContainerStyle}
         >
           <HeaderText
-            label={title} 
+            label={title}
             ukuran="18px"
             warna="black"
             fontWeight="700"
@@ -68,7 +79,9 @@ const CardBerita = ({ title, author, date, description, image, size = "large", o
             marginTop="10px"
           />
 
-          <p style={{ color: "#007bff", fontSize: "14px", marginBottom: "10px" }}>
+          <p
+            style={{ color: "#007bff", fontSize: "14px", marginBottom: "10px" }}
+          >
             Oleh {author} | {date}
           </p>
 
@@ -79,7 +92,11 @@ const CardBerita = ({ title, author, date, description, image, size = "large", o
           ></p>
 
           <div style={buttonStyle}>
-            <Button label="Selengkapnya" classType="primary" onClick={onClick} />
+            <Button
+              label="Selengkapnya"
+              classType="primary"
+              onClick={onClick}
+            />
           </div>
         </div>
       </div>

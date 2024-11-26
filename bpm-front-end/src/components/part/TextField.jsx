@@ -14,15 +14,14 @@ const TextField = forwardRef(function TextField(
   },
   ref
 ) {
-  const [value, setValue] = useState(""); 
-  const [error, setError] = useState(false); 
-  const inputRef = useRef(null); 
+  const [value, setValue] = useState("");
+  const [error, setError] = useState(false);
+  const inputRef = useRef(null);
 
-  
   useImperativeHandle(ref, () => ({
     reset() {
       setValue("");
-      setError(false); 
+      setError(false);
     },
     validate() {
       if (isRequired && !value.trim()) {
@@ -36,20 +35,20 @@ const TextField = forwardRef(function TextField(
       return value;
     },
     focus() {
-      inputRef.current.focus(); 
+      inputRef.current.focus();
     },
     value,
   }));
-  
 
-  const sizeClass = size === "lg" ? "form-control-lg" : size === "sm" ? "form-control-sm" : "";
+  const sizeClass =
+    size === "lg" ? "form-control-lg" : size === "sm" ? "form-control-sm" : "";
 
   const handleChange = (e) => {
     const newValue = e.target.value;
     if (maxChar && newValue.length <= maxChar) {
       setValue(newValue);
     } else if (!maxChar) {
-      setValue(newValue); 
+      setValue(newValue);
     }
     if (isRequired) setError(!newValue.trim());
   };
@@ -63,7 +62,7 @@ const TextField = forwardRef(function TextField(
         </label>
       )}
       <input
-        ref={inputRef} 
+        ref={inputRef}
         id={id}
         name={id}
         type="text"
@@ -79,7 +78,9 @@ const TextField = forwardRef(function TextField(
         {...props}
       />
       {error && (
-        <div className="invalid-feedback">{errorMsg || "Field ini wajib diisi."}</div>
+        <div className="invalid-feedback">
+          {errorMsg || "Field ini wajib diisi."}
+        </div>
       )}
       {maxChar && (
         <div className="small text-muted mt-1">
