@@ -1,5 +1,4 @@
 import { forwardRef, useState } from "react";
-import { TENTANGFILE_LINK } from "../util/Constants";
 
 const FileUpload = forwardRef(function FileUpload(
   {
@@ -79,7 +78,7 @@ const FileUpload = forwardRef(function FileUpload(
                 <br />
                 Berkas saat ini:{" "}
                 <a
-                  href={TENTANGFILE_LINK + hasExisting}
+                  href={hasExisting}
                   className="text-decoration-none"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -97,7 +96,7 @@ const FileUpload = forwardRef(function FileUpload(
             <br />
             {hasExisting && (
               <a
-                href={TENTANGFILE_LINK + hasExisting}
+                href={hasExisting}
                 className="text-decoration-none"
                 target="_blank"
                 rel="noopener noreferrer"

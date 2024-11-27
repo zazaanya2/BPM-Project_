@@ -5,7 +5,7 @@ import TextArea from "../../part/TextArea";
 import HeaderForm from "../../part/HeaderText";
 import Button from "../../part/Button";
 import DetailData from "../../part/DetailData";
-import { API_LINK } from "../../util/Constants";
+import { API_LINK, TENTANGFILE_LINK } from "../../util/Constants";
 import Loading from "../../part/Loading";
 import FileUpload from "../../part/FileUpload";
 import UploadFoto from "../../part/UploadFoto";
@@ -69,7 +69,7 @@ export default function Edit({ onChangePage }) {
           id="upload-foto"
           label="Upload Foto"
           onChange={(file) => handleFileChange(file)}
-          hasExisting={formData.Isi}
+          hasExisting={TENTANGFILE_LINK + formData.Isi}
           isRequired="true"
         />
       );
@@ -80,7 +80,7 @@ export default function Edit({ onChangePage }) {
           forInput="upload-file"
           formatFile=".pdf"
           onChange={(e) => handleFileChange(e.target.files[0])}
-          hasExisting={formData.Isi}
+          hasExisting={TENTANGFILE_LINK + formData.Isi}
           isRequired="true"
         />
       );
