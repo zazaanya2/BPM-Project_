@@ -16,7 +16,7 @@ const FileUpload = forwardRef(function FileUpload(
 ) {
   const [fileError, setFileError] = useState(""); // Untuk menyimpan pesan error ukuran file
 
-  // Fungsi untuk menangani perubahan file
+  // Fungsi untuk menangani perubahan file h
   const handleFileChange = (event) => {
     const file = event.target.files[0];
 
@@ -41,24 +41,23 @@ const FileUpload = forwardRef(function FileUpload(
       <div className="mb-3">
         <label htmlFor={forInput} className="form-label fw-bold">
           {label}
-          {isRequired ? <span className="text-danger"> *</span> : ""}
-          {errorMessage ? (
-            <span className="fw-normal text-danger">
-              <br />
-              {errorMessage}
-            </span>
-          ) : (
-            ""
-          )}
+          {isRequired && <span className="text-danger"> *</span>}
         </label>
-        {!isDisabled && (
+        {errorMessage && (
+          <span className="fw-normal text-danger">
+            <br />
+            {errorMessage}
+          </span>
+        )}
+
+        {!isDisabled ? (
           <>
             <input
-              className="form-control"
               type="file"
               id={forInput}
               name={forInput}
               accept={formatFile}
+              className="form-control"
               ref={ref}
               onChange={handleFileChange}
               {...props}
@@ -90,11 +89,10 @@ const FileUpload = forwardRef(function FileUpload(
               </sub>
             )}
           </>
-        )}
-        {isDisabled && (
+        ) : (
           <>
             <br />
-            {hasExisting && (
+            {hasExisting ? (
               <a
                 href={hasExisting}
                 className="text-decoration-none"
@@ -103,13 +101,14 @@ const FileUpload = forwardRef(function FileUpload(
               >
                 Unduh berkas
               </a>
+            ) : (
+              "-"
             )}
-            {!hasExisting && "-"}
           </>
         )}
       </div>
-    </>
-  );
-});
+    </>);
+  }
+);
 
 export default FileUpload;

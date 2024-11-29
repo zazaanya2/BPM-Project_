@@ -3,7 +3,7 @@ import { forwardRef } from "react";
 const DropDown = forwardRef(function DropDown(
   {
     arrData,
-    type = "pilih",
+    type = "",
     label = "",
     forInput,
     isRequired = false,
