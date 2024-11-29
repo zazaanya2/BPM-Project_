@@ -4,7 +4,6 @@ import Footer from "./components/backbone/Footer";
 import Tentang from "./components/page/2_Tentang/Root";
 import Berita from "./components/page/3_Berita/Root";
 import JadwalKegiatan from "./components/page/4_Kegiatan/ms_jadwalKegiatan/Root";
-import Survei from "./components/page/9_Survei/Root";
 import Pelaksanaan from "./components/page/5_SPMI/siklus_spmi/pelaksanaan/Root";
 import Penetapan from "./components/page/5_SPMI/siklus_spmi/penetapan/Root";
 import Peningkatan from "./components/page/5_SPMI/siklus_spmi/peningkatan/Root";
@@ -14,11 +13,11 @@ import "./App.css";
 import Peraturan from "./components/page/10_Peraturan/ms_kebijakanPeraturan/Root";
 import PeraturanEksternal from "./components/page/10_Peraturan/ms_peraturanEksternal/Root";
 import InstrumenAps from "./components/page/10_Peraturan/ms_instrumenAps/Root";
-import KriteriaSurvei from "./components/page/9_Survei/Kriteria_Survei/Root"
-import SkalaSurvei from "./components/page/9_Survei/Skala_Penilaian/Root"
+import KriteriaSurvei from "./components/page/9_Survei/Kriteria_Survei/Root";
+import SkalaSurvei from "./components/page/9_Survei/Skala_Penilaian/Root";
 // import './App.css';
 // import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import Header from './components/backbone/Header'; 
+// import Header from './components/backbone/Header';
 // import Footer from './components/backbone/Footer';
 // import Tentang from './components/page/2_Tentang/Root';
 // import Berita from './components/page/3_Berita/Root';
@@ -37,7 +36,6 @@ function App() {
           <Tentang />
           <Berita />
           <JadwalKegiatan />
-          <Survei />
           <Pelaksanaan />
           <Penetapan />
           <Peningkatan />
@@ -46,9 +44,9 @@ function App() {
           <Peraturan />
           <PeraturanEksternal />
           <InstrumenAps />
-          <KriteriaSurvei/>
+          <KriteriaSurvei />
           <SkalaSurvei></SkalaSurvei>
-        {/* <main className="flex-grow-1" >
+          {/* <main className="flex-grow-1" >
           <Tentang/>
           <Berita/>
           <RencanaKegiatan/>
