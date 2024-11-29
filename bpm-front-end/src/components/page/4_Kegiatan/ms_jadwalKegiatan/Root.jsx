@@ -8,6 +8,7 @@ import Index from "./Index";
 import Read from "./Read";
 import Add from "./Add";
 import Edit from "./Edit";
+import Detail from "./Detail";
 import ScrollToTop from "../../../part/ScrollToTop";
 
 export default function JadwalKegiatan() {
@@ -28,7 +29,7 @@ export default function JadwalKegiatan() {
         navigate("/kegiatan/jadwal/kelola/edit", withState);
         break;
       case "detail":
-        navigate("/berita/kelola/detail", withState);
+        navigate("/kegiatan/jadwal/kelola/detail", withState);
         break;
       case "news":
         navigate("/lihatBerita", withState);
@@ -58,6 +59,10 @@ export default function JadwalKegiatan() {
         <Route
           path="/kegiatan/jadwal/kelola/edit"
           element={<Edit onChangePage={handlePageChange} />}
+        />
+        <Route
+          path="/kegiatan/jadwal/kelola/detail"
+          element={<Detail onChangePage={handlePageChange} />}
         />
       </Routes>
     </>

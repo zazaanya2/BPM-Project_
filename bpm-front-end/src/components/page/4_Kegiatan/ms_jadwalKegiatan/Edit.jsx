@@ -1,10 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import PageTitleNav from "../../../part/PageTitleNav";
-import TextField from "../../../part/TextField";
+import TextField from "../../../part/InputField";
 import TextArea from "../../../part/TextArea";
-import DatePicker from "../../../part/DatePicker";
-import TimePicker from "../../../part/TimePicker";
 import HeaderForm from "../../../part/HeaderText";
 import Button from "../../../part/Button";
 import Loading from "../../../part/Loading";
@@ -146,7 +144,7 @@ export default function Edit({ onChangePage }) {
       return;
     }
 
-    const payload = {
+    const kegiatanData = {
       keg_id: location.state?.idData,
       keg_nama: formData.name,
       keg_deskripsi: formData.description,
@@ -158,36 +156,35 @@ export default function Edit({ onChangePage }) {
       keg_modif_by: "CurrentUser",
     };
 
+    console.log(kegiatanData);
+
     setLoading(true);
     try {
       const response = await fetch(
-        `${API_LINK}/YourController/EditJadwalKegiatan`,
+        `${API_LINK}/MasterKegiatan/EditJadwalKegiatan`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(kegiatanData),
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      console.log(JSON.stringify(kegiatanData));
 
-      const result = await response.json();
-      if (result) {
+      if (response.ok) {
         SweetAlert(
-          "Sukses!",
-          "Jadwal kegiatan berhasil diperbarui.",
+          "Berhasil!",
+          "Jadwal kegiatan berhasil dibuat.",
           "success",
           "OK"
-        );
-        onChangePage("read");
+        ).then(() => onChangePage("read"));
+      } else {
+        throw new Error("Gagal membuat jadwal kegiatan");
       }
     } catch (error) {
-      console.error("Error saving data:", error);
-      SweetAlert("Gagal!", "Gagal memperbarui jadwal kegiatan.", "error", "OK");
+      SweetAlert("Gagal!", error.message, "error", "OK");
     } finally {
       setLoading(false);
     }
@@ -241,7 +238,7 @@ export default function Edit({ onChangePage }) {
             </div>
             <div className="row">
               <div className="col-lg-6 col-md-6">
-                <DatePicker
+                <TextField
                   ref={tglMulaiRef}
                   label="Tanggal Mulai"
                   value={formData.startDate}
@@ -249,8 +246,9 @@ export default function Edit({ onChangePage }) {
                     setFormData({ ...formData, startDate: e.target.value })
                   }
                   isRequired={true}
+                  type="date"
                 />
-                <TimePicker
+                <TextField
                   ref={jamMulaiRef}
                   label="Waktu Mulai"
                   value={formData.startTime}
@@ -258,10 +256,11 @@ export default function Edit({ onChangePage }) {
                     setFormData({ ...formData, startTime: e.target.value })
                   }
                   isRequired={true}
+                  type="time"
                 />
               </div>
               <div className="col-lg-6 col-md-6">
-                <DatePicker
+                <TextField
                   ref={tglSelesaiRef}
                   label="Tanggal Selesai"
                   value={formData.endDate}
@@ -269,8 +268,9 @@ export default function Edit({ onChangePage }) {
                     setFormData({ ...formData, endDate: e.target.value })
                   }
                   isRequired={true}
+                  type="date"
                 />
-                <TimePicker
+                <TextField
                   ref={jamSelesaiRef}
                   label="Waktu Selesai"
                   value={formData.endTime}
@@ -278,6 +278,7 @@ export default function Edit({ onChangePage }) {
                     setFormData({ ...formData, endTime: e.target.value })
                   }
                   isRequired={true}
+                  type="time"
                 />
               </div>
             </div>

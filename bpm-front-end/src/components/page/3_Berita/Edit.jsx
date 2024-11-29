@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import PageTitleNav from "../../part/PageTitleNav";
-import TextField from "../../part/TextField";
+import InputField from "../../part/InputField";
 import TextArea from "../../part/TextArea";
-import DatePicker from "../../part/DatePicker";
 import UploadFoto from "../../part/UploadFotoMulti";
 import HeaderForm from "../../part/HeaderText";
 import Button from "../../part/Button";
@@ -100,13 +99,15 @@ export default function Edit({ onChangePage }) {
     const isTanggalValid = tanggalRef.current?.validate();
     const isIsiValid = isiRef.current?.validate();
     const isFotoValid = fotoRef.current?.validate();
-    console.log(
-      isJudulValid,
-      isPenulisValid,
-      isTanggalValid,
-      isIsiValid,
-      isFotoValid
-    );
+
+    if (!isJudulValid) {
+      judulRef.current?.focus();
+      return;
+    }
+    if (!isPenulisValid) {
+      penulisRef.current?.focus();
+      return;
+    }
 
     if (!isTanggalValid) {
       tanggalRef.current?.focus();
@@ -212,7 +213,7 @@ export default function Edit({ onChangePage }) {
             <HeaderForm label="Formulir Berita" />
             <div className="row">
               <div className="col-lg-6 col-md-6">
-                <TextField
+                <InputField
                   ref={judulRef}
                   label="Judul Berita"
                   value={formData.title}
@@ -221,7 +222,7 @@ export default function Edit({ onChangePage }) {
                   }
                   isRequired={true}
                 />
-                <TextField
+                <InputField
                   ref={penulisRef}
                   label="Penulis"
                   value={formData.author}
@@ -232,11 +233,12 @@ export default function Edit({ onChangePage }) {
                 />
               </div>
               <div className="col-lg-6 col-md-6">
-                <DatePicker
+                <InputField
                   ref={tanggalRef}
                   label="Tanggal Berita"
                   value={formData.date}
                   onChange={(date) => setFormData({ ...formData, date: date })}
+                  type="date"
                 />
               </div>
             </div>

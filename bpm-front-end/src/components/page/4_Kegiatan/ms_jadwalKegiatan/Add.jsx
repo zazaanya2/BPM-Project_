@@ -1,11 +1,10 @@
 import React, { useState, useRef } from "react";
 import PageTitleNav from "../../../part/PageTitleNav";
-import TextField from "../../../part/TextField";
+import TextField from "../../../part/InputField";
 import TextArea from "../../../part/TextArea";
-import DatePicker from "../../../part/DatePicker";
-import TimePicker from "../../../part/TimePicker";
 import HeaderForm from "../../../part/HeaderText";
 import Button from "../../../part/Button";
+import Loading from "../../../part/Loading";
 import { API_LINK } from "../../../util/Constants";
 import SweetAlert from "../../../util/SweetAlert";
 import { useIsMobile } from "../../../util/useIsMobile";
@@ -18,8 +17,18 @@ export default function Add({ onChangePage }) {
     { label: "Tambah Jadwal Kegiatan" },
   ];
   const isMobile = useIsMobile();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const [deskripsi, setDeskripsi] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+    startTime: "",
+    endTime: "",
+    place: "",
+  });
 
   // Refs for validation
   const namaRef = useRef();
@@ -31,7 +40,6 @@ export default function Add({ onChangePage }) {
   const jamSelesaiRef = useRef();
 
   const handleSubmit = async () => {
-    // Validation checks for required fields
     if (!namaRef.current?.validate()) {
       namaRef.current?.focus();
       return;
@@ -81,16 +89,18 @@ export default function Add({ onChangePage }) {
     }
 
     const kegiatanData = {
-      keg_nama: namaRef.current.value,
-      keg_deskripsi: deskripsi,
-      keg_tgl_mulai: tglMulaiRef.current.value,
-      keg_jam_mulai: jamMulaiRef.current.value,
-      keg_tgl_selesai: tglSelesaiRef.current.value,
-      keg_jam_selesai: jamSelesaiRef.current.value,
-      keg_tempat: tempatRef.current.value,
+      keg_nama: formData.name,
+      keg_deskripsi: formData.description,
+      keg_tgl_mulai: formData.startDate,
+      keg_jam_mulai: formData.startTime,
+      keg_tgl_selesai: formData.endDate,
+      keg_jam_selesai: formData.endTime,
+      keg_tempat: formData.place,
       keg_created_by: "Admin",
     };
 
+    setLoading(true);
+    console.log(kegiatanData);
     try {
       const response = await fetch(
         `${API_LINK}/MasterKegiatan/CreateJadwalKegiatan`,
@@ -116,6 +126,9 @@ export default function Add({ onChangePage }) {
     }
   };
 
+  if (loading) return <Loading />;
+  if (error) return <p>{error}</p>;
+
   return (
     <div className="d-flex flex-column min-vh-100">
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
@@ -140,44 +153,78 @@ export default function Add({ onChangePage }) {
                 <TextField
                   ref={namaRef}
                   label="Nama Kegiatan"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   isRequired={true}
                 />
               </div>
               <div className="col-lg-6 col-md-6">
-                <TextField ref={tempatRef} label="Tempat" isRequired={true} />
+                <TextField
+                  ref={tempatRef}
+                  label="Tempat"
+                  value={formData.place}
+                  onChange={(e) =>
+                    setFormData({ ...formData, place: e.target.value })
+                  }
+                  isRequired={true}
+                />
               </div>
             </div>
             <div className="row">
               <div className="col-lg-6 col-md-6">
-                <DatePicker
+                <TextField
                   ref={tglMulaiRef}
                   label="Tanggal Mulai"
+                  value={formData.startDate}
+                  onChange={(e) =>
+                    setFormData({ ...formData, startDate: e.target.value })
+                  }
                   isRequired={true}
+                  type="date"
                 />
-                <TimePicker
+                <TextField
                   ref={jamMulaiRef}
                   label="Waktu Mulai"
+                  value={formData.startTime}
+                  onChange={(e) =>
+                    setFormData({ ...formData, startTime: e.target.value })
+                  }
                   isRequired={true}
+                  type="time"
                 />
               </div>
               <div className="col-lg-6 col-md-6">
-                <DatePicker
+                <TextField
                   ref={tglSelesaiRef}
                   label="Tanggal Selesai"
+                  value={formData.endDate}
+                  onChange={(e) =>
+                    setFormData({ ...formData, endDate: e.target.value })
+                  }
                   isRequired={true}
+                  type="date"
                 />
-                <TimePicker
+                <TextField
                   ref={jamSelesaiRef}
                   label="Waktu Selesai"
+                  value={formData.endTime}
+                  onChange={(e) =>
+                    setFormData({ ...formData, endTime: e.target.value })
+                  }
                   isRequired={true}
+                  type="time"
                 />
               </div>
             </div>
             <TextArea
               ref={deskripsiRef}
               label="Deskripsi Singkat"
-              value={deskripsi}
-              onChange={(e) => setDeskripsi(e.target.value)}
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               isRequired={true}
             />
 

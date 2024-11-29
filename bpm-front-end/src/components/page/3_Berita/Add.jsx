@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
 import PageTitleNav from "../../part/PageTitleNav";
-import TextField from "../../part/TextField";
-import DatePicker from "../../part/DatePicker";
+import InputField from "../../part/InputField";
 import TextArea from "../../part/TextArea";
 import UploadFoto from "../../part/UploadFotoMulti";
 import HeaderForm from "../../part/HeaderText";
@@ -18,6 +17,7 @@ export default function Add({ onChangePage }) {
     { label: "Tambah Berita" },
   ];
   const isMobile = useIsMobile();
+  const [isiBerita, setIsiBerita] = useState("");
 
   const [formData, setFormData] = useState({
     judul: "",
@@ -95,14 +95,16 @@ export default function Add({ onChangePage }) {
       const uploadedFileNames = await uploadResponse.json();
 
       const beritaData = {
-        ber_judul: formData.judul,
-        ber_tgl: formData.tanggal,
-        ber_isi: formData.isi,
+        ber_judul: judulRef.current.value,
+        ber_tgl: tanggalRef.current.value,
+        ber_isi: isiBerita,
         ber_status: 1,
-        ber_created_by: formData.penulis,
+        ber_created_by: penulisRef.current.value,
+        ber_penulis: penulisRef.current.value,
         fotoList: uploadedFileNames,
-        ber_penulis: formData.penulis,
       };
+
+      console.log(beritaData);
 
       const createResponse = await fetch(
         `${API_LINK}/MasterBerita/CreateBerita`,
@@ -129,6 +131,10 @@ export default function Add({ onChangePage }) {
     }
   };
 
+  const handleIsiChange = (e) => {
+    setIsiBerita(e.target.value);
+  };
+
   return (
     <div className="d-flex flex-column min-vh-100">
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
@@ -149,7 +155,7 @@ export default function Add({ onChangePage }) {
               <HeaderForm label="Formulir Berita" />
               <div className="row">
                 <div className="col-lg-6 col-md-6">
-                  <TextField
+                  <InputField
                     ref={judulRef}
                     label="Judul Berita"
                     value={formData.judul} // Mengikat value dengan formData
@@ -157,7 +163,7 @@ export default function Add({ onChangePage }) {
                     isRequired={true}
                     name="judul"
                   />
-                  <TextField
+                  <InputField
                     ref={penulisRef}
                     label="Penulis"
                     value={formData.penulis} // Mengikat value dengan formData
@@ -167,25 +173,23 @@ export default function Add({ onChangePage }) {
                   />
                 </div>
                 <div className="col-lg-6 col-md-6">
-                  <DatePicker
+                  <InputField
                     ref={tanggalRef}
                     label="Tanggal Berita"
                     value={formData.tanggal} // Mengikat value dengan formData
                     onChange={handleChange}
                     isRequired={true}
                     name="tanggal"
+                    type="date"
                   />
                 </div>
               </div>
               <TextArea
                 ref={isiRef}
                 label="Isi Berita"
-                value={formData.isi} // Mengikat value dengan formData
-                onChange={(e) =>
-                  setFormData({ ...formData, isi: e.target.value })
-                }
+                value={isiBerita}
+                onChange={handleIsiChange}
                 isRequired={true}
-                name="isi"
               />
               <UploadFoto
                 ref={fotoRef}

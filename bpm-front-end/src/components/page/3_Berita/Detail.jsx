@@ -72,15 +72,22 @@ export default function Detail({ onChangePage }) {
             author: berita.ber_penulis,
             images: images,
             Createby: berita.ber_created_by,
-            CreateDate: format(
-              new Date(berita.ber_created_date),
-              "EEEE, dd MMMM yyyy",
-              { locale: id }
+            CreateDate: new Date(berita.ber_created_date).toLocaleDateString(
+              "id-ID",
+              {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              }
             ),
             Modifby: berita.ber_modif_by ? berita.ber_modif_by : "-",
             ModifDate: berita.ber_modif_date
-              ? format(new Date(berita.ber_modif_date), "EEEE, dd MMMM yyyy", {
-                  locale: id,
+              ? new Date(berita.ber_modif_date).toLocaleDateString("id-ID", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
                 })
               : "-",
           });

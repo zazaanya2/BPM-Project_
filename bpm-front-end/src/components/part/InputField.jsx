@@ -1,23 +1,27 @@
-import { forwardRef, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useState, useRef } from "react";
 
-const TimePicker = forwardRef(function TimePicker(
+const InputField = forwardRef(function TextField(
   {
     id,
     label = "",
     size = "md",
-    errorMsg = "Field ini wajib diisi.",
+    placeHolder = "",
+    errorMsg = "",
     isRequired = false,
     isDisabled = false,
+    type = "text",
+    maxChar,
+    value,
+    onChange,
     ...props
   },
   ref
 ) {
-  const [value, setValue] = useState("");
   const [error, setError] = useState(false);
+  const inputRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
     reset() {
-      setValue("");
       setError(false);
     },
     validate() {
@@ -32,7 +36,7 @@ const TimePicker = forwardRef(function TimePicker(
       return value;
     },
     focus() {
-      document.getElementById(id)?.focus();
+      inputRef.current.focus();
     },
   }));
 
@@ -41,10 +45,12 @@ const TimePicker = forwardRef(function TimePicker(
 
   const handleChange = (e) => {
     const newValue = e.target.value;
-    setValue(newValue);
-    if (isRequired) {
-      setError(!newValue.trim());
+    if (maxChar && newValue.length <= maxChar) {
+      onChange(e); // panggil onChange yang diberikan oleh induk
+    } else if (!maxChar) {
+      onChange(e); // panggil onChange yang diberikan oleh induk
     }
+    if (isRequired) setError(!newValue.trim());
   };
 
   return (
@@ -56,21 +62,33 @@ const TimePicker = forwardRef(function TimePicker(
         </label>
       )}
       <input
+        ref={inputRef}
         id={id}
         name={id}
-        type="time"
+        type={type}
         className={`form-control ${sizeClass} ${error ? "is-invalid" : ""}`}
-        value={value}
-        onChange={handleChange}
+        placeholder={placeHolder}
+        disabled={isDisabled}
+        value={value} // nilai dikendalikan oleh induk
+        onChange={handleChange} // event perubahan dikendalikan oleh induk
         onBlur={() => {
           if (isRequired && !value.trim()) setError(true);
         }}
-        disabled={isDisabled}
+        maxLength={maxChar}
         {...props}
       />
-      {error && <span className="text-danger small">{errorMsg}</span>}
+      {error && (
+        <div className="invalid-feedback">
+          {errorMsg || "Field ini wajib diisi."}
+        </div>
+      )}
+      {maxChar && (
+        <div className="small text-muted mt-1">
+          {value.length}/{maxChar} characters
+        </div>
+      )}
     </div>
   );
 });
 
-export default TimePicker;
+export default InputField;
