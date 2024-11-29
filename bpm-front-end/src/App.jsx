@@ -5,19 +5,20 @@ import Footer from "./components/backbone/Footer";
 import Tentang from "./components/page/2_Tentang/Root";
 import Berita from "./components/page/3_Berita/Root";
 import RencanaKegiatan from "./components/page/4_Kegiatan/Root";
-import Survei from "./components/page/9_Survei/Root";
+// import Survei from "./components/page/9_Survei/Root";
 import Peraturan from "./components/page/10_Peraturan/ms_kebijakanPeraturan/Root";
 import PeraturanEksternal from "./components/page/10_Peraturan/ms_peraturanEksternal/Root";
 import InstrumenAps from "./components/page/10_Peraturan/ms_instrumenAps/Root";
-
-import './App.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './components/backbone/Header'; 
-import Footer from './components/backbone/Footer';
-import Tentang from './components/page/2_Tentang/Root';
-import Berita from './components/page/3_Berita/Root';
-import RencanaKegiatan from './components/page/4_Kegiatan/Root'
-import KriteriaSurvei from './components/page/9_Survei/Kriteria_Survei/Root';
+import KriteriaSurvei from "./components/page/9_Survei/Kriteria_Survei/Root"
+import SkalaSurvei from "./components/page/9_Survei/Skala_Penilaian/Root"
+// import './App.css';
+// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// import Header from './components/backbone/Header'; 
+// import Footer from './components/backbone/Footer';
+// import Tentang from './components/page/2_Tentang/Root';
+// import Berita from './components/page/3_Berita/Root';
+// import RencanaKegiatan from './components/page/4_Kegiatan/Root'
+// import KriteriaSurvei from './components/page/9_Survei/Kriteria_Survei/Root';
 function App() {
   return (
     <Router>
@@ -31,15 +32,17 @@ function App() {
           <Tentang />
           <Berita />
           <RencanaKegiatan />
-          <Survei />
+          {/* <Survei /> */}
           <Peraturan />
           <PeraturanEksternal />
           <InstrumenAps />
-        <main className="flex-grow-1" >
+          <KriteriaSurvei/>
+          <SkalaSurvei></SkalaSurvei>
+        {/* <main className="flex-grow-1" >
           <Tentang/>
           <Berita/>
           <RencanaKegiatan/>
-          <KriteriaSurvei/>
+           */}
         </main>
 
         {/* Footer Component */}

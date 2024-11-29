@@ -17,7 +17,7 @@ const FileUpload = forwardRef(function FileUpload(
 ) {
   const [fileError, setFileError] = useState(""); // Untuk menyimpan pesan error ukuran file
 
-  // Fungsi untuk menangani perubahan file
+  // Fungsi untuk menangani perubahan file h
   const handleFileChange = (event) => {
     const file = event.target.files[0];
 
@@ -102,7 +102,7 @@ const FileUpload = forwardRef(function FileUpload(
           </>
         )}
       </div>
-    );
+    </>);
   }
 );
 
