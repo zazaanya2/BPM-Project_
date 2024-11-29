@@ -28,13 +28,10 @@ export default function Index({ onChangePage }) {
   useEffect(() => {
     const fetchBerita = async () => {
       try {
-        const response = await fetch(
-          `${API_LINK}/api/MasterBerita/GetDataBerita`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        const response = await fetch(`${API_LINK}/MasterBerita/GetDataBerita`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
 
         if (!response.ok) throw new Error("Gagal mengambil data");
 
@@ -50,7 +47,7 @@ export default function Index({ onChangePage }) {
               }),
               year: new Date(item.ber_tgl).getFullYear(), // Simpan tahun
               description: item.ber_isi,
-              author: item.ber_created_by,
+              author: item.ber_penulis,
               images: [],
             };
           }
