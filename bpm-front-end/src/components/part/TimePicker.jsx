@@ -1,26 +1,23 @@
-import { forwardRef, useImperativeHandle, useState, useRef } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 
-const TextField = forwardRef(function TextField(
+const TimePicker = forwardRef(function TimePicker(
   {
     id,
     label = "",
     size = "md",
-    placeHolder = "",
-    errorMsg = "",
+    errorMsg = "Field ini wajib diisi.",
     isRequired = false,
     isDisabled = false,
-    maxChar,
-    value,
-    onChange,
     ...props
   },
   ref
 ) {
+  const [value, setValue] = useState("");
   const [error, setError] = useState(false);
-  const inputRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
     reset() {
+      setValue("");
       setError(false);
     },
     validate() {
@@ -35,7 +32,7 @@ const TextField = forwardRef(function TextField(
       return value;
     },
     focus() {
-      inputRef.current.focus();
+      document.getElementById(id)?.focus();
     },
   }));
 
@@ -44,12 +41,10 @@ const TextField = forwardRef(function TextField(
 
   const handleChange = (e) => {
     const newValue = e.target.value;
-    if (maxChar && newValue.length <= maxChar) {
-      onChange(e); // panggil onChange yang diberikan oleh induk
-    } else if (!maxChar) {
-      onChange(e); // panggil onChange yang diberikan oleh induk
+    setValue(newValue);
+    if (isRequired) {
+      setError(!newValue.trim());
     }
-    if (isRequired) setError(!newValue.trim());
   };
 
   return (
@@ -61,33 +56,21 @@ const TextField = forwardRef(function TextField(
         </label>
       )}
       <input
-        ref={inputRef}
         id={id}
         name={id}
-        type="text"
+        type="time"
         className={`form-control ${sizeClass} ${error ? "is-invalid" : ""}`}
-        placeholder={placeHolder}
-        disabled={isDisabled}
-        value={value} // nilai dikendalikan oleh induk
-        onChange={handleChange} // event perubahan dikendalikan oleh induk
+        value={value}
+        onChange={handleChange}
         onBlur={() => {
           if (isRequired && !value.trim()) setError(true);
         }}
-        maxLength={maxChar}
+        disabled={isDisabled}
         {...props}
       />
-      {error && (
-        <div className="invalid-feedback">
-          {errorMsg || "Field ini wajib diisi."}
-        </div>
-      )}
-      {maxChar && (
-        <div className="small text-muted mt-1">
-          {value.length}/{maxChar} characters
-        </div>
-      )}
+      {error && <span className="text-danger small">{errorMsg}</span>}
     </div>
   );
 });
 
-export default TextField;
+export default TimePicker;

@@ -46,7 +46,7 @@ export default function Read({ onChangePage }) {
                 locale: id,
               }),
               description: item.ber_isi,
-              author: item.ber_created_by,
+              author: item.ber_penulis,
               images: [],
               year: new Date(item.ber_tgl).getFullYear(), // Tambahkan properti tahun
             };

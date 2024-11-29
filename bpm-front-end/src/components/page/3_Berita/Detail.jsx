@@ -69,7 +69,7 @@ export default function Detail({ onChangePage }) {
               locale: id,
             }),
             description: berita.ber_isi,
-            author: berita.ber_created_by,
+            author: berita.ber_penulis,
             images: images,
             Createby: berita.ber_created_by,
             CreateDate: format(

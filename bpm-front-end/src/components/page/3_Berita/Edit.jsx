@@ -8,6 +8,7 @@ import UploadFoto from "../../part/UploadFotoMulti";
 import HeaderForm from "../../part/HeaderText";
 import Button from "../../part/Button";
 import SweetAlert from "../../util/SweetAlert";
+import Loading from "../../part/Loading";
 import { API_LINK } from "../../util/Constants";
 import { format } from "date-fns";
 import { useIsMobile } from "../../util/useIsMobile";
@@ -71,7 +72,7 @@ export default function Edit({ onChangePage }) {
             title: berita.ber_judul,
             date: format(new Date(berita.ber_tgl), "yyyy-MM-dd"),
             description: berita.ber_isi,
-            author: berita.ber_created_by,
+            author: berita.ber_penulis,
             images: images,
           });
           setTempImages(images);
@@ -124,10 +125,6 @@ export default function Edit({ onChangePage }) {
     setError(null);
 
     try {
-      if (!formData.title || !formData.date || !formData.description) {
-        throw new Error("Semua kolom wajib diisi.");
-      }
-
       const existingPaths = tempImages.filter((img) => typeof img === "string");
       const newFiles = tempImages.filter((img) => img instanceof File);
 
@@ -167,6 +164,7 @@ export default function Edit({ onChangePage }) {
           description: formData.description,
           modif_by: formData.author,
           images: finalImagePaths,
+          ber_penulis: formData.author,
         }),
       });
 
@@ -187,6 +185,9 @@ export default function Edit({ onChangePage }) {
       setLoading(false);
     }
   };
+
+  if (loading) return <Loading />;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -209,8 +210,6 @@ export default function Edit({ onChangePage }) {
             }
           >
             <HeaderForm label="Formulir Berita" />
-            {loading && <p>Loading...</p>}
-            {error && <p className="text-danger">{error}</p>}
             <div className="row">
               <div className="col-lg-6 col-md-6">
                 <TextField
