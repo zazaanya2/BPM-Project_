@@ -280,14 +280,19 @@ export default function Read({ onChangePage }) {
                     ? "Terlewat"
                     : "Terlaksana",
               }))}
-              actions={["Detail", "Edit", "Delete"]}
+              actions={(item) => {
+                console.log("Item:", item);
+                return item.Status === "Terlaksana"
+                  ? ["Detail"]
+                  : ["Detail", "Edit", "Delete"];
+              }}
               onEdit={(item) =>
-                onChangePage("edit", { state: { idData: item } })
+                onChangePage("edit", { state: { idData: item.Key } })
               }
               onDetail={(item) =>
-                onChangePage("detail", { state: { idData: item } })
+                onChangePage("detail", { state: { idData: item.Key } })
               }
-              onDelete={(item) => handleDelete(item)}
+              onDelete={(item) => handleDelete(item.Key)}
             />
 
             <Paging
