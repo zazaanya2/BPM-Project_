@@ -25,7 +25,7 @@ export default function Index({ onChangePage }) {
     const fetchData = async () => {
       try {
         console.log("Fetching data...");
-        const response = await fetch(API_LINK + '/api/MasterTentang/GetDataTentang', {
+        const response = await fetch(API_LINK + '/MasterTentang/GetDataTentang', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

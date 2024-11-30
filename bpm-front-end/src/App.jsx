@@ -11,6 +11,7 @@ import PeraturanEksternal from "./components/page/10_Peraturan/ms_peraturanEkste
 import InstrumenAps from "./components/page/10_Peraturan/ms_instrumenAps/Root";
 import KriteriaSurvei from "./components/page/9_Survei/Kriteria_Survei/Root"
 import SkalaSurvei from "./components/page/9_Survei/Skala_Penilaian/Root"
+
 // import './App.css';
 // import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // import Header from './components/backbone/Header'; 

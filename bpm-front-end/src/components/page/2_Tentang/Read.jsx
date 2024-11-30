@@ -19,7 +19,7 @@ export default function Read({ onChangePage }) {
             try {
                 console.log('Fetching data with:', { pageCurrent, pageSize }); // Log request data
         
-                const response = await fetch(API_LINK +'/api/MasterTentang/GetDataTentang', {
+                const response = await fetch(API_LINK +'/MasterTentang/GetDataTentang', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
