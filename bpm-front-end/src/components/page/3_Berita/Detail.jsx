@@ -43,13 +43,16 @@ export default function Detail({ onChangePage }) {
 
     const fetchData = async () => {
       try {
-        const response = await fetch(`${API_LINK}/api/MasterBerita/GetDataBeritaById`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ ber_id: editId }),
-        });
+        const response = await fetch(
+          `${API_LINK}/api/MasterBerita/GetDataBeritaById`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ ber_id: editId }),
+          }
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -62,16 +65,24 @@ export default function Detail({ onChangePage }) {
 
           setFormData({
             title: berita.ber_judul,
-            date: format(new Date(berita.ber_tgl), "EEEE, dd MMMM yyyy", { locale: id }),
+            date: format(new Date(berita.ber_tgl), "EEEE, dd MMMM yyyy", {
+              locale: id,
+            }),
             description: berita.ber_isi,
             author: berita.ber_created_by,
             images: images,
             Createby: berita.ber_created_by,
-            CreateDate: format(new Date(berita.ber_created_date), "EEEE, dd MMMM yyyy", { locale: id }),
-            Modifby: berita.ber_modif_by?berita.ber_modif_by:"-",
-            ModifDate: berita.ber_modif_date 
-                        ? format(new Date(berita.ber_modif_date), "EEEE, dd MMMM yyyy", { locale: id }) 
-                        : "-",
+            CreateDate: format(
+              new Date(berita.ber_created_date),
+              "EEEE, dd MMMM yyyy",
+              { locale: id }
+            ),
+            Modifby: berita.ber_modif_by ? berita.ber_modif_by : "-",
+            ModifDate: berita.ber_modif_date
+              ? format(new Date(berita.ber_modif_date), "EEEE, dd MMMM yyyy", {
+                  locale: id,
+                })
+              : "-",
           });
         } else {
           console.warn("Data not found or empty.");
@@ -87,9 +98,9 @@ export default function Detail({ onChangePage }) {
     fetchData();
   }, [location.state?.idData]);
 
-    if (loading) {
-        return <Loading />;
-    }
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -104,7 +115,13 @@ export default function Detail({ onChangePage }) {
             />
           </div>
           {/* Main Content */}
-          <div className={isMobile ? "shadow p-4 m-2 mt-0 bg-white rounded" : "shadow p-5 p-5 m-5 mt-0 bg-white rounded"}>
+          <div
+            className={
+              isMobile
+                ? "shadow p-4 m-2 mt-0 bg-white rounded"
+                : "shadow p-5 p-5 m-5 mt-0 bg-white rounded"
+            }
+          >
             <HeaderForm label="Formulir Berita" />
             {error && <p className="text-danger">{error}</p>}
             <div className="row">
@@ -118,7 +135,9 @@ export default function Detail({ onChangePage }) {
             </div>
             <DetailData label="Isi Berita" isi={formData.description} />
             <div className="row">
-                <label htmlFor={id} className="form-label fw-bold">Foto Struktur</label> 
+              <label htmlFor={id} className="form-label fw-bold">
+                Foto Struktur
+              </label>
               {formData.images.length > 0 ? (
                 formData.images.map((image, index) => (
                   <div key={index} className="col-4 mb-3">
@@ -126,7 +145,7 @@ export default function Detail({ onChangePage }) {
                       src={`${BERITAFOTO_LINK}${image}`}
                       alt={`Foto Berita ${index + 1}`}
                       className="img-fluid"
-                      style={{height:"100%"}}
+                      style={{ height: "100%" }}
                     />
                   </div>
                 ))
@@ -135,15 +154,18 @@ export default function Detail({ onChangePage }) {
               )}
             </div>
             <div className="row">
-                <div className="col-lg-6 col-md-6">
-                    <DetailData label="Dibuat Oleh" isi={formData.Createby}/>
-                    <DetailData label="Dibuat Tanggal" isi={formData.CreateDate}/>
-                </div>
-                <div className="col-lg-6 col-md-6">
-                    <DetailData label="Dimodifikasi Oleh" isi={formData.Modifby}/>
-                    <DetailData label="Dimodifikasi Tanggal" isi={formData.ModifDate}/>
-                </div>
-            </div>   
+              <div className="col-lg-6 col-md-6">
+                <DetailData label="Dibuat Oleh" isi={formData.Createby} />
+                <DetailData label="Dibuat Tanggal" isi={formData.CreateDate} />
+              </div>
+              <div className="col-lg-6 col-md-6">
+                <DetailData label="Dimodifikasi Oleh" isi={formData.Modifby} />
+                <DetailData
+                  label="Dimodifikasi Tanggal"
+                  isi={formData.ModifDate}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </main>

@@ -19,25 +19,26 @@ export default function Index({ onChangePage }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const isMobile = useIsMobile(); 
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(API_LINK + '/api/MasterTentang/GetDataTentang', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            
-          }),
-        });
+        const response = await fetch(
+          API_LINK + "/api/MasterTentang/GetDataTentang",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({}),
+          }
+        );
 
         if (!response.ok) throw new Error("Network response was not ok");
 
         const result = await response.json();
-        setData(result); 
+        setData(result);
       } catch (err) {
         console.error("Fetch error:", err);
         setError("Gagal mengambil data");
@@ -49,7 +50,7 @@ export default function Index({ onChangePage }) {
     fetchData();
   }, []);
 
-  if (loading) return <Loading/>;
+  if (loading) return <Loading />;
   if (error) return <p>{error}</p>;
 
   const handleDownloadClick = () => {
@@ -60,7 +61,10 @@ export default function Index({ onChangePage }) {
   return (
     <>
       <div className="latarGradasi mt-5">
-        <div className="position-absolute top-0 end-0 p-5" style={{ zIndex: 20 }}>
+        <div
+          className="position-absolute top-0 end-0 p-5 mb-3"
+          style={{ zIndex: 20 }}
+        >
           <Button
             className="btn btn-primary"
             title="Kelola Tentang"
@@ -69,35 +73,67 @@ export default function Index({ onChangePage }) {
           />
         </div>
 
-        <img src={Bangunan} alt="Bangunan" style={{
-          position: 'absolute', bottom: '0', width: '100%', left: '0', zIndex: 1
-        }} />
+        <img
+          src={Bangunan}
+          alt="Bangunan"
+          style={{
+            position: "absolute",
+            bottom: "0",
+            width: "100%",
+            left: "0",
+            zIndex: 1,
+          }}
+        />
 
-        <img src={Orang} alt="Orang" style={{
-          position: 'absolute', bottom: '-2rem', left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '33vw', minWidth: isMobile?'50%':'37%', zIndex: 2
-        }} />
+        <img
+          src={Orang}
+          alt="Orang"
+          style={{
+            position: "absolute",
+            bottom: "-2rem",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "100%",
+            maxWidth: "33vw",
+            minWidth: isMobile ? "50%" : "37%",
+            zIndex: 2,
+          }}
+        />
 
-        <div style={{
-          position: 'relative', zIndex: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'start', margin: '1rem', padding: '2rem', minHeight: '100vh', width: '800px'
-        }}>
-          <img src={Logo} alt="Logo" style={{ width: '200px', height: 'auto', marginBottom: '25px' }} />
-          
+        <div
+          style={{
+            position: "relative",
+            zIndex: 3,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "start",
+            margin: "1rem",
+            padding: "2rem",
+            minHeight: "100vh",
+            width: "800px",
+          }}
+        >
+          <img
+            src={Logo}
+            alt="Logo"
+            style={{ width: "200px", height: "auto", marginBottom: "25px" }}
+          />
+
           {data[0] && (
-            <Text
-              isi={data[0].ten_isi}
-              alignText="center"
-              ukuran="18px"
-            />
+            <Text isi={data[0].ten_isi} alignText="center" ukuran="18px" />
           )}
         </div>
       </div>
 
-      <div  className="shadow bg-white rounded" 
-            style={{
-              padding: isMobile ? "2rem" : "5rem", // Padding lebih kecil di mobile
-              margin: isMobile ? "2rem" : "5rem", // Margin lebih kecil di mobile
-              marginTop: "3rem",
-            }}>
+      <div
+        className="shadow bg-white rounded"
+        style={{
+          padding: isMobile ? "2rem" : "5rem", // Padding lebih kecil di mobile
+          margin: isMobile ? "2rem" : "8rem", // Margin lebih kecil di mobile
+          marginTop: "3rem",
+        }}
+      >
         <HeaderText
           label="Sejarah BPM"
           warna="#2654A1"
@@ -107,7 +143,11 @@ export default function Index({ onChangePage }) {
 
         <div className="row align-items-center">
           <div className="col-lg-4 col-md-6">
-            <img src={OrangLaptop} alt="Logo" style={{ width: '80%', height: 'auto', marginBottom: '25px' }} />
+            <img
+              src={OrangLaptop}
+              alt="Logo"
+              style={{ width: "80%", height: "auto", marginBottom: "25px" }}
+            />
           </div>
           <div className="col-lg-8 col-md-6">
             {data[1] && (
@@ -131,14 +171,14 @@ export default function Index({ onChangePage }) {
                 fontWeight="700"
                 marginBottom="20px"
               />
-              
+
               <Text
-                  isi= "SK Pendirian BPM dapat diakses  dengan mengklik kolom dibawah ini:"
-                  alignText="left"
-                  ukuran="16px"
-                  warna="grey"
-                />  
-              
+                isi="SK Pendirian BPM dapat diakses  dengan mengklik kolom dibawah ini:"
+                alignText="left"
+                ukuran="16px"
+                warna="grey"
+              />
+
               <Button
                 className="btn btn-primary"
                 title="Unduh SK Pendirian"
@@ -149,15 +189,31 @@ export default function Index({ onChangePage }) {
             </div>
           </div>
           <div className="col-lg-5 col-md-6">
-            <img src={OrangKerja} alt="Logo" style={{ width: '100%', height: 'auto', marginBottom: '25px' }} />
+            <img
+              src={OrangKerja}
+              alt="Logo"
+              style={{ width: "100%", height: "auto", marginBottom: "25px" }}
+            />
           </div>
         </div>
       </div>
 
-      <div className="flex-grow-1" style={{ backgroundColor: '#193756', padding: isMobile ? "2rem" : "4rem" }}>
+      <div
+        className="flex-grow-1"
+        style={{
+          backgroundColor: "#193756",
+          padding: isMobile ? "2rem" : "4rem",
+        }}
+      >
         <div className="row">
-          <div className="col-lg-6 col-md-6" style={{padding: isMobile ? "1rem" : "2rem"}}>
-            <div className="card" style={{padding: isMobile ? "2rem" : "3rem"}}>
+          <div
+            className="col-lg-6 col-md-6"
+            style={{ padding: isMobile ? "1rem" : "2rem" }}
+          >
+            <div
+              className="card"
+              style={{ padding: isMobile ? "2rem" : "3rem" }}
+            >
               <HeaderText
                 label="Sasaran Badan Penjamin Mutu"
                 warna="white"
@@ -175,8 +231,14 @@ export default function Index({ onChangePage }) {
               )}
             </div>
           </div>
-          <div className="col-lg-6 col-md-6" style={{padding: isMobile ? "1rem" : "2rem"}}>
-            <div className="card" style={{padding: isMobile ? "2rem" : "3rem"}}>
+          <div
+            className="col-lg-6 col-md-6"
+            style={{ padding: isMobile ? "1rem" : "2rem" }}
+          >
+            <div
+              className="card"
+              style={{ padding: isMobile ? "2rem" : "3rem" }}
+            >
               <HeaderText
                 label="Strategi Badan Penjamin Mutu"
                 warna="white"
@@ -205,25 +267,67 @@ export default function Index({ onChangePage }) {
           fontWeight="700"
           marginBottom="50px"
         />
-        <img src={`${TENTANGFILE_LINK}${data[6].ten_isi}`} alt="Logo" style={{ width: '100%', height: 'auto', marginBottom: '25px' }} />
+        <img
+          src={`${TENTANGFILE_LINK}${data[6].ten_isi}`}
+          alt="Logo"
+          style={{ width: "100%", height: "auto", marginBottom: "25px" }}
+        />
       </div>
 
       <div className="latarGradasi2">
-        <div className="d-flex flex-column align-items-center justify-content-start m-5 p-3" style={{ minHeight: '100vh', width: '800px' }}>
-          <Icon name="book-open-cover" cssClass="text-white" ukuran="80px" margin="10px" />
-          
-          <HeaderText label="Visi" warna="white" alignText="center" ukuran="35px" fontWeight="700" />
+        <div
+          className="d-flex flex-column align-items-center justify-content-start m-5 p-3"
+          style={{ minHeight: "100vh", width: "800px" }}
+        >
+          <Icon
+            name="book-open-cover"
+            cssClass="text-white"
+            ukuran="80px"
+            margin="10px"
+          />
+
+          <HeaderText
+            label="Visi"
+            warna="white"
+            alignText="center"
+            ukuran="35px"
+            fontWeight="700"
+          />
           {data[3] && (
             <Text isi={data[4].ten_isi} alignText="center" ukuran="18px" />
           )}
 
-          <HeaderText label="Misi" warna="white" alignText="center" ukuran="35px" fontWeight="700" />
+          <HeaderText
+            label="Misi"
+            warna="white"
+            alignText="center"
+            ukuran="35px"
+            fontWeight="700"
+          />
           {data[4] && (
             <Text isi={data[5].ten_isi} alignText="center" ukuran="18px" />
           )}
 
-          <img src={Gedung} alt="Bangunan" style={{ position: 'absolute', width: '100%', height: 'auto', bottom:'0px' }} />
-          <img src={Mahasiswa} alt="Orang" style={{ position: 'relative', width: '150%', height: 'auto', bottom:'-70px' }} />
+          <img
+            src={Gedung}
+            alt="Bangunan"
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "auto",
+              bottom: "0px",
+            }}
+          />
+          <img
+            src={Mahasiswa}
+            alt="Orang"
+            style={{
+              position: "relative",
+              width: "150%",
+              height: "auto",
+              bottom: "-70px",
+            }}
+          />
         </div>
       </div>
     </>

@@ -29,16 +29,18 @@ export default function Header() {
     return () => window.removeEventListener("resize", checkIsMobile);
   }, []);
 
- 
   useEffect(() => {
     if (isMobile) {
-      setMobileMenuOpen(false); 
+      setMobileMenuOpen(false);
     }
-  }, [location]); 
+  }, [location]);
 
   return (
     <header className="header">
-      <div className="d-flex justify-content-between align-items-center fixed-top p-1" style={{ backgroundColor: "#2654A1" }}>
+      <div
+        className="d-flex justify-content-between align-items-center fixed-top p-1"
+        style={{ backgroundColor: "#2654A1" }}
+      >
         <div className="d-flex align-items-center">
           <img
             src={brand}
@@ -65,8 +67,15 @@ export default function Header() {
             }}
           >
             <i
-              className={`fi ${isMobileMenuOpen ? "fi-br-cross-small" : "fi-br-menu-burger"}`}
-              style={{ color: "#FFFFFF", fontSize: "25px", margin: "10px 5px 10px", cursor: "pointer" }}
+              className={`fi ${
+                isMobileMenuOpen ? "fi-br-cross-small" : "fi-br-menu-burger"
+              }`}
+              style={{
+                color: "#FFFFFF",
+                fontSize: "25px",
+                margin: "10px 5px 10px",
+                cursor: "pointer",
+              }}
             ></i>
           </button>
         )}

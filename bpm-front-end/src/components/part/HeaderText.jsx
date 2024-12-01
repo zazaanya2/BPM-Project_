@@ -1,5 +1,5 @@
 export default function HeaderText({
-  label,
+  label, // Properti 'isi' akan digunakan untuk teks HTML
   warna = "#5F5858",
   ukuran = "30px",
   alignText = "center",
@@ -19,8 +19,7 @@ export default function HeaderText({
         marginTop: marginTop,
         width: width, // Mengatur lebar elemen
       }}
-    >
-      {label}
-    </h3>
+      dangerouslySetInnerHTML={{ __html: label }} // Menampilkan isi HTML
+    />
   );
 }
