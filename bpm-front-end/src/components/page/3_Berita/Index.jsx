@@ -17,6 +17,7 @@ export default function Index({ onChangePage }) {
   const [beritaData, setBeritaData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [selectedYear, setSelectedYear] = useState(""); // Tambahkan state untuk filter tahun
   const [pageCurrent, setPageCurrent] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,13 +28,10 @@ export default function Index({ onChangePage }) {
   useEffect(() => {
     const fetchBerita = async () => {
       try {
-        const response = await fetch(
-          `${API_LINK}/api/MasterBerita/GetDataBerita`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        const response = await fetch(`${API_LINK}/MasterBerita/GetDataBerita`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
 
         if (!response.ok) throw new Error("Gagal mengambil data");
 
@@ -47,8 +45,9 @@ export default function Index({ onChangePage }) {
               date: format(new Date(item.ber_tgl), "EEEE, dd MMMM yyyy", {
                 locale: id,
               }),
+              year: new Date(item.ber_tgl).getFullYear(), // Simpan tahun
               description: item.ber_isi,
-              author: item.ber_created_by,
+              author: item.ber_penulis,
               images: [],
             };
           }
@@ -70,20 +69,27 @@ export default function Index({ onChangePage }) {
     fetchBerita();
   }, []);
 
-  // Handle search filtering
+  // Handle search and year filtering
   useEffect(() => {
-    if (!searchKeyword) {
-      setFilteredData(beritaData);
-    } else {
+    let data = beritaData;
+
+    // Filter berdasarkan tahun
+    if (selectedYear) {
+      data = data.filter((item) => item.year === parseInt(selectedYear));
+    }
+
+    // Filter berdasarkan kata kunci
+    if (searchKeyword) {
       const lowerKeyword = searchKeyword.toLowerCase();
-      const filtered = beritaData.filter(
+      data = data.filter(
         (item) =>
           item.title.toLowerCase().includes(lowerKeyword) ||
           item.description.toLowerCase().includes(lowerKeyword)
       );
-      setFilteredData(filtered);
     }
-  }, [searchKeyword, beritaData]);
+
+    setFilteredData(data);
+  }, [searchKeyword, selectedYear, beritaData]);
 
   // Highlight search keyword in text
   const highlightText = (text, keyword) => {
@@ -133,7 +139,11 @@ export default function Index({ onChangePage }) {
         }}
       >
         <div
-          className="position-absolute top-0 end-0 p-5 m-5"
+          className={
+            isMobile
+              ? "position-absolute top-0 end-0 p-5 m-0 mt-5"
+              : "position-absolute top-0 end-0 p-5 m-5"
+          }
           style={{ zIndex: 1 }}
         >
           <Button
@@ -148,7 +158,11 @@ export default function Index({ onChangePage }) {
           <div className="col-lg-4 col-md-6">
             <div
               className="position-absolute"
-              style={{ top: "10%", padding: "3rem", margin: "5rem" }}
+              style={{
+                top: "10%",
+                padding: isMobile ? "2rem" : "3rem",
+                margin: isMobile ? "1rem" : "3rem",
+              }}
             >
               <HeaderText
                 label={
@@ -158,7 +172,7 @@ export default function Index({ onChangePage }) {
                 alignText="left"
                 fontWeight="700"
                 lebar="310px"
-                ukuran="200%"
+                ukuran={isMobile ? "175%" : "200%"}
               />
             </div>
           </div>
@@ -169,7 +183,7 @@ export default function Index({ onChangePage }) {
               style={{
                 position: "absolute",
                 right: "0",
-                bottom: "0",
+                bottom: isMobile ? "120px" : "0",
                 width: "75%",
                 height: "auto",
                 minWidth: "700px",
@@ -190,7 +204,7 @@ export default function Index({ onChangePage }) {
           height: "100%",
           padding: isMobile ? "2rem" : "3rem",
           margin: isMobile ? "1rem" : "7rem",
-          marginBottom: "-13rem",
+          marginBottom: "-15rem",
         }}
       >
         <div className="row mb-3">
@@ -202,9 +216,27 @@ export default function Index({ onChangePage }) {
           </div>
           <div className="col-lg-2 col-md-6">
             <Filter>
-              <div>Option 1</div>
-              <div>Option 2</div>
-              <div>Option 3</div>
+              <div className="mb-3">
+                <label htmlFor="yearPicker" className="mb-1">
+                  Berdasarkan Tahun
+                </label>
+                <input
+                  id="yearPicker"
+                  type="number"
+                  className="form-control"
+                  placeholder="Masukkan Tahun"
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(e.target.value)}
+                  min="2000"
+                  max={new Date().getFullYear()}
+                />
+              </div>
+              <Button
+                classType="btn btn-secondary"
+                title="Reset Filter"
+                label="Reset"
+                onClick={() => setSelectedYear("")}
+              />
             </Filter>
           </div>
         </div>

@@ -1,5 +1,4 @@
 import { forwardRef, useState } from "react";
-import { TENTANGFILE_LINK } from "../util/Constants";
 
 const FileUpload = forwardRef(function FileUpload(
   {
@@ -17,7 +16,7 @@ const FileUpload = forwardRef(function FileUpload(
 ) {
   const [fileError, setFileError] = useState(""); // Untuk menyimpan pesan error ukuran file
 
-  // Fungsi untuk menangani perubahan file
+  // Fungsi untuk menangani perubahan file h
   const handleFileChange = (event) => {
     const file = event.target.files[0];
 
@@ -42,24 +41,23 @@ const FileUpload = forwardRef(function FileUpload(
       <div className="mb-3">
         <label htmlFor={forInput} className="form-label fw-bold">
           {label}
-          {isRequired ? <span className="text-danger"> *</span> : ""}
-          {errorMessage ? (
-            <span className="fw-normal text-danger">
-              <br />
-              {errorMessage}
-            </span>
-          ) : (
-            ""
-          )}
+          {isRequired && <span className="text-danger"> *</span>}
         </label>
-        {!isDisabled && (
+        {errorMessage && (
+          <span className="fw-normal text-danger">
+            <br />
+            {errorMessage}
+          </span>
+        )}
+
+        {!isDisabled ? (
           <>
             <input
-              className="form-control"
               type="file"
               id={forInput}
               name={forInput}
               accept={formatFile}
+              className="form-control"
               ref={ref}
               onChange={handleFileChange}
               {...props}
@@ -79,7 +77,7 @@ const FileUpload = forwardRef(function FileUpload(
                 <br />
                 Berkas saat ini:{" "}
                 <a
-                  href={TENTANGFILE_LINK + hasExisting}
+                  href={hasExisting}
                   className="text-decoration-none"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -91,26 +89,26 @@ const FileUpload = forwardRef(function FileUpload(
               </sub>
             )}
           </>
-        )}
-        {isDisabled && (
+        ) : (
           <>
             <br />
-            {hasExisting && (
+            {hasExisting ? (
               <a
-                href={TENTANGFILE_LINK + hasExisting}
+                href={hasExisting}
                 className="text-decoration-none"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Unduh berkas
               </a>
+            ) : (
+              "-"
             )}
-            {!hasExisting && "-"}
           </>
         )}
       </div>
-    </>
-  );
-});
+    </>);
+  }
+);
 
 export default FileUpload;
