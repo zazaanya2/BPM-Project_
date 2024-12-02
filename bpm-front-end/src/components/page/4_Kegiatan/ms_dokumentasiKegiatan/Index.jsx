@@ -139,24 +139,24 @@ export default function Index({ onChangePage }) {
           {jenisKegiatan.map((jenis) => (
             <div
               key={jenis.Value}
-              className="col-auto mb-0 d-flex justify-content-center" // col-auto for auto width based on content
+              className="col-auto mb-0 d-flex justify-content-center"
             >
               <button
                 className={`btn ${
                   selectedJenisKegiatan === jenis.Value
                     ? "shadow"
                     : "btn-outline-white"
-                } rounded-top-2 rounded-bottom-0`} // Apply rounded-top to button
+                } rounded-top-2 rounded-bottom-0`}
                 style={{
                   backgroundColor:
                     selectedJenisKegiatan === jenis.Value ? "#2654A1" : "",
                   color:
                     selectedJenisKegiatan === jenis.Value ? "white" : "#AAA7A7",
                   fontSize: "16px",
-                  padding: "10px 15px", // Adjust padding to keep the button size fitting its text
+                  padding: "10px 15px",
                   fontWeight: "650",
-                  width: "auto", // Button width adjusts to content
-                  whiteSpace: "nowrap", // Prevent text wrapping
+                  width: "auto",
+                  whiteSpace: "nowrap",
                 }}
                 onClick={() => setSelectedJenisKegiatan(jenis.Value)}
               >
@@ -184,7 +184,7 @@ export default function Index({ onChangePage }) {
               />
             ))
           ) : (
-            <p>Belum ada kegiatan</p>
+            <p className="m-5">Belum ada kegiatan</p>
           )}
         </div>
       </div>

@@ -203,7 +203,7 @@ export default function Index({ onChangePage }) {
           zIndex: "1",
           height: "100%",
           padding: isMobile ? "2rem" : "3rem",
-          margin: isMobile ? "1rem" : "7rem",
+          margin: isMobile ? "1rem" : "6rem",
           marginBottom: "-15rem",
         }}
       >
