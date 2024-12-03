@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import TabTahun from "./TabTahunKegiatan";
 import HeaderText from "../../../part/HeaderText";
+import Button from "../../../part/Button";
 import { API_LINK } from "../../../util/Constants";
 import { useIsMobile } from "../../../util/useIsMobile";
 
@@ -48,12 +49,13 @@ export default function Index({ onChangePage }) {
   const fetchEvents = async () => {
     try {
       const response = await fetch(
-        `${API_LINK}/MasterKegiatan/GetDataKegiatan`,
+        `${API_LINK}/MasterKegiatan/GetDataKegiatanByCategory`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({ keg_kategori: 3 }),
         }
       );
 
@@ -130,6 +132,21 @@ export default function Index({ onChangePage }) {
           fontWeight="700"
           marginBottom="1rem"
           marginTop="4rem"
+        />
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginRight: "3rem",
+        }}
+      >
+        <Button
+          classType="btn btn-primary"
+          title="Kelola Dokumentasi Kegiatan"
+          label="Kelola Dokumentasi Kegiatan"
+          onClick={() => onChangePage("read")}
         />
       </div>
 

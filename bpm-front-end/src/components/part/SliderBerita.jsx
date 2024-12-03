@@ -28,7 +28,7 @@ const SliderBerita = ({ beritaItems }) => {
   };
 
   const handleCardClick = (item) => {
-    navigate("/lihatBerita", { state: item });
+    navigate("/berita/lihatBerita", { state: item });
   };
 
   const navButtonStyle = {

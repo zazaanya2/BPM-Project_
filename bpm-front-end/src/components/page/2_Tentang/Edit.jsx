@@ -195,7 +195,6 @@ export default function Edit({ onChangePage }) {
             <HeaderForm label="Formulir Tentang" />
             <div className="row">
               <DetailData label="Kategori" isi={formData.Kategori} />
-              <DetailData label="Dibuat Oleh" isi={formData.Createby} />
             </div>
             {renderContent()}
             <div className="d-flex justify-content-between align-items-center">

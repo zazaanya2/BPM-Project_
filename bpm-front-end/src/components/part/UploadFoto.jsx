@@ -1,9 +1,15 @@
 import { useState, useEffect } from "react";
-import { TENTANGFILE_LINK } from "../util/Constants";
 
-const UploadFoto = ({ id, label = "", isRequired = false, errorMsg = "", onChange, hasExisting }) => {
+const UploadFoto = ({
+  id,
+  label = "",
+  isRequired = false,
+  errorMsg = "",
+  onChange,
+  hasExisting,
+}) => {
   const [preview, setPreview] = useState(null);
-  
+
   // useEffect(() => {
   //   // Jika hasExisting ada, tampilkan gambar yang ada sebagai preview
   //   if (hasExisting) {
@@ -32,7 +38,9 @@ const UploadFoto = ({ id, label = "", isRequired = false, errorMsg = "", onChang
         <label htmlFor={id} className="form-label fw-bold mt-3">
           {label}
           {isRequired && <span className="text-danger"> *</span>}
-          {errorMsg && <span className="fw-normal text-danger"> {errorMsg}</span>}
+          {errorMsg && (
+            <span className="fw-normal text-danger"> {errorMsg}</span>
+          )}
         </label>
       )}
 
@@ -52,7 +60,11 @@ const UploadFoto = ({ id, label = "", isRequired = false, errorMsg = "", onChang
             src={preview}
             alt="Preview"
             className="img-thumbnail"
-            style={{ maxWidth: "100%", maxHeight: "150px", borderRadius: "8px" }}
+            style={{
+              maxWidth: "100%",
+              maxHeight: "150px",
+              borderRadius: "8px",
+            }}
           />
         ) : (
           <span className="text-muted">No Image Selected</span>
@@ -74,7 +86,7 @@ const UploadFoto = ({ id, label = "", isRequired = false, errorMsg = "", onChang
           <br />
           Gambar saat ini:{" "}
           <a
-            href={TENTANGFILE_LINK + hasExisting}
+            href={hasExisting}
             className="text-decoration-none"
             target="_blank"
             rel="noopener noreferrer"
