@@ -20,9 +20,9 @@ import PeraturanEksternal from "./components/page/10_Peraturan/ms_peraturanEkste
 import InstrumenAps from "./components/page/10_Peraturan/ms_instrumenAps/Root";
 import KriteriaSurvei from "./components/page/9_Survei/Kriteria_Survei/Root";
 import SkalaSurvei from "./components/page/9_Survei/Skala_Penilaian/Root";
-import RencanaKegiatan from "./components/page/4_Kegiatan/Root";
-import Survei from "./components/page/9_Survei/Root";
-
+import AkreProdi from "./components/page/6_SPME/AkreditasiProdi/Root";
+import AkreInstitusi from "./components/page/6_SPME/AkreditasiInstitusi/Root";
+// import Survei from "./components/page/9_Survei/Survei/Root";
 function App() {
   return (
     <Router>
@@ -35,7 +35,7 @@ function App() {
         <main className="flex-grow-1">
           <Tentang />
           <Berita />
-          <RencanaKegiatan />
+          {/* <RencanaKegiatan /> */}
           <JadwalKegiatan />
           <DokumentasiKegiatan />
           <Pelaksanaan />
@@ -43,7 +43,7 @@ function App() {
           <Peningkatan />
           <Pengendalian />
           <Evaluasi />
-          <Survei />
+          {/* <Survei /> */}
           <Peraturan />
           <PeraturanEksternal />
           <InstrumenAps />
@@ -52,6 +52,8 @@ function App() {
           <InstrumenAps />
           <KriteriaSurvei />
           <SkalaSurvei />
+          <AkreProdi />
+          <AkreInstitusi />
         </main>
 
         {/* Footer Component */}
