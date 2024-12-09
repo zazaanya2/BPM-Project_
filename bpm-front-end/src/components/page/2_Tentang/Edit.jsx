@@ -80,7 +80,7 @@ export default function Edit({ onChangePage }) {
           label="Upload File"
           forInput="upload-file"
           formatFile=".pdf"
-          onChange={(e) => handleFileChange(e.target.files[0])}
+          onChange={(file) => handleFileChange(file)}
           hasExisting={TENTANGFILE_LINK + formData.Isi}
           isRequired="true"
         />

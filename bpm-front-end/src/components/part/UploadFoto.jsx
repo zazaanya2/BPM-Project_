@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import SweetAlert from "../util/SweetAlert";
 
 const UploadFoto = ({
   id,
@@ -9,17 +10,19 @@ const UploadFoto = ({
   hasExisting,
 }) => {
   const [preview, setPreview] = useState(null);
-
-  // useEffect(() => {
-  //   // Jika hasExisting ada, tampilkan gambar yang ada sebagai preview
-  //   if (hasExisting) {
-  //     setPreview(FILE_LINK + hasExisting);
-  //   }
-  // }, [hasExisting]);
+  const inputRef = useRef(); // Tambahkan ref untuk input file
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
+
     if (file) {
+      // Validasi apakah file adalah gambar
+      if (!file.type.startsWith("image/")) {
+        SweetAlert("Gagal!", "File harus berupa gambar", "error", "OK");
+        inputRef.current.value = ""; // Kosongkan input field jika file tidak valid
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result); // Set preview gambar baru
@@ -29,13 +32,19 @@ const UploadFoto = ({
       if (onChange) {
         onChange(file);
       }
+    } else {
+      // Kosongkan preview jika tidak ada file yang dipilih
+      setPreview(null);
     }
+
+    // Kosongkan nilai input setelah proses selesai
+    inputRef.current.value = "";
   };
 
   return (
     <div className="mb-3">
       {label && (
-        <label htmlFor={id} className="form-label fw-bold mt-3">
+        <label htmlFor={id} className="form-label fw-bold">
           {label}
           {isRequired && <span className="text-danger"> *</span>}
           {errorMsg && (
@@ -78,6 +87,7 @@ const UploadFoto = ({
         className="form-control mt-2"
         accept="image/*"
         onChange={handleFileChange}
+        ref={inputRef} // Hubungkan ref ke input
         style={{ cursor: "pointer" }}
       />
 

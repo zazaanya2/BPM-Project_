@@ -44,10 +44,15 @@ export default function Index({ onChangePage }) {
             acc[item.ber_id] = {
               id: item.ber_id,
               title: item.ber_judul,
-              date: format(new Date(item.ber_tgl), "EEEE, dd MMMM yyyy", {
-                locale: id,
-              }),
-              year: new Date(item.ber_tgl).getFullYear(), // Simpan tahun
+              date: new Date(item.ber_tgl),
+              formattedDate: format(
+                new Date(item.ber_tgl),
+                "EEEE, dd MMMM yyyy",
+                {
+                  locale: id,
+                }
+              ),
+              year: new Date(item.ber_tgl).getFullYear(),
               description: item.ber_isi,
               author: item.ber_penulis,
               images: [],
@@ -59,7 +64,11 @@ export default function Index({ onChangePage }) {
           return acc;
         }, {});
 
-        setBeritaData(Object.values(groupedBerita));
+        const sortedBerita = Object.values(groupedBerita).sort(
+          (a, b) => b.date - a.date
+        );
+
+        setBeritaData(sortedBerita);
       } catch (err) {
         console.error("Fetch error:", err);
         setError("Gagal mengambil data");
@@ -204,7 +213,7 @@ export default function Index({ onChangePage }) {
           top: "-10rem",
           zIndex: "1",
           height: "100%",
-          padding: isMobile ? "2rem" : "3rem",
+          padding: isMobile ? "1rem" : "3rem",
           marginBottom: "-5rem",
         }}
       >
@@ -224,42 +233,40 @@ export default function Index({ onChangePage }) {
             }}
           >
             {/* Search dan Filter (sebelahan) */}
-            <div
-              className="d-flex mb-4"
-              style={{ gap: "20px", alignItems: "center", flexWrap: "wrap" }}
-            >
-              {/* Search Field */}
-              <div style={{ flex: 5 }}>
-                <SearchField
-                  onChange={(value) => setSearchKeyword(value)}
-                  placeHolder="Cari Berita..."
-                />
-              </div>
-              {/* Filter Field */}
-              <div style={{ flex: 1 }}>
-                <Filter>
-                  <div className="mb-3">
-                    <label htmlFor="yearPicker" className="mb-1">
-                      Berdasarkan Tahun
-                    </label>
-                    <input
-                      id="yearPicker"
-                      type="number"
-                      className="form-control"
-                      placeholder="Masukkan Tahun"
-                      value={selectedYear}
-                      onChange={(e) => setSelectedYear(e.target.value)}
-                      min="2000"
-                      max={new Date().getFullYear()}
-                    />
-                  </div>
-                  <Button
-                    classType="btn btn-secondary"
-                    title="Reset Filter"
-                    label="Reset"
-                    onClick={() => setSelectedYear("")}
+            <div className="row mb-3 p-1">
+              <div className="col-12 d-flex flex-wrap align-items-center">
+                <div className="me-auto flex-grow-1 mt-3">
+                  <SearchField
+                    onChange={(value) => setSearchKeyword(value)}
+                    placeHolder="Cari Berita..."
                   />
-                </Filter>
+                </div>
+
+                <div className="ms-3 m-0">
+                  <Filter>
+                    <div className="mb-3">
+                      <label htmlFor="yearPicker" className="mb-1">
+                        Berdasarkan Tahun
+                      </label>
+                      <input
+                        id="yearPicker"
+                        type="number"
+                        className="form-control"
+                        placeholder="Masukkan Tahun"
+                        value={selectedYear}
+                        onChange={(e) => setSelectedYear(e.target.value)}
+                        min="2000"
+                        max={new Date().getFullYear()}
+                      />
+                    </div>
+                    <Button
+                      classType="btn btn-secondary"
+                      title="Reset Filter"
+                      label="Reset"
+                      onClick={() => setSelectedYear("")}
+                    />
+                  </Filter>
+                </div>
               </div>
             </div>
 
@@ -269,7 +276,11 @@ export default function Index({ onChangePage }) {
                 {currentData.map((newsItem, index) => (
                   <div
                     key={index}
-                    className="col-lg-4 col-md-6 col-12 mb-4 ps-0 p-3"
+                    className={
+                      isMobile
+                        ? "col-lg-4 col-md-6 col-12 mb-4 p-0"
+                        : "col-lg-4 col-md-6 col-12 mb-4 ps-0 p-3"
+                    }
                   >
                     <CardBerita
                       title={truncateAndHighlight(
@@ -278,7 +289,7 @@ export default function Index({ onChangePage }) {
                         93
                       )}
                       author={newsItem.author}
-                      date={newsItem.date}
+                      date={newsItem.formattedDate}
                       description={highlightText(
                         getSnippet(
                           newsItem.description,
@@ -368,7 +379,7 @@ export default function Index({ onChangePage }) {
                           marginBottom: "10px",
                         }}
                       >
-                        {newsItem.date}
+                        {newsItem.formattedDate}
                       </p>
                     </div>
                   </div>

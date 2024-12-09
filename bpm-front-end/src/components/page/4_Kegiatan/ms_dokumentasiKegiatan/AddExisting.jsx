@@ -5,11 +5,15 @@ import HeaderForm from "../../../part/HeaderText";
 import Button from "../../../part/Button";
 import Loading from "../../../part/Loading";
 import DropDown from "../../../part/Dropdown";
+import UploadFoto from "../../../part/UploadFoto";
+import RadioButton from "../../../part/RadioButton";
 import moment from "moment";
 import "moment/locale/id";
 moment.locale("id");
 import { API_LINK } from "../../../util/Constants";
 import { useIsMobile } from "../../../util/useIsMobile";
+import InputField from "../../../part/InputField";
+import FileUpload from "../../../part/FileUpload";
 
 export default function AddExisting({ onChangePage }) {
   const title = "Tambah Jadwal Kegiatan";
@@ -21,6 +25,7 @@ export default function AddExisting({ onChangePage }) {
   const isMobile = useIsMobile();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const [formData, setFormData] = useState({
     id: "",
@@ -32,9 +37,18 @@ export default function AddExisting({ onChangePage }) {
     endTime: "",
     place: "",
     jenisKegiatan: "",
+    fotoSampul: "",
+    linkFolder: "",
+    fileNotulen: "",
+    statusFileNotulen: 0,
   });
 
   const [existingKegiatan, setExistingKegiatan] = useState([]);
+
+  const namaRef = useRef();
+  const folderLinkRef = useRef();
+  const fotoSampulRef = useRef();
+  const statusFileNotulenRef = useRef();
 
   // Fetch kegiatan data
   useEffect(() => {
@@ -97,7 +111,7 @@ export default function AddExisting({ onChangePage }) {
           "dddd, DD MMMM YYYY"
         ),
         startTime: moment(selectedData.keg_jam_mulai, "HH:mm:ss").format(
-          "HH:mm"
+          "HH:mm [WIB]"
         ), // Format waktu
         endTime: moment(selectedData.keg_jam_selesai, "HH:mm:ss").format(
           "HH:mm [WIB]"
@@ -106,6 +120,10 @@ export default function AddExisting({ onChangePage }) {
         jenisKegiatan: selectedData.jkg_nama,
       });
     }
+  };
+
+  const handleFileChange = (file) => {
+    setSelectedFile(file); // Store file in state
   };
 
   if (loading) return <Loading />;
@@ -129,10 +147,11 @@ export default function AddExisting({ onChangePage }) {
                 : "shadow p-5 m-5 mt-0 bg-white rounded"
             }
           >
-            <HeaderForm label="Formulir Jadwal Kegiatan" />
+            <HeaderForm label="Formulir Dokumentasi Kegiatan" />
             <div className="row">
               {/* Dropdown */}
               <DropDown
+                ref={namaRef}
                 arrData={existingKegiatan}
                 type="pilih"
                 label="Jadwal Kegiatan"
@@ -156,7 +175,55 @@ export default function AddExisting({ onChangePage }) {
               </div>
             </div>
             <DetailData label="Deskripsi Singkat" isi={formData.description} />
-            <div className="d-flex justify-content-between align-items-center">
+            <div className="row">
+              <div className="col-lg-6 col-md-6">
+                <InputField
+                  ref={folderLinkRef}
+                  label="Link Folder Dokumentasi"
+                  value={formData.linkFolder || ""} // Fallback ke string kosong
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      linkFolder: e.target.value,
+                    }))
+                  }
+                  isRequired={true}
+                />
+                <FileUpload
+                  label="File Notulensi"
+                  forInput="upload-file"
+                  formatFile=".pdf"
+                  onChange={(file) => handleFileChange(file)}
+                  isRequired="true"
+                />
+                <RadioButton
+                  ref={statusFileNotulenRef}
+                  label="Sifat File Notulensi"
+                  name="options"
+                  arrData={[
+                    { Value: 0, Text: "Privat" },
+                    { Value: 1, Text: "Publik" },
+                  ]}
+                  value={Number(formData.statusFileNotulen) || 0} // Fallback ke string kosong
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      statusFileNotulen: e.target.value,
+                    }))
+                  }
+                  isRequired={true}
+                />
+              </div>
+              <div className="col-lg-6 col-md-6">
+                <UploadFoto
+                  id="upload-foto"
+                  label="Foto Sampul"
+                  onChange={(file) => handleFileChange(file)}
+                  isRequired="true"
+                />
+              </div>
+            </div>
+            <div className="d-flex justify-content-between align-items-center mt-4">
               <div className="flex-grow-1 m-2">
                 <Button
                   classType="primary"

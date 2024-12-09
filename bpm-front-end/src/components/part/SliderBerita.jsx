@@ -89,7 +89,7 @@ const SliderBerita = ({ beritaItems }) => {
               <CardBerita
                 title={item.title}
                 author={item.author}
-                date={item.date}
+                date={item.formattedDate}
                 description={
                   !isMobile ? truncateDescription(item.description) : ""
                 } // Truncated description
