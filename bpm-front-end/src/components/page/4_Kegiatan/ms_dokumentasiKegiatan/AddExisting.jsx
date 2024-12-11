@@ -30,13 +30,13 @@ export default function AddExisting({ onChangePage }) {
   const [formData, setFormData] = useState({
     id: "",
     name: "",
-    description: "",
-    startDate: "",
-    endDate: "",
-    startTime: "",
-    endTime: "",
-    place: "",
-    jenisKegiatan: "",
+    description: "-",
+    startDate: "-",
+    endDate: "-",
+    startTime: "-",
+    endTime: "-",
+    place: "-",
+    jenisKegiatan: "-",
     fotoSampul: "",
     linkFolder: "",
     fileNotulen: "",
@@ -68,8 +68,8 @@ export default function AddExisting({ onChangePage }) {
         if (response.ok) {
           const data = await response.json();
           const formattedData = data.map((item) => ({
-            Value: item.keg_id, // ID untuk dropdown
-            Text: item.keg_nama, // Nama untuk ditampilkan di dropdown
+            Value: item.keg_id,
+            Text: item.keg_nama,
             keg_deskripsi: item.keg_deskripsi,
             keg_tgl_mulai: item.keg_tgl_mulai,
             keg_tgl_selesai: item.keg_tgl_selesai,
@@ -106,13 +106,13 @@ export default function AddExisting({ onChangePage }) {
         description: selectedData.keg_deskripsi,
         startDate: moment(selectedData.keg_tgl_mulai).format(
           "dddd, DD MMMM YYYY"
-        ), // Format tanggal
+        ),
         endDate: moment(selectedData.keg_tgl_selesai).format(
           "dddd, DD MMMM YYYY"
         ),
         startTime: moment(selectedData.keg_jam_mulai, "HH:mm:ss").format(
           "HH:mm [WIB]"
-        ), // Format waktu
+        ),
         endTime: moment(selectedData.keg_jam_selesai, "HH:mm:ss").format(
           "HH:mm [WIB]"
         ),
