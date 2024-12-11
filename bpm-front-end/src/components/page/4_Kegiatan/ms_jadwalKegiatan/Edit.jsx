@@ -134,7 +134,6 @@ export default function Edit({ onChangePage }) {
   }, [location.state?.idData]);
 
   const handleSubmit = async () => {
-    console.log(jenisKegiatanRef.current.value);
     if (!namaRef.current?.validate()) {
       namaRef.current?.focus();
       return;
@@ -201,8 +200,6 @@ export default function Edit({ onChangePage }) {
       jkg_id: formData.jenisKegiatan,
     };
 
-    console.log(kegiatanData);
-
     setLoading(true);
     try {
       const response = await fetch(
@@ -215,8 +212,6 @@ export default function Edit({ onChangePage }) {
           body: JSON.stringify(kegiatanData),
         }
       );
-
-      console.log(JSON.stringify(kegiatanData));
 
       if (response.ok) {
         SweetAlert(

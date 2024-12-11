@@ -78,7 +78,6 @@ export default function Add({ onChangePage }) {
   const jenisKegiatanRef = useRef();
 
   const handleSubmit = async () => {
-    console.log(formData.jenisKegiatan);
     if (!namaRef.current?.validate()) {
       namaRef.current?.focus();
       return;
@@ -145,7 +144,6 @@ export default function Add({ onChangePage }) {
     };
 
     setLoading(true);
-    console.log(kegiatanData);
     try {
       const response = await fetch(
         `${API_LINK}/MasterKegiatan/CreateJadwalKegiatan`,
