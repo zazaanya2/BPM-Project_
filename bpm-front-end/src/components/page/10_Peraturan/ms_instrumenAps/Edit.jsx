@@ -1,136 +1,144 @@
 import React, { useState, useEffect } from "react";
+import Table from "../../../part/Table";
+import Paging from "../../../part/Paging";
 import PageTitleNav from "../../../part/PageTitleNav";
-import TextField from "../../../part/TextField";
-import HeaderForm from "../../../part/HeaderText";
-import DropDown from "../../../part/Dropdown";
-import { useLocation } from "react-router-dom";
 import Button from "../../../part/Button";
+import { useIsMobile } from "../../../util/useIsMobile";
+import { API_LINK } from "../../../util/Constants";
+import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
 
-export default function Edit({ onChangePage, data }) {
-  const location = useLocation();
+export default function Edit({ onChangePage }) {
+  const [peraturanData, setPeraturanData] = useState([]);
+  const [pageSize] = useState(10);
+  const [pageCurrent, setPageCurrent] = useState(1);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const isMobile = useIsMobile();
+  const { id } = useParams(); // Mengambil ID dari URL
 
-  const [formData, setFormData] = useState({
-    JudulDokumen: "",
-    NomorIndukDokumen: "",
-    TahunDokumen: "",
-    JenisDokumen: "",
-    TahunKadaluarsa: "",
-  });
+  // Indeks data untuk pagination
+  const indexOfLastData = pageCurrent * pageSize;
+  const indexOfFirstData = indexOfLastData - pageSize;
+  const currentData = data.slice(indexOfFirstData, indexOfLastData);
+
+  // Fetch data dari API
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        `${API_LINK}/api/MasterPeraturan/GetDataPeraturanById/${id}`, // Menggunakan ID dalam URL
+        {
+          method: "POST", // Gunakan GET untuk mengambil data berdasarkan ID
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const result = await response.json();
+
+      // Ubah groupedBerita menjadi array dan set data
+      setData(result);
+    } catch (err) {
+      setError("Gagal mengambil data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (location.state?.editData) {
-      const editId = location.state.editData;
-      const selectedData = data.find((item) => item.Key === editId);
-      if (selectedData) {
-        setFormData({
-          JudulDokumen: selectedData.JudulDokumen,
-          NomorIndukDokumen: selectedData.NomorIndukDokumen,
-          TahunDokumen: selectedData.TahunDokumen,
-          JenisDokumen: selectedData.JenisDokumen,
-          TahunKadaluarsa: selectedData.TahunKadaluarsa,
-        });
-      }
-    }
-  }, [location.state, data]);
+    fetchData();
+  }, []);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+  const handlePageNavigation = (page) => {
+    setPageCurrent(page);
   };
+
+  const title = "Instrumen APS";
+  const breadcrumbs = [
+    { label: "Instrumen APS", href: "/peraturan/aps" },
+    { label: "Dokumen Instrumen APS" },
+  ];
+
+  // Mendapatkan instance navigate
+  const navigate = useNavigate();
+
+  const handleEdit = (item) => {
+    console.log(item); // Cek apakah item memiliki 'dok_id'
+    if (item && item.dok_id) {
+      navigate("/peraturan/aps/edit", {
+        state: { editData: item, dokId: item.dok_id },
+      });
+    } else {
+      console.log("dok_id tidak ditemukan", item); // Menangani kasus tidak ada dok_id
+    }
+  };
+
+  if (loading) {
+    return <div>Loading data...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div className="d-flex flex-column min-vh-100">
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
         <div className="d-flex flex-column">
-          <div className="m-3 mb-0">
+          <div className={isMobile ? "m-0" : "m-3"}>
             <PageTitleNav
-              title="Edit Instrumen APS"
-              breadcrumbs={[
-                { label: "Peraturan", href: "/peraturan/aps" },
-                {
-                  label: "instrumen APS",
-                  href: "/peraturan/aps/kelola",
-                },
-                { label: "Edit Instrumen APS" },
-              ]}
+              title={title}
+              breadcrumbs={breadcrumbs}
               onClick={() => onChangePage("index")}
             />
           </div>
+          <div
+            className={`p-3 m-5 mt-2 mb-0 ${isMobile ? "m-1" : ""}`}
+            style={{ marginLeft: isMobile ? "10px" : "50px" }}
+          >
+            <Button
+              iconName="add"
+              classType="primary"
+              label="Tambah Data"
+              onClick={() => onChangePage("add")}
+            />
+          </div>
+          <div className="table-container bg-white p-3 m-5 mt-0 rounded">
+            <Table
+              arrHeader={[
+                "No",
+                "Judul Dokumen",
+                "Nomor Dokumen",
+                "Tahun Dokumen",
+              ]}
+              headerToDataMap={{
+                No: "No",
+                "Judul Dokumen": "JudulDokumen",
+                "Nomor Dokumen": "dok_nodok",
+                "Tahun Dokumen": "dok_tahun",
+              }}
+              data={currentData.map((item, index) => ({
+                key: item.dok_id, // Make sure dok_id is available here
+                No: indexOfFirstData + index + 1,
+                JudulDokumen: item.dok_judul,
+                dok_nodok: item.dok_nodok,
+                dok_tahun: item.dok_tahun,
+              }))}
+              actions={["Detail", "Edit", "Delete", "UpdateHistory"]}
+              onEdit={handleEdit}
+            />
 
-          <div className="shadow p-5 m-5 mt-0 bg-white rounded">
-            <HeaderForm label="Formulir Instrumen APS" />
-            <div className="row">
-              <TextField
-                label="Judul Dokumen"
-                isRequired={true}
-                name="Judul Dokumen"
-                value={formData.JudulDokumen}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="row">
-              <div className="col-lg-6 col-md-6">
-                <TextField
-                  label="Nomor Induk Dokumen"
-                  isRequired={true}
-                  name="Nomor Induk Dokumen"
-                  value={formData.NomorIndukDokumen}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="col-lg-6 col-md-6">
-                <TextField
-                  label="Tahun Dokumen"
-                  isRequired={true}
-                  name="Tahun Dokumen"
-                  value={formData.TahunDokumen}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="col-lg-6 col-md-6">
-                <DropDown
-                  label="Jenis Dokumen"
-                  isRequired={true}
-                  name="Jenis Dokumen"
-                  value={formData.JenisDokumen}
-                  onChange={handleInputChange}
-                  arrData={[
-                    { Value: "controlled", Text: "Controlled Copy" },
-                    { Value: "uncontrolled", Text: "Uncontrolled Copy" },
-                  ]}
-                />
-              </div>
-              <div className="col-lg-6 col-md-6">
-                <TextField
-                  label="Tahun Kadaluarsa"
-                  isRequired={true}
-                  name="Tahun Kadaluarsa"
-                  value={formData.TahunKadaluarsa}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-            <div className="d-flex justify-content-between align-items-center mt-4">
-              <div className="flex-grow-1 m-2">
-                <Button
-                  classType="primary"
-                  type="submit"
-                  label="Simpan"
-                  width="100%"
-                  onClick={() => {
-                    onChangePage("index");
-                  }}
-                />
-              </div>
-              <div className="flex-grow-1 m-2">
-                <Button
-                  classType="danger"
-                  type="button"
-                  label="Batal"
-                  width="100%"
-                />
-              </div>
-            </div>
+            <Paging
+              pageSize={pageSize}
+              pageCurrent={pageCurrent}
+              totalData={data.length}
+              navigation={handlePageNavigation}
+            />
           </div>
         </div>
       </main>

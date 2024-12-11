@@ -5,16 +5,20 @@ import HeaderForm from "../../../part/HeaderText";
 import DropDown from "../../../part/Dropdown";
 import { useLocation } from "react-router-dom";
 import Button from "../../../part/Button";
+import { useIsMobile } from "../../../util/useIsMobile";
+
+import FileUpload from "../../../part/FileUpload";
 
 export default function Edit({ onChangePage, data }) {
   const location = useLocation();
-
+  const isMobile = useIsMobile();
   const [formData, setFormData] = useState({
     JudulDokumen: "",
     NomorIndukDokumen: "",
     TahunDokumen: "",
     JenisDokumen: "",
     TahunKadaluarsa: "",
+    Dokumen: "",
   });
 
   useEffect(() => {
@@ -28,6 +32,7 @@ export default function Edit({ onChangePage, data }) {
           TahunDokumen: selectedData.TahunDokumen,
           JenisDokumen: selectedData.JenisDokumen,
           TahunKadaluarsa: selectedData.TahunKadaluarsa,
+          Dokumen: selectedData.Dokumen,
         });
       }
     }
@@ -42,7 +47,7 @@ export default function Edit({ onChangePage, data }) {
     <div className="d-flex flex-column min-vh-100">
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
         <div className="d-flex flex-column">
-          <div className="m-3 mb-0">
+          <div className={isMobile ? "m-0" : "m-3"}>
             <PageTitleNav
               title="Edit Peraturan"
               breadcrumbs={[
@@ -57,8 +62,23 @@ export default function Edit({ onChangePage, data }) {
             />
           </div>
 
-          <div className="shadow p-5 m-5 mt-0 bg-white rounded">
+          <div
+            className={
+              isMobile
+                ? "shadow p-4 m-2 mt-0 bg-white rounded"
+                : "shadow p-5 m-5 mt-0 bg-white rounded"
+            }
+          >
             <HeaderForm label="Formulir Kebijakan Peraturan" />
+            <div className="row">
+              <TextField
+                label="Nomor Induk Dokumen"
+                isRequired={true}
+                name="Nomor Induk Dokumen"
+                value={formData.NomorIndukDokumen}
+                onChange={handleInputChange}
+              />
+            </div>
             <div className="row">
               <TextField
                 label="Judul Dokumen"
@@ -69,46 +89,44 @@ export default function Edit({ onChangePage, data }) {
               />
             </div>
             <div className="row">
-              <div className="col-lg-6 col-md-6">
-                <TextField
-                  label="Nomor Induk Dokumen"
-                  isRequired={true}
-                  name="Nomor Induk Dokumen"
-                  value={formData.NomorIndukDokumen}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="col-lg-6 col-md-6">
-                <TextField
-                  label="Tahun Dokumen"
-                  isRequired={true}
-                  name="Tahun Dokumen"
-                  value={formData.TahunDokumen}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="col-lg-6 col-md-6">
-                <DropDown
-                  label="Jenis Dokumen"
-                  isRequired={true}
-                  name="Jenis Dokumen"
-                  value={formData.JenisDokumen}
-                  onChange={handleInputChange}
-                  arrData={[
-                    { Value: "controlled", Text: "Controlled Copy" },
-                    { Value: "uncontrolled", Text: "Uncontrolled Copy" },
-                  ]}
-                />
-              </div>
-              <div className="col-lg-6 col-md-6">
-                <TextField
-                  label="Tahun Kadaluarsa"
-                  isRequired={true}
-                  name="Tahun Kadaluarsa"
-                  value={formData.TahunKadaluarsa}
-                  onChange={handleInputChange}
-                />
-              </div>
+              <TextField
+                label="Tahun Dokumen"
+                isRequired={true}
+                name="Tahun Dokumen"
+                value={formData.TahunDokumen}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="row">
+              <DropDown
+                label="Jenis Dokumen"
+                isRequired={true}
+                name="Jenis Dokumen"
+                value={formData.JenisDokumen}
+                onChange={handleInputChange}
+                arrData={[
+                  { Value: "controlled", Text: "Controlled Copy" },
+                  { Value: "uncontrolled", Text: "Uncontrolled Copy" },
+                ]}
+              />
+            </div>
+            <div className="row">
+              <TextField
+                label="Tahun Kadaluarsa"
+                isRequired={true}
+                name="Tahun Kadaluarsa"
+                value={formData.TahunKadaluarsa}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="row">
+              <FileUpload
+                label="Dokumen"
+                isRequired={true}
+                name="Dokumen"
+                value={formData.Dokumen}
+                onChange={handleInputChange}
+              />
             </div>
             <div className="d-flex justify-content-between align-items-center mt-4">
               <div className="flex-grow-1 m-2">
@@ -117,9 +135,6 @@ export default function Edit({ onChangePage, data }) {
                   type="submit"
                   label="Simpan"
                   width="100%"
-                  onClick={() => {
-                    onChangePage("index");
-                  }}
                 />
               </div>
               <div className="flex-grow-1 m-2">
@@ -128,6 +143,9 @@ export default function Edit({ onChangePage, data }) {
                   type="button"
                   label="Batal"
                   width="100%"
+                  onClick={() => {
+                    onChangePage("index");
+                  }}
                 />
               </div>
             </div>
