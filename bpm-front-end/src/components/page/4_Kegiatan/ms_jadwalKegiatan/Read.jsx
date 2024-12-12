@@ -12,6 +12,7 @@ import SweetAlert from "../../../util/SweetAlert";
 import moment from "moment";
 import "moment-timezone";
 import { useFetch } from "../../../util/useFetch";
+import DropDown from "../../../part/Dropdown";
 
 export default function Read({ onChangePage }) {
   const isMobile = useIsMobile();
@@ -22,7 +23,6 @@ export default function Read({ onChangePage }) {
   ];
 
   const [events, setEvents] = useState([]);
-  const [status, setStatus] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
@@ -30,6 +30,12 @@ export default function Read({ onChangePage }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [status, setStatus] = useState([
+    { Value: "", Text: "Semua" },
+    { Value: 1, Text: "Rencana" },
+    { Value: 2, Text: "Terlewat" },
+    { Value: 3, Text: "Terlaksana" },
+  ]);
 
   const pageSize = 10;
 
@@ -87,7 +93,9 @@ export default function Read({ onChangePage }) {
     }
 
     if (selectedStatus) {
-      tempData = tempData.filter((item) => item.category === selectedStatus);
+      tempData = tempData.filter(
+        (item) => item.category === parseInt(selectedStatus)
+      );
     }
 
     setFilteredData(tempData);
@@ -205,19 +213,12 @@ export default function Read({ onChangePage }) {
                       />
                     </div>
                     <div className="mb-3">
-                      <label htmlFor="statusPicker" className="mb-1">
-                        Berdasarkan Status
-                      </label>
-                      <select
-                        className="form-control"
+                      <DropDown
+                        arrData={status}
+                        label="Berdasarkan Status"
                         value={selectedStatus}
                         onChange={(e) => setSelectedStatus(e.target.value)}
-                      >
-                        <option value="">Semua</option>
-                        <option value="1">Rencana</option>
-                        <option value="2">Terlewat</option>
-                        <option value="3">Terlaksana</option>
-                      </select>
+                      />
                     </div>
 
                     <Button

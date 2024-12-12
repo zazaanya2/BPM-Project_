@@ -1,4 +1,4 @@
-import { useState, forwardRef, useRef } from "react";
+import { useState, useImperativeHandle, useRef } from "react";
 import SweetAlert from "../util/SweetAlert";
 
 const UploadFoto = ({
