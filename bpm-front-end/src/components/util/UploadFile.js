@@ -1,29 +1,26 @@
 import { API_LINK } from "./Constants";
+export const uploadFile = async (selectedFile, folderName, filePrefix) => {
+  const formData = new FormData();
+  formData.append("files", selectedFile);
 
-const uploadFile = async (file) => {
-  if (file) { // Check if file exists
-    const data = new FormData();
-    data.append("file", file instanceof File ? file : file.files[0]); // Directly append if already a File object
-
-    try {
-      const response = await fetch(API_LINK + "/api/Upload/UploadFile", {
+  try {
+    const uploadResponse = await fetch(
+      `${API_LINK}/Upload/UploadFiles?folderName=${encodeURIComponent(
+        folderName
+      )}&filePrefix=${encodeURIComponent(filePrefix)}`,
+      {
         method: "POST",
-        body: data,
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("jwtToken"),
-        },
-      });
-      const result = await response.json();
-      if (response.ok) {
-        return result;
-      } else {
-        return "ERROR";
+        body: formData,
       }
-    } catch (err) {
-      return "ERROR";
+    );
+
+    if (!uploadResponse.ok) {
+      throw new Error("Gagal mengunggah file");
     }
-  } else return "";
+
+    return await uploadResponse.json(); // Assuming the server returns JSON response
+  } catch (error) {
+    console.error("Error during file upload:", error);
+    throw error; // Re-throw the error to be handled by the caller
+  }
 };
-
-export default uploadFile;
-

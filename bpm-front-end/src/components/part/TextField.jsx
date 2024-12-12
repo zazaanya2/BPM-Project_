@@ -10,19 +10,18 @@ const TextField = forwardRef(function TextField(
     isRequired = false,
     isDisabled = false,
     maxChar,
+    value,
+    onChange,
     ...props
   },
   ref
 ) {
-  const [value, setValue] = useState(""); // State untuk nilai input
-  const [error, setError] = useState(false); // State untuk validasi error
-  const inputRef = useRef(null); // Referensi ke elemen input
+  const [error, setError] = useState(false);
+  const inputRef = useRef(null);
 
-  // Fungsi reset untuk mengatur nilai kembali ke kondisi awal
   useImperativeHandle(ref, () => ({
     reset() {
-      setValue(""); // Reset nilai input ke kosong
-      setError(false); // Reset error state
+      setError(false);
     },
     validate() {
       if (isRequired && !value.trim()) {
@@ -32,22 +31,23 @@ const TextField = forwardRef(function TextField(
       setError(false);
       return true;
     },
-    focus() {
-      inputRef.current.focus(); // Gunakan ref untuk memfokuskan elemen input
+    get value() {
+      return value;
     },
-    value,
+    focus() {
+      inputRef.current.focus();
+    },
   }));
 
-  // Tentukan kelas ukuran input berdasarkan prop `size`
-  const sizeClass = size === "lg" ? "form-control-lg" : size === "sm" ? "form-control-sm" : "";
+  const sizeClass =
+    size === "lg" ? "form-control-lg" : size === "sm" ? "form-control-sm" : "";
 
-  // Fungsi untuk menangani perubahan input dan membatasi panjang karakter
   const handleChange = (e) => {
     const newValue = e.target.value;
     if (maxChar && newValue.length <= maxChar) {
-      setValue(newValue); // Set nilai hanya jika panjangnya sesuai dengan maxChar
+      onChange(e); // panggil onChange yang diberikan oleh induk
     } else if (!maxChar) {
-      setValue(newValue); // Jika maxChar tidak ada, biarkan input bebas
+      onChange(e); // panggil onChange yang diberikan oleh induk
     }
     if (isRequired) setError(!newValue.trim());
   };
@@ -61,15 +61,15 @@ const TextField = forwardRef(function TextField(
         </label>
       )}
       <input
-        ref={inputRef} // Hubungkan ref ke elemen input
+        ref={inputRef}
         id={id}
         name={id}
         type="text"
         className={`form-control ${sizeClass} ${error ? "is-invalid" : ""}`}
         placeholder={placeHolder}
         disabled={isDisabled}
-        value={value}
-        onChange={handleChange}
+        value={value} // nilai dikendalikan oleh induk
+        onChange={handleChange} // event perubahan dikendalikan oleh induk
         onBlur={() => {
           if (isRequired && !value.trim()) setError(true);
         }}
@@ -77,7 +77,9 @@ const TextField = forwardRef(function TextField(
         {...props}
       />
       {error && (
-        <div className="invalid-feedback">{errorMsg || "Field ini wajib diisi."}</div>
+        <div className="invalid-feedback">
+          {errorMsg || "Field ini wajib diisi."}
+        </div>
       )}
       {maxChar && (
         <div className="small text-muted mt-1">

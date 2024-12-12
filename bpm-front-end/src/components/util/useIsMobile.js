@@ -5,10 +5,10 @@ export const useIsMobile = (breakpoint = 850) => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= breakpoint); // Sesuaikan dengan breakpoint
+      setIsMobile(window.innerWidth <= breakpoint); 
     };
 
-    handleResize(); // Set state awal saat komponen pertama kali dirender
+    handleResize(); 
     window.addEventListener("resize", handleResize);
 
     return () => window.removeEventListener("resize", handleResize);

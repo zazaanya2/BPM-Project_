@@ -12,14 +12,13 @@ const DatePicker = forwardRef(function DatePicker(
   },
   ref
 ) {
-  const [value, setValue] = useState(""); // State untuk nilai input
-  const [error, setError] = useState(false); // State untuk validasi error
+  const [value, setValue] = useState("");
+  const [error, setError] = useState(false);
 
-  // Fungsi reset dan validasi melalui ref
   useImperativeHandle(ref, () => ({
     reset() {
-      setValue(""); // Reset nilai input ke kosong
-      setError(false); // Reset error state
+      setValue("");
+      setError(false);
     },
     validate() {
       if (isRequired && !value.trim()) {
@@ -37,10 +36,9 @@ const DatePicker = forwardRef(function DatePicker(
     },
   }));
 
-  // Tentukan kelas ukuran input berdasarkan prop `size`
-  const sizeClass = size === "lg" ? "form-control-lg" : size === "sm" ? "form-control-sm" : "";
+  const sizeClass =
+    size === "lg" ? "form-control-lg" : size === "sm" ? "form-control-sm" : "";
 
-  // Fungsi untuk menangani perubahan input
   const handleChange = (e) => {
     const newValue = e.target.value;
     setValue(newValue);
@@ -60,7 +58,7 @@ const DatePicker = forwardRef(function DatePicker(
       <input
         id={id}
         name={id}
-        type="date" // Tipe input khusus tanggal
+        type="date"
         className={`form-control ${sizeClass} ${error ? "is-invalid" : ""}`}
         value={value}
         onChange={handleChange}
@@ -70,9 +68,7 @@ const DatePicker = forwardRef(function DatePicker(
         disabled={isDisabled}
         {...props}
       />
-      {error && (
-        <span className="text-danger small">{errorMsg}</span>
-      )}
+      {error && <span className="text-danger small">{errorMsg}</span>}
     </div>
   );
 });

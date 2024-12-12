@@ -1,5 +1,4 @@
-import { forwardRef, useState } from "react";
-import { TENTANGFILE_LINK } from "../util/Constants";
+import { forwardRef, useState, useImperativeHandle } from "react";
 
 const FileUpload = forwardRef(function FileUpload(
   {
@@ -11,6 +10,7 @@ const FileUpload = forwardRef(function FileUpload(
     errorMessage,
     hasExisting,
     maxSizeFile = 10 * 1024 * 1024, // Default 10 MB
+    onChange, // Fungsi onChange diterima sebagai prop
     ...props
   },
   ref
@@ -24,56 +24,84 @@ const FileUpload = forwardRef(function FileUpload(
     if (file) {
       // Validasi ukuran file
       if (file.size > maxSizeFile) {
-        setFileError(`Ukuran berkas tidak boleh lebih dari ${maxSizeFile / (1024 * 1024)} MB`);
+        setFileError(
+          `Ukuran berkas tidak boleh lebih dari ${
+            maxSizeFile / (1024 * 1024)
+          } MB`
+        );
         // Mengosongkan file input agar file yang lebih besar tidak tetap dipilih
-        event.target.value = null; 
+        event.target.value = null;
       } else {
         setFileError(""); // Reset error jika ukuran file valid
+
+        // Jika onChange diteruskan sebagai prop, panggil dan kirim file ke parent
+        if (onChange) {
+          onChange(file); // Mengirim file ke komponen parent
+        }
       }
     }
   };
+
+  useImperativeHandle(ref, () => ({
+    validate() {
+      if (isRequired && value === "") {
+        setError(true);
+        return false;
+      }
+      setError(false);
+      return true;
+    },
+    reset() {
+      setPreviews([]);
+      setError(false);
+      onChange([]);
+    },
+    focus() {
+      inputRef.current?.focus();
+    },
+  }));
 
   return (
     <>
       <div className="mb-3">
         <label htmlFor={forInput} className="form-label fw-bold">
           {label}
-          {isRequired ? <span className="text-danger"> *</span> : ""}
-          {errorMessage ? (
-            <span className="fw-normal text-danger">
-              <br />
-              {errorMessage}
-            </span>
-          ) : (
-            ""
-          )}
+          {isRequired && <span className="text-danger"> *</span>}
         </label>
-        {!isDisabled && (
+        {errorMessage && (
+          <span className="fw-normal text-danger">
+            <br />
+            {errorMessage}
+          </span>
+        )}
+
+        {!isDisabled ? (
           <>
             <input
-              className="form-control"
               type="file"
               id={forInput}
               name={forInput}
               accept={formatFile}
+              className="form-control"
               ref={ref}
-              onChange={handleFileChange}
+              onChange={handleFileChange} // Panggil handleFileChange di sini
               {...props}
             />
-            {/* Menampilkan pesan error jika ukuran file lebih besar */}
             {fileError && (
               <span className="fw-normal text-danger">
                 <br />
                 {fileError}
               </span>
             )}
-            <sub>Maksimum ukuran berkas adalah {maxSizeFile / (1024 * 1024)} MB</sub>
+            <sub>
+              Maksimum ukuran berkas adalah {maxSizeFile / (1024 * 1024)} MB
+            </sub>
             {hasExisting && (
               <sub>
                 <br />
                 Berkas saat ini:{" "}
                 <a
-                  href={TENTANGFILE_LINK + hasExisting}
+                  href={hasExisting}
                   className="text-decoration-none"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -85,21 +113,21 @@ const FileUpload = forwardRef(function FileUpload(
               </sub>
             )}
           </>
-        )}
-        {isDisabled && (
+        ) : (
           <>
             <br />
-            {hasExisting && (
+            {hasExisting ? (
               <a
-                href={TENTANGFILE_LINK + hasExisting}
+                href={hasExisting}
                 className="text-decoration-none"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Unduh berkas
               </a>
+            ) : (
+              "-"
             )}
-            {!hasExisting && "-"}
           </>
         )}
       </div>

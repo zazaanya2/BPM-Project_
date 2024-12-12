@@ -1,17 +1,49 @@
-import { useState, forwardRef, useImperativeHandle, useRef, useEffect } from "react";
+import {
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useEffect,
+} from "react";
+import { BERITAFOTO_LINK } from "../util/Constants";
+import SweetAlert from "../util/SweetAlert";
 
 const UploadFotoMulti = forwardRef(function UploadFotoMulti(
-  { id, label = "", isRequired = false, errorMsg = "Field ini wajib diisi.", onChange, initialImages = [] },
+  {
+    id,
+    label = "",
+    isRequired = false,
+    errorMsg = "Field ini wajib diisi.",
+    onChange,
+    initialImages = [],
+    link = BERITAFOTO_LINK,
+    maxSizeFile = 5 * 1024 * 1024,
+  },
   ref
 ) {
   const [previews, setPreviews] = useState([]);
-  const [files, setFiles] = useState([]);
   const [error, setError] = useState(false);
   const inputRef = useRef();
 
+  const isInitialImagesProcessed = useRef(false);
+
+  useEffect(() => {
+    if (initialImages?.length > 0 && !isInitialImagesProcessed.current) {
+      isInitialImagesProcessed.current = true;
+
+      const mappedImages = initialImages.map((img) => ({
+        type: "path",
+        value: img,
+        preview: link + img,
+      }));
+
+      setPreviews(mappedImages);
+    }
+  }, [initialImages]);
+
   useImperativeHandle(ref, () => ({
     validate() {
-      if (isRequired && files.length === 0) {
+      if (isRequired && previews.length === 0) {
         setError(true);
         return false;
       }
@@ -20,58 +52,70 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
     },
     reset() {
       setPreviews([]);
-      setFiles([]);
       setError(false);
-      onChange([]); // Inform parent about reset
+      onChange([]);
     },
     focus() {
       inputRef.current?.focus();
     },
   }));
 
-  // Handle initial images (fetch from database)
-  useEffect(() => {
-    if (initialImages && initialImages.length > 0) {
-      const initialPreviews = initialImages.map((image) => {
-        const imageUrl = `${BERITAFOTO_LINK}${image}`; // Path gambar
-        return {
-          preview: imageUrl, // Menyimpan URL gambar untuk preview
-          file: new File([], image, { type: 'image/jpeg' }), // Anda bisa mengganti tipe gambar sesuai dengan format
-        };
-      });
-      setPreviews(initialPreviews.map(item => item.preview));
-      setFiles(initialPreviews.map(item => item.file));
-    }
-  }, [initialImages]);
-  
-
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const selectedFiles = Array.from(event.target.files);
-    const previewUrls = [];
 
-    selectedFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        previewUrls.push(reader.result);
+    // Validasi file gambar
+    const invalidFiles = selectedFiles.filter(
+      (file) => !file.type.startsWith("image/")
+    );
+    if (invalidFiles.length > 0) {
+      SweetAlert("Gagal!", "File harus berupa gambar", "error", "OK");
+      inputRef.current.value = ""; // Kosongkan input field
+      return; // Batalkan proses jika ada file yang tidak valid
+    }
 
-        if (previewUrls.length === selectedFiles.length) {
-          setPreviews((prev) => [...prev, ...previewUrls]);
-          setFiles((prev) => [...prev, ...selectedFiles]);
-          onChange([...files, ...selectedFiles]);
-        }
-      };
-      reader.readAsDataURL(file);
+    // File valid diproses
+    const validFiles = selectedFiles.filter((file) =>
+      file.type.startsWith("image/")
+    );
+    if (validFiles.length === 0) {
+      inputRef.current.value = ""; // Kosongkan input field jika tidak ada file valid
+      return;
+    }
+
+    const newPreviews = await Promise.all(
+      validFiles.map((file) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            resolve({
+              type: "file",
+              value: file,
+              preview: reader.result,
+            });
+          };
+          reader.onerror = () => reject(new Error("File read error"));
+          reader.readAsDataURL(file);
+        });
+      })
+    );
+
+    setPreviews((prev) => {
+      const updatedPreviews = [...prev, ...newPreviews];
+      onChange(updatedPreviews.map((item) => item.value));
+      return updatedPreviews;
     });
 
-    if (isRequired) setError(false); // Reset error state when a file is selected
+    // Kosongkan nilai input setelah selesai memproses file
+    inputRef.current.value = "";
+
+    if (isRequired) setError(false);
   };
 
   const handleRemovePreview = (index) => {
-    setPreviews((prev) => prev.filter((_, i) => i !== index));
-    setFiles((prev) => {
-      const updatedFiles = prev.filter((_, i) => i !== index);
-      onChange(updatedFiles);
-      return updatedFiles;
+    setPreviews((prev) => {
+      const updatedPreviews = prev.filter((_, i) => i !== index);
+      onChange(updatedPreviews.map((item) => item.value));
+      return updatedPreviews;
     });
   };
 
@@ -85,7 +129,9 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
       )}
 
       <div
-        className={`preview-container form-control ms-0 m-3 p-3 ${error ? "border-danger" : ""}`}
+        className={`preview-container form-control ms-0 m-3 p-3 ${
+          error ? "border-danger" : ""
+        }`}
         style={{
           border: "2px dashed #ddd",
           borderRadius: "8px",
@@ -94,10 +140,10 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
       >
         {previews.length > 0 ? (
           <div className="preview-grid">
-            {previews.map((preview, index) => (
+            {previews.map((item, index) => (
               <div key={index} className="preview-item">
                 <img
-                  src={preview}
+                  src={item.preview}
                   alt={`Preview ${index + 1}`}
                   className="img-thumbnail"
                   style={{
@@ -109,6 +155,7 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
                 <button
                   className="remove-btn"
                   onClick={() => handleRemovePreview(index)}
+                  type="button"
                 >
                   &times;
                 </button>

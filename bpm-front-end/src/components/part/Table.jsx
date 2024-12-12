@@ -1,11 +1,11 @@
 import React from "react";
-import Icon from "./Icon"; 
+import Icon from "./Icon";
 
 export default function Table({
   arrHeader,
   headerToDataMap,
   data,
-  actions = [], 
+  actions = [],
   onDelete = () => {},
   onDetail = () => {},
   onEdit = () => {},
@@ -16,8 +16,31 @@ export default function Table({
   onSurveyor = () => {},
   onResponden = () => {},
 }) {
-  function generateActionButton(actionType, id) {
+  function generateActionButton(actionType, id, status = "Aktif") {
     switch (actionType) {
+      case "Toggle": {
+        if (status === "Aktif") {
+          return (
+            <Icon
+              name="toggle-on"
+              type="Bold"
+              cssClass="btn px-1 py-0 text-primary"
+              title="Nonaktifkan"
+              onClick={() => onToggle(id)}
+            />
+          );
+        } else if (status === "Tidak Aktif") {
+          return (
+            <Icon
+              name="toggle-off"
+              type="Bold"
+              cssClass="btn px-1 py-0 text-secondary"
+              title="Aktifkan"
+              onClick={() => onToggle(id)}
+            />
+          );
+        }
+      }
       case "Delete":
         return (
           <Icon
@@ -115,7 +138,10 @@ export default function Table({
 
   return (
     <div className="table-responsive">
-      <table className="table table-hover table-striped table-bordered" style={{ borderCollapse: 'collapse', minWidth: '1000px' }}>
+      <table
+        className="table table-hover table-striped table-bordered"
+        style={{ borderCollapse: "collapse", minWidth: "1000px" }}
+      >
         <thead>
           <tr>
             {arrHeader.map((header, index) => (
@@ -135,7 +161,7 @@ export default function Table({
               style={{
                 backgroundColor: "#2654A1",
                 color: "#fff",
-                width: '250px', 
+                width: "250px",
               }}
             >
               Aksi
@@ -147,20 +173,36 @@ export default function Table({
             data.map((row, rowIndex) => (
               <tr key={`row-${rowIndex}`}>
                 {arrHeader.map((column, colIndex) => (
-                  <td 
+                  <td
                     key={`cell-${row.Key}-${colIndex}`}
-                    className={`align-middle ${column === "No" ? "text-center" : "text-start"}`}
+                    className={`align-middle ${
+                      column === "No" ? "text-center" : "text-start"
+                    }`}
                   >
                     {row[headerToDataMap[column]]}
                   </td>
                 ))}
-                <td className="text-center align-middle" style={{ width: '250px' }}>
-                {actions.map((action, actionIndex) => (
-                  <React.Fragment key={`${action}-${row.Key || rowIndex}`}>
-                    {generateActionButton(action, row.Key)}
-                  </React.Fragment>
-                ))}
-
+                <td
+                  className="text-center align-middle"
+                  style={{ width: "250px" }}
+                >
+                  {typeof actions === "function"
+                    ? actions(row).map((action, actionIndex) => (
+                        <React.Fragment
+                          key={`${action}-${row.Key || rowIndex}`}
+                        >
+                          {generateActionButton(action, row)}
+                        </React.Fragment>
+                      ))
+                    : Array.isArray(actions) && actions.length > 0
+                    ? actions.map((action, actionIndex) => (
+                        <React.Fragment
+                          key={`${action}-${row.Key || rowIndex}`}
+                        >
+                          {generateActionButton(action, row)}
+                        </React.Fragment>
+                      ))
+                    : null}
                 </td>
               </tr>
             ))

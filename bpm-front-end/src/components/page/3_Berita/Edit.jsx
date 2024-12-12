@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import PageTitleNav from "../../part/PageTitleNav";
-import TextField from "../../part/TextField";
+import InputField from "../../part/InputField";
 import TextArea from "../../part/TextArea";
-import DatePicker from "../../part/DatePicker";
 import UploadFoto from "../../part/UploadFotoMulti";
 import HeaderForm from "../../part/HeaderText";
 import Button from "../../part/Button";
-import DetailData from "../../part/DetailData";
-import { useIsMobile } from "../../util/useIsMobile";
-import { API_LINK, BERITAFOTO_LINK } from "../../util/Constants";  // Pastikan BERITAFOTO_LINK di-import
+import SweetAlert from "../../util/SweetAlert";
+import Loading from "../../part/Loading";
+import { API_LINK } from "../../util/Constants";
 import { format } from "date-fns";
+import { useIsMobile } from "../../util/useIsMobile";
+import { decodeHtml } from "../../util/DecodeHtml";
+import { useFetch } from "../../util/useFetch";
 
 export default function Edit({ onChangePage }) {
   const isMobile = useIsMobile();
@@ -19,11 +21,18 @@ export default function Edit({ onChangePage }) {
     title: "",
     date: "",
     description: "",
-    author: "Retno Widiastuti", // Default author
-    images: [], // Array untuk gambar
+    author: "",
+    fotoList: [],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [tempImages, setTempImages] = useState([]);
+
+  const judulRef = useRef();
+  const penulisRef = useRef();
+  const tanggalRef = useRef();
+  const isiRef = useRef();
+  const fotoRef = useRef();
 
   const title = "Edit Berita";
   const breadcrumbs = [
@@ -32,74 +41,151 @@ export default function Edit({ onChangePage }) {
     { label: "Edit Berita" },
   ];
 
-  console.log(location.state.idData)
   useEffect(() => {
     if (!location.state?.idData) return;
-  
+
     const editId = location.state.idData;
     setLoading(true);
-  
+
     const fetchData = async () => {
       try {
-        const response = await fetch(`${API_LINK}/api/MasterBerita/GetDataBeritaById`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ ber_id: editId }),
-        });
-  
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-  
-        const data = await response.json();
-        console.log("Data API:", data);
-  
+        const data = await useFetch(
+          API_LINK + `/MasterBerita/GetDataBeritaById`,
+          { ber_id: editId }
+        );
+
         if (data?.berita?.length > 0) {
-          const berita = data.berita[0];
-  
-          const images = await Promise.all(
-            data.foto?.map(async (foto) => {
-              try {
-                const imageUrl = `${BERITAFOTO_LINK}${foto.foto_path}`;
-                const imageBlob = await fetch(imageUrl).then(res => {
-                  if (!res.ok) throw new Error(`Failed to fetch image: ${res.status}`);
-                  return res.blob();
-                });
-                return new File([imageBlob], foto.foto_path, { type: imageBlob.type });
-              } catch (error) {
-                console.error("Error fetching image:", foto.foto_path, error);
-                return null;
-              }
-            }) || []
-          ).filter(Boolean);
-  
+          const berita = JSON.parse(data.berita)[0];
+          const foto = JSON.parse(data.foto);
+
+          const images = foto.map((fotoItem) => fotoItem.foto_path);
+
           setFormData({
             title: berita.ber_judul,
             date: format(new Date(berita.ber_tgl), "yyyy-MM-dd"),
-            description: berita.ber_isi,
-            author: berita.ber_created_by,
+            description: decodeHtml(berita.ber_isi),
+            author: berita.ber_penulis,
             images: images,
           });
+          setTempImages(images);
         } else {
-          console.warn("Data tidak ditemukan atau kosong.");
+          console.warn("Data not found or empty.");
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        setError("Gagal mengambil data berita.");
+        setError("Failed to fetch data.");
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchData();
   }, [location.state?.idData]);
-  
 
-  const handleSubmit = () => {
-    // Implement logic for form submission
+  const handleUploadChange = (updatedFiles) => {
+    setTempImages(updatedFiles);
   };
+
+  const handleSubmit = async () => {
+    const isJudulValid = judulRef.current?.validate();
+    const isPenulisValid = penulisRef.current?.validate();
+    const isTanggalValid = tanggalRef.current?.validate();
+    const isIsiValid = isiRef.current?.validate();
+    const isFotoValid = fotoRef.current?.validate();
+
+    if (!isJudulValid) {
+      judulRef.current?.focus();
+      return;
+    }
+    if (!isPenulisValid) {
+      penulisRef.current?.focus();
+      return;
+    }
+
+    if (!isTanggalValid) {
+      tanggalRef.current?.focus();
+      return;
+    }
+    if (!isIsiValid) {
+      isiRef.current?.focus();
+      return;
+    }
+    if (!isFotoValid) {
+      fotoRef.current?.focus();
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const existingPaths = tempImages.filter((img) => typeof img === "string");
+      const newFiles = tempImages.filter((img) => img instanceof File);
+
+      let uploadedPaths = [];
+      if (newFiles.length > 0) {
+        const formDataUpload = new FormData();
+        newFiles.forEach((file) => formDataUpload.append("files", file));
+        const folderName = "Berita";
+        const filePrefix = "FOTO";
+
+        const uploadResponse = await fetch(
+          `${API_LINK}/Upload/UploadFiles?folderName=${encodeURIComponent(
+            folderName
+          )}&filePrefix=${encodeURIComponent(filePrefix)}`,
+          {
+            method: "POST",
+            body: formDataUpload,
+          }
+        );
+
+        if (!uploadResponse.ok) {
+          throw new Error(
+            `Gagal mengunggah file: ${uploadResponse.statusText}`
+          );
+        }
+
+        uploadedPaths = await uploadResponse.json(); // Asumsikan ini array path
+      }
+
+      const finalImagePaths = [...existingPaths, ...uploadedPaths];
+
+      const editData = {
+        ber_id: location.state?.idData,
+        title: formData.title,
+        date: formData.date,
+        description: formData.description,
+        ber_penulis: formData.author,
+        fotoList: finalImagePaths,
+        modif_by: formData.author,
+      };
+
+      const editResponse = await useFetch(
+        `${API_LINK}/MasterBerita/EditBerita`,
+        editData,
+        "POST"
+      );
+
+      if (editResponse === "ERROR") {
+        throw new Error("Gagal memperbarui data");
+      }
+
+      SweetAlert(
+        "Berhasil!",
+        "Data berhasil diperbarui.",
+        "success",
+        "OK"
+      ).then(() => onChangePage("read"));
+    } catch (error) {
+      console.error("Error saat menyimpan:", error);
+      SweetAlert("Gagal!", error.message, "error", "OK");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <Loading />;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -122,55 +208,68 @@ export default function Edit({ onChangePage }) {
             }
           >
             <HeaderForm label="Formulir Berita" />
-            {loading && <p>Loading...</p>}
-            {error && <p className="text-danger">{error}</p>}
-            <form onSubmit={handleSubmit}>
-              <div className="row">
-                <div className="col-lg-6 col-md-6">
-                  <TextField
-                    label="Judul Berita"
-                    isRequired={true}
-                    value={formData.title}
-                    onChange={(e) =>
-                      setFormData({ ...formData, title: e.target.value })
-                    }
-                  />
-                  <DetailData label="Penulis" isi={formData.author} />
-                </div>
-                <div className="col-lg-6 col-md-6">
-                  <DatePicker
-                    label="Tanggal"
-                    value={formData.date}
-                    onChange={(date) =>
-                      setFormData({ ...formData, date: date })
-                    }
-                  />
-                </div>
-              </div>
-              <TextArea
-                label="Isi Berita"
-                initialValue={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-              />
-              <div className="row">
-                <UploadFoto
-                  label="Masukkan Foto"
-                  value={formData.images}  // Kirimkan gambar yang sudah ada
-                  onChange={(images) =>
-                    setFormData({ ...formData, images: images })
+            <div className="row">
+              <div className="col-lg-6 col-md-6">
+                <InputField
+                  ref={judulRef}
+                  label="Judul Berita"
+                  value={formData.title}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
                   }
-                  initialImages={formData.images}  // Kirim gambar yang sudah ada sebagai preview
+                  isRequired={true}
+                  maxChar="100"
+                />
+                <InputField
+                  ref={penulisRef}
+                  label="Penulis"
+                  value={formData.author}
+                  onChange={(e) =>
+                    setFormData({ ...formData, author: e.target.value })
+                  }
+                  isRequired={true}
+                  maxChar="50"
                 />
               </div>
-              <div className="d-flex justify-content-between align-items-center">
+              <div className="col-lg-6 col-md-6">
+                <InputField
+                  ref={tanggalRef}
+                  label="Tanggal Berita"
+                  value={formData.date}
+                  onChange={(date) => setFormData({ ...formData, date: date })}
+                  type="date"
+                />
+              </div>
+            </div>
+            <TextArea
+              ref={isiRef}
+              label="Isi Berita"
+              initialValue={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+            />
+            <div className="row">
+              <UploadFoto
+                ref={fotoRef}
+                label="Foto"
+                initialImages={tempImages}
+                onChange={handleUploadChange}
+                multiple
+                isRequired={true}
+              />
+            </div>
+            <div className="d-flex justify-content-between align-items-center">
+              <div className="flex-grow-1 m-2">
                 <Button
                   classType="primary"
-                  type="submit"
+                  type="button"
                   label="Simpan"
                   width="100%"
+                  onClick={handleSubmit}
                 />
+              </div>
+              <div className="flex-grow-1 m-2">
                 <Button
                   classType="danger"
                   type="button"
@@ -179,7 +278,7 @@ export default function Edit({ onChangePage }) {
                   onClick={() => onChangePage("read")}
                 />
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </main>
