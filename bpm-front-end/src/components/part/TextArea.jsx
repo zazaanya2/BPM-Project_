@@ -70,6 +70,7 @@ const TextArea = React.forwardRef(
             {isRequired && <span className="text-danger"> *</span>}
           </label>
         )}
+
         <JoditEditor
           ref={editorRef}
           value={editorValue}

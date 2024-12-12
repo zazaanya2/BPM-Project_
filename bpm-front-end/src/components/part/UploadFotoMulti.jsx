@@ -17,6 +17,7 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
     onChange,
     initialImages = [],
     link = BERITAFOTO_LINK,
+    maxSizeFile = 5 * 1024 * 1024,
   },
   ref
 ) {

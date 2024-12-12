@@ -155,9 +155,9 @@ export default function Edit({ onChangePage }) {
         title: formData.title,
         date: formData.date,
         description: formData.description,
-        modif_by: formData.author,
         ber_penulis: formData.author,
         fotoList: finalImagePaths,
+        modif_by: formData.author,
       };
 
       const editResponse = await useFetch(
@@ -166,9 +166,13 @@ export default function Edit({ onChangePage }) {
         "POST"
       );
 
+      if (editResponse === "ERROR") {
+        throw new Error("Gagal memperbarui data");
+      }
+
       SweetAlert(
         "Berhasil!",
-        "Data berhasil ditambahkan.",
+        "Data berhasil diperbarui.",
         "success",
         "OK"
       ).then(() => onChangePage("read"));

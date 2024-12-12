@@ -11,6 +11,7 @@ import { useIsMobile } from "../../../util/useIsMobile";
 import SweetAlert from "../../../util/SweetAlert";
 import moment from "moment";
 import "moment-timezone";
+import { useFetch } from "../../../util/useFetch";
 
 export default function Read({ onChangePage }) {
   const isMobile = useIsMobile();
@@ -35,19 +36,11 @@ export default function Read({ onChangePage }) {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(
-          API_LINK + "/MasterKegiatan/GetDataKegiatan",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
+        const data = await useFetch(
+          `${API_LINK}/MasterKegiatan/GetDataKegiatan`,
+          JSON.stringify({}),
+          "POST"
         );
-
-        if (!response.ok) throw new Error("Gagal mengambil data kegiatan");
-
-        const data = await response.json();
 
         const formattedEvents = data.map((item) => {
           const startDate = moment(item.keg_tgl_mulai).format("YYYY-MM-DD");
@@ -104,14 +97,6 @@ export default function Read({ onChangePage }) {
   const indexOfFirstData = indexOfLastData - pageSize;
   const currentData = filteredData.slice(indexOfFirstData, indexOfLastData);
 
-  const eventStatus = () => {
-    if (item.category === "Terlaksana") {
-      return ["Detail"];
-    } else {
-      return ["Detail", "Edit", "Delete"];
-    }
-  };
-
   const handlePageNavigation = (page) => {
     setPageCurrent(page);
   };
@@ -148,8 +133,7 @@ export default function Read({ onChangePage }) {
 
         if (!response.ok) throw new Error("Gagal menghapus kegiatan");
 
-        const result = await response.text();
-        SweetAlert("Berhasil", result, "success");
+        SweetAlert("Berhasil", "Data Berhasil Dihapus", "success");
 
         setEvents((prevData) => prevData.filter((item) => item.id !== id));
       } catch (err) {

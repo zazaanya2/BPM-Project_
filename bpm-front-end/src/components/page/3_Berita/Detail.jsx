@@ -146,7 +146,7 @@ export default function Detail({ onChangePage }) {
             <DetailData label="Isi Berita" isi={formData.description} />
             <div className="row">
               <label htmlFor={id} className="form-label fw-bold">
-                Foto Struktur
+                Foto
               </label>
               {formData.images.length > 0 ? (
                 formData.images.map((image, index) => (

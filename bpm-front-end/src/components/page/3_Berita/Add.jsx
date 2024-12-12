@@ -101,10 +101,9 @@ export default function Add({ onChangePage }) {
         ber_judul: judulRef.current.value,
         ber_tgl: tanggalRef.current.value,
         ber_isi: isiBerita,
-        ber_status: 1,
-        ber_created_by: penulisRef.current.value,
         ber_penulis: penulisRef.current.value,
         fotoList: uploadedFileNames,
+        ber_created_by: penulisRef.current.value,
       };
 
       const createResponse = await useFetch(

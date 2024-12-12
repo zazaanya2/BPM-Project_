@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { forwardRef, useState, useImperativeHandle } from "react";
 
 const FileUpload = forwardRef(function FileUpload(
   {
@@ -41,6 +41,25 @@ const FileUpload = forwardRef(function FileUpload(
       }
     }
   };
+
+  useImperativeHandle(ref, () => ({
+    validate() {
+      if (isRequired && value === "") {
+        setError(true);
+        return false;
+      }
+      setError(false);
+      return true;
+    },
+    reset() {
+      setPreviews([]);
+      setError(false);
+      onChange([]);
+    },
+    focus() {
+      inputRef.current?.focus();
+    },
+  }));
 
   return (
     <>
