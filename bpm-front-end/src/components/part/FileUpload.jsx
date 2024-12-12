@@ -42,25 +42,6 @@ const FileUpload = forwardRef(function FileUpload(
     }
   };
 
-  useImperativeHandle(ref, () => ({
-    validate() {
-      if (isRequired && value === "") {
-        setError(true);
-        return false;
-      }
-      setError(false);
-      return true;
-    },
-    reset() {
-      setPreviews([]);
-      setError(false);
-      onChange([]);
-    },
-    focus() {
-      inputRef.current?.focus();
-    },
-  }));
-
   return (
     <>
       <div className="mb-3">

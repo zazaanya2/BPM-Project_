@@ -14,6 +14,7 @@ import { API_LINK } from "../../../util/Constants";
 import { useIsMobile } from "../../../util/useIsMobile";
 import InputField from "../../../part/InputField";
 import FileUpload from "../../../part/FileUpload";
+import { uploadFile } from "../../../util/UploadFile";
 
 export default function AddExisting({ onChangePage }) {
   const title = "Tambah Dokumentasi Kegiatan";
@@ -47,7 +48,7 @@ export default function AddExisting({ onChangePage }) {
     statusFileNotulen: 0,
   });
 
-  const [tempDate, setTempDate] = useState({
+  const [tempForm, settempForm] = useState({
     startDate: "-",
     endDate: "-",
     startTime: "-",
@@ -114,18 +115,19 @@ export default function AddExisting({ onChangePage }) {
     if (selectedData) {
       setFormData({
         id: selectedData.Value,
+        jenisKegiatan: selectedData.jkg_id,
         name: selectedData.Text,
         description: selectedData.keg_deskripsi,
         startDate: selectedData.keg_tgl_mulai,
-        endDate: selectedData.keg_tgl_selesai,
         startTime: selectedData.keg_jam_mulai,
+        endDate: selectedData.keg_tgl_selesai,
         endTime: selectedData.keg_jam_selesai,
         place: selectedData.keg_tempat,
-        jenisKegiatan: selectedData.jkg_nama,
         statusFileNotulen: 0,
       });
 
-      setTempDate({
+      settempForm({
+        jenisKegiatan: selectedData.jkg_nama,
         startDate: moment(selectedData.keg_tgl_mulai).format(
           "dddd, DD MMMM YYYY"
         ),
@@ -151,7 +153,6 @@ export default function AddExisting({ onChangePage }) {
   };
 
   const handleSubmit = async () => {
-    console.log(formData);
     if (!namaRef.current?.validate()) {
       namaRef.current?.focus();
       return;
@@ -162,10 +163,38 @@ export default function AddExisting({ onChangePage }) {
       return;
     }
 
-    if (!fileNotulenRef.current?.validate()) {
+    if (fileNotulenRef.current?.value === "") {
       fileNotulenRef.current?.focus();
       return;
     }
+
+    if (selectedFile) {
+      const folderName = "Kegiatan";
+      const filePrefix = "NOTULEN";
+
+      const uploadResult = await uploadFile(
+        selectedFile,
+        folderName,
+        filePrefix
+      );
+
+      setFormData({ ...formData, fileNotulen: uploadResult });
+    }
+
+    if (selectedFoto) {
+      const folderName = "Kegiatan";
+      const filePrefix = "FOTO";
+
+      const uploadResult = await uploadFile(
+        selectedFoto,
+        folderName,
+        filePrefix
+      );
+
+      setFormData({ ...formData, fotoSampul: uploadResult });
+    }
+
+    console.log(formData);
   };
 
   if (loading) return <Loading />;
@@ -205,15 +234,15 @@ export default function AddExisting({ onChangePage }) {
               <div className="col-lg-6 col-md-6">
                 <DetailData
                   label="Jenis Kegiatan"
-                  isi={formData.jenisKegiatan}
+                  isi={tempForm.jenisKegiatan}
                 />
-                <DetailData label="Tanggal Mulai" isi={tempDate.startDate} />
-                <DetailData label="Waktu Mulai" isi={tempDate.startTime} />
+                <DetailData label="Tanggal Mulai" isi={tempForm.startDate} />
+                <DetailData label="Waktu Mulai" isi={tempForm.startTime} />
               </div>
               <div className="col-lg-6 col-md-6">
                 <DetailData label="Tempat" isi={formData.place} />
-                <DetailData label="Tanggal Selesai" isi={tempDate.endDate} />
-                <DetailData label="Waktu Selesai" isi={tempDate.endTime} />
+                <DetailData label="Tanggal Selesai" isi={tempForm.endDate} />
+                <DetailData label="Waktu Selesai" isi={tempForm.endTime} />
               </div>
             </div>
             <DetailData label="Deskripsi Singkat" isi={formData.description} />
