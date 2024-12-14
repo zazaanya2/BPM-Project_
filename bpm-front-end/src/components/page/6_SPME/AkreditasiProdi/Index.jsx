@@ -88,7 +88,7 @@ export default function Index({ onChangePage, title, breadcrumbs }) {
               <Button
                 iconName="add"
                 classType="primary"
-                label="Tambah Skala Penilaian"
+                label="Tambah Akreditasi"
                 // onClick={() => addModalRef.current.open()}
               />
               <div className="row mt-3 ">

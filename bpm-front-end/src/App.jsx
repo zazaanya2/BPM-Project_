@@ -22,6 +22,7 @@ import KriteriaSurvei from "./components/page/9_Survei/Kriteria_Survei/Root";
 import SkalaSurvei from "./components/page/9_Survei/Skala_Penilaian/Root";
 import AkreProdi from "./components/page/6_SPME/AkreditasiProdi/Root";
 import AkreInstitusi from "./components/page/6_SPME/AkreditasiInstitusi/Root";
+import DokumenSPMI from "./components/page/5_SPMI/dokumen_spmi/Root";
 // import Survei from "./components/page/9_Survei/Survei/Root";
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
           <SkalaSurvei />
           <AkreProdi />
           <AkreInstitusi />
+          <DokumenSPMI />
         </main>
 
         {/* Footer Component */}
