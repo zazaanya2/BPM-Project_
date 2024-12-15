@@ -26,6 +26,7 @@ export default function Read({ onChangePage }) {
   const [filteredData, setFilteredData] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
+  const [selectedJenis, setSelectedJenis] = useState("");
   const [pageCurrent, setPageCurrent] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,6 +39,32 @@ export default function Read({ onChangePage }) {
   ]);
 
   const pageSize = 10;
+
+  const [jenisKegiatan, setJenisKegiatan] = useState([]);
+
+  useEffect(() => {
+    const fetchJenisKegiatan = async () => {
+      try {
+        const data = await useFetch(
+          `${API_LINK}/MasterKegiatan/GetDataJenisKegiatan`,
+          JSON.stringify({}),
+          "POST"
+        );
+        const formattedData = [
+          { Value: "", Text: "Semua" }, // Opsi default
+          ...data.map((item) => ({
+            Value: item.jkg_id,
+            Text: item.jkg_nama,
+          })),
+        ];
+        setJenisKegiatan(formattedData);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    fetchJenisKegiatan();
+  }, []);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -61,6 +88,8 @@ export default function Read({ onChangePage }) {
             end: moment(`${endDate}T${item.keg_jam_selesai}`).toDate(),
             location: item.keg_tempat,
             year: new Date(item.keg_tgl_mulai).getFullYear(),
+            idJenisKegiatan: item.jkg_id,
+            jenisKegiatan: item.jkg_nama,
           };
         });
 
@@ -98,8 +127,14 @@ export default function Read({ onChangePage }) {
       );
     }
 
+    if (selectedJenis) {
+      tempData = tempData.filter(
+        (item) => item.idJenisKegiatan === parseInt(selectedJenis)
+      );
+    }
+
     setFilteredData(tempData);
-  }, [searchKeyword, selectedYear, selectedStatus, events]);
+  }, [searchKeyword, selectedJenis, selectedYear, selectedStatus, events]);
 
   const indexOfLastData = pageCurrent * pageSize;
   const indexOfFirstData = indexOfLastData - pageSize;
@@ -113,6 +148,7 @@ export default function Read({ onChangePage }) {
     setSearchKeyword("");
     setSelectedYear("");
     setSelectedStatus("");
+    setSelectedJenis("");
   };
 
   const handleDelete = async (id) => {
@@ -199,7 +235,7 @@ export default function Read({ onChangePage }) {
                 <div className="m-0">
                   <Filter>
                     <div className="mb-3">
-                      <label htmlFor="yearPicker" className="mb-1">
+                      <label htmlFor="yearPicker" className="mb-1 fw-bold">
                         Berdasarkan Tahun
                       </label>
                       <input
@@ -221,6 +257,15 @@ export default function Read({ onChangePage }) {
                       />
                     </div>
 
+                    <div className="mb-3">
+                      <DropDown
+                        arrData={jenisKegiatan}
+                        label="Berdasarkan Jenis Kegiatan"
+                        value={selectedJenis}
+                        onChange={(e) => setSelectedJenis(e.target.value)}
+                      />
+                    </div>
+
                     <Button
                       classType="btn btn-secondary"
                       title="Reset Filter"
@@ -237,6 +282,7 @@ export default function Read({ onChangePage }) {
                 "No",
                 "Nama Kegiatan",
                 "Tanggal Mulai",
+                "Jenis Kegiatan",
                 "Tempat",
                 "Status",
               ]}
@@ -244,6 +290,7 @@ export default function Read({ onChangePage }) {
                 No: "No",
                 "Nama Kegiatan": "NamaKegiatan",
                 "Tanggal Mulai": "TanggalMulai",
+                "Jenis Kegiatan": "JenisKegiatan",
                 Tempat: "Tempat",
                 Status: "Status",
               }}
@@ -257,6 +304,7 @@ export default function Read({ onChangePage }) {
                   month: "long",
                   year: "numeric",
                 }),
+                JenisKegiatan: item.jenisKegiatan,
                 Tempat: item.location,
                 Status:
                   item.category === 1

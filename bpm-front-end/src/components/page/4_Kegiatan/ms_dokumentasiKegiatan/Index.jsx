@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import TabTahun from "./TabTahunKegiatan";
+import TabTahunKegiatan from "./TabTahunKegiatan"; // Import TabTahunKegiatan
 import HeaderText from "../../../part/HeaderText";
 import Button from "../../../part/Button";
 import { API_LINK } from "../../../util/Constants";
 import { useIsMobile } from "../../../util/useIsMobile";
+import { useLocation } from "react-router-dom";
 
 export default function Index({ onChangePage }) {
   const [groupedEvents, setGroupedEvents] = useState({});
@@ -11,8 +12,13 @@ export default function Index({ onChangePage }) {
   const [jenisKegiatan, setJenisKegiatan] = useState([]);
   const [selectedJenisKegiatan, setSelectedJenisKegiatan] = useState(null);
   const isMobile = useIsMobile();
+  const location = useLocation();
 
-  // Fetch jenis kegiatan data on component mount
+  useEffect(() => {
+    if (!location.state?.idData) return;
+    console.log("state", location.state?.idData);
+  }, [location.state?.idData]);
+
   useEffect(() => {
     const fetchJenisKegiatan = async () => {
       try {
@@ -104,7 +110,6 @@ export default function Index({ onChangePage }) {
     return <p>Loading...</p>;
   }
 
-  // Filter kegiatan berdasarkan jenis kegiatan yang dipilih
   const filteredEvents = Object.keys(groupedEvents).reduce((acc, year) => {
     const filtered = groupedEvents[year].filter(
       (event) => event.jenisKegiatan === selectedJenisKegiatan
@@ -117,6 +122,7 @@ export default function Index({ onChangePage }) {
 
   return (
     <div className="container my-5">
+      {/* Header */}
       <div
         style={{
           padding: "20px",
@@ -135,6 +141,7 @@ export default function Index({ onChangePage }) {
         />
       </div>
 
+      {/* Button */}
       <div
         style={{
           display: "flex",
@@ -150,9 +157,10 @@ export default function Index({ onChangePage }) {
         />
       </div>
 
+      {/* Filter jenis kegiatan */}
       <div className={isMobile ? "m-0" : "m-3"}>
         <div className={"row m-0 g-1"}>
-          {/* g-1 to reduce the gap between columns */}
+          {/* Filter tab kegiatan */}
           {jenisKegiatan.map((jenis) => (
             <div
               key={jenis.Value}
@@ -194,10 +202,11 @@ export default function Index({ onChangePage }) {
         >
           {Object.keys(filteredEvents).length > 0 ? (
             Object.keys(filteredEvents).map((year) => (
-              <TabTahun
+              <TabTahunKegiatan
                 key={year}
                 year={year}
                 kegiatanList={filteredEvents[year]}
+                selectedId={location.state?.idData}
               />
             ))
           ) : (

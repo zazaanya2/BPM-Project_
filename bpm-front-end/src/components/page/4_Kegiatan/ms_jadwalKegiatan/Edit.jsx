@@ -13,6 +13,7 @@ import { useIsMobile } from "../../../util/useIsMobile";
 import moment from "moment";
 import "moment-timezone";
 import { useFetch } from "../../../util/useFetch";
+import { decodeHtml } from "../../../util/DecodeHtml";
 
 export default function Edit({ onChangePage }) {
   const title = "Edit Jadwal Kegiatan";
@@ -35,7 +36,6 @@ export default function Edit({ onChangePage }) {
     endTime: "",
     place: "",
     jenisKegiatan: "",
-    modifBy: "User",
   });
 
   const [deskripsi, setDeskripsi] = useState("");
@@ -89,7 +89,7 @@ export default function Edit({ onChangePage }) {
           setFormData({
             id: location.state.idData,
             name: data[0].keg_nama,
-            description: data[0].keg_deskripsi,
+            description: decodeHtml(data[0].keg_deskripsi),
             startDate: moment(data[0].keg_tgl_mulai).format("YYYY-MM-DD"),
             startTime: moment(data[0].keg_jam_mulai, "HH:mm:ss").format(
               "HH:mm"
@@ -101,7 +101,6 @@ export default function Edit({ onChangePage }) {
 
             place: data[0].keg_tempat,
             jenisKegiatan: data[0].jkg_id,
-            modifBy: "User",
           });
         }
         console.log(formData);
@@ -305,7 +304,9 @@ export default function Edit({ onChangePage }) {
               ref={deskripsiRef}
               label="Deskripsi Singkat"
               initialValue={formData.description}
-              onChange={(e) => setDeskripsi(e.target.value)}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               isRequired={true}
             />
 
