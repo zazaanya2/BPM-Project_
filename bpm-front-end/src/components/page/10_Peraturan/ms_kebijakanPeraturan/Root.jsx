@@ -8,6 +8,7 @@ import Index from "./Index";
 import ScrollToTop from "../../../part/ScrollToTop";
 import Add from "./Add";
 import Edit from "./Edit";
+import Detail from "./Detail";
 
 export default function Peraturan() {
   const navigate = useNavigate();
@@ -22,6 +23,9 @@ export default function Peraturan() {
         break;
       case "edit":
         navigate("/peraturan/kebijakan/edit");
+        break;
+      case "detail":
+        navigate("/peraturan/kebijakan/detail");
         break;
 
       default:
@@ -42,6 +46,10 @@ export default function Peraturan() {
         <Route
           path="/edit"
           element={<Edit onChangePage={handlePageChange} />}
+        />
+        <Route
+          path="/detail"
+          element={<Detail onChangePage={handlePageChange} />}
         />
       </Routes>
     </>

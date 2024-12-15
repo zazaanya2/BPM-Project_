@@ -45,9 +45,9 @@ const TextField = forwardRef(function TextField(
   const handleChange = (e) => {
     const newValue = e.target.value;
     if (maxChar && newValue.length <= maxChar) {
-      onChange(e); // panggil onChange yang diberikan oleh induk
+      onChange(e.target.value); // panggil onChange yang diberikan oleh induk
     } else if (!maxChar) {
-      onChange(e); // panggil onChange yang diberikan oleh induk
+      onChange(e.target.value); // panggil onChange yang diberikan oleh induk
     }
     if (isRequired) setError(!newValue.trim());
   };

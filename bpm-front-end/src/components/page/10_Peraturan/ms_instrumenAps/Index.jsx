@@ -2,37 +2,47 @@ import React, { useState, useEffect } from "react";
 import Table from "../../../part/Table";
 import Paging from "../../../part/Paging";
 import PageTitleNav from "../../../part/PageTitleNav";
+import SearchField from "../../../part/SearchField";
 import Button from "../../../part/Button";
 import { useIsMobile } from "../../../util/useIsMobile";
 import { API_LINK } from "../../../util/Constants";
-import { useNavigate } from "react-router-dom";
-import { format } from "date-fns"; // Pastikan 'format' sudah diimpor
-import { id } from "date-fns/locale"; // Pastikan locale 'id' diimpor
+import Filter from "../../../part/Filter";
 
-export default function Read({ onChangePage }) {
-  const [peraturanData, setPeraturanData] = useState([]);
+export default function Index({ onChangePage }) {
   const [pageSize] = useState(10);
   const [pageCurrent, setPageCurrent] = useState(1);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const isMobile = useIsMobile();
+  const [searchKeyword, setSearchKeyword] = useState(""); // Keyword pencarian
+  const [selectedYear, setSelectedYear] = useState(""); // Filter tahun
 
   // Indeks data untuk pagination
   const indexOfLastData = pageCurrent * pageSize;
   const indexOfFirstData = indexOfLastData - pageSize;
   const currentData = data.slice(indexOfFirstData, indexOfLastData);
 
+  const resetFilter = () => {
+    setSearchKeyword("");
+    setSelectedYear("");
+  };
+
   // Fetch data dari API
   const fetchData = async () => {
+    const parameters = {};
+    for (let i = 1; i <= 50; i++) {
+      parameters[`param${i}`] = null; // Isi semua parameter dengan null
+    }
     try {
       const response = await fetch(
-        `${API_LINK}/api/MasterPeraturan/GetDataPeraturan`,
+        `${API_LINK}/MasterPeraturan/GetDataDokumen`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify(parameters),
         }
       );
 
@@ -43,28 +53,7 @@ export default function Read({ onChangePage }) {
       // Filter data dengan dok_category = 1
       const filteredData = result.filter((item) => item.dok_category === "1");
 
-      // Jika ingin mengelompokkan berita berdasarkan dok_id
-      const groupedBerita = result.reduce((acc, item) => {
-        if (!acc[item.dok_id]) {
-          acc[item.dok_id] = {
-            id: item.dok_id,
-            category: item.dok_category,
-            JudulDokumen: item.dok_judul,
-            TahunDokumen: item.dok_tahun,
-            TahunKadaluarsa: format(
-              new Date(item.dok_thn_kadaluarsa),
-              "EEEE, dd MMMM yyyy",
-              { locale: id }
-            ), // Format tanggal
-            File: item.dok_file,
-            author: item.dok_created_by,
-          };
-        }
-        return acc;
-      }, {});
-
-      console.log(groupedBerita); // Cek hasil pengelompokkan
-
+      console.log(filteredData);
       // Simpan data yang difilter ke state
       setData(filteredData);
     } catch (err) {
@@ -82,19 +71,14 @@ export default function Read({ onChangePage }) {
     setPageCurrent(page);
   };
 
-  const title = "Instrumen APS";
+  const title = " INSTRUMEN APS";
   const breadcrumbs = [
     { label: "Instrumen APS", href: "/peraturan/aps" },
-    { label: "Dokumen Instrumen APS" },
+    { label: "Instrumen APS" },
   ];
 
-  // Mendapatkan instance navigate
-  const navigate = useNavigate();
-
   const handleEdit = (item) => {
-    navigate("/edit", {
-      state: { editData: item, dokId: item.dok_id },
-    });
+    onChangePage("edit", { state: { editData: item } });
   };
 
   if (loading) {
@@ -127,41 +111,78 @@ export default function Read({ onChangePage }) {
               onClick={() => onChangePage("add")}
             />
           </div>
-          <div className="table-container bg-white p-3 m-5 mt-0 rounded">
-            <Table
-              arrHeader={[
-                "No",
-                "Judul Dokumen",
-                "Nomor Dokumen",
-                "Tahun Dokumen",
-              ]}
-              headerToDataMap={{
-                No: "No",
-                "Judul Dokumen": "JudulDokumen",
-                "Nomor Dokumen": "dok_nodok",
-                "Tahun Dokumen": "dok_tahun",
-              }}
-              data={currentData.map((item, index) => ({
-                key: item.dok_id || item.dok_nodok,
-                No: indexOfFirstData + index + 1,
-                JudulDokumen: item.dok_judul,
-                dok_nodok: item.dok_nodok,
-                dok_tahun: item.dok_tahun,
-              }))}
-              actions={["Detail", "Edit", "Delete", "UpdateHistory"]}
-              onEdit={() => {
-                const clickedItem = currentData[0];
-                console.log("Item clicked for edit:", clickedItem.dok_id);
-                handleEdit(clickedItem.dok_id);
-              }}
-            />
+          <div
+            className={
+              isMobile
+                ? "table-container bg-white p-1 m-1 mt-0 rounded"
+                : "table-container bg-white p-3 m-5 mt-0 rounded"
+            }
+          >
+            <div className="row mb-3">
+              <div className="col-12 d-flex flex-wrap align-items-center">
+                <div className="me-auto flex-grow-1 mt-3 me-3">
+                  <SearchField onChange={(value) => setSearchKeyword(value)} />
+                </div>
 
-            <Paging
-              pageSize={pageSize}
-              pageCurrent={pageCurrent}
-              totalData={data.length}
-              navigation={handlePageNavigation}
-            />
+                <div className="m-0">
+                  <Filter>
+                    <div className="mb-3">
+                      <label htmlFor="yearPicker" className="mb-1">
+                        Berdasarkan Tahun
+                      </label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        placeholder="Masukkan Tahun"
+                        value={selectedYear}
+                        onChange={(e) => setSelectedYear(e.target.value)}
+                        min="2000"
+                        max={new Date().getFullYear()}
+                      />
+                    </div>
+
+                    <Button
+                      classType="btn btn-secondary"
+                      title="Reset Filter"
+                      label="Reset"
+                      onClick={resetFilter}
+                    />
+                  </Filter>
+                </div>
+              </div>
+            </div>
+            <div className="table-container bg-white p-3 m-5 mt-0 rounded">
+              <Table
+                arrHeader={[
+                  "No",
+                  "Judul Dokumen",
+                  "Nomor Dokumen",
+                  "Tahun Dokumen",
+                ]}
+                headerToDataMap={{
+                  No: "No",
+                  "Judul Dokumen": "JudulDokumen",
+                  "Nomor Dokumen": "dok_nodok",
+                  "Tahun Dokumen": "dok_tahun",
+                }}
+                data={currentData.map((item, index) => ({
+                  key: item.dok_id,
+                  No: indexOfFirstData + index + 1,
+                  JudulDokumen: item.dok_judul,
+                  dok_nodok: item.dok_nodok,
+                  dok_tahun: item.dok_tahun,
+                }))}
+                actions={["Detail", "Edit", "Toggle", "UpdateHistory"]}
+                onEdit={handleEdit}
+              />
+
+              <Paging
+                pageSize={pageSize}
+                pageCurrent={pageCurrent}
+                totalData={data.length}
+                navigation={handlePageNavigation}
+              />
+            </div>
           </div>
         </div>
       </main>

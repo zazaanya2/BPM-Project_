@@ -10,19 +10,31 @@ import { format } from "date-fns";
 import { id } from "date-fns/locale";
 
 export default function Edit({ onChangePage }) {
-  const [peraturanData, setPeraturanData] = useState([]);
-  const [pageSize] = useState(10);
-  const [pageCurrent, setPageCurrent] = useState(1);
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const isMobile = useIsMobile();
-  const { id } = useParams(); // Mengambil ID dari URL
+  const location = useLocation();
+  const [formData, setFormData] = useState({
+    title: "",
+    date: "",
+    description: "",
+    author: "",
+    fotoList: [],
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [tempImages, setTempImages] = useState([]);
 
-  // Indeks data untuk pagination
-  const indexOfLastData = pageCurrent * pageSize;
-  const indexOfFirstData = indexOfLastData - pageSize;
-  const currentData = data.slice(indexOfFirstData, indexOfLastData);
+  const judulRef = useRef();
+  const penulisRef = useRef();
+  const tanggalRef = useRef();
+  const isiRef = useRef();
+  const fotoRef = useRef();
+
+  const title = "Instrumen APS";
+  const breadcrumbs = [
+    { label: "Instrumen APS", href: "/peraturan/aps" },
+    { label: "Dokumen Instrumen APS" },
+    { label: "Edit Dokumen" },
+  ];
 
   // Fetch data dari API
   const fetchData = async () => {
@@ -57,12 +69,6 @@ export default function Edit({ onChangePage }) {
   const handlePageNavigation = (page) => {
     setPageCurrent(page);
   };
-
-  const title = "Instrumen APS";
-  const breadcrumbs = [
-    { label: "Instrumen APS", href: "/peraturan/aps" },
-    { label: "Dokumen Instrumen APS" },
-  ];
 
   // Mendapatkan instance navigate
   const navigate = useNavigate();

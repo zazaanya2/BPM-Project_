@@ -6,30 +6,44 @@ import SearchField from "../../../part/SearchField";
 import Button from "../../../part/Button";
 import { useIsMobile } from "../../../util/useIsMobile";
 import { API_LINK } from "../../../util/Constants";
+import Filter from "../../../part/Filter";
+import Swal from "sweetalert2";
 
-export default function Read({ onChangePage }) {
+export default function Index({ onChangePage }) {
   const [pageSize] = useState(10);
   const [pageCurrent, setPageCurrent] = useState(1);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const isMobile = useIsMobile();
+  const [searchKeyword, setSearchKeyword] = useState(""); // Keyword pencarian
+  const [selectedYear, setSelectedYear] = useState(""); // Filter tahun
 
   // Indeks data untuk pagination
   const indexOfLastData = pageCurrent * pageSize;
   const indexOfFirstData = indexOfLastData - pageSize;
   const currentData = data.slice(indexOfFirstData, indexOfLastData);
 
+  const resetFilter = () => {
+    setSearchKeyword("");
+    setSelectedYear("");
+  };
+
   // Fetch data dari API
   const fetchData = async () => {
+    const parameters = {};
+    for (let i = 1; i <= 50; i++) {
+      parameters[`param${i}`] = null; // Isi semua parameter dengan null
+    }
     try {
       const response = await fetch(
-        `${API_LINK}/api/MasterPeraturan/GetDataPeraturan`,
+        `${API_LINK}/MasterPeraturan/GetDataDokumen`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify(parameters),
         }
       );
 
@@ -63,6 +77,47 @@ export default function Read({ onChangePage }) {
     { label: "Kebijakan Peraturan", href: "/peraturan/kebijakan" },
     { label: "Kebijakan Peraturan" },
   ];
+
+  const handleDelete = async (id) => {
+    const parameters = { dok_id: id, dok_modif_by: "author" };
+    for (let i = 3; i <= 50; i++) {
+      parameters[`param${i}`] = null; // Isi semua parameter dengan null
+    }
+    const confirm = await Swal.fire({
+      title: "Konfirmasi",
+      text: "Apakah Anda yakin ingin menghapus dokumen ini?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Ya, Hapus",
+      cancelButtonText: "Batal",
+    });
+
+    if (confirm.isConfirmed) {
+      try {
+        const response = await fetch(
+          `${API_LINK}/MasterPeraturan/DeleteDokumen`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(parameters),
+          }
+        );
+
+        if (!response.ok) throw new Error("Gagal menghapus dokumen");
+
+        const result = await response.text();
+        Swal.fire("Berhasil", null, "success");
+
+        // Update data setelah penghapusan
+        fetchData();
+      } catch (err) {
+        console.error(err);
+        Swal.fire("Gagal", "Terjadi kesalahan saat menghapus dokumen", "error");
+      }
+    }
+  };
 
   const handleEdit = (item) => {
     onChangePage("edit", { state: { editData: item } });
@@ -98,37 +153,86 @@ export default function Read({ onChangePage }) {
               onClick={() => onChangePage("add")}
             />
           </div>
-          <div className="table-container bg-white p-3 m-5 mt-0 rounded">
-            <Table
-              arrHeader={[
-                "No",
-                "Judul Dokumen",
-                "Nomor Dokumen",
-                "Tahun Dokumen",
-              ]}
-              headerToDataMap={{
-                No: "No",
-                "Judul Dokumen": "JudulDokumen",
-                "Nomor Dokumen": "dok_nodok",
-                "Tahun Dokumen": "dok_tahun",
-              }}
-              data={currentData.map((item, index) => ({
-                key: item.dok_id,
-                No: indexOfFirstData + index + 1,
-                JudulDokumen: item.dok_judul,
-                dok_nodok: item.dok_nodok,
-                dok_tahun: item.dok_tahun,
-              }))}
-              actions={["Detail", "Edit", "Delete", "UpdateHistory"]}
-              onEdit={handleEdit}
-            />
+          <div
+            className={
+              isMobile
+                ? "table-container bg-white p-1 m-1 mt-0 rounded"
+                : "table-container bg-white p-3 m-5 mt-0 rounded"
+            }
+          >
+            <div className="row mb-3">
+              <div className="col-12 d-flex flex-wrap align-items-center">
+                <div className="me-auto flex-grow-1 mt-3 me-3">
+                  <SearchField onChange={(value) => setSearchKeyword(value)} />
+                </div>
 
-            <Paging
-              pageSize={pageSize}
-              pageCurrent={pageCurrent}
-              totalData={data.length}
-              navigation={handlePageNavigation}
-            />
+                <div className="m-0">
+                  <Filter>
+                    <div className="mb-3">
+                      <label htmlFor="yearPicker" className="mb-1">
+                        Berdasarkan Tahun
+                      </label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        placeholder="Masukkan Tahun"
+                        value={selectedYear}
+                        onChange={(e) => setSelectedYear(e.target.value)}
+                        min="2000"
+                        max={new Date().getFullYear()}
+                      />
+                    </div>
+
+                    <Button
+                      classType="btn btn-secondary"
+                      title="Reset Filter"
+                      label="Reset"
+                      onClick={resetFilter}
+                    />
+                  </Filter>
+                </div>
+              </div>
+            </div>
+            <div className="table-container bg-white p-3 m-5 mt-0 rounded">
+              <Table
+                arrHeader={[
+                  "No",
+                  "Judul Dokumen",
+                  "Nomor Dokumen",
+                  "Tahun Dokumen",
+                ]}
+                headerToDataMap={{
+                  No: "No",
+                  "Judul Dokumen": "JudulDokumen",
+                  "Nomor Dokumen": "dok_nodok",
+                  "Tahun Dokumen": "dok_tahun",
+                }}
+                data={currentData.map((item, index) => ({
+                  key: item.dok_id,
+                  No: indexOfFirstData + index + 1,
+                  JudulDokumen: item.dok_judul,
+                  dok_nodok: item.dok_nodok,
+                  dok_tahun: item.dok_tahun,
+                }))}
+                actions={["Detail", "Edit", "Toggle", "UpdateHistory"]}
+                onDetail={(item) => {
+                  onChangePage("detail", { state: { idData: item.dok_id } });
+                }}
+                onEdit={(item) => {
+                  onChangePage("edit", { state: { idData: item.dok_id } });
+                }}
+                onToggle={(item) => {
+                  handleDelete(item.key);
+                }}
+              />
+
+              <Paging
+                pageSize={pageSize}
+                pageCurrent={pageCurrent}
+                totalData={data.length}
+                navigation={handlePageNavigation}
+              />
+            </div>
           </div>
         </div>
       </main>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PageTitleNav from "../../../part/PageTitleNav";
 import TextField from "../../../part/TextField";
 import HeaderForm from "../../../part/HeaderText";
@@ -7,13 +7,14 @@ import Dropdown from "../../../part/Dropdown";
 import FileUpload from "../../../part/FileUpload";
 import { useIsMobile } from "../../../util/useIsMobile";
 import { API_LINK } from "../../../util/Constants";
+import DocUpload from "../../../part/DocUpload";
 
 export default function Add({ onChangePage }) {
   const title = "INSTRUMEN APS";
   const breadcrumbs = [
     { label: "Peraturan", href: "/peraturan/aps" },
     { label: "Instrumen APS", href: "/peraturan/aps/kelola" },
-    { label: "Tambah Instrumen APS" },
+    { label: "Tambah Dokumen" },
   ];
   const isMobile = useIsMobile();
   const author = "Retno Widiastuti";
@@ -59,7 +60,7 @@ export default function Add({ onChangePage }) {
 
       // Kirim data ke backend untuk upload file
       const uploadResponse = await fetch(
-        `${API_LINK}/api/MasterPeraturan/UploadFile`,
+        `${API_LINK}/MasterPeraturan/UploadFiles`,
         {
           method: "POST",
           body: formData, // Pastikan mengirim FormData
@@ -93,7 +94,7 @@ export default function Add({ onChangePage }) {
 
         // Kirim data dokumen ke API
         const createResponse = await fetch(
-          `${API_LINK}/api/MasterPeraturan/CreatePeraturan`,
+          `${API_LINK}/MasterPeraturan/CreateDokumen`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -174,7 +175,7 @@ export default function Add({ onChangePage }) {
               <TextField label="Tahun Kadaluarsa" name="Tahun Kadaluarsa" />
             </div>
             <div className="row">
-              <FileUpload label="Dokumen" name="Dokumen" />
+              <DocUpload label="Dokumen" name="Dokumen" />
             </div>
             <div className="d-flex justify-content-between align-items-center mt-4">
               <div className="flex-grow-1 m-2">
