@@ -30,7 +30,7 @@ export default function Button({
       {iconName && (
         <Icon name={iconName} cssClass={label === "" ? undefined : "pe-2"} />
       )}
-      <span style={{ fontWeight: "600" }}>{label}</span>
+      <span style={{ fontWeight: "700" }}>{label}</span>
     </button>
   );
 }
