@@ -12,6 +12,7 @@ import SweetAlert from "../../../util/SweetAlert";
 import moment from "moment";
 import "moment-timezone";
 import { useFetch } from "../../../util/useFetch";
+import { decodeHtml } from "../../../util/DecodeHtml";
 import DropDown from "../../../part/Dropdown";
 
 export default function Read({ onChangePage }) {
@@ -53,10 +54,11 @@ export default function Read({ onChangePage }) {
         const formattedData = [
           { Value: "", Text: "Semua" }, // Opsi default
           ...data.map((item) => ({
-            Value: item.jkg_id,
-            Text: item.jkg_nama,
+            Value: item.idJenisKegiatan,
+            Text: item.namaJenisKegiatan,
           })),
         ];
+
         setJenisKegiatan(formattedData);
       } catch (error) {
         setError(error.message);
@@ -76,20 +78,19 @@ export default function Read({ onChangePage }) {
         );
 
         const formattedEvents = data.map((item) => {
-          const startDate = moment(item.keg_tgl_mulai).format("YYYY-MM-DD");
-          const endDate = moment(item.keg_tgl_selesai).format("YYYY-MM-DD");
-
+          const startDate = moment(item.tglMulaiKegiatan).format("YYYY-MM-DD");
+          const endDate = moment(item.tglSelesaiKegiatan).format("YYYY-MM-DD");
           return {
-            id: item.keg_id,
-            title: item.keg_nama,
-            description: item.keg_deskripsi,
-            category: item.keg_kategori,
-            start: moment(`${startDate}T${item.keg_jam_mulai}`).toDate(),
-            end: moment(`${endDate}T${item.keg_jam_selesai}`).toDate(),
-            location: item.keg_tempat,
-            year: new Date(item.keg_tgl_mulai).getFullYear(),
-            idJenisKegiatan: item.jkg_id,
-            jenisKegiatan: item.jkg_nama,
+            id: item.idKegiatan,
+            title: decodeHtml(item.namaKegiatan),
+            description: item.deskripsiKegiatan,
+            category: item.kategoriKegiatan,
+            start: moment(`${startDate}T${item.jamMulaiKegiatan}`).toDate(),
+            end: moment(`${endDate}T${item.jamSelesaiKegiatan}`).toDate(),
+            location: item.tempatKegiatan,
+            year: new Date(item.tglMulaiKegiatan).getFullYear(),
+            idJenisKegiatan: item.idJenisKegiatan,
+            jenisKegiatan: item.namaJenisKegiatan,
           };
         });
 
@@ -164,18 +165,13 @@ export default function Read({ onChangePage }) {
 
     if (confirm) {
       try {
-        const response = await fetch(
+        const response = await useFetch(
           `${API_LINK}/MasterKegiatan/DeleteKegiatan`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ keg_id: id, keg_modif_by: "author" }),
-          }
+          { idKeg: id },
+          "POST"
         );
 
-        if (!response.ok) throw new Error("Gagal menghapus kegiatan");
+        if (response === "ERROR") throw new Error("Gagal menghapus kegiatan");
 
         SweetAlert("Berhasil", "Data Berhasil Dihapus", "success");
 
@@ -286,25 +282,20 @@ export default function Read({ onChangePage }) {
                 "Tempat",
                 "Status",
               ]}
-              headerToDataMap={{
-                No: "No",
-                "Nama Kegiatan": "NamaKegiatan",
-                "Tanggal Mulai": "TanggalMulai",
-                "Jenis Kegiatan": "JenisKegiatan",
-                Tempat: "Tempat",
-                Status: "Status",
-              }}
               data={currentData.map((item, index) => ({
                 Key: item.id,
                 No: indexOfFirstData + index + 1,
-                NamaKegiatan: item.title,
-                TanggalMulai: new Date(item.start).toLocaleDateString("id-ID", {
-                  weekday: "long",
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                }),
-                JenisKegiatan: item.jenisKegiatan,
+                "Nama Kegiatan": item.title,
+                "Tanggal Mulai": new Date(item.start).toLocaleDateString(
+                  "id-ID",
+                  {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  }
+                ),
+                "Jenis Kegiatan": item.jenisKegiatan,
                 Tempat: item.location,
                 Status:
                   item.category === 1

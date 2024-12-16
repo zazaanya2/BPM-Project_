@@ -5,6 +5,7 @@ import Button from "../../../part/Button";
 import { API_LINK } from "../../../util/Constants";
 import { useIsMobile } from "../../../util/useIsMobile";
 import { useLocation } from "react-router-dom";
+import { useFetch } from "../../../util/useFetch";
 
 export default function Index({ onChangePage }) {
   const [groupedEvents, setGroupedEvents] = useState({});
@@ -22,28 +23,18 @@ export default function Index({ onChangePage }) {
   useEffect(() => {
     const fetchJenisKegiatan = async () => {
       try {
-        const response = await fetch(
+        const data = await useFetch(
           `${API_LINK}/MasterKegiatan/GetDataJenisKegiatan`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({}),
-          }
+          JSON.stringify({}),
+          "POST"
         );
+        const formattedData = data.map((item) => ({
+          Value: item.idJenisKegiatan,
+          Text: item.namaJenisKegiatan,
+        }));
 
-        if (response.ok) {
-          const data = await response.json();
-          const formattedData = data.map((item) => ({
-            Value: item.jkg_id, // ID untuk nilai dropdown
-            Text: item.jkg_nama, // Nama untuk teks dropdown
-          }));
-          setJenisKegiatan(formattedData); // Menyimpan data ke state
-          setSelectedJenisKegiatan(formattedData[0]?.Value || null); // Pilih tab pertama sebagai default
-        } else {
-          throw new Error("Gagal mengambil data jenis kegiatan");
-        }
+        setJenisKegiatan(formattedData);
+        setSelectedJenisKegiatan(formattedData[0]?.Value || null);
       } catch (error) {
         console.error("Error fetching jenis kegiatan:", error);
       }
@@ -54,42 +45,30 @@ export default function Index({ onChangePage }) {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch(
+      const data = await useFetch(
         `${API_LINK}/MasterKegiatan/GetDataKegiatanByCategory`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ keg_kategori: 3 }),
-        }
+        { kategori: 3 },
+        "POST"
       );
 
-      if (!response.ok) {
-        throw new Error("Gagal mengambil data kegiatan");
-      }
-
-      const data = await response.json();
-
-      // Kelompokkan berdasarkan tahun
       const groupedData = data.reduce((acc, item) => {
-        const year = new Date(item.keg_tgl_mulai).getFullYear();
+        const year = new Date(item.tglMulaiKegiatan).getFullYear();
         if (!acc[year]) {
           acc[year] = [];
         }
         acc[year].push({
-          id: item.keg_id,
-          title: item.keg_nama,
-          description: item.keg_deskripsi,
-          category: item.keg_kategori,
-          startDate: item.keg_tgl_mulai,
-          endDate: item.keg_tgl_selesai,
-          startTime: item.keg_jam_mulai,
-          endTime: item.keg_jam_selesai,
-          location: item.keg_tempat,
-          linkFolder: item.keg_link_folder,
-          image: item.keg_foto_sampul,
-          jenisKegiatan: item.jkg_id, // Sesuaikan dengan ID jenis kegiatan
+          id: item.idKegiatan,
+          title: item.namaKegiatan,
+          description: item.deskripsiKegiatan,
+          category: item.kategoriKegiatan,
+          startDate: item.tglMulaiKegiatan,
+          endDate: item.tglSelesaiKegiatan,
+          startTime: item.jamMulaiKegiatan,
+          endTime: item.jamSelesaiKegiatan,
+          location: item.tempatKegiatan,
+          linkFolder: item.linkFolderKegiatan,
+          image: item.fotoSampulKegiatan,
+          jenisKegiatan: item.idJenisKegiatan,
         });
         return acc;
       }, {});

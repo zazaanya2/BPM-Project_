@@ -34,17 +34,17 @@ export default function Index({ onChangePage }) {
       }
 
       const formattedEvents = data.map((item) => {
-        const startDate = moment(item.keg_tgl_mulai).format("YYYY-MM-DD");
-        const endDate = moment(item.keg_tgl_selesai).format("YYYY-MM-DD");
+        const startDate = moment(item.tglMulaiKegiatan).format("YYYY-MM-DD");
+        const endDate = moment(item.tglSelesaiKegiatan).format("YYYY-MM-DD");
 
         return {
-          id: item.keg_id,
-          title: item.keg_nama,
-          description: item.keg_deskripsi,
-          category: item.keg_kategori,
-          start: moment(`${startDate}T${item.keg_jam_mulai}`).toDate(),
-          end: moment(`${endDate}T${item.keg_jam_selesai}`).toDate(),
-          location: item.keg_tempat,
+          id: item.idKegiatan,
+          title: item.namaKegiatan,
+          description: item.deskripsiKegiatan,
+          category: item.kategoriKegiatan,
+          start: moment(`${startDate}T${item.jamMulaiKegiatan}`).toDate(),
+          end: moment(`${endDate}T${item.jamSelesaiKegiatan}`).toDate(),
+          location: item.tempatKegiatan,
         };
       });
       setEvents(formattedEvents);

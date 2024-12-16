@@ -51,8 +51,6 @@ export default function Detail({ onChangePage }) {
         if (data?.berita?.length > 0) {
           const berita = JSON.parse(data.berita)[0];
           const foto = JSON.parse(data.foto);
-
-          // Extract the image paths from foto
           const images = foto.map((fotoItem) => fotoItem.foto_path);
 
           setFormData({

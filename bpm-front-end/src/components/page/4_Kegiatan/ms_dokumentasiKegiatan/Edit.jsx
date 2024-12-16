@@ -48,7 +48,6 @@ export default function Edit({ onChangePage }) {
     linkFolder: "",
   });
 
-  const [deskripsi, setDeskripsi] = useState("");
   const [jenisKegiatan, setJenisKegiatan] = useState([]);
 
   useEffect(() => {
@@ -60,12 +59,12 @@ export default function Edit({ onChangePage }) {
           "POST"
         );
         const formattedData = data.map((item) => ({
-          Value: item.jkg_id, // ID untuk nilai dropdown
-          Text: item.jkg_nama, // Nama untuk teks dropdown
+          Value: item.idJenisKegiatan,
+          Text: item.namaJenisKegiatan,
         }));
-        setJenisKegiatan(formattedData); // Menyimpan data ke state
+        setJenisKegiatan(formattedData);
       } catch (error) {
-        setError(error.message); // Menangani error
+        setError(error.message);
       }
     };
 
@@ -96,29 +95,29 @@ export default function Edit({ onChangePage }) {
       try {
         const data = await useFetch(
           API_LINK + `/MasterKegiatan/GetDataKegiatanById`,
-          { ber_id: editId }
+          { id: editId }
         );
 
         if (data) {
           setFormData({
             id: location.state.idData,
-            jenisKegiatan: data[0].jkg_id,
-            name: data[0].keg_nama,
-            description: decodeHtml(data[0].keg_deskripsi),
-            startDate: moment(data[0].keg_tgl_mulai).format("YYYY-MM-DD"),
-            startTime: moment(data[0].keg_jam_mulai, "HH:mm:ss").format(
+            jenisKegiatan: data[0].idJenisKegiatan,
+            name: data[0].namaKegiatan,
+            description: decodeHtml(data[0].deskripsiKegiatan),
+            startDate: moment(data[0].tglMulaiKegiatan).format("YYYY-MM-DD"),
+            startTime: moment(data[0].jamMulaiKegiatan, "HH:mm:ss").format(
               "HH:mm"
             ),
-            endDate: moment(data[0].keg_tgl_selesai).format("YYYY-MM-DD"),
-            endTime: moment(data[0].keg_jam_selesai, "HH:mm:ss").format(
+            endDate: moment(data[0].tglSelesaiKegiatan).format("YYYY-MM-DD"),
+            endTime: moment(data[0].jamSelesaiKegiatan, "HH:mm:ss").format(
               "HH:mm"
             ),
 
-            place: data[0].keg_tempat,
-            statusFileNotulen: data[0].keg_status_dok_notulen,
-            linkFolder: data[0].keg_link_folder,
-            fileNotulen: data[0].keg_dok_notulen,
-            fotoSampul: data[0].keg_foto_sampul,
+            place: data[0].tempatKegiatan,
+            statusFileNotulen: data[0].statusFileNotulenKegiatan,
+            linkFolder: data[0].linkFolderKegiatan,
+            fileNotulen: data[0].fileNotulenKegiatan,
+            fotoSampul: data[0].fotoSampulKegiatan,
           });
         }
       } catch (error) {

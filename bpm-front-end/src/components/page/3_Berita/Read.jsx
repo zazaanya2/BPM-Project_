@@ -122,17 +122,14 @@ export default function Read({ onChangePage }) {
 
     if (confirm) {
       try {
-        const response = await fetch(`${API_LINK}/MasterBerita/DeleteBerita`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ ber_id: id, ber_modif_by: "author" }),
-        });
+        const response = await useFetch(
+          `${API_LINK}/MasterBerita/DeleteBerita`,
+          { idBerita: id },
+          "POST"
+        );
 
-        if (!response.ok) throw new Error("Gagal menghapus berita");
+        if (response === "ERROR") throw new Error("Gagal menghapus berita");
 
-        const result = await response.text();
         SweetAlert("Berhasil", "Berita berhasil dihapus", "success");
 
         setData((prevData) => prevData.filter((item) => item.id !== id));

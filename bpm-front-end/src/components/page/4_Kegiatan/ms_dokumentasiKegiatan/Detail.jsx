@@ -50,13 +50,13 @@ export default function Detail({ onChangePage }) {
       try {
         const data = await useFetch(
           API_LINK + `/MasterKegiatan/GetDataKegiatanById`,
-          { ber_id: editId }
+          { id: editId }
         );
         if (data) {
           setFormData({
-            name: data[0].keg_nama,
-            description: data[0].keg_deskripsi,
-            startDate: new Date(data[0].keg_tgl_mulai).toLocaleDateString(
+            name: data[0].namaKegiatan,
+            description: data[0].deksripsiKegiatan,
+            startDate: new Date(data[0].tglMulaiKegiatan).toLocaleDateString(
               "id-ID",
               {
                 weekday: "long",
@@ -65,7 +65,7 @@ export default function Detail({ onChangePage }) {
                 year: "numeric",
               }
             ),
-            endDate: new Date(data[0].keg_tgl_selesai).toLocaleDateString(
+            endDate: new Date(data[0].tglSelesaiKegiatan).toLocaleDateString(
               "id-ID",
               {
                 weekday: "long",
@@ -75,20 +75,20 @@ export default function Detail({ onChangePage }) {
               }
             ),
             startTime: moment
-              .tz(data[0].keg_jam_mulai, "HH:mm:ss", "Asia/Jakarta")
+              .tz(data[0].jamMulaiKegiatan, "HH:mm:ss", "Asia/Jakarta")
               .format("HH:mm [WIB]"),
 
             endTime: moment
-              .tz(data[0].keg_jam_selesai, "HH:mm:ss", "Asia/Jakarta")
+              .tz(data[0].jamSelesaiKegiatan, "HH:mm:ss", "Asia/Jakarta")
               .format("HH:mm [WIB]"),
 
-            place: data[0].keg_tempat,
-            statusFileNotulen: data[0].keg_status_dok_notulen,
-            linkFolder: data[0].keg_link_folder,
-            fileNotulen: data[0].keg_dok_notulen,
-            fotoSampul: data[0].keg_foto_sampul,
-            Createby: data[0].keg_created_by,
-            CreateDate: new Date(data[0].keg_created_date).toLocaleDateString(
+            place: data[0].tempatKegiatan,
+            statusFileNotulen: data[0].statusFileNotulenKegiatan,
+            linkFolder: data[0].linkFolderKegiatan,
+            fileNotulen: data[0].fileNotulenKegiatan,
+            fotoSampul: data[0].fotoSampulKegiatan,
+            Createby: data[0].dibuatOleh,
+            CreateDate: new Date(data[0].dibuatTgl).toLocaleDateString(
               "id-ID",
               {
                 weekday: "long",
@@ -97,9 +97,9 @@ export default function Detail({ onChangePage }) {
                 year: "numeric",
               }
             ),
-            Modifby: data[0].keg_modif_by ? data[0].keg_modif_by : "-",
-            ModifDate: data[0].keg_modif_date
-              ? new Date(data[0].keg_modif_date).toLocaleDateString("id-ID", {
+            Modifby: data[0].dimodifOleh ? data[0].dimodifOleh : "-",
+            ModifDate: data[0].dimodifTgl
+              ? new Date(data[0].dimodifTgl).toLocaleDateString("id-ID", {
                   weekday: "long",
                   day: "numeric",
                   month: "long",
@@ -107,12 +107,12 @@ export default function Detail({ onChangePage }) {
                 })
               : "-",
             status:
-              data[0].keg_kategori === "1"
+              data[0].kategoriKegiatan === "1"
                 ? "Rencana"
-                : data[0].keg_category === "2"
+                : data[0].kategoriKegiatan === "2"
                 ? "Terlewat"
                 : "Terlaksana",
-            jenisKegiatan: data[0].jkg_nama,
+            jenisKegiatan: data[0].namaJenisKegiatan,
           });
         }
       } catch (error) {
