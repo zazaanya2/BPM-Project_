@@ -14,9 +14,12 @@ import { API_LINK } from "../../util/Constants";
 import Loading from "../../part/Loading";
 import SliderKegiatan from "../../part/SliderKegiatan";
 import SliderProgramStudi from "../../part/SliderProgramStudi";
+import Button from "../../part/Button";
+import { useNavigate } from "react-router-dom";
 
 export default function Index({ onChangePage }) {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   const [beritaData, setBeritaData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -43,7 +46,7 @@ export default function Index({ onChangePage }) {
       programStudi: "Mekatronika (MK)",
       sertifikat: "link",
       foto: "mk.png",
-      akre: "Cukup", // Added accreditation field
+      akre: "A", // Added accreditation field
     },
     {
       id: 4,
@@ -90,11 +93,31 @@ export default function Index({ onChangePage }) {
   const [rencanaKegiatan, setRencanaKegiatan] = useState([]);
 
   useEffect(() => {
+    const fetchKategoriKegiatan = async () => {
+      try {
+        const data = await useFetch(
+          `${API_LINK}/MasterKegiatan/UpdateKategoriKegiatan`,
+          {},
+          "POST"
+        );
+
+        if (data === "ERROR") {
+          throw new Error("Gagal memperbarui data");
+        }
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    fetchKategoriKegiatan();
+  }, []);
+
+  useEffect(() => {
     const fetchJenisKegiatan = async () => {
       try {
         const data = await useFetch(
           `${API_LINK}/MasterKegiatan/GetDataKegiatanByCategory`,
-          { kategori: 3 },
+          { kategori: 1 },
           "POST"
         );
         const formattedData = [
@@ -148,9 +171,9 @@ export default function Index({ onChangePage }) {
           return acc;
         }, {});
 
-        const sortedBerita = Object.values(groupedBerita).sort(
-          (a, b) => b.date - a.date
-        );
+        const sortedBerita = Object.values(groupedBerita)
+          .sort((a, b) => b.date - a.date)
+          .slice(0, 5);
 
         setBeritaData(sortedBerita);
       } catch (err) {
@@ -274,7 +297,7 @@ export default function Index({ onChangePage }) {
             />
           </div>
           <div className="col-lg-6 col-md-6 mt-5 ps-0">
-            {/* <SliderKegiatan dataKegiatan={rencanaKegiatan} /> */}
+            <SliderKegiatan dataKegiatan={rencanaKegiatan} />
           </div>
         </div>
       </div>
@@ -282,10 +305,12 @@ export default function Index({ onChangePage }) {
       <SliderProgramStudi akreditasiData={akreditasiData} />
 
       <div
-        className={isMobile ? "flex-grow-1 p-0 mt-3" : "flex-grow-1 p-5 mt-3"}
+        className={`${
+          isMobile ? "flex-grow-1 p-0 mt-3" : "flex-grow-1 p-5 mt-3"
+        } d-flex flex-column align-items-center`}
       >
         <HeaderText
-          label="Berita Terkait BPM"
+          label="Berita BPM Terkini"
           warna="#2654A1"
           alignText="center"
           fontWeight="650"
@@ -294,6 +319,13 @@ export default function Index({ onChangePage }) {
           marginTop="4rem"
         />
         <SliderBerita beritaItems={beritaData} />
+
+        <Button
+          classType="btn btn-primary ms-3"
+          title="Lihat Berita lainnya"
+          label="Lihat Berita lainnya"
+          onClick={() => navigate("/berita")}
+        />
       </div>
     </>
   );

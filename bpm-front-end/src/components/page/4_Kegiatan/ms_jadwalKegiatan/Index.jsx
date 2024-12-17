@@ -11,6 +11,7 @@ import "moment-timezone";
 import { useIsMobile } from "../../../util/useIsMobile";
 import { useFetch } from "../../../util/useFetch";
 import { useLocation, useNavigate } from "react-router-dom";
+import { decodeHtml } from "../../../util/DecodeHtml";
 const localizer = momentLocalizer(moment);
 
 export default function Index({ onChangePage }) {
@@ -52,7 +53,7 @@ export default function Index({ onChangePage }) {
 
         return {
           id: item.idKegiatan,
-          title: item.namaKegiatan,
+          title: decodeHtml(item.namaKegiatan),
           description: item.deskripsiKegiatan,
           category: item.kategoriKegiatan,
           start: moment(`${startDate}T${item.jamMulaiKegiatan}`).toDate(),
@@ -463,7 +464,23 @@ export default function Index({ onChangePage }) {
                   />
                 )}
 
-                {selectedEvent.category === 3 && (
+                {selectedEvent.category === 2 && (
+                  <Button
+                    classType="btn btn-primary"
+                    title="Tambah Dokumentasi"
+                    label="Tambah Dokumentasi"
+                    onClick={() =>
+                      navigate("/kegiatan/dokumentasi/kelola/tambah", {
+                        state: {
+                          idData: selectedEvent.id,
+                        },
+                      })
+                    }
+                  />
+                )}
+
+                {(selectedEvent.category === 3 ||
+                  selectedEvent.category === 2) && (
                   <Button
                     classType="btn btn-success ms-3"
                     title="Tambah Berita"
