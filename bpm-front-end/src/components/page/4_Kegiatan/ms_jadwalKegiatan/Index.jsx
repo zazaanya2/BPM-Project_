@@ -13,12 +13,13 @@ import { useFetch } from "../../../util/useFetch";
 import { useLocation, useNavigate } from "react-router-dom";
 import { decodeHtml } from "../../../util/DecodeHtml";
 const localizer = momentLocalizer(moment);
+import Cookies from "js-cookie";
 
 export default function Index({ onChangePage }) {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,6 +37,12 @@ export default function Index({ onChangePage }) {
   }, [location.state?.idData, events]);
 
   const fetchEvents = async () => {
+    const activeUser = Cookies.get("activeUser");
+
+    if (activeUser) {
+      setIsLoggedIn(true); // Set login status jika cookie ada
+    }
+
     try {
       const data = await useFetch(
         `${API_LINK}/MasterKegiatan/GetDataKegiatan`,
@@ -213,12 +220,14 @@ export default function Index({ onChangePage }) {
           marginRight: "3rem",
         }}
       >
-        <Button
-          classType="btn btn-primary"
-          title="Kelola Jadwal Kegiatan"
-          label="Kelola Jadwal Kegiatan"
-          onClick={() => onChangePage("read")}
-        />
+        {isLoggedIn && (
+          <Button
+            classType="btn btn-primary"
+            title="Kelola Jadwal Kegiatan"
+            label="Kelola Jadwal Kegiatan"
+            onClick={() => onChangePage("read")}
+          />
+        )}
       </div>
 
       {/* Main Content */}
@@ -470,10 +479,8 @@ export default function Index({ onChangePage }) {
                     title="Tambah Dokumentasi"
                     label="Tambah Dokumentasi"
                     onClick={() =>
-                      navigate("/kegiatan/dokumentasi/kelola/tambah", {
-                        state: {
-                          idData: selectedEvent.id,
-                        },
+                      navigate("/kegiatan/dokumentasi/kelola", {
+                        state: { mode: "addExist", idData: selectedEvent.id },
                       })
                     }
                   />
@@ -486,8 +493,9 @@ export default function Index({ onChangePage }) {
                     title="Tambah Berita"
                     label="Tambah Berita"
                     onClick={() =>
-                      navigate("/berita/kelola/tambah", {
+                      navigate("/berita/kelola", {
                         state: {
+                          mode: "add",
                           judul: selectedEvent.title,
                           deskripsi: selectedEvent.description,
                         },

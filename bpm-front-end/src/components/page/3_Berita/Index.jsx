@@ -14,6 +14,7 @@ import { id } from "date-fns/locale";
 import { useIsMobile } from "../../util/useIsMobile";
 import { useNavigate } from "react-router-dom";
 import { useFetch } from "../../util/useFetch";
+import Cookies from "js-cookie";
 
 export default function Index({ onChangePage }) {
   const [beritaData, setBeritaData] = useState([]);
@@ -23,6 +24,8 @@ export default function Index({ onChangePage }) {
   const [pageCurrent, setPageCurrent] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const pageSize = 6;
@@ -30,6 +33,11 @@ export default function Index({ onChangePage }) {
   useEffect(() => {
     const fetchBerita = async () => {
       try {
+        const activeUser = Cookies.get("activeUser");
+        console.log(activeUser);
+        if (activeUser) {
+          setIsLoggedIn(true); // Set login status jika cookie ada
+        }
         const result = await useFetch(
           `${API_LINK}/MasterBerita/GetDataBerita`,
           JSON.stringify({}),
@@ -148,12 +156,14 @@ export default function Index({ onChangePage }) {
           }
           style={{ zIndex: 1 }}
         >
-          <Button
-            classType="btn btn-primary"
-            title="Kelola Berita"
-            label="Kelola Berita"
-            onClick={() => onChangePage("read")}
-          />
+          {isLoggedIn && (
+            <Button
+              classType="btn btn-primary"
+              title="Kelola Berita"
+              label="Kelola Berita"
+              onClick={() => onChangePage("read")}
+            />
+          )}
         </div>
 
         <div className="row">

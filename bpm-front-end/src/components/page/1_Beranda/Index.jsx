@@ -192,7 +192,7 @@ export default function Index({ onChangePage }) {
   return (
     <>
       <div
-        className="latarGradasi mt-5"
+        className="latarGradasi"
         style={{
           position: "relative",
           display: "flex",

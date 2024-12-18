@@ -233,10 +233,10 @@ export default function Read({ onChangePage }) {
               }))}
               actions={["Detail", "Edit", "Delete"]}
               onEdit={(item) => {
-                onChangePage("edit", { state: { idData: item.Key } });
+                onChangePage("edit", { idData: item.Key });
               }}
               onDetail={(item) => {
-                onChangePage("detail", { state: { idData: item.Key } });
+                onChangePage("detail", { idData: item.Key });
               }}
               onDelete={(item) => handleDelete(item.Key)}
             />

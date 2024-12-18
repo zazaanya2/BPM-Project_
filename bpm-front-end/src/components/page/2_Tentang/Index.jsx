@@ -15,14 +15,22 @@ import { useFetch } from "../../util/useFetch";
 import { API_LINK, TENTANGFILE_LINK } from "../../util/Constants";
 import Loading from "../../part/Loading";
 import { useIsMobile } from "../../util/useIsMobile";
+import Cookies from "js-cookie";
 
 export default function Index({ onChangePage }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const isMobile = useIsMobile();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
+    const activeUser = Cookies.get("activeUser");
+
+    if (activeUser) {
+      setIsLoggedIn(true); // Set login status jika cookie ada
+    }
+
     const fetchData = async () => {
       try {
         const result = await useFetch(
@@ -57,12 +65,14 @@ export default function Index({ onChangePage }) {
           className="position-absolute top-0 end-0 p-5 mb-3"
           style={{ zIndex: 20 }}
         >
-          <Button
-            className="btn btn-primary"
-            title="Kelola Tentang"
-            label="Kelola Tentang"
-            onClick={() => onChangePage("read")}
-          />
+          {isLoggedIn && (
+            <Button
+              className="btn btn-primary"
+              title="Kelola Tentang"
+              label="Kelola Tentang"
+              onClick={() => onChangePage("read")}
+            />
+          )}
         </div>
 
         <img

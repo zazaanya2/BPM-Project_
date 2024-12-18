@@ -2,23 +2,42 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useFetch } from "../util/useFetch";
 import { API_LINK } from "../util/Constants";
+import Cookies from "js-cookie";
 
 export default function NavItem() {
-  const [menuItems, setMenuItems] = useState([]); // State untuk menyimpan menu
-  const [openDropdown, setOpenDropdown] = useState(null); // Dropdown utama yang terbuka
+  const [menuItems, setMenuItems] = useState([]);
+  const [openDropdown, setOpenDropdown] = useState(null);
   const [openSubmenu, setOpenSubmenu] = useState(null);
+  const [openGrandchild, setOpenGrandchild] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-  // Fungsi untuk toggle dropdown
   const toggleDropdown = (menuId) => {
     setOpenDropdown(openDropdown === menuId ? null : menuId);
+    setOpenSubmenu(null);
+    setOpenGrandchild(null);
   };
 
   const toggleSubmenu = (submenu) => {
-    setOpenSubmenu(openSubmenu === submenu ? null : submenu); // Toggle submenu
+    setOpenSubmenu(openSubmenu === submenu ? null : submenu);
+    setOpenGrandchild(null);
   };
 
-  // Ambil data menu dari API dan konversi ke hierarki
+  const toggleGrandchild = (grandchild) => {
+    setOpenGrandchild(openGrandchild === grandchild ? null : grandchild);
+  };
+
+  const toggleUserMenu = () => {
+    setIsUserMenuOpen(!isUserMenuOpen); // Toggle user menu dropdown
+  };
+
   useEffect(() => {
+    const activeUser = Cookies.get("activeUser");
+
+    if (activeUser) {
+      setIsLoggedIn(true);
+    }
+
     const fetchMenuItems = async () => {
       const data = await useFetch(
         `${API_LINK}/Utilities/GetListMenu`,
@@ -35,23 +54,18 @@ export default function NavItem() {
     fetchMenuItems();
   }, []);
 
-  // Fungsi untuk membangun hierarki menu dari data flat
   const buildMenuHierarchy = (data) => {
-    const menuMap = {}; // Untuk menyimpan referensi menu berdasarkan idMenu
-    const menuHierarchy = []; // Menyimpan hasil menu hierarkis
+    const menuMap = {};
+    const menuHierarchy = [];
 
-    // Inisialisasi menu dalam menuMap
     data.forEach((item) => {
       menuMap[item.idMenu] = { ...item, children: [] };
     });
 
-    // Bangun hierarki
     data.forEach((item) => {
       if (item.parentMenu) {
-        // Jika ada parent, tambahkan ke children parent
         menuMap[item.parentMenu].children.push(menuMap[item.idMenu]);
       } else {
-        // Jika tidak ada parent, tambahkan ke root menu
         menuHierarchy.push(menuMap[item.idMenu]);
       }
     });
@@ -79,13 +93,49 @@ export default function NavItem() {
                 {openDropdown === menu.idMenu && (
                   <ul className="dropdown-menu">
                     {menu.children.map((child) => (
-                      <li key={child.idMenu}>
-                        <Link
-                          className="dropdown-item"
-                          to={child.linkMenu || "#"}
-                        >
-                          {child.namaMenu}
-                        </Link>
+                      <li
+                        key={child.idMenu}
+                        className={
+                          child.children.length > 0 ? "dropdown-submenu" : ""
+                        }
+                      >
+                        {/* Only make it a dropdown if there are grandchildren */}
+                        {child.children.length > 0 ? (
+                          <button
+                            className="dropdown-item dropdown-toggle"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleSubmenu(child.idMenu);
+                            }}
+                          >
+                            {child.namaMenu}
+                          </button>
+                        ) : (
+                          <Link
+                            className="dropdown-item"
+                            to={child.linkMenu || "#"}
+                          >
+                            {child.namaMenu}
+                          </Link>
+                        )}
+                        {openSubmenu === child.idMenu && (
+                          <ul className="dropdown-menu">
+                            {child.children.map((grandchild) => (
+                              <li key={grandchild.idMenu}>
+                                <Link
+                                  className="dropdown-item"
+                                  to={grandchild.linkMenu || "#"}
+                                  onClick={() => {
+                                    console.log(grandchild.linkMenu);
+                                    toggleGrandchild(grandchild.idMenu);
+                                  }}
+                                >
+                                  {grandchild.namaMenu}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -100,7 +150,31 @@ export default function NavItem() {
           </li>
         ))}
         <li className="nav-item ms-3">
-          <button className="btn bg-white">Masuk</button>
+          {isLoggedIn ? (
+            // Jika ada cookie, tampilkan ikon pengguna
+            <div className="btn bg-white" onClick={toggleUserMenu}>
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png"
+                alt="User Icon"
+                style={{ width: "24px", height: "24px" }}
+              />
+              {isUserMenuOpen && (
+                <ul className="dropdown-menu">
+                  <Link to="/profile" className="dropdown-item">
+                    Profile
+                  </Link>
+                  <button onClick={() => Cookies.remove("activeUser")}>
+                    Logout
+                  </button>
+                </ul>
+              )}
+            </div>
+          ) : (
+            // Jika tidak ada cookie, tampilkan tombol masuk
+            <Link to="/login" className="btn bg-white">
+              Masuk
+            </Link>
+          )}
         </li>
       </ul>
     </nav>
