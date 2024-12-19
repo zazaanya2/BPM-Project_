@@ -34,9 +34,15 @@ export default function Index({ onChangePage }) {
     const fetchBerita = async () => {
       try {
         const activeUser = Cookies.get("activeUser");
-        console.log(activeUser);
         if (activeUser) {
-          setIsLoggedIn(true); // Set login status jika cookie ada
+          const parsedUser = JSON.parse(activeUser);
+          if (parsedUser.RoleID.trim() === "ROL01") {
+            setIsLoggedIn(true);
+          } else {
+            setIsLoggedIn(false);
+          }
+        } else {
+          setIsLoggedIn(false);
         }
         const result = await useFetch(
           `${API_LINK}/MasterBerita/GetDataBerita`,

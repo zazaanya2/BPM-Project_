@@ -27,7 +27,14 @@ export default function Index({ onChangePage }) {
     const activeUser = Cookies.get("activeUser");
 
     if (activeUser) {
-      setIsLoggedIn(true);
+      const parsedUser = JSON.parse(activeUser);
+      if (parsedUser.RoleID.trim() === "ROL01") {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    } else {
+      setIsLoggedIn(false);
     }
 
     const fetchJenisKegiatan = async () => {

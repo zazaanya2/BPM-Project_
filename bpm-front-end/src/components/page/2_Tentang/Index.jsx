@@ -28,7 +28,14 @@ export default function Index({ onChangePage }) {
     const activeUser = Cookies.get("activeUser");
 
     if (activeUser) {
-      setIsLoggedIn(true); // Set login status jika cookie ada
+      const parsedUser = JSON.parse(activeUser);
+      if (parsedUser.RoleID.trim() === "ROL01") {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    } else {
+      setIsLoggedIn(false);
     }
 
     const fetchData = async () => {

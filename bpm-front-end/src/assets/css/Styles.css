@@ -4,13 +4,13 @@
 }
 
 .nav-item .nav-link {
-  color: #FFF;
+  color: #fff;
 }
 
 /* Nav Dekstop View */
 @media (min-width: 1200px) {
   .nav .nav-item {
-    margin-right: 15px;
+    margin-right: 1rem;
   }
 
   .dropdown-submenu {
@@ -54,19 +54,21 @@
     /* overflow: auto;
     pointer-events: none;
     opacity: 0; */
-    transition: top .4s, opacity .3s;
+    transition: top 0.4s, opacity 0.3s;
   }
   .navmenu::-webkit-scrollbar {
     width: 0;
   }
   .nav {
-    background-color: #2654A1;
+    background-color: #2654a1;
     padding-top: 1rem;
     display: block;
     width: 100vh;
+    max-width: 100%;
+    max-height: 85vh; /* Menentukan tinggi maksimal */
+    overflow-y: auto;
   }
-  .nav
-  .dropdown-submenu {
+  .nav .dropdown-submenu {
     position: relative;
   }
 
@@ -90,7 +92,6 @@
   .dropdown-item:hover {
     background-color: #d3e3ff;
   }
-
 
   .nav-item:hover {
     background-color: #183667;

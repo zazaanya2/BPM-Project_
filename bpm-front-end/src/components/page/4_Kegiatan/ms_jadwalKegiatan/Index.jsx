@@ -40,7 +40,14 @@ export default function Index({ onChangePage }) {
     const activeUser = Cookies.get("activeUser");
 
     if (activeUser) {
-      setIsLoggedIn(true); // Set login status jika cookie ada
+      const parsedUser = JSON.parse(activeUser);
+      if (parsedUser.RoleID.trim() === "ROL01") {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    } else {
+      setIsLoggedIn(false);
     }
 
     try {
@@ -473,7 +480,7 @@ export default function Index({ onChangePage }) {
                   />
                 )}
 
-                {selectedEvent.category === 2 && (
+                {isLoggedIn && selectedEvent.category === 2 && (
                   <Button
                     classType="btn btn-primary"
                     title="Tambah Dokumentasi"
@@ -486,23 +493,24 @@ export default function Index({ onChangePage }) {
                   />
                 )}
 
-                {(selectedEvent.category === 3 ||
-                  selectedEvent.category === 2) && (
-                  <Button
-                    classType="btn btn-success ms-3"
-                    title="Tambah Berita"
-                    label="Tambah Berita"
-                    onClick={() =>
-                      navigate("/berita/kelola", {
-                        state: {
-                          mode: "add",
-                          judul: selectedEvent.title,
-                          deskripsi: selectedEvent.description,
-                        },
-                      })
-                    }
-                  />
-                )}
+                {isLoggedIn &&
+                  (selectedEvent.category === 3 ||
+                    selectedEvent.category === 2) && (
+                    <Button
+                      classType="btn btn-success ms-3"
+                      title="Tambah Berita"
+                      label="Tambah Berita"
+                      onClick={() =>
+                        navigate("/berita/kelola", {
+                          state: {
+                            mode: "add",
+                            judul: selectedEvent.title,
+                            deskripsi: selectedEvent.description,
+                          },
+                        })
+                      }
+                    />
+                  )}
               </div>
             </div>
           ) : (

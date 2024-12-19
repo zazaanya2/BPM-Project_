@@ -10,7 +10,6 @@ export default function NavItem() {
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [openGrandchild, setOpenGrandchild] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const toggleDropdown = (menuId) => {
     setOpenDropdown(openDropdown === menuId ? null : menuId);
@@ -25,10 +24,6 @@ export default function NavItem() {
 
   const toggleGrandchild = (grandchild) => {
     setOpenGrandchild(openGrandchild === grandchild ? null : grandchild);
-  };
-
-  const toggleUserMenu = () => {
-    setIsUserMenuOpen(!isUserMenuOpen); // Toggle user menu dropdown
   };
 
   useEffect(() => {
@@ -152,23 +147,13 @@ export default function NavItem() {
         <li className="nav-item ms-3">
           {isLoggedIn ? (
             // Jika ada cookie, tampilkan ikon pengguna
-            <div className="btn bg-white" onClick={toggleUserMenu}>
+            <Link to="/profile" className="btn bg-white">
               <img
                 src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png"
                 alt="User Icon"
                 style={{ width: "24px", height: "24px" }}
               />
-              {isUserMenuOpen && (
-                <ul className="dropdown-menu">
-                  <Link to="/profile" className="dropdown-item">
-                    Profile
-                  </Link>
-                  <button onClick={() => Cookies.remove("activeUser")}>
-                    Logout
-                  </button>
-                </ul>
-              )}
-            </div>
+            </Link>
           ) : (
             // Jika tidak ada cookie, tampilkan tombol masuk
             <Link to="/login" className="btn bg-white">
