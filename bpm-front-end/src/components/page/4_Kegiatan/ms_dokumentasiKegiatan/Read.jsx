@@ -11,18 +11,17 @@ import { useIsMobile } from "../../../util/useIsMobile";
 import SweetAlert from "../../../util/SweetAlert";
 import moment from "moment";
 import "moment-timezone";
-import { useFetch } from "../../../util/useFetch";
-import DropDown from "../../../part/Dropdown";
 
 export default function Read({ onChangePage }) {
   const isMobile = useIsMobile();
-  const title = "Kelola Jadwal Kegiatan";
+  const title = "Kelola Dokumentasi Kegiatan";
   const breadcrumbs = [
-    { label: "Jadwal Kegiatan", href: "/kegiatan/jadwal" },
-    { label: "Kelola Jadwal Kegiatan" },
+    { label: "Dokumentasi Kegiatan", href: "/kegiatan/jadwal" },
+    { label: "Kelola Dokumentasi Kegiatan" },
   ];
 
   const [events, setEvents] = useState([]);
+  const [status, setStatus] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
@@ -30,23 +29,26 @@ export default function Read({ onChangePage }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("");
-  const [status, setStatus] = useState([
-    { Value: "", Text: "Semua" },
-    { Value: 1, Text: "Rencana" },
-    { Value: 2, Text: "Terlewat" },
-    { Value: 3, Text: "Terlaksana" },
-  ]);
 
   const pageSize = 10;
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const data = await useFetch(
-          `${API_LINK}/MasterKegiatan/GetDataKegiatan`,
-          JSON.stringify({}),
-          "POST"
+        const response = await fetch(
+          `${API_LINK}/MasterKegiatan/GetDataKegiatanByCategory`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ keg_kategori: 3 }),
+          }
         );
+
+        if (!response.ok) throw new Error("Gagal mengambil data kegiatan");
+
+        const data = await response.json();
 
         const formattedEvents = data.map((item) => {
           const startDate = moment(item.keg_tgl_mulai).format("YYYY-MM-DD");
@@ -93,9 +95,7 @@ export default function Read({ onChangePage }) {
     }
 
     if (selectedStatus) {
-      tempData = tempData.filter(
-        (item) => item.category === parseInt(selectedStatus)
-      );
+      tempData = tempData.filter((item) => item.category === selectedStatus);
     }
 
     setFilteredData(tempData);
@@ -104,6 +104,14 @@ export default function Read({ onChangePage }) {
   const indexOfLastData = pageCurrent * pageSize;
   const indexOfFirstData = indexOfLastData - pageSize;
   const currentData = filteredData.slice(indexOfFirstData, indexOfLastData);
+
+  const eventStatus = () => {
+    if (item.category === "Terlaksana") {
+      return ["Detail"];
+    } else {
+      return ["Detail", "Edit", "Delete"];
+    }
+  };
 
   const handlePageNavigation = (page) => {
     setPageCurrent(page);
@@ -141,7 +149,8 @@ export default function Read({ onChangePage }) {
 
         if (!response.ok) throw new Error("Gagal menghapus kegiatan");
 
-        SweetAlert("Berhasil", "Data Berhasil Dihapus", "success");
+        const result = await response.text();
+        SweetAlert("Berhasil", result, "success");
 
         setEvents((prevData) => prevData.filter((item) => item.id !== id));
       } catch (err) {
@@ -175,10 +184,36 @@ export default function Read({ onChangePage }) {
           >
             <Button
               iconName="add"
-              classType="primary"
+              classType="primary dropdown-toggle px-4 border-start"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="outside"
               label="Tambah Data"
-              onClick={() => onChangePage("add")}
             />
+            <div className="dropdown-menu" style={{ width: "350px" }}>
+              {["Dari Jadwal Kegiatan", "Tambah Baru"].map((label, index) => (
+                <Button
+                  key={index}
+                  type="button"
+                  label={label}
+                  width="100%"
+                  boxShadow="0px 4px 6px rgba(0, 0, 0, 0)"
+                  onClick={() => onChangePage(index === 0 ? "addExist" : "add")}
+                  style={{
+                    color: "#2654A1",
+                    textAlign: "left",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = "#2654A1";
+                    e.target.style.color = "white";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = "white";
+                    e.target.style.color = "#2654A1";
+                  }}
+                />
+              ))}
+            </div>
           </div>
           <div
             className={
@@ -213,12 +248,19 @@ export default function Read({ onChangePage }) {
                       />
                     </div>
                     <div className="mb-3">
-                      <DropDown
-                        arrData={status}
-                        label="Berdasarkan Status"
+                      <label htmlFor="statusPicker" className="mb-1">
+                        Berdasarkan Status
+                      </label>
+                      <select
+                        className="form-control"
                         value={selectedStatus}
                         onChange={(e) => setSelectedStatus(e.target.value)}
-                      />
+                      >
+                        <option value="">Semua</option>
+                        <option value="1">Rencana</option>
+                        <option value="2">Terlewat</option>
+                        <option value="3">Terlaksana</option>
+                      </select>
                     </div>
 
                     <Button
@@ -259,17 +301,13 @@ export default function Read({ onChangePage }) {
                 }),
                 Tempat: item.location,
                 Status:
-                  item.category === 1
+                  item.category === "1"
                     ? "Rencana"
-                    : item.category === 2
+                    : item.category === "2"
                     ? "Terlewat"
                     : "Terlaksana",
               }))}
-              actions={(item) => {
-                return item.Status === "Terlaksana"
-                  ? ["Detail"]
-                  : ["Detail", "Edit", "Delete"];
-              }}
+              actions={["Detail", "Edit", "Delete"]}
               onEdit={(item) =>
                 onChangePage("edit", { state: { idData: item.Key } })
               }

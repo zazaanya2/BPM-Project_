@@ -6,31 +6,30 @@ import Button from "../../../part/Button";
 import HeaderText from "../../../part/HeaderText";
 import Text from "../../../part/Text";
 import { API_LINK } from "../../../util/Constants";
+import Loading from "../../../part/Loading";
 import "moment-timezone";
+import { useIsMobile } from "../../../util/useIsMobile";
+import { useFetch } from "../../../util/useFetch";
 const localizer = momentLocalizer(moment);
 
 export default function Index({ onChangePage }) {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const isMobile = useIsMobile();
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch(
-        API_LINK + "/MasterKegiatan/GetDataKegiatan",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const data = await useFetch(
+        `${API_LINK}/MasterKegiatan/GetDataKegiatan`,
+        JSON.stringify({}),
+        "POST"
       );
 
-      if (!response.ok) {
-        throw new Error("Gagal mengambil data kegiatan");
+      if (!data || !Array.isArray(data)) {
+        throw new Error("Invalid data format or no data returned");
       }
-
-      const data = await response.json();
-      console.log(data);
 
       const formattedEvents = data.map((item) => {
         const startDate = moment(item.keg_tgl_mulai).format("YYYY-MM-DD");
@@ -46,11 +45,11 @@ export default function Index({ onChangePage }) {
           location: item.keg_tempat,
         };
       });
-
-      console.log(formattedEvents);
       setEvents(formattedEvents);
     } catch (error) {
       console.error("Error fetching events:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -61,6 +60,8 @@ export default function Index({ onChangePage }) {
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
   };
+
+  if (loading) return <Loading />;
 
   const buttonStyle = {
     backgroundColor: "#B8E8FF",
@@ -105,7 +106,7 @@ export default function Index({ onChangePage }) {
       borderRadius: "8px",
       boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
       borderLeft: `5px solid ${borderColor}`,
-      minWidth: "400px",
+      minWidth: isMobile ? "100%" : "20rem",
     };
   };
 
@@ -150,6 +151,7 @@ export default function Index({ onChangePage }) {
   const textStyle = {
     color: "#575050",
     marginBottom: "5px",
+    fontFamily: "Poppins, sans-serif",
   };
 
   const descriptionStyle = {
@@ -208,7 +210,7 @@ export default function Index({ onChangePage }) {
         className="row"
         style={{
           display: "flex",
-          margin: "1.5rem",
+          margin: isMobile ? "0rem" : "1.5rem",
           gap: "1rem",
           padding: "0 20px",
         }}
@@ -331,29 +333,29 @@ export default function Index({ onChangePage }) {
           </div>
 
           <div className="row">
-            <div class="col-lg-4 col-md-6 mb-0">
+            <div className="col-lg-4 col-md-6 mb-0">
               <p style={paragraphStyle}>
                 <i
-                  class="fi fi-sr-square-small"
+                  className="fi fi-sr-square-small"
                   style={{ ...iconStyle, color: "#4989C2" }}
                 ></i>
                 Rencana Kegiatan
               </p>
             </div>
-            <div class="col-lg-4 col-md-6 mb-0">
+            <div className="col-lg-4 col-md-6 mb-0">
               <p style={paragraphStyle}>
                 <i
-                  class="fi fi-sr-square-small"
+                  className="fi fi-sr-square-small"
                   style={{ ...iconStyle, color: "#08A500" }}
                 ></i>
                 Kegiatan Terlaksana
               </p>
             </div>
           </div>
-          <div class="col-lg-4 col-md-6 mb-0">
+          <div className="col-lg-4 col-md-6 mb-0">
             <p style={paragraphStyle}>
               <i
-                class="fi fi-sr-square-small"
+                className="fi fi-sr-square-small"
                 style={{ ...iconStyle, color: "#6c757d" }}
               ></i>
               Kegiatan Terlewat
@@ -367,18 +369,56 @@ export default function Index({ onChangePage }) {
             <div>
               <h4 style={titleStyle()}>{selectedEvent.title}</h4>
               <div style={containerStyle}>
-                <p style={flexStyle}>
+                <p style={{ ...flexStyle, ...textStyle }}>
                   <i className="fi fi-br-calendar-day" style={iconStyle}></i>
+                  {new Date(selectedEvent.start).toLocaleDateString("id-ID", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  }) ===
+                  new Date(selectedEvent.end).toLocaleDateString("id-ID", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })
+                    ? new Date(selectedEvent.start).toLocaleDateString(
+                        "id-ID",
+                        {
+                          weekday: "long",
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        }
+                      )
+                    : `${new Date(selectedEvent.start).toLocaleDateString(
+                        "id-ID",
+                        {
+                          weekday: "long",
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        }
+                      )} - ${new Date(selectedEvent.end).toLocaleDateString(
+                        "id-ID",
+                        {
+                          weekday: "long",
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        }
+                      )}`}
+                </p>
+                <p style={{ ...flexStyle, ...textStyle }}>
+                  <i className="fi fi-rr-clock-three" style={iconStyle}></i>
                   {moment(selectedEvent.start)
                     .tz("Asia/Jakarta")
-                    .format("dddd, DD MMMM YYYY HH:mm [WIB]")}
-                </p>
-                <i className="fi fi-rr-arrow-down"></i>
-                <p style={flexStyle}>
-                  <i className="fi fi-br-calendar-day" style={iconStyle}></i>
+                    .format("HH:mm")}{" "}
+                  -{" "}
                   {moment(selectedEvent.end)
                     .tz("Asia/Jakarta")
-                    .format("dddd, DD MMMM YYYY HH:mm [WIB]")}
+                    .format("HH:mm [WIB]")}
                 </p>
 
                 <p style={{ ...flexStyle, ...textStyle }}>

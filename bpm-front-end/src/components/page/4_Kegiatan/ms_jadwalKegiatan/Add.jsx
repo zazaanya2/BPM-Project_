@@ -1,13 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import PageTitleNav from "../../../part/PageTitleNav";
-import TextField from "../../../part/InputField";
+import InputField from "../../../part/InputField";
 import TextArea from "../../../part/TextArea";
 import HeaderForm from "../../../part/HeaderText";
 import Button from "../../../part/Button";
 import Loading from "../../../part/Loading";
+import DropDown from "../../../part/Dropdown";
 import { API_LINK } from "../../../util/Constants";
 import SweetAlert from "../../../util/SweetAlert";
 import { useIsMobile } from "../../../util/useIsMobile";
+import { useFetch } from "../../../util/useFetch";
 
 export default function Add({ onChangePage }) {
   const title = "Tambah Jadwal Kegiatan";
@@ -24,11 +26,36 @@ export default function Add({ onChangePage }) {
     name: "",
     description: "",
     startDate: "",
-    endDate: "",
     startTime: "",
+    endDate: "",
     endTime: "",
     place: "",
+    jenisKegiatan: "",
+    createdBy: "Admin",
   });
+
+  const [jenisKegiatan, setJenisKegiatan] = useState([]);
+
+  useEffect(() => {
+    const fetchJenisKegiatan = async () => {
+      try {
+        const data = await useFetch(
+          `${API_LINK}/MasterKegiatan/GetDataJenisKegiatan`,
+          JSON.stringify({}),
+          "POST"
+        );
+        const formattedData = data.map((item) => ({
+          Value: item.jkg_id,
+          Text: item.jkg_nama,
+        }));
+        setJenisKegiatan(formattedData);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    fetchJenisKegiatan();
+  }, []);
 
   // Refs for validation
   const namaRef = useRef();
@@ -38,8 +65,10 @@ export default function Add({ onChangePage }) {
   const jamMulaiRef = useRef();
   const tglSelesaiRef = useRef();
   const jamSelesaiRef = useRef();
+  const jenisKegiatanRef = useRef();
 
   const handleSubmit = async () => {
+    console.log(jenisKegiatanRef.current.value);
     if (!namaRef.current?.validate()) {
       namaRef.current?.focus();
       return;
@@ -69,6 +98,13 @@ export default function Add({ onChangePage }) {
       return;
     }
 
+    if (!jenisKegiatanRef.current?.validate()) {
+      jenisKegiatanRef.current?.focus();
+      return;
+    }
+
+    console.log(formData);
+
     // Combine date and time values into Date objects
     const startDate = new Date(
       `${tglMulaiRef.current.value} ${jamMulaiRef.current.value}`
@@ -87,42 +123,27 @@ export default function Add({ onChangePage }) {
       );
       return;
     }
-
-    const kegiatanData = {
-      keg_nama: formData.name,
-      keg_deskripsi: formData.description,
-      keg_tgl_mulai: formData.startDate,
-      keg_jam_mulai: formData.startTime,
-      keg_tgl_selesai: formData.endDate,
-      keg_jam_selesai: formData.endTime,
-      keg_tempat: formData.place,
-      keg_created_by: "Admin",
-    };
-
     setLoading(true);
-    console.log(kegiatanData);
     try {
-      const response = await fetch(
+      const response = await useFetch(
         `${API_LINK}/MasterKegiatan/CreateJadwalKegiatan`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(kegiatanData),
-        }
+        formData,
+        "POST"
       );
 
-      if (response.ok) {
-        SweetAlert(
-          "Berhasil!",
-          "Jadwal kegiatan berhasil dibuat.",
-          "success",
-          "OK"
-        ).then(() => onChangePage("read"));
-      } else {
-        throw new Error("Gagal membuat jadwal kegiatan");
+      if (response === "ERROR") {
+        throw new Error("Gagal memperbarui data");
       }
+
+      SweetAlert(
+        "Berhasil!",
+        "Jadwal kegiatan berhasil dibuat.",
+        "success",
+        "OK"
+      ).then(() => onChangePage("read"));
     } catch (error) {
       SweetAlert("Gagal!", error.message, "error", "OK");
+      setLoading(false);
     }
   };
 
@@ -149,19 +170,32 @@ export default function Add({ onChangePage }) {
           >
             <HeaderForm label="Formulir Jadwal Kegiatan" />
             <div className="row">
+              <InputField
+                ref={namaRef}
+                label="Nama Kegiatan"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                isRequired={true}
+                maxChar="100"
+              />
               <div className="col-lg-6 col-md-6">
-                <TextField
-                  ref={namaRef}
-                  label="Nama Kegiatan"
-                  value={formData.name}
+                <DropDown
+                  ref={jenisKegiatanRef}
+                  arrData={jenisKegiatan}
+                  label="Jenis Kegiatan"
+                  type="pilih"
+                  forInput="jenisKegiatan"
+                  value={formData.jenisKegiatan}
                   onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
+                    setFormData({ ...formData, jenisKegiatan: e.target.value })
                   }
                   isRequired={true}
                 />
               </div>
               <div className="col-lg-6 col-md-6">
-                <TextField
+                <InputField
                   ref={tempatRef}
                   label="Tempat"
                   value={formData.place}
@@ -169,12 +203,13 @@ export default function Add({ onChangePage }) {
                     setFormData({ ...formData, place: e.target.value })
                   }
                   isRequired={true}
+                  maxChar="50"
                 />
               </div>
             </div>
             <div className="row">
               <div className="col-lg-6 col-md-6">
-                <TextField
+                <InputField
                   ref={tglMulaiRef}
                   label="Tanggal Mulai"
                   value={formData.startDate}
@@ -184,7 +219,7 @@ export default function Add({ onChangePage }) {
                   isRequired={true}
                   type="date"
                 />
-                <TextField
+                <InputField
                   ref={jamMulaiRef}
                   label="Waktu Mulai"
                   value={formData.startTime}
@@ -196,7 +231,7 @@ export default function Add({ onChangePage }) {
                 />
               </div>
               <div className="col-lg-6 col-md-6">
-                <TextField
+                <InputField
                   ref={tglSelesaiRef}
                   label="Tanggal Selesai"
                   value={formData.endDate}
@@ -206,7 +241,7 @@ export default function Add({ onChangePage }) {
                   isRequired={true}
                   type="date"
                 />
-                <TextField
+                <InputField
                   ref={jamSelesaiRef}
                   label="Waktu Selesai"
                   value={formData.endTime}

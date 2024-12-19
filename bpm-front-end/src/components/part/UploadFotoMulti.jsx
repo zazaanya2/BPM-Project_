@@ -6,6 +6,7 @@ import {
   useEffect,
 } from "react";
 import { BERITAFOTO_LINK } from "../util/Constants";
+import SweetAlert from "../util/SweetAlert";
 
 const UploadFotoMulti = forwardRef(function UploadFotoMulti(
   {
@@ -15,6 +16,8 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
     errorMsg = "Field ini wajib diisi.",
     onChange,
     initialImages = [],
+    link = BERITAFOTO_LINK,
+    maxSizeFile = 5 * 1024 * 1024,
   },
   ref
 ) {
@@ -31,7 +34,7 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
       const mappedImages = initialImages.map((img) => ({
         type: "path",
         value: img,
-        preview: BERITAFOTO_LINK + img,
+        preview: link + img,
       }));
 
       setPreviews(mappedImages);
@@ -60,11 +63,24 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
   const handleFileChange = async (event) => {
     const selectedFiles = Array.from(event.target.files);
 
+    // Validasi file gambar
+    const invalidFiles = selectedFiles.filter(
+      (file) => !file.type.startsWith("image/")
+    );
+    if (invalidFiles.length > 0) {
+      SweetAlert("Gagal!", "File harus berupa gambar", "error", "OK");
+      inputRef.current.value = ""; // Kosongkan input field
+      return; // Batalkan proses jika ada file yang tidak valid
+    }
+
+    // File valid diproses
     const validFiles = selectedFiles.filter((file) =>
       file.type.startsWith("image/")
     );
-
-    if (validFiles.length === 0) return;
+    if (validFiles.length === 0) {
+      inputRef.current.value = ""; // Kosongkan input field jika tidak ada file valid
+      return;
+    }
 
     const newPreviews = await Promise.all(
       validFiles.map((file) => {
@@ -88,6 +104,9 @@ const UploadFotoMulti = forwardRef(function UploadFotoMulti(
       onChange(updatedPreviews.map((item) => item.value));
       return updatedPreviews;
     });
+
+    // Kosongkan nilai input setelah selesai memproses file
+    inputRef.current.value = "";
 
     if (isRequired) setError(false);
   };

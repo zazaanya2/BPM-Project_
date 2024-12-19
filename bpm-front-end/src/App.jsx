@@ -20,45 +20,57 @@ import PeraturanEksternal from "./components/page/10_Peraturan/ms_peraturanEkste
 import InstrumenAps from "./components/page/10_Peraturan/ms_instrumenAps/Root";
 import KriteriaSurvei from "./components/page/9_Survei/Kriteria_Survei/Root";
 import SkalaSurvei from "./components/page/9_Survei/Skala_Penilaian/Root";
-import AkreProdi from "./components/page/6_SPME/AkreditasiProdi/Root";
-import AkreInstitusi from "./components/page/6_SPME/AkreditasiInstitusi/Root";
-import DokumenSPMI from "./components/page/5_SPMI/dokumen_spmi/Root";
-// import Survei from "./components/page/9_Survei/Survei/Root";
+import ScrollToTop from "./components/part/ScrollToTop";
+import "./App.css";
+
 function App() {
   return (
-    <Router>
-      {" "}
-      {/* Wrap the entire app in Router */}
+    <Router
+      future={{
+        v7_startTransition: true, // Mengaktifkan startTransition
+        v7_relativeSplatPath: true, // Mengaktifkan perubahan dalam resolusi rute relatif
+      }}
+    >
+      <ScrollToTop />
       <div className="d-flex flex-column min-vh-100">
-        {/* Header Component */}
         <Header />
-          
-        <main className="flex-grow-1">
-          <Tentang />
-          <Berita />
-          {/* <RencanaKegiatan /> */}
-          <JadwalKegiatan />
-          <DokumentasiKegiatan />
-          <Pelaksanaan />
-          <Penetapan />
-          <Peningkatan />
-          <Pengendalian />
-          <Evaluasi />
-          {/* <Survei /> */}
-          <Peraturan />
-          <PeraturanEksternal />
-          <InstrumenAps />
-          <Peraturan />
-          <PeraturanEksternal />
-          <InstrumenAps />
-          <KriteriaSurvei />
-          <SkalaSurvei />
-          <AkreProdi />
-          <AkreInstitusi />
-          <DokumenSPMI />
-        </main>
 
-        {/* Footer Component */}
+        <main className="flex-grow-1">
+          <Routes>
+            <Route path="/tentang/*" element={<Tentang />} />
+            <Route path="/berita/*" element={<Berita />} />
+            <Route path="/kegiatan/jadwal/*" element={<JadwalKegiatan />} />
+            <Route
+              path="/kegiatan/dokumentasi/*"
+              element={<DokumentasiKegiatan />}
+            />
+            <Route
+              path="/spmi/siklus/pelaksanaan/*"
+              element={<Pelaksanaan />}
+            />
+            <Route path="/spmi/siklus/penetapan/*" element={<Penetapan />} />
+            <Route
+              path="/spmi/siklus/peningkatan/*"
+              element={<Peningkatan />}
+            />
+            <Route
+              path="/spmi/siklus/pengendalian/*"
+              element={<Pengendalian />}
+            />
+            <Route path="/spmi/siklus/evaluasi/*" element={<Evaluasi />} />
+            <Route path="/peraturan/kebijakan/*" element={<Peraturan />} />
+            <Route
+              path="/peraturan/eksternal/*"
+              element={<PeraturanEksternal />}
+            />
+            <Route path="/peraturan/aps/*" element={<InstrumenAps />} />
+            <Route path="/survei/kriteria/*" element={<KriteriaSurvei />} />
+            <Route path="/survei/skala/*" element={<SkalaSurvei />} />
+
+            {/* Halaman 404 */}
+            <Route path="*" element={<div>Halaman tidak ditemukan</div>} />
+          </Routes>
+        </main>
         <Footer />
       </div>
     </Router>

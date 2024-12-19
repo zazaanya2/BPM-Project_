@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import PageTitleNav from "../../../part/PageTitleNav";
 import TextField from "../../../part/InputField";
 import TextArea from "../../../part/TextArea";
+import DropDown from "../../../part/Dropdown";
 import HeaderForm from "../../../part/HeaderText";
 import Button from "../../../part/Button";
 import Loading from "../../../part/Loading";
@@ -11,6 +12,7 @@ import SweetAlert from "../../../util/SweetAlert";
 import { useIsMobile } from "../../../util/useIsMobile";
 import moment from "moment";
 import "moment-timezone";
+import { useFetch } from "../../../util/useFetch";
 
 export default function Edit({ onChangePage }) {
   const title = "Edit Jadwal Kegiatan";
@@ -24,16 +26,41 @@ export default function Edit({ onChangePage }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
+    id: location.state?.idData,
     name: "",
     description: "",
     startDate: "",
-    endDate: "",
     startTime: "",
+    endDate: "",
     endTime: "",
     place: "",
+    jenisKegiatan: "",
+    modifBy: "User",
   });
 
   const [deskripsi, setDeskripsi] = useState("");
+  const [jenisKegiatan, setJenisKegiatan] = useState([]);
+
+  useEffect(() => {
+    const fetchJenisKegiatan = async () => {
+      try {
+        const data = await useFetch(
+          `${API_LINK}/MasterKegiatan/GetDataJenisKegiatan`,
+          JSON.stringify({}),
+          "POST"
+        );
+        const formattedData = data.map((item) => ({
+          Value: item.jkg_id, // ID untuk nilai dropdown
+          Text: item.jkg_nama, // Nama untuk teks dropdown
+        }));
+        setJenisKegiatan(formattedData); // Menyimpan data ke state
+      } catch (error) {
+        setError(error.message); // Menangani error
+      }
+    };
+
+    fetchJenisKegiatan();
+  }, []);
 
   // Refs for validation
   const namaRef = useRef();
@@ -43,6 +70,7 @@ export default function Edit({ onChangePage }) {
   const jamMulaiRef = useRef();
   const tglSelesaiRef = useRef();
   const jamSelesaiRef = useRef();
+  const jenisKegiatanRef = useRef();
 
   useEffect(() => {
     if (!location.state?.idData) return;
@@ -52,38 +80,31 @@ export default function Edit({ onChangePage }) {
 
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `${API_LINK}/MasterKegiatan/GetDataKegiatanById`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ keg_id: editId }),
-          }
+        const data = await useFetch(
+          API_LINK + `/MasterKegiatan/GetDataKegiatanById`,
+          { ber_id: editId }
         );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
         if (data) {
           setFormData({
+            id: location.state.idData,
             name: data[0].keg_nama,
             description: data[0].keg_deskripsi,
             startDate: moment(data[0].keg_tgl_mulai).format("YYYY-MM-DD"),
-            endDate: moment(data[0].keg_tgl_selesai).format("YYYY-MM-DD"),
             startTime: moment(data[0].keg_jam_mulai, "HH:mm:ss").format(
               "HH:mm"
             ),
+            endDate: moment(data[0].keg_tgl_selesai).format("YYYY-MM-DD"),
             endTime: moment(data[0].keg_jam_selesai, "HH:mm:ss").format(
               "HH:mm"
             ),
 
             place: data[0].keg_tempat,
+            jenisKegiatan: data[0].jkg_id,
+            modifBy: "User",
           });
         }
+        console.log(formData);
       } catch (error) {
         console.error("Error fetching data:", error);
         setError("Failed to fetch data.");
@@ -125,6 +146,11 @@ export default function Edit({ onChangePage }) {
       return;
     }
 
+    if (!jenisKegiatanRef.current?.value === "") {
+      jenisKegiatanRef.current?.focus();
+      return;
+    }
+
     // Combine date and time values into Date objects
     const startDate = new Date(
       `${tglMulaiRef.current.value} ${jamMulaiRef.current.value}`
@@ -144,45 +170,24 @@ export default function Edit({ onChangePage }) {
       return;
     }
 
-    const kegiatanData = {
-      keg_id: location.state?.idData,
-      keg_nama: formData.name,
-      keg_deskripsi: formData.description,
-      keg_tgl_mulai: formData.startDate,
-      keg_jam_mulai: formData.startTime,
-      keg_tgl_selesai: formData.endDate,
-      keg_jam_selesai: formData.endTime,
-      keg_tempat: formData.place,
-      keg_modif_by: "CurrentUser",
-    };
-
-    console.log(kegiatanData);
-
     setLoading(true);
     try {
-      const response = await fetch(
+      const response = await useFetch(
         `${API_LINK}/MasterKegiatan/EditJadwalKegiatan`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(kegiatanData),
-        }
+        formData,
+        "POST"
       );
 
-      console.log(JSON.stringify(kegiatanData));
-
-      if (response.ok) {
-        SweetAlert(
-          "Berhasil!",
-          "Jadwal kegiatan berhasil dibuat.",
-          "success",
-          "OK"
-        ).then(() => onChangePage("read"));
-      } else {
-        throw new Error("Gagal membuat jadwal kegiatan");
+      if (response === "ERROR") {
+        throw new Error("Gagal memperbarui data");
       }
+
+      SweetAlert(
+        "Berhasil!",
+        "Jadwal kegiatan berhasil dibuat.",
+        "success",
+        "OK"
+      ).then(() => onChangePage("read"));
     } catch (error) {
       SweetAlert("Gagal!", error.message, "error", "OK");
     } finally {
@@ -213,13 +218,26 @@ export default function Edit({ onChangePage }) {
           >
             <HeaderForm label="Formulir Jadwal Kegiatan" />
             <div className="row">
+              <TextField
+                ref={namaRef}
+                label="Nama Kegiatan"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                isRequired={true}
+                maxChar="100"
+              />
               <div className="col-lg-6 col-md-6">
-                <TextField
-                  ref={namaRef}
-                  label="Nama Kegiatan"
-                  value={formData.name}
+                <DropDown
+                  ref={jenisKegiatanRef}
+                  arrData={jenisKegiatan}
+                  label="Jenis Kegiatan"
+                  type="pilih"
+                  forInput="jenisKegiatan"
+                  value={formData.jenisKegiatan}
                   onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
+                    setFormData({ ...formData, jenisKegiatan: e.target.value })
                   }
                   isRequired={true}
                 />
@@ -233,6 +251,7 @@ export default function Edit({ onChangePage }) {
                     setFormData({ ...formData, place: e.target.value })
                   }
                   isRequired={true}
+                  maxChar="50"
                 />
               </div>
             </div>
