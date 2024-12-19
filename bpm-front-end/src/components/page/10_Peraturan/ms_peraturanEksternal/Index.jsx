@@ -7,6 +7,8 @@ import Button from "../../../part/Button";
 import { useIsMobile } from "../../../util/useIsMobile";
 import { API_LINK } from "../../../util/Constants";
 import Filter from "../../../part/Filter";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 export default function Index({ onChangePage }) {
   const [pageSize] = useState(10);
@@ -18,6 +20,7 @@ export default function Index({ onChangePage }) {
   const [searchKeyword, setSearchKeyword] = useState(""); // Keyword pencarian
   const [selectedYear, setSelectedYear] = useState(""); // Filter tahun
 
+  const navigate = useNavigate();
   // Indeks data untuk pagination
   const indexOfLastData = pageCurrent * pageSize;
   const indexOfFirstData = indexOfLastData - pageSize;
@@ -77,9 +80,114 @@ export default function Index({ onChangePage }) {
     { label: "Dokumen Kebijakan Eksternal" },
   ];
 
-  const handleEdit = (item) => {
-    onChangePage("edit", { state: { editData: item } });
+  const handleDelete = async (id) => {
+    // Menyiapkan parameter untuk API
+    const parameters = { dok_id: id, dok_modif_by: "author" };
+    for (let i = 3; i <= 50; i++) {
+      parameters[`param${i}`] = null; // Isi semua parameter tambahan dengan null
+    }
+
+    console.log("Parameters dikirim:", parameters); // Debug log parameter
+
+    // Menampilkan konfirmasi ke pengguna
+    const confirm = await Swal.fire({
+      title: "Konfirmasi",
+      text: "Apakah Anda yakin ingin menghapus dokumen ini?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Ya, Hapus",
+      cancelButtonText: "Batal",
+    });
+
+    // Jika pengguna mengonfirmasi penghapusan
+    if (confirm.isConfirmed) {
+      try {
+        // Mengirimkan permintaan ke server
+        const response = await fetch(
+          `${API_LINK}/MasterPeraturan/DeleteDokumen`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(parameters),
+          }
+        );
+
+        console.log("Response status:", response.status); // Debug log status respons
+
+        if (!response.ok) {
+          const errorText = await response.text(); // Mendapatkan pesan error dari server
+          console.error("Error dari server:", errorText); // Log error server
+          throw new Error("Gagal menghapus dokumen: " + errorText);
+        }
+
+        const result = await response.json(); // Jika respons berupa JSON
+        console.log("Hasil respons:", result); // Debug log hasil respons
+
+        Swal.fire("Berhasil", "Dokumen berhasil dihapus", "success");
+
+        // Memperbarui data setelah penghapusan
+        fetchData();
+      } catch (err) {
+        console.error("Error:", err); // Log error untuk debugging
+        Swal.fire("Gagal", "Terjadi kesalahan saat menghapus dokumen", "error");
+      }
+    } else {
+      console.log("Penghapusan dibatalkan oleh pengguna"); // Debug log jika pengguna membatalkan
+    }
   };
+
+  const handlePrint = async (item) => {
+    try {
+      const response = await fetch(`${API_LINK}/TrunduhDokumen/unduhDokumen`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ dok_id: item.key }),
+      });
+
+      if (!response.ok) throw new Error("Gagal mengunduh dokumen");
+
+      // Cek Content-Type respons
+      const contentType = response.headers.get("Content-Type");
+      console.log("Content-Type:", contentType); // Menampilkan Content-Type untuk debugging
+
+      // Periksa apakah file yang diterima adalah PDF
+      if (!contentType || !contentType.includes("pdf")) {
+        throw new Error("File yang diterima bukan PDF");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "dokumen.pdf"); // Nama file saat diunduh
+      document.body.appendChild(link);
+      link.click();
+
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error mengunduh file:", error);
+      Swal.fire("Error", error.message, "error");
+    }
+  };
+
+  const handleEdit = (item) => {
+    navigate("edit", { state: { editData: item } });
+  };
+
+  const handleDetail = (item) => {
+    navigate("detail", { state: { detailData: item } });
+  };
+  const handleUpdateHistory = (item) => {
+    navigate("updateHistory", { state: { updateHistoryData: item } });
+  };
+  // const handleDownload = (item) => {
+  //   navigate("print", { state: { printData: item } });
+  // };
 
   if (loading) {
     return <div>Loading data...</div>;
@@ -156,14 +264,14 @@ export default function Index({ onChangePage }) {
                 arrHeader={[
                   "No",
                   "Judul Dokumen",
-                  "Nomor Dokumen",
-                  "Tahun Dokumen",
+                  // "Nomor Dokumen",
+                  // "Tahun Dokumen",
                 ]}
                 headerToDataMap={{
                   No: "No",
                   "Judul Dokumen": "JudulDokumen",
-                  "Nomor Dokumen": "dok_nodok",
-                  "Tahun Dokumen": "dok_tahun",
+                  // "Nomor Dokumen": "dok_nodok",
+                  // "Tahun Dokumen": "dok_tahun",
                 }}
                 data={currentData.map((item, index) => ({
                   key: item.dok_id,
@@ -172,8 +280,30 @@ export default function Index({ onChangePage }) {
                   dok_nodok: item.dok_nodok,
                   dok_tahun: item.dok_tahun,
                 }))}
-                actions={["Detail", "Edit", "Toggle", "UpdateHistory"]}
-                onEdit={handleEdit}
+                actions={[
+                  "Detail",
+                  "Edit",
+                  "Toggle",
+                  "Print",
+                  "UpdateHistory",
+                  "PrintHistory",
+                ]}
+                onDetail={(item) => {
+                  handleDetail(item.key);
+                }}
+                onEdit={(item) => {
+                  console.log("id yang harus dikirm: ", item.key);
+                  handleEdit(item.key);
+                }}
+                onToggle={(item) => {
+                  handleDelete(item.key);
+                }}
+                onPrint={(item) => {
+                  handlePrint(item.key);
+                }}
+                onUpdateHistory={(item) => {
+                  handleUpdateHistory(item.key);
+                }}
               />
 
               <Paging

@@ -8,6 +8,8 @@ import Index from "./Index";
 import ScrollToTop from "../../../part/ScrollToTop";
 import Add from "./Add";
 import Edit from "./Edit";
+import Detail from "./Detail";
+import UpdateHistory from "./UpdateHistory";
 
 export default function Peraturan() {
   const navigate = useNavigate();
@@ -23,7 +25,12 @@ export default function Peraturan() {
       case "edit":
         navigate("/peraturan/aps/edit");
         break;
-
+      case "detail":
+        navigate("/peraturan/aps/detail");
+        break;
+      case "updateHistory":
+        navigate("/peraturan/aps/updateHistory");
+        break;
       default:
         console.warn(`Halaman "${page}" tidak dikenali.`);
         break;
@@ -42,6 +49,14 @@ export default function Peraturan() {
         <Route
           path="/edit"
           element={<Edit onChangePage={handlePageChange} />}
+        />
+        <Route
+          path="/detail"
+          element={<Detail onChangePage={handlePageChange} />}
+        />
+        <Route
+          path="/updateHistory"
+          element={<UpdateHistory onChangePage={handlePageChange} />}
         />
       </Routes>
     </>

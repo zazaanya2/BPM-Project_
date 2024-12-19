@@ -21,8 +21,8 @@ export default function Detail({ onChangePage }) {
 
   const title = "DETAIL DOKUMEN";
   const breadcrumbs = [
-    { label: "Kebijakan Peraturan", href: "/peraturan/kebijakan" },
-    { label: "Kebijakan Peraturan" },
+    { label: "Peraturan Eksternal", href: "/peraturan/eksternal" },
+    { label: "Peraturan Eksternal" },
   ];
 
   useEffect(() => {

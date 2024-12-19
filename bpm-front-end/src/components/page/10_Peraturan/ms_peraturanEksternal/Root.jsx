@@ -8,6 +8,8 @@ import Index from "./Index";
 import Add from "./Add";
 import Edit from "./Edit";
 import ScrollToTop from "../../../part/ScrollToTop";
+import UpdateHistory from "./UpdateHistory";
+import Detail from "./Detail";
 
 export default function PeraturanEksternal() {
   const navigate = useNavigate();
@@ -22,6 +24,12 @@ export default function PeraturanEksternal() {
         break;
       case "edit":
         navigate("/peraturan/eksternal/edit");
+        break;
+      case "detail":
+        navigate("/peraturan/eksternal/detail");
+        break;
+      case "updateHistory":
+        navigate("/peraturan/eksternal/updateHistory");
         break;
 
       default:
@@ -42,6 +50,14 @@ export default function PeraturanEksternal() {
         <Route
           path="/edit"
           element={<Edit onChangePage={handlePageChange} />}
+        />
+        <Route
+          path="/detail"
+          element={<Detail onChangePage={handlePageChange} />}
+        />
+        <Route
+          path="/updateHistory"
+          element={<UpdateHistory onChangePage={handlePageChange} />}
         />
       </Routes>
     </>

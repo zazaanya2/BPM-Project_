@@ -1,53 +1,49 @@
 import React, { useState, useEffect } from "react";
+import SweetAlert from "../../../util/SweetAlert";
 import PageTitleNav from "../../../part/PageTitleNav";
-import TextField from "../../../part/TextField";
+import TextField from "../../../part/InputField";
 import HeaderForm from "../../../part/HeaderText";
 import DropDown from "../../../part/Dropdown";
 import Button from "../../../part/Button";
-import FileUpload from "../../../part/FileUpload";
 import { useLocation } from "react-router-dom";
 import { API_LINK } from "../../../util/Constants";
 import { useIsMobile } from "../../../util/useIsMobile";
 
-export default function Edit({ onChangePage, data }) {
+export default function Edit({ onChangePage }) {
   const isMobile = useIsMobile();
-  const [error, setError] = useState(null);
-  const [formData, setFormData] = useState({});
-  const [fileData, setFileData] = useState(null);
+  const [formData, setFormData] = useState({
+    dok_nodok: "",
+    dok_judul: "",
+    dok_tahun: "",
+    dok_control: "",
+    dok_thn_kadaluarsa: "",
+  });
   const location = useLocation();
-
-  // Ambil idData dari state
-  const editId = location.state?.idData || 10;
-
-  const fetchData = async () => {
-    try {
-      const parameters = { param1: editId };
-
-      for (let i = 2; i <= 50; i++) {
-        parameters[`param${i}`] = null;
-      }
-
-      const response = await fetch(
-        `${API_LINK}/MasterPeraturan/GetDataDokumenById`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(parameters),
-        }
-      );
-
-      if (!response.ok) throw new Error("Gagal mengambil data");
-
-      const result = await response.json();
-      setFormData(result[0] || {});
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    const editId = location.state.editData;
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${API_LINK}/MasterPeraturan/GetDataDokumenById`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ param1: editId }),
+          }
+        );
+
+        if (!response.ok) throw new Error("Gagal mengambil data");
+        const result = await response.json();
+        setFormData(result[0] || {});
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
     fetchData();
-  }, []);
+  }, [location.state]);
 
   const handleInputChange = (name, value) => {
     setFormData((prevData) => ({
@@ -56,59 +52,87 @@ export default function Edit({ onChangePage, data }) {
     }));
   };
 
-  const handleFileChange = (files) => {
-    setFileData(files);
-  };
-
   const handleSubmit = async () => {
     try {
       const {
+        dok_id,
+        dok_nodok,
+        dok_judul,
+        dok_tahun: dok_tahun_input,
+        dok_control,
+        dok_thn_kadaluarsa: dok_thn_kadaluarsa_input,
+      } = formData;
+
+      // VALIDASI: Pastikan semua field diisi
+      if (!dok_nodok || !dok_judul || !dok_tahun_input || !dok_control) {
+        SweetAlert(
+          "Peringatan!",
+          "Harap lengkapi semua field yang diperlukan.",
+          "warning",
+          "OK"
+        );
+        return;
+      }
+
+      // VALIDASI: Tahun Dokumen harus berupa angka
+      if (!/^\d+$/.test(dok_tahun_input)) {
+        SweetAlert(
+          "Peringatan!",
+          "Tahun Dokumen harus berupa angka integer.",
+          "warning",
+          "OK"
+        );
+        return;
+      }
+
+      const dok_tahun = parseInt(dok_tahun_input, 10);
+
+      // VALIDASI: Tahun Kadaluarsa lebih besar dari Tahun Dokumen
+      let dok_thn_kadaluarsa = null;
+      if (dok_thn_kadaluarsa_input) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(dok_thn_kadaluarsa_input)) {
+          SweetAlert(
+            "Peringatan!",
+            "Format Tahun Kadaluarsa harus 'YYYY-MM-DD'.",
+            "warning",
+            "OK"
+          );
+          return;
+        }
+
+        const kadaluarsaYear = parseInt(
+          dok_thn_kadaluarsa_input.split("-")[0],
+          10
+        );
+        if (kadaluarsaYear <= dok_tahun) {
+          SweetAlert(
+            "Peringatan!",
+            "Tahun Kadaluarsa harus lebih besar dari Tahun Dokumen.",
+            "warning",
+            "OK"
+          );
+          return;
+        }
+
+        dok_thn_kadaluarsa = dok_thn_kadaluarsa_input;
+      }
+
+      // DATA SIAP UNTUK DIKIRIM
+      const dokumenData = {
+        dok_id,
+        dok_category: "2",
         dok_nodok,
         dok_judul,
         dok_tahun,
         dok_control,
         dok_thn_kadaluarsa,
-      } = formData;
-
-      if (!dok_nodok || !dok_judul || !dok_tahun || !dok_control) {
-        alert("Harap lengkapi semua field yang diperlukan.");
-        return;
-      }
-
-      const uploadFormData = new FormData();
-      Array.from(fileData).forEach((file) =>
-        uploadFormData.append("file", file)
-      );
-
-      const uploadResponse = await fetch(
-        `${API_LINK}/MasterPeraturan/UploadFiles`,
-        {
-          method: "POST",
-          body: uploadFormData,
-        }
-      );
-
-      if (!uploadResponse.ok) {
-        const errorResponse = await uploadResponse.json();
-        alert(errorResponse.message || "Gagal mengunggah dokumen");
-        return;
-      }
-
-      const uploadData = await uploadResponse.json();
-      const dok_fileList = uploadData.fileName;
-
-      const dokumenData = {
-        dok_category: "2",
-        dok_nodok,
-        dok_judul,
-        dok_tahun: parseInt(dok_tahun),
-        dok_control,
-        dok_thn_kadaluarsa: dok_thn_kadaluarsa || null,
-        dok_fileList,
-        dok_status: 1,
-        dok_modify_by: "Retno Widiastuti",
+        dok_modif_date: new Date().toISOString().slice(0, 19).replace("T", " "),
+        dok_modif_by: "Retno Widiastuti",
       };
 
+      console.log("Dokumen data yang akan dikirimkan ke API:", dokumenData);
+
+      // SIMPAN DATA KE API
       const createResponse = await fetch(
         `${API_LINK}/MasterPeraturan/EditDokumen`,
         {
@@ -120,14 +144,26 @@ export default function Edit({ onChangePage, data }) {
 
       if (!createResponse.ok) {
         const errorResponse = await createResponse.json();
-        alert(errorResponse.message || "Gagal menyimpan data.");
+        SweetAlert(
+          "Gagal!",
+          errorResponse.message || "Gagal menyimpan data.",
+          "error",
+          "OK"
+        );
         return;
       }
 
-      alert("Berhasil! Data berhasil disimpan.");
-      onChangePage("index");
+      // TAMBAH SweetAlert UNTUK BERHASIL
+      SweetAlert("Berhasil!", "Data berhasil disimpan.", "success", "OK").then(
+        () => onChangePage("index")
+      );
     } catch (error) {
-      alert(`Gagal! Terjadi kesalahan: ${error.message}`);
+      SweetAlert(
+        "Gagal!",
+        `Terjadi kesalahan: ${error.message}`,
+        "error",
+        "OK"
+      );
     }
   };
 
@@ -160,15 +196,16 @@ export default function Edit({ onChangePage, data }) {
             <TextField
               label="Nomor Induk Dokumen"
               isRequired
-              name="Nomor Induk Dokumen"
+              name="dok_nodok"
               value={formData.dok_nodok || ""}
               onChange={(e) => handleInputChange("dok_nodok", e.target.value)}
+              disabled
             />
 
             <TextField
               label="Judul Dokumen"
               isRequired
-              name="Judul Dokumen"
+              name="dok_judul"
               value={formData.dok_judul || ""}
               onChange={(e) => handleInputChange("dok_judul", e.target.value)}
             />
@@ -176,7 +213,7 @@ export default function Edit({ onChangePage, data }) {
             <TextField
               label="Tahun Dokumen"
               isRequired
-              name="Tahun Dokumen"
+              name="dok_tahun"
               value={formData.dok_tahun || ""}
               onChange={(e) => handleInputChange("dok_tahun", e.target.value)}
             />
@@ -184,46 +221,45 @@ export default function Edit({ onChangePage, data }) {
             <DropDown
               label="Jenis Dokumen"
               isRequired
-              name="Jenis Dokumen"
+              name="dok_control"
               value={formData.dok_control || ""}
               onChange={(e) => handleInputChange("dok_control", e.target.value)}
               arrData={[
                 { Value: "controlled", Text: "Controlled Copy" },
                 { Value: "uncontrolled", Text: "Uncontrolled Copy" },
               ]}
+              disabled
             />
 
             <TextField
               label="Tahun Kadaluarsa"
-              name="Tahun Kadaluarsa"
+              name="dok_thn_kadaluarsa"
               value={formData.dok_thn_kadaluarsa || ""}
               onChange={(e) =>
                 handleInputChange("dok_thn_kadaluarsa", e.target.value)
               }
+              type="date"
             />
 
-            <FileUpload
-              label="Dokumen"
-              isRequired
-              name="Dokumen"
-              onChange={(e) => handleFileChange(e.target.files)}
-            />
-
-            <div className="d-flex justify-content-between align-items-center mt-4">
-              <Button
-                classType="primary"
-                type="button"
-                label="Simpan"
-                onClick={handleSubmit}
-                width="100%"
-              />
-              <Button
-                classType="danger"
-                type="button"
-                label="Batal"
-                onClick={() => onChangePage("index")}
-                width="100%"
-              />
+            <div className="d-flex justify-content-between mt-4">
+              <div className="flex-grow-1 m-2">
+                <Button
+                  classType="primary"
+                  type="button"
+                  label="Simpan"
+                  onClick={handleSubmit}
+                  width="100%"
+                />
+              </div>
+              <div className="flex-grow-1 m-2">
+                <Button
+                  classType="danger"
+                  type="button"
+                  label="Batal"
+                  onClick={() => onChangePage("index")}
+                  width="100%"
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -4,10 +4,11 @@ import TextField from "../../../part/TextField";
 import HeaderForm from "../../../part/HeaderText";
 import Button from "../../../part/Button";
 import Dropdown from "../../../part/Dropdown";
-import FileUpload from "../../../part/FileUpload";
 import { useIsMobile } from "../../../util/useIsMobile";
 import { API_LINK } from "../../../util/Constants";
 import DocUpload from "../../../part/DocUpload";
+import InputField from "../../../part/InputField";
+import SweetAlert from "../../../util/SweetAlert";
 
 export default function Add({ onChangePage }) {
   const title = "Peraturan Eksternal";
@@ -28,32 +29,68 @@ export default function Add({ onChangePage }) {
         "[name='Nomor Induk Dokumen']"
       ).value;
       const dok_judul = document.querySelector("[name='Judul Dokumen']").value;
-      const dok_tahun = parseInt(
-        document.querySelector("[name='Tahun Dokumen']").value
-      );
+      const dok_tahun_input = document.querySelector(
+        "[name='Tahun Dokumen']"
+      ).value;
       const dok_control = document.querySelector(
         "[name='Jenis Dokumen']"
       ).value;
       const dok_thn_kadaluarsa_input =
         document.querySelector("[name='Tahun Kadaluarsa']").value || null;
 
+      // Validasi bahwa Tahun Dokumen adalah angka
+      if (!/^\d+$/.test(dok_tahun_input)) {
+        SweetAlert(
+          "Peringatan!",
+          "Tahun Dokumen harus berupa angka integer.",
+          "warning",
+          "OK"
+        );
+        return;
+      }
+
+      const dok_tahun = parseInt(dok_tahun_input);
+
+      // Validasi bahwa Tahun Kadaluarsa lebih besar dari Tahun Dokumen
       let dok_thn_kadaluarsa = null;
       if (dok_thn_kadaluarsa_input) {
-        dok_thn_kadaluarsa = dok_thn_kadaluarsa_input; // Pastikan format tahun yang benar
+        // Pastikan format Tahun Kadaluarsa adalah 'YYYY-MM-DD'
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(dok_thn_kadaluarsa_input)) {
+          SweetAlert(
+            "Peringatan!",
+            "Format Tahun Kadaluarsa harus 'YYYY-MM-DD'.",
+            "warning",
+            "OK"
+          );
+          return;
+        }
+
+        const kadaluarsaYear = parseInt(dok_thn_kadaluarsa_input.split("-")[0]); // Ambil tahun dari 'YYYY-MM-DD'
+        if (kadaluarsaYear <= dok_tahun) {
+          SweetAlert(
+            "Peringatan!",
+            "Tahun Kadaluarsa harus lebih besar dari Tahun Dokumen.",
+            "warning",
+            "OK"
+          );
+          return;
+        }
+
+        dok_thn_kadaluarsa = dok_thn_kadaluarsa_input; // Tetap gunakan format 'YYYY-MM-DD'
       }
 
       const dok_files = Array.from(
         document.querySelector("[name='Dokumen']").files
       );
 
-      if (
-        !dok_nodok ||
-        !dok_judul ||
-        isNaN(dok_tahun) ||
-        !dok_control ||
-        !dok_files.length
-      ) {
-        alert("Harap lengkapi semua field yang diperlukan.");
+      // Validasi bahwa semua field wajib diisi
+      if (!dok_nodok || !dok_judul || isNaN(dok_tahun) || !dok_control) {
+        SweetAlert(
+          "Peringatan!",
+          "Harap lengkapi semua field yang diperlukan.",
+          "warning",
+          "OK"
+        );
         return;
       }
 
@@ -71,15 +108,25 @@ export default function Add({ onChangePage }) {
       if (!uploadResponse.ok) {
         const errorResponse = await uploadResponse.json();
         console.error("Upload Error:", errorResponse);
-        alert(errorResponse.message || "Gagal mengunggah dokumen");
+        SweetAlert(
+          "Gagal!",
+          errorResponse.message || "Gagal mengunggah dokumen",
+          "error",
+          "OK"
+        );
         return;
       }
+      const getdate = () => {
+        const date = new Date();
+        return date.toLocaleDateString("en-CA"); // Format YYYY-MM-DD
+      };
 
+      const dok_created_date = getdate();
       const uploadResponseData = await uploadResponse.json();
 
       // Periksa apakah file berhasil diunggah
       if (uploadResponseData && uploadResponseData.fileName) {
-        const dok_fileList = uploadResponseData.fileName; // Mendapatkan nama file yang di-upload
+        const dok_file = uploadResponseData.fileName; // Mendapatkan nama file yang di-upload
 
         const dokumenData = {
           dok_category: "3", // Asumsi kategori tetap 1
@@ -88,9 +135,10 @@ export default function Add({ onChangePage }) {
           dok_tahun,
           dok_control,
           dok_thn_kadaluarsa, // Tahun Kadaluarsa dalam format 'YYYY-MM-DD'
-          dok_fileList, // Gunakan nama file yang diupload
+          dok_file, // Gunakan nama file yang diupload
           dok_status: 1,
-          dok_created_by: "Retno Widiastuti", // Anda bisa mengganti ini dengan dynamic username jika perlu
+          dok_created_date,
+          dok_created_by: author, // Anda bisa mengganti ini dengan dynamic username jika perlu
         };
 
         // Kirim data dokumen ke API
@@ -106,18 +154,33 @@ export default function Add({ onChangePage }) {
         if (!createResponse.ok) {
           const errorResponse = await createResponse.json();
           console.error("CreatePeraturan Error:", errorResponse);
-          alert(errorResponse.message || "Gagal menambahkan peraturan.");
+          SweetAlert(
+            "Gagal!",
+            errorResponse.message || "Gagal menambahkan peraturan.",
+            "error",
+            "OK"
+          );
           return;
         }
 
-        alert("Berhasil! Data berhasil ditambahkan.");
-        onChangePage("index");
+        // TAMBAH SweetAlert UNTUK BERHASIL
+        SweetAlert(
+          "Berhasil!",
+          "Data berhasil ditambahkan.",
+          "success",
+          "OK"
+        ).then(() => onChangePage("index"));
       } else {
-        alert("Gagal mengunggah file. Coba lagi.");
+        SweetAlert(
+          "Gagal!",
+          "Gagal mengunggah file. Coba lagi.",
+          "error",
+          "OK"
+        );
       }
     } catch (error) {
       console.error("Error:", error.message);
-      alert("Gagal! Terjadi kesalahan saat menambahkan data.");
+      SweetAlert("Gagal!", error.message, "error", "OK");
     }
   };
 
@@ -141,21 +204,21 @@ export default function Add({ onChangePage }) {
           >
             <HeaderForm label="Formulir Kebijakan Peraturan" />
             <div className="row">
-              <TextField
+              <InputField
                 label="Nomor Induk Dokumen"
                 name="Nomor Induk Dokumen"
                 isRequired={true}
               />
             </div>
             <div className="row">
-              <TextField
+              <InputField
                 label="Judul Dokumen"
                 name="Judul Dokumen"
                 isRequired={true}
               />
             </div>
             <div className="row">
-              <TextField
+              <InputField
                 label="Tahun Dokumen"
                 name="Tahun Dokumen"
                 isRequired={true}
@@ -173,7 +236,11 @@ export default function Add({ onChangePage }) {
               />
             </div>
             <div className="row">
-              <TextField label="Tahun Kadaluarsa" name="Tahun Kadaluarsa" />
+              <InputField
+                label="Tahun Kadaluarsa"
+                name="Tahun Kadaluarsa"
+                type="date"
+              />
             </div>
             <div className="row">
               <DocUpload label="Dokumen" name="Dokumen" />

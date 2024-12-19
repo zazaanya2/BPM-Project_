@@ -21,12 +21,13 @@ export default function Detail({ onChangePage }) {
 
   const title = "DETAIL DOKUMEN";
   const breadcrumbs = [
-    { label: "Kebijakan Peraturan", href: "/peraturan/kebijakan" },
-    { label: "Kebijakan Peraturan" },
+    { label: "Instrumen APS", href: "/peraturan/aps" },
+    { label: "Instrumen APS" },
   ];
 
   useEffect(() => {
     const detailId = location.state.detailData;
+    console.log("data yang diterima: ", detailId);
     const fetchData = async () => {
       try {
         const response = await fetch(

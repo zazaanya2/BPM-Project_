@@ -9,6 +9,8 @@ import ScrollToTop from "../../../part/ScrollToTop";
 import Add from "./Add";
 import Edit from "./Edit";
 import Detail from "./Detail";
+import Unduh from "./Print";
+import UpdateHistory from "./UpdateHistory";
 
 export default function Peraturan() {
   const navigate = useNavigate();
@@ -26,6 +28,12 @@ export default function Peraturan() {
         break;
       case "detail":
         navigate("/peraturan/kebijakan/detail");
+        break;
+      case "print":
+        navigate("/peraturan/kebijakan/print");
+        break;
+      case "updateHistory":
+        navigate("/peraturan/kebijakan/updateHistory");
         break;
 
       default:
@@ -50,6 +58,10 @@ export default function Peraturan() {
         <Route
           path="/detail"
           element={<Detail onChangePage={handlePageChange} />}
+        />
+        <Route
+          path="/updateHistory"
+          element={<UpdateHistory onChangePage={handlePageChange} />}
         />
       </Routes>
     </>
