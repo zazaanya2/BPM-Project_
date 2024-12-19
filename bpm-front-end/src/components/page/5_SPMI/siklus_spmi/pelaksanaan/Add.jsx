@@ -4,6 +4,7 @@ import TextField from "../../../../part/TextField";
 import HeaderForm from "../../../../part/HeaderText";
 import Button from "../../../../part/Button";
 import DocUpload from "../../../../part/DocUpload";
+import FileUpload from "../../../../part/FileUpload";
 import DropDown from "../../../../part/Dropdown";
 
 export default function Add({ onChangePage }) {
@@ -72,11 +73,14 @@ export default function Add({ onChangePage }) {
             </div>
 
             <div className="row">
-              <DocUpload
-                label="Dokumen"
-                forInput="document"
-                isRequired={true}
-              />
+            <FileUpload
+                  label="Dokumen"
+                  forInput="fileDok"
+                  // onChange={handleFileChange}
+                  name="fileDok"
+                  // ref={fileRef}
+                  isRequired={true}
+                />
             </div>
 
             <div className="d-flex justify-content-between align-items-center">

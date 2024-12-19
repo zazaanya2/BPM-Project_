@@ -7,12 +7,12 @@ import DropDown from "../../../part/Dropdown";
 import DocUpload from "../../../part/DocUpload";
 
 export default function Edit({ onChangePage }) {
-  const title = "Akreditasi Prodi";
+  const title = "Edit Dokumen";
   const breadcrumbs = [
     { label: "SPME" },
     { label: "Status Akreditasi" },
     { label: "Program Studi" },
-    { label: "Tambah" },
+    { label: "Edit" },
   ];
   const arrData = [
     { Value: "Controlled Copy", Text: "Controlled Copy" },
@@ -27,6 +27,18 @@ export default function Edit({ onChangePage }) {
     { Value: "C", Text: "C" },
     { Value: "Belum Terakreditasi", Text: "Belum Terakreditasi" },
   ];
+
+  const arrProdi = [
+    {value: "Manajemen Informatika (MI)", Text: "Manajemen Informatika (MI)"},
+    {value: "Mekratonika (MK)", Text: "Mekratonika (MK)"},
+    {value: "Teknik Pembuatan Peralatan Perkakas Produksi (P4)", Text: "Teknik Pembuatan Peralatan Perkakas Produksi (P4)"},
+    {value: "Teknik Produksi dan Proses Manufaktur (TPPM)", Text: "Teknik Produksi dan Proses Manufaktur (TPPM)"},
+    {value: "Mesin Otomotif (MO)", Text: "Mesin Otomotif (MO)"},
+    {value: "Teknologi Konstruksi Bangunan Gedung (TKBG)", Text: "Teknologi Konstruksi Bangunan Gedung (TKBG)"},
+    {value: "Teknologi Rekayasa Logistik (TRL)", Text: "Teknologi Rekayasa Logistik (TRL)"},
+    {value: "Teknologi Rekayasa Perangkat Lunak (TRPL)", Text: "Teknologi Rekayasa Perangkat Lunak (TRPL)"},
+  ];
+
   const handleChange = (e) => {
     console.log("Selected Value:", e.target.value);
   };
@@ -78,6 +90,17 @@ export default function Edit({ onChangePage }) {
                     label="Tanggal Kadaluarsa"
                     isRequired="true"
                     type="date"
+                  />
+                </div>
+                <div className="col-lg-6 col-md-6">
+                  <DropDown
+                    arrData={arrProdi}
+                    type="pilih"
+                    label="Pilih Program Studi"
+                    forInput="dropdownExample"
+                    isRequired={true}
+                    onChange={handleChange}
+                    errorMessage="" // Add an error message if needed
                   />
                 </div>
                 <div className="col-lg-6 col-md-6">

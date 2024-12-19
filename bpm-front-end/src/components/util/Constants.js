@@ -5,5 +5,6 @@ export const API_LINK = "http://localhost:5187/api";
 export const TENTANGFILE_LINK = "http://localhost:5187/Tentang/";
 export const BERITAFOTO_LINK = "http://localhost:5187/Berita/";
 export const FILE_LINK = "http://localhost:5187/Tentang/";
+export const DOKUMEN_LINK = "http://localhost:5187/Dokumen/";
 export const BASE_ROUTE = "";
 export const PAGE_SIZE = 10;

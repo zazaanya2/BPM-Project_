@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
+import { useNavigate } from "react-router-dom";
+
 export default function NavItem() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [openSubmenu, setOpenSubmenu] = useState(null);
+  const navigate = useNavigate();
 
   const toggleDropdown = (menu) => {
     if (openDropdown === menu) {
@@ -146,37 +149,109 @@ export default function NavItem() {
               {openSubmenu === "dokumen-spmi" && (
                 <ul className="dropdown-menu">
                   <li>
-                    <Link
+                    {/* <Link
                       className="dropdown-item"
                       to="/spmi/dokumen/kebijakan"
                     >
                       Kebijakan SPMI
-                    </Link>
+                    </Link> */}
+                    <button
+                      className="dropdown-item"
+                      onClick={() =>
+                        navigate("/spmi/dokumen/kebijakan", {
+                          state: { idData: 92 },
+                        })
+                      }
+                    >
+                      Kebijakan SPMI
+                    </button>
                   </li>
                   <li>
-                    <Link className="dropdown-item" to="/spmi/dokumen/manual">
+                    {/* <Link className="dropdown-item" to="/spmi/dokumen/manual?idMen=93">
                       Manual SPMI
-                    </Link>
+                    </Link> */}
+                    <button
+                      className="dropdown-item"
+                      onClick={() =>
+                        navigate("/spmi/dokumen/manual", {
+                          state: { idData: 93 },
+                        })
+                      }
+                    >
+                      Manual SPMI
+                    </button>
                   </li>
                   <li>
-                    <Link className="dropdown-item" to="/spmi/dokumen/standar">
+                    {/* <Link
+                      className="dropdown-item"
+                      to="/spmi/dokumen/standar?idMen=94"
+                    >
                       Standar SPMI
-                    </Link>
+                    </Link> */}
+                    <button
+                      className="dropdown-item"
+                      onClick={() =>
+                        navigate("/spmi/dokumen/standar", {
+                          state: { idData: 94 },
+                        })
+                      }
+                    >
+                      Standar SPMI
+                    </button>
                   </li>
                   <li>
-                    <Link className="dropdown-item" to="/spmi/dokumen/formulir">
+                    {/* <Link
+                      className="dropdown-item"
+                      to="/spmi/dokumen/formulir?idMen=95"
+                    >
                       Formulir SPMI
-                    </Link>
+                    </Link> */}
+                    <button
+                      className="dropdown-item"
+                      onClick={() =>
+                        navigate("/spmi/dokumen/formulir", {
+                          state: { idData: 95 },
+                        })
+                      }
+                    >
+                      Formulir SPMI
+                    </button>
                   </li>
                   <li>
-                    <Link className="dropdown-item" to="/spmi/dokumen/sop">
+                    {/* <Link
+                      className="dropdown-item"
+                      to="/spmi/dokumen/sop?idMen=96"
+                    >
                       SOP
-                    </Link>
+                    </Link> */}
+                    <button
+                      className="dropdown-item"
+                      onClick={() =>
+                        navigate("/spmi/dokumen/sop", {
+                          state: { idData: 96 },
+                        })
+                      }
+                    >
+                      SOP
+                    </button>
                   </li>
                   <li>
-                    <Link className="dropdown-item" to="/spmi/dokumen/template">
+                    {/* <Link
+                      className="dropdown-item"
+                      to="/spmi/dokumen/template?idMen=97"
+                    >
                       Template Dokumen SPMI
-                    </Link>
+                    </Link> */}
+                    <button
+                      className="dropdown-item"
+                      onClick={() =>
+                        navigate("/spmi/dokumen/template", {
+                          state: { idData: 97 },
+                        })
+                      }
+                    >
+                      Template Dokumen
+                    </button>
                   </li>
                 </ul>
               )}
@@ -223,10 +298,7 @@ export default function NavItem() {
                     </Link>
                   </li>
                   <li>
-                    <Link
-                      className="dropdown-item"
-                      to="/spme/status/institusi"
-                    >
+                    <Link className="dropdown-item" to="/spme/status/institusi">
                       Akreditasi Institusi
                     </Link>
                   </li>

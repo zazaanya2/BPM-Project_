@@ -5,6 +5,7 @@ import HeaderForm from "../../../../part/HeaderText";
 import Button from "../../../../part/Button";
 import DocUpload from "../../../../part/DocUpload";
 import DropDown from "../../../../part/Dropdown";
+import FileUpload from "../../../../part/FileUpload";
 
 export default function Add({ onChangePage }) {
   const title = "Tambah Dokumen";
@@ -72,9 +73,12 @@ export default function Add({ onChangePage }) {
             </div>
 
             <div className="row">
-              <DocUpload
+              <FileUpload
                 label="Dokumen"
-                forInput="document"
+                forInput="fileDok"
+                // onChange={handleFileChange}
+                name="fileDok"
+                // ref={fileRef}
                 isRequired={true}
               />
             </div>

@@ -10,15 +10,38 @@ import Modal from "../../../../part/Modal";
 import pdf from "../../MI_PRG4_M4_P2_XXX.pdf";
 import { useLocation, useNavigate } from "react-router-dom";
 
+const data = [
+  {
+    Key: 1,
+    Dokumen: "SK NO39/09230/SK/2024",
+    Src: "bpm-front-end/src/components/page/5_SPMI/MI_PRG4_M4_P2_XXX.pdf",
+  },
+  {
+    Key: 2,
+    Dokumen: "SK NO39/09230/SK/2024",
+    Src: "bpm-front-end/src/components/page/5_SPMI/MI_PRG4_M4_P2_XXX.pdf",
+  },
+  {
+    Key: 3,
+    Dokumen: "SK NO39/09230/SK/2024",
+    Src: "bpm-front-end/src/components/page/5_SPMI/MI_PRG4_M4_P2_XXX.pdf",
+  },
+  {
+    Key: 4,
+    Dokumen: "SK NO39/09230/SK/2024",
+    Src: "bpm-front-end/src/components/page/5_SPMI/MI_PRG4_M4_P2_XXX.pdf",
+  },
+  {
+    Key: 5,
+    Dokumen: "SK NO39/09230/SK/2024",
+    Src: "bpm-front-end/src/components/page/5_SPMI/MI_PRG4_M4_P2_XXX.pdf",
+  },
+];
+
 export default function Index({ onChangePage }) {
   const navigate = useNavigate();
   const detailModalRef = useRef();
   const [detail, setDetail] = useState("");
-
-  const arrData = [
-    { Value: "Controlled Copy", Text: "Controlled Copy" },
-    { Value: "Uncontrolled Copy", Text: "Uncontrolled Copy" },
-  ];
 
   const handlePageNavigation = (page) => {
     setPageCurrent(page);
@@ -35,34 +58,7 @@ export default function Index({ onChangePage }) {
   const [pageSize] = useState(10);
   const [pageCurrent, setPageCurrent] = useState(1);
 
-  // Menambahkan data menjadi 10 item dengan URL gambar
-  const data = [
-    {
-      Key: 1,
-      Dokumen: "SK NO39/09230/SK/2024",
-      Src: "bpm-front-end/src/components/page/5_SPMI/MI_PRG4_M4_P2_XXX.pdf",
-    },
-    {
-      Key: 2,
-      Dokumen: "SK NO39/09230/SK/2024",
-      Src: "bpm-front-end/src/components/page/5_SPMI/MI_PRG4_M4_P2_XXX.pdf",
-    },
-    {
-      Key: 3,
-      Dokumen: "SK NO39/09230/SK/2024",
-      Src: "bpm-front-end/src/components/page/5_SPMI/MI_PRG4_M4_P2_XXX.pdf",
-    },
-    {
-      Key: 4,
-      Dokumen: "SK NO39/09230/SK/2024",
-      Src: "bpm-front-end/src/components/page/5_SPMI/MI_PRG4_M4_P2_XXX.pdf",
-    },
-    {
-      Key: 5,
-      Dokumen: "SK NO39/09230/SK/2024",
-      Src: "bpm-front-end/src/components/page/5_SPMI/MI_PRG4_M4_P2_XXX.pdf",
-    },
-  ];
+
 
   // console.log(menuData);
   const title = "Peningkatan";
@@ -258,7 +254,7 @@ export default function Index({ onChangePage }) {
           </div>
         </main>
 
-        <Modal ref={detailModalRef} title="Detail Dokumen" size="full">
+        <Modal ref={detailModalRef} title="Detail Dokumen" size="medium">
           <div className="p-3 mt-0 bg-white rounded shadow">
             <div className="mb-3">
               <label className="form-label fw-bold mb-0">Judul Dokumen</label>

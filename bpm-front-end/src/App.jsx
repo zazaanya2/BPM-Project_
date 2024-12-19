@@ -1,7 +1,3 @@
-
-
-
-
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/backbone/Header";
@@ -15,6 +11,7 @@ import Penetapan from "./components/page/5_SPMI/siklus_spmi/penetapan/Root";
 import Peningkatan from "./components/page/5_SPMI/siklus_spmi/peningkatan/Root";
 import Pengendalian from "./components/page/5_SPMI/siklus_spmi/pengendalian/Root";
 import Evaluasi from "./components/page/5_SPMI/siklus_spmi/evaluasi/Root";
+import DokumenSPMI from "./components/page/5_SPMI/dokumen_spmi/Root";
 import Peraturan from "./components/page/10_Peraturan/ms_kebijakanPeraturan/Root";
 import PeraturanEksternal from "./components/page/10_Peraturan/ms_peraturanEksternal/Root";
 import InstrumenAps from "./components/page/10_Peraturan/ms_instrumenAps/Root";
@@ -66,6 +63,7 @@ function App() {
             <Route path="/peraturan/aps/*" element={<InstrumenAps />} />
             <Route path="/survei/kriteria/*" element={<KriteriaSurvei />} />
             <Route path="/survei/skala/*" element={<SkalaSurvei />} />
+            <Route path="/spmi/dokumen/*" element={<DokumenSPMI />} />
 
             {/* Halaman 404 */}
             <Route path="*" element={<div>Halaman tidak ditemukan</div>} />

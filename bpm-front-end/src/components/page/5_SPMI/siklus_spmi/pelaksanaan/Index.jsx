@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import Button from "../../../../part/Button";
+import HeaderText from "../../../../part/HeaderText";
 import Gedung from "../../../../../assets/element/gedung-astra-biru.png";
 import Mahasiswa from "../../../../../assets/element/mahasiswa.png";
 import SearchField from "../../../../part/SearchField";
@@ -11,6 +12,9 @@ import Filter from "../../../../part/Filter";
 import pdf from "../../MI_PRG4_M4_P2_XXX.pdf";
 import { useIsMobile } from "../../../../util/useIsMobile";
 import { useLocation, useNavigate } from "react-router-dom";
+import SweetAlert from "../../../../util/SweetAlert";
+import { SyncLoader } from "react-spinners";
+import DetailData from "../../../../part/DetailData";
 
 export default function Index({ onChangePage }) {
   const data = [
@@ -30,6 +34,7 @@ export default function Index({ onChangePage }) {
       dok_modif_date: "2023-01-15 00:00:00",
       dok_nodok: "ND-9508",
       dok_ref: 1,
+      dok_ref_name: "Standar Kompetensi Kelulusan ",
       dok_rev: 0,
       dok_tahun: 2023,
     },
@@ -49,6 +54,7 @@ export default function Index({ onChangePage }) {
       dok_modif_date: "2022-09-08 00:00:00",
       dok_nodok: "ND-2559",
       dok_ref: 7,
+      dok_ref_name: "Standar Isi Pembelajaran",
       dok_rev: 0,
       dok_tahun: 2023,
     },
@@ -68,6 +74,8 @@ export default function Index({ onChangePage }) {
       dok_modif_date: "2020-05-04 00:00:00",
       dok_nodok: "ND-3505",
       dok_ref: 6,
+      dok_ref_name:
+        "Standar Proses Pembelajaran",
       dok_rev: 4,
       dok_tahun: 2024,
     },
@@ -86,7 +94,8 @@ export default function Index({ onChangePage }) {
       dok_modif_by: "User10",
       dok_modif_date: "2020-06-11 00:00:00",
       dok_nodok: "ND-7816",
-      dok_ref: 8,
+      dok_ref: 2,
+      dok_ref_name: "Standar Penilaian Pembelajaran",
       dok_rev: 1,
       dok_tahun: 2022,
     },
@@ -106,6 +115,7 @@ export default function Index({ onChangePage }) {
       dok_modif_date: "2022-09-28 00:00:00",
       dok_nodok: "ND-1909",
       dok_ref: 4,
+      dok_ref_name: "Standar Pendidik dan Tenaga Kependidikan",
       dok_rev: 5,
       dok_tahun: 2022,
     },
@@ -125,6 +135,8 @@ export default function Index({ onChangePage }) {
       dok_modif_date: "2024-03-04 00:00:00",
       dok_nodok: "ND-7545",
       dok_ref: 6,
+      dok_ref_name:
+        "Standar Proses Pembelajaran",
       dok_rev: 1,
       dok_tahun: 2024,
     },
@@ -144,6 +156,7 @@ export default function Index({ onChangePage }) {
       dok_modif_date: "2023-01-14 00:00:00",
       dok_nodok: "ND-2803",
       dok_ref: 5,
+      dok_ref_name: "Standar Sarana dan Prasarana",
       dok_rev: 0,
       dok_tahun: 2021,
     },
@@ -163,6 +176,7 @@ export default function Index({ onChangePage }) {
       dok_modif_date: "2021-01-07 00:00:00",
       dok_nodok: "ND-9183",
       dok_ref: 5,
+      dok_ref_name: "Standar Sarana dan Prasarana",
       dok_rev: 2,
       dok_tahun: 2021,
     },
@@ -181,7 +195,8 @@ export default function Index({ onChangePage }) {
       dok_modif_by: "User10",
       dok_modif_date: "2024-08-05 00:00:00",
       dok_nodok: "ND-9283",
-      dok_ref: 10,
+      dok_ref: 1,
+      dok_ref_name: "Standar Kompetensi Kelulusan ",
       dok_rev: 2,
       dok_tahun: 2020,
     },
@@ -201,6 +216,8 @@ export default function Index({ onChangePage }) {
       dok_modif_date: "2020-10-16 00:00:00",
       dok_nodok: "ND-9497",
       dok_ref: 6,
+      dok_ref_name:
+        "Standar Proses Pembelajaran",
       dok_rev: 4,
       dok_tahun: 2021,
     },
@@ -220,6 +237,8 @@ export default function Index({ onChangePage }) {
       dok_modif_date: "2021-07-31 00:00:00",
       dok_nodok: "ND-9098",
       dok_ref: 6,
+      dok_ref_name:
+        "Standar Proses Pembelajaran",
       dok_rev: 4,
       dok_tahun: 2023,
     },
@@ -239,6 +258,7 @@ export default function Index({ onChangePage }) {
       dok_modif_date: "2023-01-23 00:00:00",
       dok_nodok: "ND-8610",
       dok_ref: 1,
+      dok_ref_name: "Standar Kompetensi Kelulusan ",
       dok_rev: 0,
       dok_tahun: 2024,
     },
@@ -258,6 +278,7 @@ export default function Index({ onChangePage }) {
       dok_modif_date: "2022-05-10 00:00:00",
       dok_nodok: "ND-6897",
       dok_ref: 2,
+      dok_ref_name: "Standar Penilaian Pembelajaran",
       dok_rev: 0,
       dok_tahun: 2020,
     },
@@ -277,6 +298,7 @@ export default function Index({ onChangePage }) {
       dok_modif_date: "2021-03-16 00:00:00",
       dok_nodok: "ND-8112",
       dok_ref: 7,
+      dok_ref_name: "Standar Isi Pembelajaran",
       dok_rev: 1,
       dok_tahun: 2020,
     },
@@ -296,6 +318,7 @@ export default function Index({ onChangePage }) {
       dok_modif_date: "2021-03-05 00:00:00",
       dok_nodok: "ND-8379",
       dok_ref: 3,
+      dok_ref_name: "Kinerja dan kesesuaian proses Tridharma",
       dok_rev: 3,
       dok_tahun: 2020,
     },
@@ -315,6 +338,8 @@ export default function Index({ onChangePage }) {
       dok_modif_date: "2022-03-03 00:00:00",
       dok_nodok: "ND-7708",
       dok_ref: 6,
+      dok_ref_name:
+        "Standar Proses Pembelajaran",
       dok_rev: 2,
       dok_tahun: 2024,
     },
@@ -333,7 +358,8 @@ export default function Index({ onChangePage }) {
       dok_modif_by: "User6",
       dok_modif_date: "2022-02-14 00:00:00",
       dok_nodok: "ND-6145",
-      dok_ref: 9,
+      dok_ref: 2,
+      dok_ref_name: "Standar Penilaian Pembelajaran",
       dok_rev: 2,
       dok_tahun: 2020,
     },
@@ -352,7 +378,8 @@ export default function Index({ onChangePage }) {
       dok_modif_by: "User2",
       dok_modif_date: "2023-11-03 00:00:00",
       dok_nodok: "ND-8516",
-      dok_ref: 9,
+      dok_ref: 2,
+      dok_ref_name: "Standar Penilaian Pembelajaran",
       dok_rev: 2,
       dok_tahun: 2024,
     },
@@ -372,6 +399,7 @@ export default function Index({ onChangePage }) {
       dok_modif_date: "2021-07-26 00:00:00",
       dok_nodok: "ND-7810",
       dok_ref: 4,
+      dok_ref_name: "Standar Pendidik dan Tenaga Kependidikan",
       dok_rev: 3,
       dok_tahun: 2021,
     },
@@ -391,22 +419,21 @@ export default function Index({ onChangePage }) {
       dok_modif_date: "2021-04-07 00:00:00",
       dok_nodok: "ND-3730",
       dok_ref: 2,
+      dok_ref_name: "Standar Penilaian Pembelajaran",
       dok_rev: 3,
       dok_tahun: 2022,
     },
   ];
 
   const navigate = useNavigate();
-  const detailModalRef = useRef();
-  const [detail, setDetail] = useState("");
+  const ModalRef = useRef();
+  const [detail, setDetail] = useState(null);
+  const [modalType, setModalType] = useState(""); // "add", "edit", "detail"
   const [searchKeyword, setSearchKeyword] = useState(""); // Keyword pencarian
   const isMobile = useIsMobile();
-
-  const [selectedDokRef, setSelectedDokRef] = useState(
-    data[0]?.dok_ref || null
-  ); // Set initial dok_ref based on the first item in data
-
+  const [selectedDokRef, setSelectedDokRef] = useState(data[0] || null); // Set initial dok_ref based on the first item in data
   const [sortedData, setSortedData] = useState(data);
+  const [isLoading, setIsLoading] = useState(true);
 
   const uniqueDokRefs = data
     .filter(
@@ -419,7 +446,7 @@ export default function Index({ onChangePage }) {
     if (selectedDokRef !== null) {
       // Filter data by selected dok_ref and sort by dok_rev
       const filteredData = data.filter(
-        (item) => item.dok_ref === selectedDokRef
+        (item) => item.dok_ref === selectedDokRef.dok_ref
       );
 
       let tempData = filteredData;
@@ -439,6 +466,22 @@ export default function Index({ onChangePage }) {
     }
   }, [selectedDokRef, data, sortedData]);
 
+  const handleDelete = async (id) => {
+    const confirm = await SweetAlert(
+      "Konfirmasi",
+      "Apakah Anda yakin ingin menghapus dokumen ini?",
+      "warning",
+      "Ya, Hapus",
+      null,
+      "",
+      true
+    );
+
+    if (confirm) {
+      console.log("deleted");
+    }
+  };
+
   const arrData = [
     { Value: "Controlled Copy", Text: "Controlled Copy" },
     { Value: "Uncontrolled Copy", Text: "Uncontrolled Copy" },
@@ -452,9 +495,10 @@ export default function Index({ onChangePage }) {
     setPageCurrent(page);
   };
 
-  const handleShowDetail = (key) => {
-    detailModalRef.current.open();
-    setDetail(data[key]);
+  const handleOpenModal = (type, data = null) => {
+    setModalType(type);
+    setDetail(data);
+    ModalRef.current.open();
   };
 
   const textContent =
@@ -596,7 +640,14 @@ export default function Index({ onChangePage }) {
 
               <hr />
 
-              <div className="container shadow p-3 mt-5 mb-5 bg-white rounded">
+              <div className="d-flex justify-content-between align-items-center">
+                  <h1
+                    style={{ color: "#2654A1", margin: "0", fontWeight: "700" }}
+                  >
+                    Pelaksanaan Indikator Kerja Utama
+                  </h1>
+                </div>
+              <div className="container shadow p-3 my-3 mb-5  bg-white rounded">
                 <div className="row">
                   <div className="col-lg-2 px-3">
                     <div
@@ -606,17 +657,25 @@ export default function Index({ onChangePage }) {
                       {uniqueDokRefs.map((item) => (
                         <button
                           key={item.dok_ref}
-                          onClick={() => setSelectedDokRef(item.dok_ref)}
+                          onClick={() => setSelectedDokRef(item)}
                           className={`btn ${
-                            selectedDokRef === item.dok_ref ? "btn-primary" : ""
+                            selectedDokRef.dok_ref === item.dok_ref
+                              ? "btn-primary"
+                              : ""
                           } doc-item`}
                         >
-                          Kategori {item.dok_ref}
+                          {item.dok_ref_name}
                         </button>
                       ))}
                     </div>
                   </div>
                   <div className="col-lg-10">
+                    <div className="d-flex gap-3 p-2" style={{ overflow:"auto", maxWidth: 'cover' }}>
+                      <button className="btn btn-success shadow">Standar Pendidikan</button>
+                      <button className="btn shadow">Standar Penelitian</button>
+                      <button className="btn shadow">Standar Pengabdian Masyarakat</button>
+                    </div>
+                    <hr />
                     <div className="text-center">
                       <h3
                         style={{
@@ -625,7 +684,7 @@ export default function Index({ onChangePage }) {
                           fontWeight: "700",
                         }}
                       >
-                        Kategori {selectedDokRef}
+                        {selectedDokRef.dok_ref_name}
                       </h3>
                     </div>
                     <hr />
@@ -687,10 +746,178 @@ export default function Index({ onChangePage }) {
                           No: indexOfFirstData + index + 1,
                           Dokumen: item.dok_judul,
                         }))}
-                        actions={["Detail", "Edit", "Print", "Delete", "PrintHistory", "UpdateHistory"]}
+                        actions={[
+                          "Preview",
+                          "Detail",
+                          "Edit",
+                          "Print",
+                          "Delete",
+                          "PrintHistory",
+                          "UpdateHistory",
+                        ]}
+                        onPreview={(data) => {
+                          console.log("prev");
+                          const selected = sortedData.find(
+                            (item) => item.dok_id == data.key
+                          );
+                          handleOpenModal("preview", selected);
+                        }}
                         onEdit={handleEdit}
-                        onDetail={() => handleShowDetail()}
+                        onDetail={(data) => {
+                          const selected = sortedData.find(
+                            (item) => item.dok_id == data.key
+                          );
+                          handleOpenModal("detail", selected);
+                        }}
                         onPrint={() => console.log("printed")}
+                        onDelete={(item) => handleDelete(item.key)}
+                      />
+
+                      <Paging
+                        pageSize={pageSize}
+                        pageCurrent={pageCurrent}
+                        totalData={sortedData.length}
+                        navigation={handlePageNavigation}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <hr />
+
+              <div className="d-flex justify-content-between align-items-center">
+                  <h1
+                    style={{ color: "#2654A1", margin: "0", fontWeight: "700" }}
+                  >
+                    Pelaksanaan Indikator Kerja Tambahan
+                  </h1>
+                </div>
+              <div className="container shadow p-3 my-3 bg-white rounded">
+                <div className="row">
+                  <div className="col-lg-2 px-3">
+                    <div
+                      className="row"
+                      style={{ overflow: "auto", maxHeight: "500px" }}
+                    >
+                      {uniqueDokRefs.map((item) => (
+                        <button
+                          key={item.dok_ref}
+                          onClick={() => setSelectedDokRef(item)}
+                          className={`btn ${
+                            selectedDokRef.dok_ref === item.dok_ref
+                              ? "btn-primary"
+                              : ""
+                          } doc-item`}
+                        >
+                          {item.dok_ref_name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="col-lg-10">
+                    <div className="d-flex gap-3 p-2" style={{ overflow:"auto", maxWidth: 'cover' }}>
+                      <button className="btn btn-success shadow">Standar Informasi</button>
+                      <button className="btn shadow">Standar Kerjasama</button>
+                      <button className="btn shadow">Standar Penerimaan Mahasiswa</button>
+                      <button className="btn shadow">Standar Identitas</button>
+                    </div>
+                    <hr />
+                    <div className="text-center">
+                      <h3
+                        style={{
+                          color: "#2654A1",
+                          margin: "0",
+                          fontWeight: "700",
+                        }}
+                      >
+                        {selectedDokRef.dok_ref_name}
+                      </h3>
+                    </div>
+                    <hr />
+                    <div className="table-container bg-white mt-0 rounded">
+                      <div className={isMobile ? "mb-3" : "row"}>
+                        <div className="col-12 d-flex flex-wrap align-items-center gap-1">
+                          <div className="">
+                            <Button
+                              iconName="add"
+                              classType="primary"
+                              label="Tambah Dokumen"
+                              onClick={() => onChangePage("add")}
+                            />
+                          </div>
+
+                          <div className="me-auto flex-grow-1 mt-3 me-3">
+                            <SearchField
+                              onChange={(value) => setSearchKeyword(value)}
+                            />
+                          </div>
+
+                          <div className="">
+                            <Filter>
+                              <div className="mb-3">
+                                <label htmlFor="yearPicker" className="mb-1">
+                                  Berdasarkan Tahun
+                                </label>
+                                <input
+                                  type="number"
+                                  className="form-control"
+                                  placeholder="Masukkan Tahun"
+                                  // value={selectedYear}
+                                  // onChange={(e) =>
+                                  //   setSelectedYear(e.target.value)
+                                  // }
+                                  min="2000"
+                                  max={new Date().getFullYear()}
+                                />
+                              </div>
+
+                              <Button
+                                classType="btn btn-secondary"
+                                title="Reset Filter"
+                                label="Reset"
+                                // onClick={resetFilter}
+                              />
+                            </Filter>
+                          </div>
+                        </div>
+                      </div>
+                      <Table
+                        arrHeader={["No", "Dokumen"]}
+                        headerToDataMap={{
+                          No: "No",
+                          Dokumen: "Dokumen",
+                        }}
+                        data={sortedData.map((item, index) => ({
+                          key: item.dok_id || index,
+                          No: indexOfFirstData + index + 1,
+                          Dokumen: item.dok_judul,
+                        }))}
+                        actions={[
+                          "Preview",
+                          "Detail",
+                          "Edit",
+                          "Print",
+                          "Delete",
+                          "PrintHistory",
+                          "UpdateHistory",
+                        ]}
+                        onPreview={(data) => {
+                          console.log("prev");
+                          const selected = sortedData.find(
+                            (item) => item.dok_id == data.key
+                          );
+                          handleOpenModal("preview", selected);
+                        }}
+                        onEdit={handleEdit}
+                        onDetail={(data) => {
+                          const selected = sortedData.find(
+                            (item) => item.dok_id == data.key
+                          );
+                          handleOpenModal("detail", selected);
+                        }}
+                        onPrint={() => console.log("printed")}
+                        onDelete={(item) => handleDelete(item.key)}
                       />
 
                       <Paging
@@ -707,64 +934,137 @@ export default function Index({ onChangePage }) {
           </div>
         </main>
 
-        <Modal ref={detailModalRef} title="Detail Dokumen" size="full">
-          <div className="p-3 mt-0 bg-white rounded shadow">
-            <div className="mb-3">
-              <label className="form-label fw-bold mb-0">Judul Dokumen</label>
-              <br />
-              <p>Dokumen Materi Pemrograman</p>
-            </div>
-            <div className="row">
-              <div className="col-lg-6 col-md-6 ">
-                <div className="mb-3">
-                  <label className="form-label fw-bold mb-0">
-                    Nomor Induk Dokumen
-                  </label>
-                  <br />
-                  <p>XX/XXXX/XXX</p>
-                </div>
-              </div>
-              <div className="col-lg-6 col-md-6">
-                <div className="mb-3">
-                  <label className="form-label fw-bold mb-0">
-                    Tahun Dokumen
-                  </label>
-                  <br />
-                  <p>2022/2023</p>
-                </div>
-              </div>
-              <div className="col-lg-6 col-md-6">
-                <div className="mb-3">
-                  <label className="form-label fw-bold mb-0">
-                    Jenis Dokumen
-                  </label>
-                  <br />
-                  <p>Controlled Copy</p>
-                </div>
-              </div>
-              <div className="col-lg-6 col-md-6">
-                <div className="mb-3">
-                  <label className="form-label fw-bold mb-0">
-                    Tahun Kadaluarsa
-                  </label>
-                  <br />
-                  <p>2022/2023</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <form
-            className="p-3 mt-3 bg-white rounded shadow"
-            style={{ overflow: "auto" }}
+        {modalType === "detail" && (
+          <Modal
+            ref={ModalRef}
+            title="Detail Dokumen"
+            size="medium"
+            Button2={
+              <Button
+                classType="secondary"
+                label="Tutup"
+                onClick={() => ModalRef.current.close()}
+              />
+            }
           >
-            <iframe
-              src={pdf}
-              frameborder="2"
-              height={"500px"}
-              width={"100%"}
-            ></iframe>
-          </form>
-        </Modal>
+            <div className="p-3 mt-0 bg-white rounded shadow">
+              <HeaderText label="Detail Dokumen" />
+              <div className="row">
+                <div className="col-lg-12 col-md-12">
+                  <DetailData label="Judul Dokumen" isi={detail.dok_judul} />
+                </div>
+                <div className="col-lg-6 col-md-6">
+                  <DetailData label="Nomor Dokumen" isi={detail.dok_nodok} />
+                  <DetailData label="Jenis Dokumen" isi={detail.dok_control} />
+                </div>
+                <div className="col-lg-6 col-md-6">
+                  <DetailData
+                    label="Tanggal Berlaku"
+                    isi={new Date(detail.dok_tahun).toLocaleDateString(
+                      "id-ID",
+                      {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      }
+                    )}
+                  />
+                  <DetailData
+                    label="Tanggal Kadaluarsa"
+                    isi={new Date(detail.dok_tgl_akhir).toLocaleDateString(
+                      "id-ID",
+                      {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      }
+                    )}
+                  />
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-lg-6 col-md-6">
+                  <DetailData label="Dibuat Oleh" isi={detail.dok_created_by} />
+                  <DetailData
+                    label="Dibuat Tanggal"
+                    isi={new Date(detail.dok_created_date).toLocaleDateString(
+                      "id-ID",
+                      {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      }
+                    )}
+                  />
+                </div>
+                <div className="col-lg-6 col-md-6">
+                  <DetailData
+                    label="Dimodifikasi Oleh"
+                    isi={detail.dok_modif_by}
+                  />
+                  <DetailData
+                    label="Dimodifikasi Tanggal"
+                    isi={new Date(detail.dok_modif_date).toLocaleDateString(
+                      "id-ID",
+                      {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      }
+                    )}
+                  />
+                </div>
+              </div>
+            </div>
+          </Modal>
+        )}
+        {modalType === "preview" && (
+          <Modal
+            ref={ModalRef}
+            title="Detail Dokumen"
+            size="medium"
+            Button2={
+              <Button
+                classType="secondary"
+                label="Tutup"
+                onClick={() => ModalRef.current.close()}
+              />
+            }
+          >
+            <div className="p-3 mt-0 bg-white rounded shadow">
+              <HeaderText label="Preview Dokumen" />
+              <div style={{ width: "90vh", height: "50vh" }}>
+                {isLoading == true ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "white",
+                      minHeight: "50vh",
+                      margin: 0,
+                    }}
+                  >
+                    <SyncLoader color="#0d6efd" loading={true} />
+                  </div>
+                ) : (
+                  <embed
+                    src={pdf}
+                    width="100%"
+                    height="100%"
+                    type="application/pdf"
+                    title="PDF Preview"
+                    onLoad={() => setIsLoading(false)}
+                  />
+                )}
+              </div>
+            </div>
+          </Modal>
+        )}
       </div>
     </>
   );

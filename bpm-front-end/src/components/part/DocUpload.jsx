@@ -148,9 +148,7 @@ const DocUpload = forwardRef(function DocUpload(
               className="d-flex justify-content-center align-items-center"
             >
               <h2>
-                <strong>
-                  Seret atau pilih file PDF, DOCX, XLSX, atau PPTX
-                </strong>
+                <strong>Drag & drop file here or click to upload</strong>
               </h2>
             </div>
           )}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PageTitleNav from "../../../part/PageTitleNav";
 import TextField from "../../../part/TextField";
 import HeaderForm from "../../../part/HeaderText";
@@ -7,7 +7,7 @@ import DropDown from "../../../part/Dropdown";
 import DocUpload from "../../../part/DocUpload";
 
 export default function Add({ onChangePage }) {
-  const title = "Akreditasi Prodi";
+  const title = "Tambah Dokumen";
   const breadcrumbs = [
     { label: "SPME" },
     { label: "Status Akreditasi" },
@@ -29,6 +29,18 @@ export default function Add({ onChangePage }) {
     { Value: "C", Text: "C" },
     { Value: "Belum Terakreditasi", Text: "Belum Terakreditasi" },
   ];
+
+  const arrProdi = [
+    {value: "Manajemen Informatika (MI)", Text: "Manajemen Informatika (MI)"},
+    {value: "Mekratonika (MK)", Text: "Mekratonika (MK)"},
+    {value: "Teknik Pembuatan Peralatan Perkakas Produksi (P4)", Text: "Teknik Pembuatan Peralatan Perkakas Produksi (P4)"},
+    {value: "Teknik Produksi dan Proses Manufaktur (TPPM)", Text: "Teknik Produksi dan Proses Manufaktur (TPPM)"},
+    {value: "Mesin Otomotif (MO)", Text: "Mesin Otomotif (MO)"},
+    {value: "Teknologi Konstruksi Bangunan Gedung (TKBG)", Text: "Teknologi Konstruksi Bangunan Gedung (TKBG)"},
+    {value: "Teknologi Rekayasa Logistik (TRL)", Text: "Teknologi Rekayasa Logistik (TRL)"},
+    {value: "Teknologi Rekayasa Perangkat Lunak (TRPL)", Text: "Teknologi Rekayasa Perangkat Lunak (TRPL)"},
+  ];
+
   const handleChange = (e) => {
     console.log("Selected Value:", e.target.value);
   };
@@ -39,23 +51,23 @@ export default function Add({ onChangePage }) {
         <div className="d-flex flex-column">
           <div className="container mb-3">
             {/* Breadcrumbs and Page Title */}
-            <div className="mt-4">
+            <div className="mt-3">
               <PageTitleNav
                 title={title}
                 breadcrumbs={breadcrumbs}
-                onClick={() => onChangePage("index")}
+                onClick={() => onChangePage("AkreditasiProdi")}
               />
             </div>
 
             {/* Main Content Section */}
             <div className="shadow p-5 mt-0 bg-white rounded">
-              <HeaderForm label={"Formulir "+title} />
+              <HeaderForm label="Formulir Dokumen" />
               <div className="row">
-                <TextField label="Judul Dokumen " isRequired={true} />
+                <TextField label="Judul Dokumen " isRequired="true" />
               </div>
               <div className="row">
                 <div className="col-lg-6 col-md-6 ">
-                  <TextField label="Nomor Induk Dokumen" isRequired="true" />
+                  <TextField label="Nomor Induk Dokumen / SK" isRequired="true" />
                 </div>
                 <div className="col-lg-6 col-md-6">
                   <TextField
@@ -68,7 +80,7 @@ export default function Add({ onChangePage }) {
                   <DropDown
                     arrData={arrData}
                     type="pilih"
-                    label="Jenis Dokumen"
+                    label="Pilih Jenis Dokumen"
                     forInput="dropdownExample"
                     isRequired={true}
                     onChange={handleChange}
@@ -80,6 +92,17 @@ export default function Add({ onChangePage }) {
                     label="Tanggal Kadaluarsa"
                     isRequired="true"
                     type="date"
+                  />
+                </div>
+                <div className="col-lg-6 col-md-6">
+                  <DropDown
+                    arrData={arrProdi}
+                    type="pilih"
+                    label="Pilih Program Studi"
+                    forInput="dropdownExample"
+                    isRequired={true}
+                    onChange={handleChange}
+                    errorMessage="" // Add an error message if needed
                   />
                 </div>
                 <div className="col-lg-6 col-md-6">

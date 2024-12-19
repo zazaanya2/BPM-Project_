@@ -5,6 +5,7 @@ import HeaderForm from "../../../../part/HeaderText";
 import Button from "../../../../part/Button";
 import DocUpload from "../../../../part/DocUpload";
 import DropDown from "../../../../part/Dropdown";
+import FileUpload from "../../../../part/FileUpload";
 
 export default function Add({ onChangePage }) {
   const title = "Tambah Dokumen";
@@ -72,11 +73,19 @@ export default function Add({ onChangePage }) {
             </div>
 
             <div className="row">
-              <DocUpload
+              {/* <DocUpload
                 label="Dokumen"
                 forInput="document"
                 isRequired={true}
-              />
+              /> */}
+              <FileUpload
+                  label="Dokumen"
+                  forInput="fileDok"
+                  // onChange={handleFileChange}
+                  name="fileDok"
+                  // ref={fileRef}
+                  isRequired={true}
+                />
             </div>
 
             <div className="d-flex justify-content-between align-items-center">

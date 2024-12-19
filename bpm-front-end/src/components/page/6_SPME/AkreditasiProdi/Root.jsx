@@ -7,6 +7,7 @@ import {
 import Index from "./Index";
 import ScrollToTop from "../../../part/ScrollToTop";
 import Add from "./Add";
+import Edit from "./Edit";
 
 export default function AkreProdi() {
   const navigate = useNavigate();
@@ -35,24 +36,9 @@ export default function AkreProdi() {
     <>
       <ScrollToTop />
       <Routes>
-        <Route
-          path="/spme/status/program-studi"
-          element={
-            <Index
-              onChangePage={handlePageChange}
-              title={"Akreditasi Program Studi"}
-              breadcrumbs={[
-                { label: "SPME" },
-                { label: "Status Akreditasi" },
-                { label: "Program Studi" },
-              ]}
-            />
-          }
-        />
-        <Route
-          path="/spme/status/program-studi/add"
-          element={<Add onChangePage={handlePageChange} />}
-        />
+        <Route path="/" element={<Index onChangePage={handlePageChange} /> } />
+        <Route path="/add" element={<Add onChangePage={handlePageChange} /> } />
+        <Route path="/edit" element={<Edit onChangePage={handlePageChange} /> } />
       </Routes>
     </>
   );

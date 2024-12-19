@@ -772,7 +772,7 @@ export default function Index({ onChangePage }) {
           <Modal
             ref={ModalRef}
             title="Detail Dokumen"
-            size="full"
+            size="medium"
             Button2={
               <Button
                 classType="secondary"
@@ -860,7 +860,7 @@ export default function Index({ onChangePage }) {
           <Modal
             ref={ModalRef}
             title="Preview Dokumen"
-            size="full"
+            size="medium"
             Button2={
               <Button
                 classType="secondary"
