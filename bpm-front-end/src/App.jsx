@@ -4,11 +4,13 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
+import ProtectedRoute from "./components/util/ProtectedRoute";
 import Header from "./components/backbone/Header";
 import Footer from "./components/backbone/Footer";
 import Login from "./components/page/login/Index";
 import Logout from "./components/page/logout/Index";
 import Profil from "./components/page/login/Profil";
+import Notifikasi from "./components/page/login/Notifikasi";
 
 import Beranda from "./components/page/1_Beranda/Root";
 import Tentang from "./components/page/2_Tentang/Root";
@@ -40,7 +42,22 @@ function Layout() {
       <main className="flex-grow-1">
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profil />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profil />{" "}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/notifikasi"
+            element={
+              <ProtectedRoute>
+                <Notifikasi />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/logout" element={<Logout />} />
           <Route path="/" element={<Beranda />} />
           <Route path="/tentang/*" element={<Tentang />} />

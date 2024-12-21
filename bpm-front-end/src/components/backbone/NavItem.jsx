@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useFetch } from "../util/useFetch";
 import { API_LINK } from "../util/Constants";
 import Cookies from "js-cookie";
+import Icon from "../part/Icon";
 
 export default function NavItem() {
   const [menuItems, setMenuItems] = useState([]);
@@ -153,6 +154,16 @@ export default function NavItem() {
                 alt="User Icon"
                 style={{ width: "24px", height: "24px" }}
               />
+              <span
+                className="badge rounded-pill bg-danger position-absolute top-0 end-0"
+                style={{
+                  fontSize: "0.8rem",
+                  marginTop: "0.6rem",
+                  marginRight: "1rem",
+                }}
+              >
+                5
+              </span>
             </Link>
           ) : (
             // Jika tidak ada cookie, tampilkan tombol masuk

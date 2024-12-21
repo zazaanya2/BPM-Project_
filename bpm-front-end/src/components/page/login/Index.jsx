@@ -131,6 +131,7 @@ export default function Login() {
           isRequired={true}
         />
         <InputField
+          type="password"
           label="Password"
           value={formData.password}
           onChange={(e) =>

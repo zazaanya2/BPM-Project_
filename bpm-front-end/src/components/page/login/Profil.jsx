@@ -97,8 +97,9 @@ export default function Profil() {
         <div
           className="card-header p-2 mb-2 rounded-4 bg-body-secondary d-flex justify-content-between align-items-center"
           style={{ cursor: "pointer" }}
+          onClick={() => navigate("/notifikasi")}
         >
-          <div className="d-flex align-items-center me-4">
+          <div className="d-flex align-items-center me-4 position-relative">
             <i
               className={`fi fi-rs-bell-notification-social-media`}
               style={{
@@ -107,6 +108,16 @@ export default function Profil() {
                 color: "#575050",
               }}
             ></i>
+            <span
+              className="badge rounded-pill bg-danger position-absolute top-3  translate-middle"
+              style={{
+                fontSize: ".7em",
+                zIndex: 2,
+                left: 40,
+              }}
+            >
+              5
+            </span>
             <HeaderText
               label="Notifikasi"
               ukuran="1rem"
