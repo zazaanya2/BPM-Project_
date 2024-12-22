@@ -63,7 +63,7 @@ export default function Index({ onChangePage }) {
     try {
       const data = await useFetch(
         `${API_LINK}/MasterKegiatan/GetDataKegiatanByCategory`,
-        { kategori: 3 },
+        { kategori: "Terlaksana" },
         "POST"
       );
 
@@ -85,6 +85,8 @@ export default function Index({ onChangePage }) {
           linkFolder: item.linkFolderKegiatan,
           image: item.fotoSampulKegiatan,
           jenisKegiatan: item.idJenisKegiatan,
+          fileNotulen: item.fileNotulenKegiatan,
+          statusFileNotulen: item.statusFileNotulenKegiatan,
         });
         return acc;
       }, {});

@@ -117,7 +117,7 @@ export default function Index({ onChangePage }) {
       try {
         const data = await useFetch(
           `${API_LINK}/MasterKegiatan/GetDataKegiatanByCategory`,
-          { kategori: 1 },
+          { kategori: "Rencana" },
           "POST"
         );
         const formattedData = [

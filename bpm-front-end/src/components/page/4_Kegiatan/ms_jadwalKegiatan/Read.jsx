@@ -297,12 +297,7 @@ export default function Read({ onChangePage }) {
                 ),
                 "Jenis Kegiatan": item.jenisKegiatan,
                 Tempat: item.location,
-                Status:
-                  item.category === 1
-                    ? "Rencana"
-                    : item.category === 2
-                    ? "Terlewat"
-                    : "Terlaksana",
+                Status: item.category,
               }))}
               actions={(item) => {
                 return item.Status === "Terlaksana"

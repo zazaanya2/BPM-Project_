@@ -5,12 +5,23 @@ import Button from "../../part/Button";
 import Cookies from "js-cookie"; // Import js-cookie for cookie handling
 import { useNavigate } from "react-router-dom"; // Import useNavigate untuk navigasi
 import HeaderText from "../../part/HeaderText";
+import { useEffect, useState } from "react";
+import { useFetch } from "../../util/useFetch";
+import { API_LINK } from "../../util/Constants";
+import moment from "moment"; // Import moment
 
 export default function Profil() {
   const navigate = useNavigate(); // Hook untuk navigasi
   let activeUser = "";
+  let username = "";
+  let lastLogin = "";
   const cookie = Cookies.get("activeUser");
   if (cookie) activeUser = JSON.parse(cookie).Nama;
+  if (cookie) username = JSON.parse(cookie).username;
+  if (cookie) lastLogin = JSON.parse(cookie).lastLogin;
+  const formattedLastLogin = moment(lastLogin)
+    .locale("id")
+    .format("dddd, D MMMM YYYY HH:mm:ss [WIB]");
 
   const handleLogout = async () => {
     const result = await Swal.fire({
@@ -23,10 +34,33 @@ export default function Profil() {
     });
 
     if (result.isConfirmed) {
-      Cookies.remove("yourCookieName"); // Ganti "yourCookieName" dengan nama cookie Anda
       navigate("/logout"); // Navigasi ke halaman logout
     }
   };
+
+  const [jumlahNotifikasi, setJumlahNotifikasi] = useState([]);
+
+  useEffect(() => {
+    const fetchNotifikasi = async () => {
+      try {
+        const data = await useFetch(
+          `${API_LINK}/Utilities/GetCountNotifikasi`,
+          { untuk: username },
+          "POST"
+        );
+
+        if (data === "ERROR") {
+          throw new Error("Gagal mengambil data");
+        }
+
+        setJumlahNotifikasi(data[0].JumlahNotifikasiBelum || 0); // Safely access the count
+      } catch (error) {
+        console.error("Error fetching notifications:", error.message);
+      }
+    };
+
+    fetchNotifikasi();
+  }, []);
 
   return (
     <div
@@ -84,7 +118,7 @@ export default function Profil() {
               />
 
               <HeaderText
-                label="last login"
+                label={"Login terakhir: " + formattedLastLogin}
                 ukuran="0.8rem"
                 warna="#575050"
                 alignText="left"
@@ -116,7 +150,7 @@ export default function Profil() {
                 left: 40,
               }}
             >
-              5
+              {jumlahNotifikasi}
             </span>
             <HeaderText
               label="Notifikasi"

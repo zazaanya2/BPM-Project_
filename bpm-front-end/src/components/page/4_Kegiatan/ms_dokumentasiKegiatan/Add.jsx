@@ -41,7 +41,7 @@ export default function Add({ onChangePage }) {
     endTime: "",
     place: "",
     linkFolder: "",
-    statusFileNotulen: 0,
+    statusFileNotulen: "Privat",
   });
 
   const [jenisKegiatan, setJenisKegiatan] = useState([]);
@@ -338,7 +338,7 @@ export default function Add({ onChangePage }) {
                 <InputField
                   ref={folderLinkRef}
                   label="Link Folder Dokumentasi"
-                  value={formData.linkFolder || ""} // Fallback ke string kosong
+                  value={formData.linkFolder || "Privat"} // Fallback ke string kosong
                   onChange={(e) =>
                     setFormData((prev) => ({
                       ...prev,
@@ -360,10 +360,10 @@ export default function Add({ onChangePage }) {
                   label="Sifat File Notulensi"
                   name="options"
                   arrData={[
-                    { Value: 0, Text: "Privat" },
-                    { Value: 1, Text: "Publik" },
+                    { Value: "Privat", Text: "Privat" },
+                    { Value: "Publik", Text: "Publik" },
                   ]}
-                  value={Number(formData.statusFileNotulen) || 0} // Fallback ke string kosong
+                  value={formData.statusFileNotulen || ""} // Fallback ke string kosong
                   onChange={(e) =>
                     setFormData((prev) => ({
                       ...prev,

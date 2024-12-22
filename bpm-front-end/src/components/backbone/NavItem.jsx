@@ -11,6 +11,9 @@ export default function NavItem() {
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [openGrandchild, setOpenGrandchild] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  let username = "";
+  const cookie = Cookies.get("activeUser");
+  if (cookie) username = JSON.parse(cookie).username;
 
   const toggleDropdown = (menuId) => {
     setOpenDropdown(openDropdown === menuId ? null : menuId);
@@ -48,6 +51,30 @@ export default function NavItem() {
     };
 
     fetchMenuItems();
+  }, []);
+
+  const [jumlahNotifikasi, setJumlahNotifikasi] = useState([]);
+
+  useEffect(() => {
+    const fetchNotifikasi = async () => {
+      try {
+        const data = await useFetch(
+          `${API_LINK}/Utilities/GetCountNotifikasi`,
+          { untuk: username },
+          "POST"
+        );
+
+        if (data === "ERROR") {
+          throw new Error("Gagal mengambil data");
+        }
+
+        setJumlahNotifikasi(data[0].JumlahNotifikasiBelum || 0); // Safely access the count
+      } catch (error) {
+        console.error("Error fetching notifications:", error.message);
+      }
+    };
+
+    fetchNotifikasi();
   }, []);
 
   const buildMenuHierarchy = (data) => {
@@ -162,7 +189,7 @@ export default function NavItem() {
                   marginRight: "1rem",
                 }}
               >
-                5
+                {jumlahNotifikasi}
               </span>
             </Link>
           ) : (

@@ -110,11 +110,11 @@ export default function Index({ onChangePage }) {
   });
 
   const eventStyles = {
-    1: {
+    Rencana: {
       backgroundColor: "rgba(181, 202, 251, 0.3)",
       borderColor: "#4989C2",
     },
-    3: {
+    Terlaksana: {
       backgroundColor: "rgba(193, 232, 191, 0.3)",
       borderColor: "#08A500",
     },
@@ -465,7 +465,7 @@ export default function Index({ onChangePage }) {
                   style={descriptionStyle}
                 ></Text>
 
-                {selectedEvent.category === 3 && (
+                {selectedEvent.category === "Terlaksana" && (
                   <Button
                     classType="btn btn-primary"
                     title="Lihat Dokumentasi"
@@ -480,7 +480,7 @@ export default function Index({ onChangePage }) {
                   />
                 )}
 
-                {isLoggedIn && selectedEvent.category === 2 && (
+                {isLoggedIn && selectedEvent.category === "Terlewat" && (
                   <Button
                     classType="btn btn-primary"
                     title="Tambah Dokumentasi"
@@ -494,8 +494,8 @@ export default function Index({ onChangePage }) {
                 )}
 
                 {isLoggedIn &&
-                  (selectedEvent.category === 3 ||
-                    selectedEvent.category === 2) && (
+                  (selectedEvent.category === "Terlaksana" ||
+                    selectedEvent.category === "Terlewat") && (
                     <Button
                       classType="btn btn-success ms-3"
                       title="Tambah Berita"

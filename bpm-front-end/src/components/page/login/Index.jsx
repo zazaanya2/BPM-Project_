@@ -19,43 +19,79 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      console.log(formData);
-      const data = await useFetch(
-        `${API_LINK}/Utilities/Login`,
-        formData,
-        "POST"
+      const ipAddress = await useFetch(
+        "https://api.ipify.org/?format=json",
+        {},
+        "GET"
       );
 
-      if (data.status === "LOGIN FAILED") {
-        alert("Login failed");
-        return;
+      if (ipAddress === "ERROR")
+        throw new Error("Terjadi kesalahan: Gagal mendapatkan alamat IP.");
+      else {
+        console.log(formData);
+        const data = await useFetch(
+          `${API_LINK}/Utilities/Login`,
+          formData,
+          "POST"
+        );
+
+        if (data.status === "LOGIN FAILED") {
+          alert("Login failed");
+          return;
+        } else {
+          const userData = data[0];
+
+          const sent = {
+            username: userData.username,
+            role: userData.Role,
+            nama: userData.Nama,
+          };
+
+          const jwtToken = await useFetch(
+            `${API_LINK}/Utilities/CreateJWTToken`,
+            sent,
+            "POST"
+          );
+
+          console.log(jwtToken);
+
+          const loginRecord = {
+            username: formData.username,
+            role: userData.RoleID.slice(0, 5),
+            ip: ipAddress.ip,
+            agent: navigator.userAgent,
+            app: "APP14",
+          };
+
+          console.log(loginRecord);
+
+          const logRec = await useFetch(
+            `${API_LINK}/Utilities/CreateLogLogin`,
+            loginRecord,
+            "POST"
+          );
+
+          if (logRec === "ERROR") {
+            throw new Error("Terjadi kesalahan: Gagal LOGIN.");
+          }
+
+          Cookies.set(
+            "activeUser",
+            JSON.stringify({
+              ...userData,
+              username: formData.username,
+              lastLogin: logRec[1]
+                ? logRec[1].lastLogin
+                : new Date().toISOString().split("T")[0] +
+                  " " +
+                  new Date().toISOString().split("T")[1], // Mendapatkan waktu saat ini dalam format ISO
+            }),
+            { expires: 1 } // 1 hari masa berlaku cookie
+          );
+
+          navigate("/");
+        }
       }
-
-      // Store user data and JWT token in cookies
-      const userData = data[0]; // Assuming the first row in the response contains user data
-
-      const sent = {
-        username: userData.username,
-        role: userData.Role,
-        nama: userData.Nama,
-      };
-
-      console.log(sent);
-
-      const jwtToken = await useFetch(
-        `${API_LINK}/Utilities/CreateJWTToken`,
-        sent,
-        "POST"
-      );
-
-      console.log(jwtToken);
-
-      // Set the cookie
-      Cookies.set("activeUser", JSON.stringify(userData), { expires: 1 }); // 1 day expiry
-      // Cookies.set("jwtToken", jwtToken.Token, { expires: 1 });
-
-      // Redirect to a different page after successful login
-      navigate("/");
     } catch (error) {
       console.error("Login error", error);
     }

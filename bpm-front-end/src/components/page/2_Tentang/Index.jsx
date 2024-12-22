@@ -26,6 +26,7 @@ export default function Index({ onChangePage }) {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const activeUser = Cookies.get("activeUser");
@@ -33,9 +34,10 @@ export default function Index({ onChangePage }) {
     if (activeUser) {
       const parsedUser = JSON.parse(activeUser);
       if (parsedUser.RoleID.trim() === "ROL01") {
+        setIsAdmin(true);
         setIsLoggedIn(true);
       } else {
-        setIsLoggedIn(false);
+        setIsLoggedIn(true);
       }
     } else {
       setIsLoggedIn(false);
@@ -79,7 +81,7 @@ export default function Index({ onChangePage }) {
           className="position-absolute top-0 end-0 p-5 mb-3"
           style={{ zIndex: 20 }}
         >
-          {isLoggedIn && (
+          {isAdmin && (
             <Button
               className="btn btn-primary"
               title="Kelola Tentang"

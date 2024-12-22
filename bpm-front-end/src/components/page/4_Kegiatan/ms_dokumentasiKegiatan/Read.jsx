@@ -69,7 +69,7 @@ export default function Read({ onChangePage }) {
       try {
         const data = await useFetch(
           `${API_LINK}/MasterKegiatan/GetDataKegiatanByCategory`,
-          { kategori: 3 },
+          { kategori: "Terlaksana" },
           "POST"
         );
 

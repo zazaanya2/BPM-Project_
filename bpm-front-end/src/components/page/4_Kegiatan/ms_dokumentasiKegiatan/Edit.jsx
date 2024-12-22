@@ -400,10 +400,10 @@ export default function Edit({ onChangePage }) {
                   label="Sifat File Notulensi"
                   name="options"
                   arrData={[
-                    { Value: 0, Text: "Privat" },
-                    { Value: 1, Text: "Publik" },
+                    { Value: "Privat", Text: "Privat" },
+                    { Value: "Publik", Text: "Publik" },
                   ]}
-                  value={Number(formData.statusFileNotulen) || 0} // Fallback ke string kosong
+                  value={formData.statusFileNotulen || "Privat"} // Fallback ke string kosong
                   onChange={(e) =>
                     setFormData((prev) => ({
                       ...prev,
