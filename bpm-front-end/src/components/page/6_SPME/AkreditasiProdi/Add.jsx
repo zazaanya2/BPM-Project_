@@ -55,7 +55,7 @@ export default function Add({ onChangePage }) {
               <PageTitleNav
                 title={title}
                 breadcrumbs={breadcrumbs}
-                onClick={() => onChangePage("AkreditasiProdi")}
+                onClick={() => onChangePage("index")}
               />
             </div>
 

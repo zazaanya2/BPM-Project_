@@ -15,25 +15,25 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Index({ onChangePage }) {
   const data = [
-    { Key: 1, Prodi: "Manajemen Informatika (MI)" },
-    { Key: 2, Prodi: "Mekratonika (MK)" },
-    { Key: 3, Prodi: "Teknik Pembuatan Peralatan Perkakas Produksi (P4)" },
-    { Key: 4, Prodi: "Teknik Produksi dan Proses Manufaktur (TPPM)" },
-    { Key: 5, Prodi: "Mesin Otomotif (MO)" },
-    { Key: 6, Prodi: "Teknologi Konstruksi Bangunan Gedung (TKBG)"},
-    { Key: 7, Prodi: "Teknologi Rekayasa Logistik (TRL)"},
-    { Key: 8, Prodi: "Teknologi Rekayasa Perangkat Lunak (TRPL)" }
+    { Key: 1, Prodi: "Manajemen Informatika (MI)", Akreditasi: 'UNGGUL' },
+    { Key: 2, Prodi: "Mekratonika (MK)", Akreditasi: 'UNGGUL' },
+    { Key: 3, Prodi: "Teknik Pembuatan Peralatan Perkakas Produksi (P4)", Akreditasi: 'UNGGUL' },
+    { Key: 4, Prodi: "Teknik Produksi dan Proses Manufaktur (TPPM)", Akreditasi: 'UNGGUL' },
+    { Key: 5, Prodi: "Mesin Otomotif (MO)", Akreditasi: 'UNGGUL' },
+    { Key: 6, Prodi: "Teknologi Konstruksi Bangunan Gedung (TKBG)", Akreditasi: 'UNGGUL'},
+    { Key: 7, Prodi: "Teknologi Rekayasa Logistik (TRL)", Akreditasi: 'UNGGUL'},
+    { Key: 8, Prodi: "Teknologi Rekayasa Perangkat Lunak (TRPL)", Akreditasi: 'UNGGUL' }
   ];
 
   const data1 = [
-    { Key: 1, NomorSK: "377/DIKTI/Kep/1999" },
-    { Key: 2, NomorSK: "126/KPT/I/2018" },
-    { Key: 3, NomorSK: "377/DIKTI/Kep/1999" },
-    { Key: 4, NomorSK: "0085/SK/LAM Teknik/VD3/IV/2023"},
-    { Key: 5, NomorSK: "11328/SK/BAN-PT/Ak-PNB/Dipl-III/X/20212"},
-    { Key: 6, NomorSK: "593/KPT/I/2018"},
-    { Key: 7, NomorSK: "55/D/OT/2023"},
-    { Key: 8, NomorSK: "309/D/OT/2023"},
+    { Key: 1, NomorSK: "377/DIKTI/Kep/1999", Akreditasi: 'UNGGUL' },
+    { Key: 2, NomorSK: "126/KPT/I/2018", Akreditasi: 'UNGGUL' },
+    { Key: 3, NomorSK: "377/DIKTI/Kep/1999", Akreditasi: 'UNGGUL' },
+    { Key: 4, NomorSK: "0085/SK/LAM Teknik/VD3/IV/2023", Akreditasi: 'UNGGUL'},
+    { Key: 5, NomorSK: "11328/SK/BAN-PT/Ak-PNB/Dipl-III/X/20212", Akreditasi: 'UNGGUL'},
+    { Key: 6, NomorSK: "593/KPT/I/2018", Akreditasi: 'UNGGUL'},
+    { Key: 7, NomorSK: "55/D/OT/2023", Akreditasi: 'UNGGUL'},
+    { Key: 8, NomorSK: "309/D/OT/2023", Akreditasi: 'UNGGUL'},
 
   ];
 
@@ -130,8 +130,8 @@ export default function Index({ onChangePage }) {
   const [pageSize] = useState(10);
   const [pageCurrent, setPageCurrent] = useState(1);
 
-  const title = "Evaluasi";
-  const breadcrumbs = [{ label: "Siklus SPMI" }, { label: "Evaluasi" }];
+  const title = "Akreditasi Program Studi";
+  const breadcrumbs = [{ label: "SPME" }, { label: "Akreditasi" }, { label: "Program Studi" }];
 
   const handleEdit = (item) => {
     onChangePage("edit", { state: { editData: item } });
@@ -191,7 +191,7 @@ export default function Index({ onChangePage }) {
               <Button
                 iconName="add"
                 classType="primary"
-                label="Tambah Skala Penilaian"
+                label="Tambah Data"
                 onClick={() => onChangePage("add")}
                 // onClick={() => addModalRef.current.open()}
               />
@@ -225,17 +225,19 @@ export default function Index({ onChangePage }) {
             </div>
             <div className="table-container bg-white rounded">
               <Table
-                arrHeader={["No", "Nomor SK", "Program Studi", "Akreditasi", "Status"]}
+                arrHeader={["No", "Nomor SK", "Program Studi", "Akreditasi"]}
                 headerToDataMap={{
                   No: "No",
                   "Program Studi": "Prodi",
-                  "Nomor SK": "NomorSK"
+                  "Nomor SK": "NomorSK",
+                  "Akreditasi": "Akreditasi"
                 }}
                 data={combinedData.map((item, index) => ({
-                  key: item.Key || index,
+                  Key: item.Key || index,
                   No: indexOfFirstData + index + 1,
-                  "Program Studi": item.Prodi,
-                  "Nomor SK": item.NomorSK
+                  "Prodi": item.Prodi,
+                  "NomorSK": item.NomorSK,
+                  "Akreditasi": item.Akreditasi
                 }))}
                 actions={[
                   "Preview",
@@ -248,14 +250,14 @@ export default function Index({ onChangePage }) {
                 onPreview={(data) => {
                   console.log("prev");
                   const selected = sortedData.find(
-                    (item) => item.dok_id == data.key
+                    (item) => item.Key == data.Key
                   );
                   handleOpenModal("preview", selected);
                 }}
                 onEdit={handleEdit}
                 onDetail={(data) => {
                   const selected = sortedData.find(
-                    (item) => item.Key == data.key
+                    (item) => item.Key == data.Key
                   );
                   handleOpenModal("detail", selected);
                 }}

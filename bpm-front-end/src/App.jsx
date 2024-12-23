@@ -17,6 +17,9 @@ import PeraturanEksternal from "./components/page/10_Peraturan/ms_peraturanEkste
 import InstrumenAps from "./components/page/10_Peraturan/ms_instrumenAps/Root";
 import KriteriaSurvei from "./components/page/9_Survei/Kriteria_Survei/Root";
 import SkalaSurvei from "./components/page/9_Survei/Skala_Penilaian/Root";
+import AkreProdi from "./components/page/6_SPME/AkreditasiProdi/Root";
+import AkreInstitusi from "./components/page/6_SPME/AkreditasiInstitusi/Root";
+import RingkasanAkre from "./components/page/6_SPME/RIngkasanAkreditasi/Root";
 import ScrollToTop from "./components/part/ScrollToTop";
 import "./App.css";
 
@@ -55,6 +58,9 @@ function App() {
               element={<Pengendalian />}
             />
             <Route path="/spmi/siklus/evaluasi/*" element={<Evaluasi />} />
+            <Route path="/spme/status/program-studi/*" element={<AkreProdi />} />
+            <Route path="/spme/status/institusi/*" element={<AkreInstitusi />} />
+            <Route path="/spme/status/tabel/*" element={<RingkasanAkre />} />
             <Route path="/peraturan/kebijakan/*" element={<Peraturan />} />
             <Route
               path="/peraturan/eksternal/*"

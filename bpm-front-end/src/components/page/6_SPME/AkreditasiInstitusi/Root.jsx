@@ -36,7 +36,7 @@ export default function AkreInstitusi() {
       <ScrollToTop />
       <Routes>
         <Route
-          path="/spme/status/institusi"
+          path="/"
           element={
             <Index
               onChangePage={handlePageChange}
@@ -50,7 +50,7 @@ export default function AkreInstitusi() {
           }
         />
         <Route
-          path="/spme/status/institusi/add"
+          path="/add"
           element={<Add onChangePage={handlePageChange} />}
         />
       </Routes>

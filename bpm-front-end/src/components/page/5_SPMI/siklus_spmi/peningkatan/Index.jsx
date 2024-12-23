@@ -13,29 +13,24 @@ import { useLocation, useNavigate } from "react-router-dom";
 const data = [
   {
     Key: 1,
-    Dokumen: "SK NO39/09230/SK/2024",
-    Src: "bpm-front-end/src/components/page/5_SPMI/MI_PRG4_M4_P2_XXX.pdf",
+    Aspek: "Pengelolaan SPMI Institusi",
+    Bukti: "Dokumen revisi SOP Pengelolaan SPMI",
   },
   {
     Key: 2,
-    Dokumen: "SK NO39/09230/SK/2024",
-    Src: "bpm-front-end/src/components/page/5_SPMI/MI_PRG4_M4_P2_XXX.pdf",
+    Aspek: "Standar Pendidikan",
+    Bukti: "Penambahan Standar Kompetensi Lulusan",
   },
   {
     Key: 3,
-    Dokumen: "SK NO39/09230/SK/2024",
-    Src: "bpm-front-end/src/components/page/5_SPMI/MI_PRG4_M4_P2_XXX.pdf",
+    Aspek: "Standar Identitas Diri",
+    Bukti: "Revisi Buku Panduan Identitas Institusi",
   },
   {
     Key: 4,
-    Dokumen: "SK NO39/09230/SK/2024",
-    Src: "bpm-front-end/src/components/page/5_SPMI/MI_PRG4_M4_P2_XXX.pdf",
-  },
-  {
-    Key: 5,
-    Dokumen: "SK NO39/09230/SK/2024",
-    Src: "bpm-front-end/src/components/page/5_SPMI/MI_PRG4_M4_P2_XXX.pdf",
-  },
+    Aspek: "Standar Pengabdian kepada Masyarakat",
+    Bukti: "Revisi prosedur pelaksanaan kegiatan pengabdian",
+  }
 ];
 
 export default function Index({ onChangePage }) {
@@ -193,17 +188,6 @@ export default function Index({ onChangePage }) {
                 </p>
               </div>
 
-              <div
-                className="mt-5"
-                style={{ display: "flex", alignItems: "center" }}
-              >
-                <h1
-                  style={{ color: "#2654A1", margin: "0", fontWeight: "700" }}
-                >
-                  Dokumen Rujukan
-                </h1>
-              </div>
-
               <div className="table-container bg-white mt-4 rounded">
                 <div className="row mt-3 ">
                   <div className="col-lg-2 col-md-6 ">
@@ -227,15 +211,17 @@ export default function Index({ onChangePage }) {
                   </div>
                 </div>
                 <Table
-                  arrHeader={["No", "Dokumen"]}
+                  arrHeader={["No", "Aspek Peningkatan", "Bukti Peningkatan"]}
                   headerToDataMap={{
                     No: "No",
-                    Dokumen: "Dokumen",
+                    "Aspek Peningkatan": "Aspek Peningkatan",
+                    "Bukti Peningkatan": "Bukti Peningkatan",
                   }}
                   data={currentData.map((item, index) => ({
                     key: item.Key || index,
                     No: indexOfFirstData + index + 1,
-                    Dokumen: item.Dokumen,
+                    "Aspek Peningkatan": item.Aspek,
+                    "Bukti Peningkatan": item.Bukti,
                   }))}
                   actions={["Detail", "Edit", "Print", "Delete", "PrintHistory", "UpdateHistory"]}
                   onEdit={handleEdit}
