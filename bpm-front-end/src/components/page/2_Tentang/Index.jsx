@@ -113,7 +113,7 @@ export default function Index({ onChangePage }) {
             transform: "translateX(-50%)",
             width: "100%",
             maxWidth: "33vw",
-            minWidth: isMobile ? "50%" : "37%",
+            minWidth: isMobile ? "50vh" : "70vh",
             zIndex: 2,
           }}
         />

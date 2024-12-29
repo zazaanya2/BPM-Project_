@@ -29,7 +29,7 @@ export default function Read({ onChangePage }) {
       try {
         const result = await useFetch(
           `${API_LINK}/MasterBerita/GetDataBerita`,
-          JSON.stringify({}),
+          { param1: searchKeyword, param2: selectedYear },
           "POST"
         );
 
@@ -71,24 +71,6 @@ export default function Read({ onChangePage }) {
 
     fetchBerita();
   }, [searchKeyword, selectedYear]);
-
-  useEffect(() => {
-    let tempData = data;
-
-    if (searchKeyword) {
-      tempData = tempData.filter((item) =>
-        item.title.toLowerCase().includes(searchKeyword.toLowerCase())
-      );
-    }
-
-    if (selectedYear) {
-      tempData = tempData.filter(
-        (item) => item.year === parseInt(selectedYear)
-      );
-    }
-
-    setFilteredData(tempData);
-  }, [searchKeyword, selectedYear, data]);
 
   const indexOfLastData = pageCurrent * pageSize;
   const indexOfFirstData = indexOfLastData - pageSize;

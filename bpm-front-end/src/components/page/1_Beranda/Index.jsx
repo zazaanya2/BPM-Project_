@@ -142,7 +142,7 @@ export default function Index({ onChangePage }) {
       try {
         const result = await useFetch(
           `${API_LINK}/MasterBerita/GetDataBerita`,
-          JSON.stringify({}),
+          { param1: "", param2: "" },
           "POST"
         );
 

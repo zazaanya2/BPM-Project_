@@ -135,9 +135,15 @@ export default function Notifikasi() {
                 />
 
                 <Text
-                  isi={moment(item.tanggalNotifikasi)
-                    .tz("Asia/Jakarta") // Menentukan zona waktu WIB
-                    .format("dddd, D MMMM YYYY, HH:mm [WIB]")} // Data dari API
+                  isi={new Date(item.tanggalNotifikasi).toLocaleDateString(
+                    "id-ID",
+                    {
+                      weekday: "long",
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    }
+                  )} // Data dari API
                   ukuran="0.8rem"
                   warna="#575050"
                   alignText="left"

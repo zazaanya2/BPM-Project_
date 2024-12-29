@@ -34,9 +34,9 @@ export default function Read({ onChangePage }) {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [status, setStatus] = useState([
     { Value: "", Text: "Semua" },
-    { Value: 1, Text: "Rencana" },
-    { Value: 2, Text: "Terlewat" },
-    { Value: 3, Text: "Terlaksana" },
+    { Value: "Rencana", Text: "Rencana" },
+    { Value: "Terlewat", Text: "Terlewat" },
+    { Value: "Terlaksana", Text: "Terlaksana" },
   ]);
 
   const pageSize = 10;
@@ -73,7 +73,12 @@ export default function Read({ onChangePage }) {
       try {
         const data = await useFetch(
           `${API_LINK}/MasterKegiatan/GetDataKegiatan`,
-          JSON.stringify({}),
+          {
+            search: searchKeyword,
+            year: selectedYear,
+            status: selectedStatus,
+            jenis: selectedJenis,
+          },
           "POST"
         );
 
@@ -105,37 +110,7 @@ export default function Read({ onChangePage }) {
     };
 
     fetchEvents();
-  }, []);
-
-  useEffect(() => {
-    let tempData = events;
-
-    if (searchKeyword) {
-      tempData = tempData.filter((item) =>
-        item.title.toLowerCase().includes(searchKeyword.toLowerCase())
-      );
-    }
-
-    if (selectedYear) {
-      tempData = tempData.filter(
-        (item) => new Date(item.start).getFullYear() === parseInt(selectedYear)
-      );
-    }
-
-    if (selectedStatus) {
-      tempData = tempData.filter(
-        (item) => item.category === parseInt(selectedStatus)
-      );
-    }
-
-    if (selectedJenis) {
-      tempData = tempData.filter(
-        (item) => item.idJenisKegiatan === parseInt(selectedJenis)
-      );
-    }
-
-    setFilteredData(tempData);
-  }, [searchKeyword, selectedJenis, selectedYear, selectedStatus, events]);
+  }, [searchKeyword, selectedJenis, selectedYear, selectedStatus]);
 
   const indexOfLastData = pageCurrent * pageSize;
   const indexOfFirstData = indexOfLastData - pageSize;

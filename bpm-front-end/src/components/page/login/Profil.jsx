@@ -1,14 +1,12 @@
 import Swal from "sweetalert2"; // Import SweetAlert2
 import Bangunan from "../../../assets/element/bangunan.png";
 import Logo from "../../../assets/bpm-logo-biru.png";
-import Button from "../../part/Button";
 import Cookies from "js-cookie"; // Import js-cookie for cookie handling
 import { useNavigate } from "react-router-dom"; // Import useNavigate untuk navigasi
 import HeaderText from "../../part/HeaderText";
 import { useEffect, useState } from "react";
 import { useFetch } from "../../util/useFetch";
 import { API_LINK } from "../../util/Constants";
-import moment from "moment"; // Import moment
 
 export default function Profil() {
   const navigate = useNavigate(); // Hook untuk navigasi
@@ -19,9 +17,12 @@ export default function Profil() {
   if (cookie) activeUser = JSON.parse(cookie).Nama;
   if (cookie) username = JSON.parse(cookie).username;
   if (cookie) lastLogin = JSON.parse(cookie).lastLogin;
-  const formattedLastLogin = moment(lastLogin)
-    .locale("id")
-    .format("dddd, D MMMM YYYY HH:mm:ss [WIB]");
+  const formattedLastLogin = new Date(lastLogin).toLocaleDateString("id-ID", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   const handleLogout = async () => {
     const result = await Swal.fire({

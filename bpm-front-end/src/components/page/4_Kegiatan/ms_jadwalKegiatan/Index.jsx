@@ -29,7 +29,6 @@ export default function Index({ onChangePage }) {
 
     console.log("state", location.state?.idData);
 
-    // Find the event based on idData passed in the location state
     const event = events.find((e) => e.id === location.state.idData);
     if (event) {
       setSelectedEvent(event);
@@ -53,7 +52,12 @@ export default function Index({ onChangePage }) {
     try {
       const data = await useFetch(
         `${API_LINK}/MasterKegiatan/GetDataKegiatan`,
-        JSON.stringify({}),
+        {
+          p1: "",
+          p2: "",
+          p3: "",
+          p4: "",
+        },
         "POST"
       );
 

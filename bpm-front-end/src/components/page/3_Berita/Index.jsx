@@ -9,7 +9,7 @@ import Paging from "../../part/Paging";
 import Loading from "../../part/Loading";
 import Filter from "../../part/Filter";
 import { API_LINK, BERITAFOTO_LINK } from "../../util/Constants";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import { id } from "date-fns/locale";
 import { useIsMobile } from "../../util/useIsMobile";
 import { useNavigate } from "react-router-dom";
@@ -25,6 +25,7 @@ export default function Index({ onChangePage }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isBerita, setIsBerita] = useState(false);
 
   const isMobile = useIsMobile();
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ export default function Index({ onChangePage }) {
         }
         const result = await useFetch(
           `${API_LINK}/MasterBerita/GetDataBerita`,
-          JSON.stringify({}),
+          { param1: searchKeyword, param2: selectedYear },
           "POST"
         );
 
@@ -79,7 +80,12 @@ export default function Index({ onChangePage }) {
           (a, b) => b.date - a.date
         );
 
-        setBeritaData(sortedBerita);
+        if (isBerita === false) {
+          setBeritaData(sortedBerita);
+          setIsBerita(true);
+        }
+
+        setFilteredData(sortedBerita);
       } catch (err) {
         console.error("Fetch error:", err);
         setError("Gagal mengambil data");
@@ -90,25 +96,6 @@ export default function Index({ onChangePage }) {
 
     fetchBerita();
   }, [searchKeyword, selectedYear]);
-
-  useEffect(() => {
-    let data = beritaData;
-
-    if (selectedYear) {
-      data = data.filter((item) => item.year === parseInt(selectedYear));
-    }
-
-    if (searchKeyword) {
-      const lowerKeyword = searchKeyword.toLowerCase();
-      data = data.filter(
-        (item) =>
-          item.title.toLowerCase().includes(lowerKeyword) ||
-          item.description.toLowerCase().includes(lowerKeyword)
-      );
-    }
-
-    setFilteredData(data);
-  }, [searchKeyword, selectedYear, beritaData]);
 
   const highlightText = (text, keyword) => {
     if (!keyword) return text;
