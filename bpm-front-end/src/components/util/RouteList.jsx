@@ -1,5 +1,6 @@
 // RouteList.jsx
 import { lazy } from "react";
+import { ROOT_LINK } from "./Constants";
 
 // Lazy load components
 const Login = lazy(() => import("../page/login/Index"));
@@ -88,38 +89,47 @@ const routeList = [
   {
     path: "/spmi/siklus/pelaksanaan/*",
     element: <Pelaksanaan />,
+    protected: true,
   },
   {
     path: "/spmi/siklus/penetapan/*",
     element: <Penetapan />,
+    protected: true,
   },
   {
     path: "/spmi/siklus/peningkatan/*",
     element: <Peningkatan />,
+    protected: true,
   },
   {
     path: "/spmi/siklus/pengendalian/*",
     element: <Pengendalian />,
+    protected: true,
   },
   {
     path: "/spmi/siklus/evaluasi/*",
     element: <Evaluasi />,
+    protected: true,
   },
   {
     path: "/peraturan/kebijakan/*",
     element: <Peraturan />,
+    protected: true,
   },
   {
     path: "/peraturan/eksternal/*",
     element: <PeraturanEksternal />,
+    protected: true,
   },
   {
     path: "/peraturan/aps/*",
     element: <InstrumenAps />,
+    protected: true,
   },
   {
     path: "/survei/kriteria/*",
     element: <KriteriaSurvei />,
+    protected: true,
   },
   {
     path: "/survei/skala/*",
