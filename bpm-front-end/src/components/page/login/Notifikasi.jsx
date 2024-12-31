@@ -9,6 +9,7 @@ import { useFetch } from "../../util/useFetch";
 import { API_LINK } from "../../util/Constants";
 import Loading from "../../part/Loading";
 import moment from "moment";
+import Paging from "../../part/Paging";
 import "moment/locale/id";
 
 export default function Notifikasi() {
@@ -18,6 +19,12 @@ export default function Notifikasi() {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // State untuk paging
+  const [pageCurrent, setPageCurrent] = useState(1); // Halaman saat ini
+  const [pageSize, setPageSize] = useState(5); // Jumlah data per halaman
+  const [totalData, setTotalData] = useState(0); // Total jumlah data
+
   let activeUser = "";
   const cookie = Cookies.get("activeUser");
   if (cookie) activeUser = JSON.parse(cookie).username;
@@ -27,10 +34,13 @@ export default function Notifikasi() {
       setLoading(true); // Set loading saat memulai fetch
       const result = await useFetch(
         `${API_LINK}/Utilities/GetDataNotifikasi`,
-        { id: activeUser },
+        { id: activeUser, size: pageSize, page: pageCurrent },
         "POST"
       );
-      setData(result);
+
+      setData(result); // Data notifikasi
+
+      setTotalData(result[0].TotalCount); // Total data (didapat dari API)
     } catch (err) {
       console.error("Fetch error:", err);
       setError("Gagal mengambil data");
@@ -42,7 +52,7 @@ export default function Notifikasi() {
   // Panggil fetchData pertama kali saat komponen dimuat
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [pageCurrent]); // Fetch ulang jika pageCurrent berubah
 
   const handleUpdateStatusBaca = async (idNotifikasi) => {
     try {
@@ -53,7 +63,7 @@ export default function Notifikasi() {
       );
       if (result !== "ERROR") {
         console.log("Status berhasil diperbarui");
-        await fetchData(); // Panggil fetchData ulang jika berhasil
+        await fetchData(pageCurrent); // Panggil fetchData ulang jika berhasil
       } else {
         console.error("Gagal memperbarui status:", result?.message);
       }
@@ -64,6 +74,7 @@ export default function Notifikasi() {
 
   if (loading) return <Loading />;
   if (error) return <p>{error}</p>;
+
   return (
     <div className={isMobile ? "bg-white mt-5 p-0 pt-5" : "bg-white m-5 p-5"}>
       <PageTitleNav
@@ -153,6 +164,15 @@ export default function Notifikasi() {
             </div>
           </div>
         ))}
+
+        <div className="mt-4">
+          <Paging
+            pageSize={pageSize}
+            pageCurrent={pageCurrent}
+            totalData={totalData}
+            navigation={(page) => setPageCurrent(page)}
+          />
+        </div>
       </div>
     </div>
   );

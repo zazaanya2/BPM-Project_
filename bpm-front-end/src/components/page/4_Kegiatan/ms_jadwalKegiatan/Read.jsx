@@ -23,8 +23,8 @@ export default function Read({ onChangePage }) {
     { label: "Kelola Jadwal Kegiatan" },
   ];
 
-  const [events, setEvents] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const [totalData, setTotalData] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedJenis, setSelectedJenis] = useState("");
@@ -51,6 +51,7 @@ export default function Read({ onChangePage }) {
           JSON.stringify({}),
           "POST"
         );
+
         const formattedData = [
           { Value: "", Text: "Semua" }, // Opsi default
           ...data.map((item) => ({
@@ -72,16 +73,22 @@ export default function Read({ onChangePage }) {
     const fetchEvents = async () => {
       try {
         const data = await useFetch(
-          `${API_LINK}/MasterKegiatan/GetDataKegiatan`,
+          `${API_LINK}/MasterKegiatan/GetDataKegiatanPage`,
           {
             search: searchKeyword,
             year: selectedYear,
             status: selectedStatus,
             jenis: selectedJenis,
+            size: pageSize,
+            page: pageCurrent,
+            kategori: "",
           },
           "POST"
         );
 
+        if (data.length > 0 && data[0].TotalCount !== undefined) {
+          setTotalData(data[0].TotalCount); // Set hanya sekali
+        }
         const formattedEvents = data.map((item) => {
           const startDate = moment(item.tglMulaiKegiatan).format("YYYY-MM-DD");
           const endDate = moment(item.tglSelesaiKegiatan).format("YYYY-MM-DD");
@@ -99,7 +106,6 @@ export default function Read({ onChangePage }) {
           };
         });
 
-        setEvents(formattedEvents);
         setFilteredData(formattedEvents);
       } catch (error) {
         setError("Gagal mengambil data kegiatan");
@@ -110,11 +116,17 @@ export default function Read({ onChangePage }) {
     };
 
     fetchEvents();
-  }, [searchKeyword, selectedJenis, selectedYear, selectedStatus]);
+  }, [
+    searchKeyword,
+    selectedJenis,
+    selectedYear,
+    selectedStatus,
+    pageSize,
+    pageCurrent,
+  ]);
 
   const indexOfLastData = pageCurrent * pageSize;
   const indexOfFirstData = indexOfLastData - pageSize;
-  const currentData = filteredData.slice(indexOfFirstData, indexOfLastData);
 
   const handlePageNavigation = (page) => {
     setPageCurrent(page);
@@ -150,7 +162,9 @@ export default function Read({ onChangePage }) {
 
         SweetAlert("Berhasil", "Data Berhasil Dihapus", "success");
 
-        setEvents((prevData) => prevData.filter((item) => item.id !== id));
+        setFilteredData((prevData) =>
+          prevData.filter((item) => item.id !== id)
+        );
       } catch (err) {
         console.error(err);
         SweetAlert(
@@ -257,7 +271,7 @@ export default function Read({ onChangePage }) {
                 "Tempat",
                 "Status",
               ]}
-              data={currentData.map((item, index) => ({
+              data={filteredData.map((item, index) => ({
                 Key: item.id,
                 No: indexOfFirstData + index + 1,
                 "Nama Kegiatan": item.title,
@@ -287,7 +301,7 @@ export default function Read({ onChangePage }) {
             <Paging
               pageSize={pageSize}
               pageCurrent={pageCurrent}
-              totalData={filteredData.length}
+              totalData={totalData}
               navigation={handlePageNavigation}
             />
           </div>

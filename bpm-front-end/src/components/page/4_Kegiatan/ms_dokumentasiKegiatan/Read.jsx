@@ -23,7 +23,7 @@ export default function Read({ onChangePage }) {
     { label: "Kelola Dokumentasi Kegiatan" },
   ];
 
-  const [events, setEvents] = useState([]);
+  const [totalData, setTotalData] = useState(0);
   const [filteredData, setFilteredData] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
@@ -68,10 +68,22 @@ export default function Read({ onChangePage }) {
     const fetchEvents = async () => {
       try {
         const data = await useFetch(
-          `${API_LINK}/MasterKegiatan/GetDataKegiatanByCategory`,
-          { kategori: "Terlaksana" },
+          `${API_LINK}/MasterKegiatan/GetDataKegiatanPage`,
+          {
+            search: searchKeyword,
+            year: selectedYear,
+            status: selectedStatus,
+            jenis: selectedJenis,
+            size: pageSize,
+            page: pageCurrent,
+            kategori: "Terlaksana",
+          },
           "POST"
         );
+
+        if (data.length > 0 && data[0].TotalCount !== undefined) {
+          setTotalData(data[0].TotalCount); // Set hanya sekali
+        }
 
         if (data) {
           const formattedEvents = data.map((item) => {
@@ -96,7 +108,6 @@ export default function Read({ onChangePage }) {
             };
           });
 
-          setEvents(formattedEvents);
           setFilteredData(formattedEvents);
         }
       } catch (error) {
@@ -108,39 +119,11 @@ export default function Read({ onChangePage }) {
     };
 
     fetchEvents();
-  }, []);
-
-  useEffect(() => {
-    let tempData = events;
-
-    if (searchKeyword) {
-      tempData = tempData.filter((item) =>
-        item.title.toLowerCase().includes(searchKeyword.toLowerCase())
-      );
-    }
-
-    if (selectedYear) {
-      tempData = tempData.filter(
-        (item) => new Date(item.start).getFullYear() === parseInt(selectedYear)
-      );
-    }
-
-    if (selectedStatus) {
-      tempData = tempData.filter((item) => item.category === selectedStatus);
-    }
-
-    if (selectedJenis) {
-      tempData = tempData.filter(
-        (item) => item.idJenisKegiatan === parseInt(selectedJenis)
-      );
-    }
-
-    setFilteredData(tempData);
-  }, [searchKeyword, selectedJenis, selectedYear, selectedStatus, events]);
+  }, [searchKeyword, selectedJenis, selectedYear, selectedStatus, pageCurrent]);
 
   const indexOfLastData = pageCurrent * pageSize;
   const indexOfFirstData = indexOfLastData - pageSize;
-  const currentData = filteredData.slice(indexOfFirstData, indexOfLastData);
+  const currentData = filteredData;
 
   const handlePageNavigation = (page) => {
     setPageCurrent(page);
@@ -323,7 +306,7 @@ export default function Read({ onChangePage }) {
             <Paging
               pageSize={pageSize}
               pageCurrent={pageCurrent}
-              totalData={filteredData.length}
+              totalData={totalData}
               navigation={handlePageNavigation}
             />
           </div>

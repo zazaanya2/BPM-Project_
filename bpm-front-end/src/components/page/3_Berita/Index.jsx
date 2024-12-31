@@ -22,6 +22,7 @@ export default function Index({ onChangePage }) {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedYear, setSelectedYear] = useState(""); // Tambahkan state untuk filter tahun
   const [pageCurrent, setPageCurrent] = useState(1);
+  const [totalData, setTotalData] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -47,7 +48,12 @@ export default function Index({ onChangePage }) {
         }
         const result = await useFetch(
           `${API_LINK}/MasterBerita/GetDataBerita`,
-          { param1: searchKeyword, param2: selectedYear },
+          {
+            param1: searchKeyword,
+            param2: selectedYear,
+            param3: pageSize,
+            param4: pageCurrent,
+          },
           "POST"
         );
 
@@ -70,6 +76,8 @@ export default function Index({ onChangePage }) {
               images: [],
             };
           }
+          setTotalData(item.TotalCount);
+
           if (item.fotoBerita) {
             acc[item.idBerita].images.push(item.fotoBerita);
           }
@@ -95,7 +103,7 @@ export default function Index({ onChangePage }) {
     };
 
     fetchBerita();
-  }, [searchKeyword, selectedYear]);
+  }, [searchKeyword, selectedYear, pageCurrent]);
 
   const highlightText = (text, keyword) => {
     if (!keyword) return text;
@@ -123,9 +131,8 @@ export default function Index({ onChangePage }) {
     return snippet + "...";
   };
 
-  const totalData = filteredData.length;
   const startIndex = (pageCurrent - 1) * pageSize;
-  const currentData = filteredData.slice(startIndex, startIndex + pageSize);
+  const currentData = filteredData;
 
   if (loading) return <Loading />;
   if (error) return <p>{error}</p>;
