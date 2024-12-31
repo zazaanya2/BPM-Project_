@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useFetch } from "../util/useFetch";
 import { API_LINK } from "../util/Constants";
 import Cookies from "js-cookie";
 import Icon from "../part/Icon";
 
 export default function NavItem() {
+  const navigate = useNavigate();
   const [menuItems, setMenuItems] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [openGrandchild, setOpenGrandchild] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [jumlahNotifikasi, setJumlahNotifikasi] = useState([]);
+
   let username = "";
   const cookie = Cookies.get("activeUser");
   if (cookie) username = JSON.parse(cookie).username;
+
+  const handleNavigation = (linkMenu, idMenu) => {
+    navigate(linkMenu, {
+      state: { idMenu },
+    });
+  };
 
   const toggleDropdown = (menuId) => {
     setOpenDropdown(openDropdown === menuId ? null : menuId);
@@ -32,7 +41,6 @@ export default function NavItem() {
 
   useEffect(() => {
     const activeUser = Cookies.get("activeUser");
-
     if (activeUser) {
       setIsLoggedIn(true);
     }
@@ -53,8 +61,6 @@ export default function NavItem() {
     fetchMenuItems();
   }, []);
 
-  const [jumlahNotifikasi, setJumlahNotifikasi] = useState([]);
-
   useEffect(() => {
     const fetchNotifikasi = async () => {
       try {
@@ -63,12 +69,10 @@ export default function NavItem() {
           { untuk: username },
           "POST"
         );
-
         if (data === "ERROR") {
           throw new Error("Gagal mengambil data");
         }
-
-        setJumlahNotifikasi(data[0].JumlahNotifikasiBelum || 0); // Safely access the count
+        setJumlahNotifikasi(data[0].JumlahNotifikasiBelum || 0);
       } catch (error) {
         console.error("Error fetching notifications:", error.message);
       }
@@ -104,7 +108,6 @@ export default function NavItem() {
             key={menu.idMenu}
             className={`nav-item ${menu.children.length > 0 ? "dropdown" : ""}`}
           >
-            {/* Tipe dropdown jika ada anak */}
             {menu.children.length > 0 ? (
               <>
                 <button
@@ -122,7 +125,6 @@ export default function NavItem() {
                           child.children.length > 0 ? "dropdown-submenu" : ""
                         }
                       >
-                        {/* Only make it a dropdown if there are grandchildren */}
                         {child.children.length > 0 ? (
                           <button
                             className="dropdown-item dropdown-toggle"
@@ -134,27 +136,30 @@ export default function NavItem() {
                             {child.namaMenu}
                           </button>
                         ) : (
-                          <Link
+                          <button
                             className="dropdown-item"
-                            to={child.linkMenu || "#"}
+                            onClick={() =>
+                              handleNavigation(child.linkMenu, child.idMenu)
+                            }
                           >
                             {child.namaMenu}
-                          </Link>
+                          </button>
                         )}
                         {openSubmenu === child.idMenu && (
                           <ul className="dropdown-menu">
                             {child.children.map((grandchild) => (
                               <li key={grandchild.idMenu}>
-                                <Link
+                                <button
                                   className="dropdown-item"
-                                  to={grandchild.linkMenu || "#"}
-                                  onClick={() => {
-                                    console.log(grandchild.linkMenu);
-                                    toggleGrandchild(grandchild.idMenu);
-                                  }}
+                                  onClick={() =>
+                                    handleNavigation(
+                                      grandchild.linkMenu,
+                                      grandchild.idMenu
+                                    )
+                                  }
                                 >
                                   {grandchild.namaMenu}
-                                </Link>
+                                </button>
                               </li>
                             ))}
                           </ul>
@@ -165,17 +170,21 @@ export default function NavItem() {
                 )}
               </>
             ) : (
-              // Tipe non-dropdown jika tidak ada anak
-              <Link className="nav-link" to={menu.linkMenu || "#"}>
+              <button
+                className="nav-link"
+                onClick={() => handleNavigation(menu.linkMenu, menu.idMenu)}
+              >
                 {menu.namaMenu}
-              </Link>
+              </button>
             )}
           </li>
         ))}
         <li className="nav-item ms-3">
           {isLoggedIn ? (
-            // Jika ada cookie, tampilkan ikon pengguna
-            <Link to="/profile" className="btn bg-white">
+            <button
+              className="btn bg-white"
+              onClick={() => handleNavigation("/profile", null)}
+            >
               <img
                 src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png"
                 alt="User Icon"
@@ -191,12 +200,14 @@ export default function NavItem() {
               >
                 {jumlahNotifikasi}
               </span>
-            </Link>
+            </button>
           ) : (
-            // Jika tidak ada cookie, tampilkan tombol masuk
-            <Link to="/login" className="btn bg-white">
+            <button
+              className="btn bg-white"
+              onClick={() => handleNavigation("/login", null)}
+            >
               Masuk
-            </Link>
+            </button>
           )}
         </li>
       </ul>
