@@ -38,8 +38,6 @@ export default function Read({ onChangePage }) {
           "POST"
         );
 
-        console.log(pageCurrent);
-        console.log(result);
         const groupedBerita = result.reduce((acc, item) => {
           if (!acc[item.idBerita]) {
             acc[item.idBerita] = {
@@ -122,7 +120,9 @@ export default function Read({ onChangePage }) {
 
         SweetAlert("Berhasil", "Berita berhasil dihapus", "success");
 
-        setData((prevData) => prevData.filter((item) => item.id !== id));
+        setFilteredData((prevData) =>
+          prevData.filter((item) => item.id !== id)
+        );
       } catch (err) {
         console.error(err);
         SweetAlert("Gagal", "Terjadi kesalahan saat menghapus berita", "error");
