@@ -1,5 +1,4 @@
 import React, { useState, useCallback, forwardRef } from "react";
-import { FILE_LINK } from "../util/Constants";
 
 const DocUpload = forwardRef(function DocUpload(
   {
@@ -162,7 +161,7 @@ const DocUpload = forwardRef(function DocUpload(
           <br />
           Berkas saat ini:{" "}
           <a
-            href={FILE_LINK + hasExisting}
+            href={hasExisting}
             className="text-decoration-none"
             target="_blank"
             rel="noopener noreferrer"

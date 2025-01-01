@@ -1,31 +1,30 @@
-import React, { useState } from "react";
-import Table from "../../../part/Table";
-import Paging from "../../../part/Paging";
-import PageTitleNav from "../../../part/PageTitleNav";
-import SearchField from "../../../part/SearchField";
-import Button from "../../../part/Button";
-import TextField from "../../../part/TextField";
+import React, { useEffect, useState } from "react";
+import Table from "../../part/Table";
+import Paging from "../../part/Paging";
+import PageTitleNav from "../../part/PageTitleNav";
+import Button from "../../part/Button";
+import { useLocation, useNavigate } from "react-router-dom";
+import Loading from "../../part/Loading";
+
+// Dynamically set title and breadcrumbs based on idMenu
+let title = "Hallo";
+let breadcrumbs = [];
 
 export default function Read({ onChangePage }) {
   const [pageSize] = useState(10);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const idMenu = location.state?.idMenu;
   const [pageCurrent, setPageCurrent] = useState(1);
+  const [loading, setLoading] = useState(true); // New loading state
 
   // Menambahkan data menjadi 10 item dengan URL gambar
   const data = [
     { Key: 1, JudulDokumen: "INSTRUMEN APS A" },
     { Key: 2, JudulDokumen: "INSTRUMEN APS B" },
-    {
-      Key: 3,
-      JudulDokumen: "INSTRUMEN APS C",
-    },
-    {
-      Key: 4,
-      JudulDokumen: "INSTRUMEN APS D",
-    },
-    {
-      Key: 5,
-      JudulDokumen: "INSTRUMEN APS E",
-    },
+    { Key: 3, JudulDokumen: "INSTRUMEN APS C" },
+    { Key: 4, JudulDokumen: "INSTRUMEN APS D" },
+    { Key: 5, JudulDokumen: "INSTRUMEN APS E" },
   ];
 
   const indexOfLastData = pageCurrent * pageSize;
@@ -36,15 +35,36 @@ export default function Read({ onChangePage }) {
     setPageCurrent(page);
   };
 
-  const title = "Instrumen APS";
-  const breadcrumbs = [
-    { label: "Instrumen APS", href: "/peraturan/aps" },
-    { label: "Dokumen Instrumen APS" },
-  ];
+  useEffect(() => {
+    if (idMenu === 39) {
+      title = "Dokumen Peraturan";
+      breadcrumbs = [
+        { label: "Peraturan", href: "/peraturan/kebijakan" },
+        { label: "Dokumen Kebijakan Peraturan" },
+      ];
+    } else if (idMenu === 40) {
+      title = "Dokumen Peraturan Eksternal";
+      breadcrumbs = [
+        { label: "Peraturan", href: "/peraturan/eksternal" },
+        { label: "Dokumen Kebijakan Eksternal" },
+      ];
+    } else if (idMenu === 41) {
+      title = "Instrumen APS";
+      breadcrumbs = [
+        { label: "Instrumen APS", href: "/peraturan/aps" },
+        { label: "Dokumen Instrumen APS" },
+      ];
+    }
+
+    // Set loading to false once idMenu is determined
+    setLoading(false);
+  }, [idMenu]);
 
   const handleEdit = (item) => {
-    onChangePage("edit", { state: { editData: item } });
+    onChangePage("edit", { editData: item });
   };
+
+  if (loading) return <Loading />;
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -54,7 +74,7 @@ export default function Read({ onChangePage }) {
             <PageTitleNav
               title={title}
               breadcrumbs={breadcrumbs}
-              onClick={() => onChangePage("index")}
+              onClick={() => onChangePage("index", { idMenu: idMenu })}
             />
           </div>
           <div className="p-3 m-5 mt-2 mb-0" style={{ marginLeft: "50px" }}>
@@ -62,7 +82,7 @@ export default function Read({ onChangePage }) {
               iconName="add"
               classType="primary"
               label="Tambah Data"
-              onClick={() => onChangePage("add")}
+              onClick={() => onChangePage("add", { idMenu: idMenu })}
             />
           </div>
           <div className="table-container bg-white p-3 m-5 mt-0 rounded">
