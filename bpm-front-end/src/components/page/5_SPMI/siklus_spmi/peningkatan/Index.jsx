@@ -7,6 +7,7 @@ import Paging from "../../../../part/Paging";
 import gedung from "../../../../../assets/element/gedung-astra.png";
 import Table from "../../../../part/Table";
 import Modal from "../../../../part/Modal";
+import ImagesCarousel from "../../../../part/ImagesCarousel";
 import pdf from "../../MI_PRG4_M4_P2_XXX.pdf";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -32,6 +33,8 @@ const data = [
     Bukti: "Revisi prosedur pelaksanaan kegiatan pengabdian",
   }
 ];
+
+const images = [];
 
 export default function Index({ onChangePage }) {
   const navigate = useNavigate();
@@ -74,79 +77,15 @@ export default function Index({ onChangePage }) {
           <div className="d-flex flex-column">
             <div className="container mb-3">
               {/* CAROUSEL */}
-              <div
-                id="carouselExampleAutoplaying"
-                className="carousel slide"
-                data-bs-ride="carousel"
-              >
-                <button
-                  className="carousel-control-prev"
-                  type="button"
-                  data-bs-target="#carouselExampleAutoplaying"
-                  data-bs-slide="prev"
-                >
-                  <div className="carousel-control-left">
-                    <span
-                      className="carousel-control-prev-icon mt-2"
-                      aria-hidden="true"
-                    ></span>
-                    <span className="visually-hidden">Previous</span>
-                  </div>
-                </button>
-                <div className="carousel-inner">
-                  <div className="carousel-item active">
-                    <img
-                      src={Mahasiswa}
-                      className="d-block w-100 carousel-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="carousel-item ">
-                    <img
-                      src={gedung}
-                      className="d-block w-100 carousel-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="carousel-item">
-                    <img
-                      src={Gedung}
-                      className="d-block w-100 carousel-img"
-                      alt="..."
-                    />
-                  </div>
-                </div>
-
-                <button
-                  className="carousel-control-next"
-                  type="button"
-                  data-bs-target="#carouselExampleAutoplaying"
-                  data-bs-slide="next"
-                >
-                  <div className="carousel-control-right">
-                    <span
-                      className="carousel-control-next-icon mt-2"
-                      aria-hidden="true"
-                    ></span>
-                    <span className="visually-hidden">Next</span>
-                  </div>
-                </button>
-              </div>
+              <ImagesCarousel images={images} />
 
               <div className="mt-5">
                 <div className="d-flex justify-content-between align-items-center">
                   <h1
                     style={{ color: "#2654A1", margin: "0", fontWeight: "700" }}
                   >
-                    {title}
-                  </h1>
-                  <Button
-                    iconName="edit"
-                    classType="primary"
-                    label="Edit Konten"
-                    // onClick={() => navigate(menuData.root+'/editkonten', {root: menuData.root})}
-                    onClick={() => onChangePage("editKonten")}
-                  />
+                    {title ? title : "Page Title"}
+                    </h1>
                 </div>
 
                 <nav className="ms-1">

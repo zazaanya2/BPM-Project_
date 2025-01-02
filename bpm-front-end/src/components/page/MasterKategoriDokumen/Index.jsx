@@ -1,28 +1,28 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
-import Table from "../../../part/Table";
-import Paging from "../../../part/Paging";
-import SearchField from "../../../part/SearchField";
-import Button from "../../../part/Button";
-import Filter from "../../../part/Filter";
-import Modal from "../../../part/Modal";
-import DetailData from "../../../part/DetailData";
+import Table from "../../part/Table";
+import Paging from "../../part/Paging";
+import SearchField from "../../part/SearchField";
+import Button from "../../part/Button";
+import Filter from "../../part/Filter";
+import Modal from "../../part/Modal";
+import DetailData from "../../part/DetailData";
 import { SyncLoader } from "react-spinners";
-import { useIsMobile } from "../../../util/useIsMobile";
-import Breadcrumbs from "../../../part/Breadcrumbs";
-import HeaderText from "../../../part/HeaderText";
+import { useIsMobile } from "../../util/useIsMobile";
+import Breadcrumbs from "../../part/Breadcrumbs";
+import HeaderText from "../../part/HeaderText";
 import { format } from "date-fns";
 import { el, id } from "date-fns/locale";
-import { API_LINK } from "../../../util/Constants";
-import { useFetch } from "../../../util/useFetch";
-import DropDown from "../../../part/Dropdown";
-import Loading from "../../../part/Loading";
+import { API_LINK } from "../../util/Constants";
+import { useFetch } from "../../util/useFetch";
+import DropDown from "../../part/Dropdown";
+import Loading from "../../part/Loading";
 
 const data = [
   {
     idDok: 1,
     men_id: 5,
-    judulDok: "Document Title 1",
+    namaKdo: "Document Title 1",
     dok_tgl_unduh: "2024-04-30 00:00:00",
     dok_tgl_akhir: "2020-03-28",
     dok_file: "file_1.pdf",
@@ -42,7 +42,7 @@ const data = [
   {
     idDok: 2,
     men_id: 8,
-    judulDok: "Document Title 2",
+    namaKdo: "Document Title 2",
     dok_tgl_unduh: "2024-06-12 00:00:00",
     dok_tgl_akhir: "2020-01-11",
     dok_file: "file_2.pdf",
@@ -62,7 +62,7 @@ const data = [
   {
     idDok: 3,
     men_id: 3,
-    judulDok: "Document Title 3",
+    namaKdo: "Document Title 3",
     dok_tgl_unduh: "2024-07-06 00:00:00",
     dok_tgl_akhir: "2022-11-03",
     dok_file: "file_3.pdf",
@@ -82,7 +82,7 @@ const data = [
   {
     idDok: 4,
     men_id: 3,
-    judulDok: "Document Title 4",
+    namaKdo: "Document Title 4",
     dok_tgl_unduh: "2023-07-28 00:00:00",
     dok_tgl_akhir: "2022-10-20",
     dok_file: "file_4.pdf",
@@ -102,7 +102,7 @@ const data = [
   {
     idDok: 5,
     men_id: 7,
-    judulDok: "Document Title 5",
+    namaKdo: "Document Title 5",
     dok_tgl_unduh: "2020-12-04 00:00:00",
     dok_tgl_akhir: "2022-08-10",
     dok_file: "file_5.pdf",
@@ -122,7 +122,7 @@ const data = [
   {
     idDok: 6,
     men_id: 3,
-    judulDok: "Document Title 6",
+    namaKdo: "Document Title 6",
     dok_tgl_unduh: "2022-10-15 00:00:00",
     dok_tgl_akhir: "2020-06-26",
     dok_file: "file_6.pdf",
@@ -142,7 +142,7 @@ const data = [
   {
     idDok: 7,
     men_id: 7,
-    judulDok: "Document Title 7",
+    namaKdo: "Document Title 7",
     dok_tgl_unduh: "2023-12-23 00:00:00",
     dok_tgl_akhir: "2020-10-21",
     dok_file: "file_7.pdf",
@@ -162,7 +162,7 @@ const data = [
   {
     idDok: 8,
     men_id: 9,
-    judulDok: "Document Title 8",
+    namaKdo: "Document Title 8",
     dok_tgl_unduh: "2023-10-21 00:00:00",
     dok_tgl_akhir: "2020-10-16",
     dok_file: "file_8.pdf",
@@ -182,7 +182,7 @@ const data = [
   {
     idDok: 9,
     men_id: 3,
-    judulDok: "Document Title 9",
+    namaKdo: "Document Title 9",
     dok_tgl_unduh: "2023-06-16 00:00:00",
     dok_tgl_akhir: "2024-01-17",
     dok_file: "file_9.pdf",
@@ -202,7 +202,7 @@ const data = [
   {
     idDok: 10,
     men_id: 8,
-    judulDok: "Document Title 10",
+    namaKdo: "Document Title 10",
     dok_tgl_unduh: "2023-05-06 00:00:00",
     dok_tgl_akhir: "2024-01-26",
     dok_file: "file_10.pdf",
@@ -222,7 +222,7 @@ const data = [
   {
     idDok: 11,
     men_id: 8,
-    judulDok: "Document Title 11",
+    namaKdo: "Document Title 11",
     dok_tgl_unduh: "2020-06-26 00:00:00",
     dok_tgl_akhir: "2021-09-04",
     dok_file: "file_11.pdf",
@@ -242,7 +242,7 @@ const data = [
   {
     idDok: 12,
     men_id: 2,
-    judulDok: "Document Title 12",
+    namaKdo: "Document Title 12",
     dok_tgl_unduh: "2024-03-21 00:00:00",
     dok_tgl_akhir: "2024-09-01",
     dok_file: "file_12.pdf",
@@ -262,7 +262,7 @@ const data = [
   {
     idDok: 13,
     men_id: 5,
-    judulDok: "Document Title 13",
+    namaKdo: "Document Title 13",
     dok_tgl_unduh: "2023-11-25 00:00:00",
     dok_tgl_akhir: "2020-09-05",
     dok_file: "file_13.pdf",
@@ -282,7 +282,7 @@ const data = [
   {
     idDok: 14,
     men_id: 9,
-    judulDok: "Document Title 14",
+    namaKdo: "Document Title 14",
     dok_tgl_unduh: "2021-08-10 00:00:00",
     dok_tgl_akhir: "2024-12-01",
     dok_file: "file_14.pdf",
@@ -302,7 +302,7 @@ const data = [
   {
     idDok: 15,
     men_id: 1,
-    judulDok: "Document Title 15",
+    namaKdo: "Document Title 15",
     dok_tgl_unduh: "2022-07-09 00:00:00",
     dok_tgl_akhir: "2020-05-27",
     dok_file: "file_15.pdf",
@@ -322,7 +322,7 @@ const data = [
   {
     idDok: 16,
     men_id: 10,
-    judulDok: "Document Title 16",
+    namaKdo: "Document Title 16",
     dok_tgl_unduh: "2023-03-18 00:00:00",
     dok_tgl_akhir: "2022-06-01",
     dok_file: "file_16.pdf",
@@ -342,7 +342,7 @@ const data = [
   {
     idDok: 17,
     men_id: 1,
-    judulDok: "Document Title 17",
+    namaKdo: "Document Title 17",
     dok_tgl_unduh: "2023-03-18 00:00:00",
     dok_tgl_akhir: "2021-07-29",
     dok_file: "file_17.pdf",
@@ -362,7 +362,7 @@ const data = [
   {
     idDok: 18,
     men_id: 10,
-    judulDok: "Document Title 18",
+    namaKdo: "Document Title 18",
     dok_tgl_unduh: "2023-08-20 00:00:00",
     dok_tgl_akhir: "2021-08-24",
     dok_file: "file_18.pdf",
@@ -382,7 +382,7 @@ const data = [
   {
     idDok: 19,
     men_id: 1,
-    judulDok: "Document Title 19",
+    namaKdo: "Document Title 19",
     dok_tgl_unduh: "2022-05-29 00:00:00",
     dok_tgl_akhir: "2024-06-22",
     dok_file: "file_19.pdf",
@@ -402,7 +402,7 @@ const data = [
   {
     idDok: 20,
     men_id: 9,
-    judulDok: "Document Title 20",
+    namaKdo: "Document Title 20",
     dok_tgl_unduh: "2022-05-13 00:00:00",
     dok_tgl_akhir: "2023-06-18",
     dok_file: "file_20.pdf",
@@ -427,11 +427,14 @@ export default function Index({ onChangePage }) {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [modalType, setModalType] = useState(""); // "add", "edit", "detail", "preview"
   const [detail, setDetail] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
   const [error, setError] = useState(null);
-  const [sortFilter, setSortFilter] = useState("[judulDok] ASC");
-  const [breadcrumbs, setBreadcrumbs] = useState([]);
+  const [sortFilter, setSortFilter] = useState("[namaKdo] ASC");
+  const [breadcrumbs, setBreadcrumbs] = useState([
+    { label: "Master" },
+    { label: "Kategori Dokumen" },
+  ]);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -440,72 +443,37 @@ export default function Index({ onChangePage }) {
   const idData = useRef();
   const isMobile = useIsMobile();
 
-  const title = jenis.toUpperCase();
-  // breadcrumbs.push({
-  //   label: title.charAt(0).toUpperCase() + title.slice(1).toLowerCase(),
-  // });
+  const title = "Kategori Dokumen";
 
   const arrData = [
-    { Value: "[judulDok] ASC", Text: "Judul Dokumen [↑]" },
-    { Value: "[judulDok] DESC", Text: "Judul Dokumen [↓]" },
+    { Value: "[namaKdo] ASC", Text: "Judul Dokumen [↑]" },
+    { Value: "[namaKdo] DESC", Text: "Judul Dokumen [↓]" },
   ];
 
   useEffect(() => {
-    if (!location.state?.idData) return;
-    idData.current = location.state?.idData;
-
-    let tempBradcrumps = [{ label: "SPMI" }, { label: "Dokumen SPMI" }];
-
-    if (
-      !tempBradcrumps.some(
-        (item) =>
-          item.label ===
-          title.charAt(0).toUpperCase() + title.slice(1).toLowerCase()
-      )
-    ) {
-      tempBradcrumps.push({
-        label: title.charAt(0).toUpperCase() + title.slice(1).toLowerCase(),
-      });
-    }
-    console.log(tempBradcrumps);
-
-    setBreadcrumbs(tempBradcrumps);
-    console.log(breadcrumbs);
-
     const fetchDokumen = async () => {
-      const body = {
-        searchDok: searchKeyword,
-        statusDok: "Aktif",
-        orderBy: "judulDok ASC",
-        idKdo: idData.current,
-        tglDok: "",
-      };
       setLoading(true);
       const result = await useFetch(
-        `${API_LINK}/MasterDokumen/GetDataDokumen`,
-        body,
+        `${API_LINK}/MasterKategoriDokumen/GetDataKategoriDokumen`,
+        {},
         "POST"
       ).finally(() => setLoading(false));
-
-      console.log(result);
-
       if (result === "ERROR" || result === null || result.length === 0) {
         setItems([]);
       } else {
-        const dokumenArray = Object.values(result);
-        setItems(dokumenArray);
+        const kategoriArray = Object.values(result);
+        setItems(kategoriArray);
       }
     };
 
     fetchDokumen();
-  }, [location.state?.idData, title]);
+  }, []);
 
   const filteredData = useMemo(() => {
     if (items.length == 0) return [];
-    // console.log(items);
     return items
       .filter((item) =>
-        item.judulDok.toLowerCase().includes(searchKeyword.toLowerCase())
+        item.namaKdo.toLowerCase().includes(searchKeyword.toLowerCase())
       )
       .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
   }, [searchKeyword, items]);
@@ -528,22 +496,22 @@ export default function Index({ onChangePage }) {
   };
 
   const handleDetail = (item) => {
-    const selected = items.find((obj) => obj.idDok == item.Key);
+    const selected = items.find((obj) => obj.idKdo == item.Key);
     handleOpenModal("detail", selected);
   };
 
   const handleEdit = (item) => {
-    onChangePage("edit", breadcrumbs, item.Key);
+    onChangePage(item.Type === "Header" ? "edit" : "editChild", breadcrumbs, item.Key);
   };
 
   const handleDelete = (item) => {
     const selected = items.find((obj) => obj.idDok == item.Key);
-    console.log(selected.judulDok + " deleted");
+    console.log(selected.namaKdo + " deleted");
   };
 
   const handleDownload = (item) => {
     const selected = items.find((obj) => obj.idDok == item.Key);
-    console.log(selected.judulDok + " downloaded");
+    console.log(selected.namaKdo + " downloaded");
   };
 
   return (
@@ -558,10 +526,36 @@ export default function Index({ onChangePage }) {
           <div className="mt-4">
             <Button
               iconName="add"
-              classType="primary"
+              classType="primary dropdown-toggle px-3 border-start"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="outside"
               label="Tambah Data"
-              onClick={() => onChangePage("add", breadcrumbs)}
             />
+            <div className="dropdown-menu">
+              {["Kategori Header", "Kategori Child"].map((label, index) => (
+                <Button
+                  key={index}
+                  type="button"
+                  label={label}
+                  width="100%"
+                  boxShadow="0px 4px 6px rgba(0, 0, 0, 0)"
+                  onClick={() => onChangePage(index === 0 ? "add" : "addChild", breadcrumbs)}
+                  style={{
+                    color: "#2654A1",
+                    textAlign: "left",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = "#2654A1";
+                    e.target.style.color = "white";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = "white";
+                    e.target.style.color = "#2654A1";
+                  }}
+                />
+              ))}
+            </div>
             <div className="row mt-3">
               <div className="col-lg-10">
                 <SearchField onChange={setSearchKeyword} />
@@ -572,7 +566,7 @@ export default function Index({ onChangePage }) {
                     arrData={arrData}
                     type="none"
                     label="Urut Berdasarkan"
-                    defaultValue="[judulDok] ASC"
+                    defaultValue="[namaKdo] ASC"
                     value={sortFilter}
                     onChange={(e) => setSortFilter(e.target.value)}
                   />
@@ -587,25 +581,21 @@ export default function Index({ onChangePage }) {
             ) : (
               <div>
                 <Table
-                  arrHeader={["No", "Judul Dokumen"]}
+                  arrHeader={["No", "Nama", "Path", "Type"]}
                   data={currentData.map((item, index) => ({
-                    Key: item.idDok,
+                    Key: item.idKdo,
                     No: (pageCurrent - 1) * pageSize + index + 1,
-                    "Judul Dokumen": item.judulDok,
+                    Nama: item.namaKdo,
+                    Path: item.pathKdo,
+                    Type: item.idMen == null ? "Child" : "Header"
                   }))}
                   actions={[
-                    "Preview",
                     "Detail",
                     "Edit",
-                    "Print",
                     "Delete",
-                    "PrintHistory",
-                    "UpdateHistory",
                   ]}
-                  onPreview={handlePreview}
                   onEdit={handleEdit}
                   onDetail={handleDetail}
-                  onPrint={handleDownload}
                   onDelete={handleDelete}
                 />
                 <Paging
@@ -624,7 +614,7 @@ export default function Index({ onChangePage }) {
         <Modal
           ref={ModalRef}
           title="Detail Dokumen"
-          size="full"
+          size="medium"
           Button2={
             <Button
               classType="secondary"
@@ -637,39 +627,20 @@ export default function Index({ onChangePage }) {
             {/* <HeaderText label="Detail Dokumen" /> */}
             <div className="row">
               <div className="col-lg-12 col-md-12">
-                <DetailData label="Judul Dokumen" isi={detail.judulDok} />
+                <DetailData label="Nama Kategori Dokumen" isi={detail.namaKdo} />
+                <DetailData label="Deskripsi Kategori Dokumen" isi={detail.deskripsiKdo} />
               </div>
               <div className="col-lg-6 col-md-6">
-                <DetailData label="Nomor Dokumen" isi={detail.noDok} />
-                <DetailData label="Jenis Dokumen" isi={detail.controlDok} />
-              </div>
-              <div className="col-lg-6 col-md-6">
-                <DetailData
-                  label="Tanggal Berlaku"
-                  isi={new Date(detail.tglDok).toLocaleDateString("id-ID", {
-                    weekday: "long",
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                />
-                <DetailData
-                  label="Tanggal Kadaluarsa"
-                  isi={new Date(detail.expDok).toLocaleDateString("id-ID", {
-                    weekday: "long",
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                />
+                <DetailData label="Parent Kategori Dokumen" isi={detail.parentKdo} />
+                <DetailData label="Urutan Kategori Dokumen" isi={detail.urutanKdo} />
               </div>
             </div>
             <div className="row">
               <div className="col-lg-6 col-md-6">
-                <DetailData label="Dibuat Oleh" isi={detail.createdBy} />
+                <DetailData label="Dibuat Oleh" isi={detail.createdByKdo} />
                 <DetailData
                   label="Dibuat Tanggal"
-                  isi={new Date(detail.createdDate).toLocaleDateString(
+                  isi={new Date(detail.createdDateKdo).toLocaleDateString(
                     "id-ID",
                     {
                       weekday: "long",
@@ -681,10 +652,10 @@ export default function Index({ onChangePage }) {
                 />
               </div>
               <div className="col-lg-6 col-md-6">
-                <DetailData label="Dimodifikasi Oleh" isi={detail.modifiedBy} />
+                <DetailData label="Dimodifikasi Oleh" isi={detail.modifiedByKdo} />
                 <DetailData
                   label="Dimodifikasi Tanggal"
-                  isi={new Date(detail.modifiedDate).toLocaleDateString(
+                  isi={new Date(detail.modifiedDateKdo).toLocaleDateString(
                     "id-ID",
                     {
                       weekday: "long",
@@ -695,49 +666,6 @@ export default function Index({ onChangePage }) {
                   )}
                 />
               </div>
-            </div>
-          </div>
-        </Modal>
-      )}
-      {modalType === "preview" && (
-        <Modal
-          ref={ModalRef}
-          title="Preview Dokumen"
-          size="full"
-          Button2={
-            <Button
-              classType="secondary"
-              label="Tutup"
-              onClick={() => ModalRef.current.close()}
-            />
-          }
-        >
-          <div className="p-3 mt-0 bg-white rounded shadow">
-            <HeaderText label="Preview Dokumen" />
-            <div style={{ width: "90vh", height: "50vh" }}>
-              {loading == true ? (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "white",
-                    minHeight: "50vh",
-                    margin: 0,
-                  }}
-                >
-                  <SyncLoader color="#0d6efd" loading={true} />
-                </div>
-              ) : (
-                <embed
-                  src={pdf}
-                  width="100%"
-                  height="100%"
-                  type="application/pdf"
-                  title="PDF Preview"
-                  onLoad={() => setLoading(false)}
-                />
-              )}
             </div>
           </div>
         </Modal>

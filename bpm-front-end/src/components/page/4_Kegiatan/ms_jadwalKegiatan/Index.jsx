@@ -42,7 +42,7 @@ export default function Index({ onChangePage }) {
         JSON.stringify({}),
         "POST"
       );
-
+      console.log(data);
       if (data === "ERROR" || !Array.isArray(data)) {
         throw new Error("Invalid data format or no data returned");
       }
@@ -63,7 +63,7 @@ export default function Index({ onChangePage }) {
       });
       setEvents(formattedEvents);
     } catch (error) {
-      console.error("Error fetching events:", error);
+      // console.error("Error fetching events:", error);
     } finally {
       setLoading(false);
     }

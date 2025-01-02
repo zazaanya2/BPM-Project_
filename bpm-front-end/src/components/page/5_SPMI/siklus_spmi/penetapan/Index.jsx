@@ -15,6 +15,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import DetailData from "../../../../part/DetailData";
 import SweetAlert from "../../../../util/SweetAlert";
 import { SyncLoader } from "react-spinners";
+import ImagesCarousel from "../../../../part/ImagesCarousel";
+import TabContainer from "./Tab";
+import DropDown from "../../../../part/Dropdown"; 
+
+const arrData = [
+  { Value: "Controlled Copy", Text: "Controlled Copy" },
+  { Value: "Uncontrolled Copy", Text: "Uncontrolled Copy" },
+];
 
 export default function Index({ onChangePage }) {
   const data = [
@@ -430,6 +438,7 @@ export default function Index({ onChangePage }) {
   const [sortedData, setSortedData] = useState(data);
   const [isLoading, setIsLoading] = useState(true);
 
+  const images = [];
 
   const uniqueDokRefs = data
     .filter(
@@ -502,6 +511,11 @@ export default function Index({ onChangePage }) {
 
   const [pageSize] = useState(10);
   const [pageCurrent, setPageCurrent] = useState(1);
+  const tabs = Array.from({ length: 10 }, (_, i) => ({
+    id: `tab${i + 1}`,
+    title: `Tab Lorem Ipsum Dolor sit Amet Condectur Idcio  ${i + 1}`,
+    content: <p>Content for Tab {i + 1}</p>,
+  }));
 
   const title = "Penetapan";
   const breadcrumbs = [{ label: "Siklus SPMI" }, { label: "Penetapan" }];
@@ -520,79 +534,15 @@ export default function Index({ onChangePage }) {
           <div className="d-flex flex-column">
             <div className="container mb-3">
               {/* CAROUSEL */}
-              <div
-                id="carouselExampleAutoplaying"
-                className="carousel slide"
-                data-bs-ride="carousel"
-              >
-                <button
-                  className="carousel-control-prev"
-                  type="button"
-                  data-bs-target="#carouselExampleAutoplaying"
-                  data-bs-slide="prev"
-                >
-                  <div className="carousel-control-left">
-                    <span
-                      className="carousel-control-prev-icon mt-2"
-                      aria-hidden="true"
-                    ></span>
-                    <span className="visually-hidden">Previous</span>
-                  </div>
-                </button>
-                <div className="carousel-inner">
-                  <div className="carousel-item active">
-                    <img
-                      src={Mahasiswa}
-                      className="d-block w-100 carousel-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="carousel-item ">
-                    <img
-                      src={gedung}
-                      className="d-block w-100 carousel-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="carousel-item">
-                    <img
-                      src={Gedung}
-                      className="d-block w-100 carousel-img"
-                      alt="..."
-                    />
-                  </div>
-                </div>
-
-                <button
-                  className="carousel-control-next"
-                  type="button"
-                  data-bs-target="#carouselExampleAutoplaying"
-                  data-bs-slide="next"
-                >
-                  <div className="carousel-control-right">
-                    <span
-                      className="carousel-control-next-icon mt-2"
-                      aria-hidden="true"
-                    ></span>
-                    <span className="visually-hidden">Next</span>
-                  </div>
-                </button>
-              </div>
+              <ImagesCarousel images={images} />
 
               <div className="mt-5">
                 <div className="d-flex justify-content-between align-items-center">
                   <h1
                     style={{ color: "#2654A1", margin: "0", fontWeight: "700" }}
                   >
-                    {title}
-                  </h1>
-                  <Button
-                    iconName="edit"
-                    classType="primary"
-                    label="Edit Konten"
-                    // onClick={() => navigate(menuData.root+'/editkonten', {root: menuData.root})}
-                    onClick={() => onChangePage("editKonten")}
-                  />
+                    {title ? title : "Page Title"}
+                    </h1>
                 </div>
 
                 <nav className="ms-1">
@@ -638,11 +588,16 @@ export default function Index({ onChangePage }) {
 
               <div className="container shadow p-3 mt-5 mb-5 bg-white rounded">
                 <div className="row">
-                  <div className="col-lg-2 px-3">
+                  {/* <div className="container">
+                    <TabContainer tabs={tabs} />
+                  </div> */}
+                  <div className="col-lg-2">
                     <div
-                      className="row"
+                      className="row px-2"
                       style={{ overflow: "auto", maxHeight: "500px" }}
                     >
+                      <button className="btn btn-success mb-3">Tes Header</button>
+                      <hr />
                       {uniqueDokRefs.map((item) => (
                         <button
                           key={item.dok_ref}
@@ -670,7 +625,7 @@ export default function Index({ onChangePage }) {
                         {selectedDokRef.dok_ref_name}
                       </h3>
                     </div>
-                    <hr />
+                    {/* <hr /> */}
                     <div className="table-container bg-white mt-0 rounded">
                       <div className={isMobile ? "mb-3" : "row"}>
                         <div className="col-12 d-flex flex-wrap align-items-center gap-1">
@@ -720,14 +675,10 @@ export default function Index({ onChangePage }) {
                       </div>
                       <Table
                         arrHeader={["No", "Judul Dokumen"]}
-                        headerToDataMap={{
-                          No: "No",
-                          "Judul Dokumen": "JudulDokumen",
-                        }}
                         data={sortedData.map((item, index) => ({
                           key: item.dok_id,
                           No: indexOfFirstData + index + 1,
-                          JudulDokumen: item.dok_judul,
+                          "Judul Dokumen": item.dok_judul,
                         }))}
                         actions={[
                           "Preview",
@@ -783,7 +734,7 @@ export default function Index({ onChangePage }) {
               />
             }
           >
-            <div className="p-5 mt-0 bg-white rounded shadow"  >
+            <div className="p-5 mt-0 bg-white rounded shadow">
               {/* <HeaderText label="Detail Dokumen" /> */}
               <div className="row">
                 <div className="col-lg-12 col-md-12">
@@ -875,14 +826,16 @@ export default function Index({ onChangePage }) {
               <HeaderText label="Preview Dokumen" />
               <div style={{ width: "90vh", height: "50vh" }}>
                 {isLoading == true ? (
-                  <div style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center", 
-                    backgroundColor: "white", 
-                    minHeight: "50vh",
-                    margin: 0,
-                  }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "white",
+                      minHeight: "50vh",
+                      margin: 0,
+                    }}
+                  >
                     <SyncLoader color="#0d6efd" loading={true} />
                   </div>
                 ) : (

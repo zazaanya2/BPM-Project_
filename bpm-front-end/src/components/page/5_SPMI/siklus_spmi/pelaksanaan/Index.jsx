@@ -15,6 +15,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import SweetAlert from "../../../../util/SweetAlert";
 import { SyncLoader } from "react-spinners";
 import DetailData from "../../../../part/DetailData";
+import ImagesCarousel from "../../../../part/ImagesCarousel";
 
 export default function Index({ onChangePage }) {
   const data = [
@@ -425,6 +426,8 @@ export default function Index({ onChangePage }) {
     },
   ];
 
+  const images = [];
+
   const navigate = useNavigate();
   const ModalRef = useRef();
   const [detail, setDetail] = useState(null);
@@ -524,79 +527,15 @@ export default function Index({ onChangePage }) {
           <div className="d-flex flex-column">
             <div className="container mb-3">
               {/* CAROUSEL */}
-              <div
-                id="carouselExampleAutoplaying"
-                className="carousel slide"
-                data-bs-ride="carousel"
-              >
-                <button
-                  className="carousel-control-prev"
-                  type="button"
-                  data-bs-target="#carouselExampleAutoplaying"
-                  data-bs-slide="prev"
-                >
-                  <div className="carousel-control-left">
-                    <span
-                      className="carousel-control-prev-icon mt-2"
-                      aria-hidden="true"
-                    ></span>
-                    <span className="visually-hidden">Previous</span>
-                  </div>
-                </button>
-                <div className="carousel-inner">
-                  <div className="carousel-item active">
-                    <img
-                      src={Mahasiswa}
-                      className="d-block w-100 carousel-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="carousel-item ">
-                    <img
-                      src={gedung}
-                      className="d-block w-100 carousel-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="carousel-item">
-                    <img
-                      src={Gedung}
-                      className="d-block w-100 carousel-img"
-                      alt="..."
-                    />
-                  </div>
-                </div>
-
-                <button
-                  className="carousel-control-next"
-                  type="button"
-                  data-bs-target="#carouselExampleAutoplaying"
-                  data-bs-slide="next"
-                >
-                  <div className="carousel-control-right">
-                    <span
-                      className="carousel-control-next-icon mt-2"
-                      aria-hidden="true"
-                    ></span>
-                    <span className="visually-hidden">Next</span>
-                  </div>
-                </button>
-              </div>
+              <ImagesCarousel images={images} />
 
               <div className="mt-5">
                 <div className="d-flex justify-content-between align-items-center">
                   <h1
                     style={{ color: "#2654A1", margin: "0", fontWeight: "700" }}
                   >
-                    {title}
-                  </h1>
-                  <Button
-                    iconName="edit"
-                    classType="primary"
-                    label="Edit Konten"
-                    // onClick={() => navigate(menuData.root+'/editkonten', {root: menuData.root})}
-                    onClick={() => onChangePage("editKonten")}
-                  />
+                    {title ? title : "Page Title"}
+                    </h1>
                 </div>
 
                 <nav className="ms-1">
@@ -670,12 +609,11 @@ export default function Index({ onChangePage }) {
                     </div>
                   </div>
                   <div className="col-lg-10">
-                    <div className="d-flex gap-3 p-2" style={{ overflow:"auto", maxWidth: 'cover' }}>
+                    {/* <div className="d-flex gap-3 p-2" style={{ overflow:"auto", maxWidth: 'cover' }}>
                       <button className="btn btn-success shadow">Standar Pendidikan</button>
                       <button className="btn shadow">Standar Penelitian</button>
                       <button className="btn shadow">Standar Pengabdian Masyarakat</button>
-                    </div>
-                    <hr />
+                    </div> */}
                     <div className="text-center">
                       <h3
                         style={{
@@ -687,7 +625,6 @@ export default function Index({ onChangePage }) {
                         {selectedDokRef.dok_ref_name}
                       </h3>
                     </div>
-                    <hr />
                     <div className="table-container bg-white mt-0 rounded">
                       <div className={isMobile ? "mb-3" : "row"}>
                         <div className="col-12 d-flex flex-wrap align-items-center gap-1">

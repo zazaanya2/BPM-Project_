@@ -12,22 +12,31 @@ import FileUpload from "../../../part/FileUpload";
 import { useIsMobile } from "../../../util/useIsMobile";
 import { API_LINK } from "../../../util/Constants";
 import { useFetch } from "../../../util/useFetch";
+import Loading from "../../../part/Loading";
+import moment from "moment";
 
 const arrData = [
   { Value: "Controlled Copy", Text: "Controlled Copy" },
   { Value: "Uncontrolled Copy", Text: "Uncontrolled Copy" },
 ];
-export default function Add({ onChangePage, breadcrumbs }) {
+export default function Edit({ onChangePage, breadcrumbs, idData }) {
   const isMobile = useIsMobile();
-  const title = "Tambah Data";
+  const title = "Edit Data";
+  const [loading, setLoading] = useState(true);
+
+  console.log(idData);
 
   const [file, setFile] = useState(null);
   const [formData, setFormData] = useState({
+    idKdo: 4,
     judulDok: "",
     nomorDok: "",
     tanggalDok: "",
     kadaluarsaDok: "",
+    fileDok: "",
     jenisDok: "",
+    prosDok: null,
+    createdBy: "User404",
   });
 
   const judulDokRef = useRef();
@@ -49,6 +58,42 @@ export default function Add({ onChangePage, breadcrumbs }) {
     setFile(updatedFiles);
     console.log(file);
   };
+
+  useEffect(() => {
+    const fetchDokumenById = async () => {
+      const body = {
+        idData: idData,
+      };
+      setLoading(true);
+      const result = await useFetch(
+        `${API_LINK}/MasterDokumen/GetDataDokumenById`,
+        body,
+        "POST"
+      ).finally(() => setLoading(false));
+
+      if (result === "ERROR" || result === null || result.length === 0) {
+        setFormData(null);
+      } else {
+        console.log(result);
+        const dokumenArray = Object.values(result);
+        setFormData({
+          idKdo: 4,
+          judulDok: dokumenArray[0].judulDok,
+          nomorDok: dokumenArray[0].noDok,
+          tanggalDok: moment(dokumenArray[0].tanggalDok).format("YYYY-MM-DD"),
+          kadaluarsaDok: moment(dokumenArray[0].kadaluarsaDok).format(
+            "YYYY-MM-DD"
+          ),
+          fileDok: dokumenArray[0].fileDok,
+          jenisDok: dokumenArray[0].jenisDok,
+          prosDok: null,
+          createdBy: dokumenArray[0].createdBy,
+        });
+      }
+    };
+
+    fetchDokumenById();
+  }, [idData]);
 
   const handleSubmit = async () => {
     const isJudulDokValid = judulDokRef.current?.validate();
@@ -132,18 +177,15 @@ export default function Add({ onChangePage, breadcrumbs }) {
       if (createResponse === "ERROR") {
         throw new Error("Gagal memperbarui data");
       } else {
-        SweetAlert(
-          "Berhasil!",
-          "Data berhasil ditambahkan.",
-          "success",
-          "OK"
-        ).then(() => onChangePage("index"));
+        SweetAlert("Berhasil!", "Data berhasil ditambahkan.", "success", "OK");
       }
     } catch (error) {
       console.error("Error:", error.message);
       SweetAlert("Gagal!", error.message, "error", "OK");
     }
   };
+
+  if (loading) return <Loading />;
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -169,26 +211,27 @@ export default function Add({ onChangePage, breadcrumbs }) {
               {" "}
               <HeaderForm label="Formulir Dokumen" />
               <InputField
-                ref={judulDokRef}
-                label="Judul Dokumen"
-                value={formData.judulDok}
+                ref={nomorDokRef}
+                label="Nomor Dokumen"
+                value={formData.nomorDok}
                 onChange={handleChange}
                 isRequired={true}
-                name="judulDok"
+                name="nomorDok"
                 type="text"
-                maxChar="100"
+                maxChar="50"
+                isDisabled={true}
               />
               <div className="row">
                 <div className="col-lg-6 col-md-6 ">
                   <InputField
-                    ref={nomorDokRef}
-                    label="Nomor Dokumen"
-                    value={formData.nomorDok}
+                    ref={judulDokRef}
+                    label="Judul Dokumen"
+                    value={formData.judulDok}
                     onChange={handleChange}
                     isRequired={true}
-                    name="nomorDok"
+                    name="judulDok"
                     type="text"
-                    maxChar="50"
+                    maxChar="100"
                   />
                 </div>
                 <div className="col-lg-6 col-md-6">

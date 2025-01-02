@@ -1,12 +1,55 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { useNavigate } from "react-router-dom";
+import { API_LINK } from "../util/Constants";
+import { useFetch } from "../util/useFetch";
+import Loading from "../part/Loading";
 
 export default function NavItem() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    const fetchMenu = async () => {
+      setLoading(true);
+      const result = await useFetch(
+        `${API_LINK}/Utilities/GetDataMenu`,
+        {},
+        "POST"
+      ).finally(() => setLoading(false));
+      if (result === "ERROR" || result === null || result.length === 0) {
+        setItems([]);
+      } else {
+        const kategoriArray = Object.values(result);
+        const groupedData = kategoriArray.reduce((acc, row) => {
+          // Find if there's already an entry with the same id1, id2, and name
+          let existing = acc.find(
+            (item) => item.namaMen == row.namaMen
+          );
+
+          if (existing) {
+            // Append the new symbol, number, and description to the existing entry
+            existing.details.push(row);
+          } else {
+            // Create a new entry if not found
+            acc.push({
+              row,
+              details: [{ symbol, number, description }],
+            });
+          }
+
+          return acc;
+        }, []);
+        setItems(kategoriArray);
+      }
+    };
+
+    fetchMenu();
+  }, []);
 
   const toggleDropdown = (menu) => {
     if (openDropdown === menu) {
@@ -22,33 +65,43 @@ export default function NavItem() {
     setOpenSubmenu(openSubmenu === submenu ? null : submenu); // Toggle submenu
   };
 
+  if (loading) return <Loading />;
+
   return (
     <>
       {/* Beranda */}
-      <li className="nav-item">
-        <Link className="nav-link" aria-current="page" to="/">
+      <li className="nav-item top-nav-item top-nav-item top-nav-item">
+        <Link className="nav-link top-nav-link" aria-current="page" to="/">
           Beranda
         </Link>
       </li>
 
       {/* Tentang */}
-      <li className="nav-item">
-        <Link className="nav-link" aria-current="page" to="/tentang">
+      <li className="nav-item top-nav-item">
+        <Link
+          className="nav-link top-nav-link"
+          aria-current="page"
+          to="/tentang"
+        >
           Tentang
         </Link>
       </li>
 
       {/* Berita */}
-      <li className="nav-item">
-        <Link className="nav-link" aria-current="page" to="/berita">
+      <li className="nav-item top-nav-item">
+        <Link
+          className="nav-link top-nav-link"
+          aria-current="page"
+          to="/berita"
+        >
           Berita
         </Link>
       </li>
 
       {/* Kegiatan */}
-      <li className="nav-item dropdown">
+      <li className="nav-item top-nav-item dropdown">
         <button
-          className="nav-link dropdown-toggle"
+          className="nav-link top-nav-link dropdown-toggle"
           onClick={() => toggleDropdown("kegiatan")}
         >
           Kegiatan
@@ -70,9 +123,9 @@ export default function NavItem() {
       </li>
 
       {/* SPMI */}
-      <li className="nav-item dropdown">
+      <li className="nav-item top-nav-item dropdown">
         <button
-          className="nav-link dropdown-toggle"
+          className="nav-link top-nav-link dropdown-toggle"
           aria-expanded={openDropdown === "spmi"}
           onClick={() => toggleDropdown("spmi")}
         >
@@ -80,7 +133,7 @@ export default function NavItem() {
         </button>
         {openDropdown === "spmi" && (
           <ul className="dropdown-menu">
-            <li className="dropdown-submenu">
+            {/* <li className="dropdown-submenu">
               <button
                 className="dropdown-item dropdown-toggle"
                 aria-expanded={openSubmenu === "siklus"}
@@ -129,10 +182,35 @@ export default function NavItem() {
                   </li>
                 </ul>
               )}
+            </li> */}
+            <li>
+              <Link className="dropdown-item" to="#">
+                Siklus SPMI
+              </Link>
             </li>
             <li>
-              <Link className="dropdown-item" to="/spmi/kebijakan-mutu">
-                Pernyataan dan Kebijakan Mutu
+              <Link className="dropdown-item" to="/spmi/siklus/penetapan">
+                Penetapan
+              </Link>
+            </li>
+            <li>
+              <Link className="dropdown-item" to="/spmi/siklus/pelaksanaan">
+                Pelaksanaan
+              </Link>
+            </li>
+            <li>
+              <Link className="dropdown-item" to="/spmi/siklus/evaluasi">
+                Evaluasi
+              </Link>
+            </li>
+            <li>
+              <Link className="dropdown-item" to="/spmi/siklus/pengendalian">
+                Pengendalian
+              </Link>
+            </li>
+            <li>
+              <Link className="dropdown-item" to="/spmi/siklus/peningkatan">
+                Peningkatan
               </Link>
             </li>
             <li className="dropdown-submenu">
@@ -261,9 +339,9 @@ export default function NavItem() {
       </li>
 
       {/* SPME */}
-      <li className="nav-item dropdown">
+      <li className="nav-item top-nav-item dropdown">
         <button
-          className="nav-link dropdown-toggle"
+          className="nav-link top-nav-link dropdown-toggle"
           onClick={() => toggleDropdown("spme")}
           aria-expanded={openDropdown === "spme"}
         >
@@ -315,9 +393,9 @@ export default function NavItem() {
       </li>
 
       {/* IKU & IKT */}
-      <li className="nav-item dropdown">
+      <li className="nav-item top-nav-item dropdown">
         <button
-          className="nav-link dropdown-toggle"
+          className="nav-link top-nav-link dropdown-toggle"
           aria-expanded={openDropdown === "iku-ikt"}
           onClick={() => toggleDropdown("iku-ikt")}
         >
@@ -340,16 +418,16 @@ export default function NavItem() {
       </li>
 
       {/* Audit */}
-      <li className="nav-item">
-        <Link className="nav-link" aria-current="page" to="/audit">
+      <li className="nav-item top-nav-item">
+        <Link className="nav-link top-nav-link" aria-current="page" to="/audit">
           Audit
         </Link>
       </li>
 
       {/* Survei */}
-      <li className="nav-item dropdown">
+      <li className="nav-item top-nav-item dropdown">
         <button
-          className="nav-link dropdown-toggle"
+          className="nav-link top-nav-link dropdown-toggle"
           onClick={() => toggleDropdown("survei")}
         >
           Survei
@@ -391,9 +469,9 @@ export default function NavItem() {
       </li>
 
       {/* Peraturan */}
-      <li className="nav-item dropdown">
+      <li className="nav-item top-nav-item dropdown">
         <button
-          className="nav-link dropdown-toggle"
+          className="nav-link top-nav-link dropdown-toggle"
           onClick={() => toggleDropdown("peraturan")}
         >
           Peraturan
@@ -419,8 +497,35 @@ export default function NavItem() {
         )}
       </li>
 
+      {/* Master */}
+      <li className="nav-item top-nav-item dropdown">
+        <button
+          className="nav-link top-nav-link dropdown-toggle"
+          onClick={() => toggleDropdown("master")}
+        >
+          Master
+        </button>
+        {openDropdown === "master" && (
+          <ul className="dropdown-menu">
+            <li>
+              <Link className="dropdown-item" to="/master/kategori_dokumen">
+                Kategori Dokumen
+              </Link>
+              {/* <button
+                className="dropdown-item"
+                onClick={() =>
+                  navigate("/master/kategori_dokumen", {
+                    state: { idData: 99 },
+                  })
+                }
+              >Kategori Dokumen</button> */}
+            </li>
+          </ul>
+        )}
+      </li>
+
       {/* Masuk Button */}
-      <li className="nav-item ms-3">
+      <li className="nav-item top-nav-item ms-3">
         <button className="btn bg-white">Masuk</button>
       </li>
     </>

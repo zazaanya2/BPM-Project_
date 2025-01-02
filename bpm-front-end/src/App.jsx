@@ -21,6 +21,7 @@ import SkalaSurvei from "./components/page/9_Survei/Skala_Penilaian/Root";
 import AkreProdi from "./components/page/6_SPME/AkreditasiProdi/Root";
 import AkreInstitusi from "./components/page/6_SPME/AkreditasiInstitusi/Root";
 import RingkasanAkre from "./components/page/6_SPME/RIngkasanAkreditasi/Root";
+import MasterKategoriDokumen from "./components/page/MasterKategoriDokumen/Root";
 import ScrollToTop from "./components/part/ScrollToTop";
 import "./App.css";
 
@@ -72,6 +73,7 @@ function App() {
             <Route path="/survei/kriteria/*" element={<KriteriaSurvei />} />
             <Route path="/survei/skala/*" element={<SkalaSurvei />} />
             <Route path="/spmi/dokumen/*" element={<DokumenSPMI />} />
+            <Route path="/master/*" element={<MasterKategoriDokumen />} />
 
             {/* Halaman 404 */}
             <Route path="*" element={<div>Halaman tidak ditemukan</div>} />

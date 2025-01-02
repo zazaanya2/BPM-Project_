@@ -1,11 +1,8 @@
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import ScrollToTop from "../../../part/ScrollToTop";
-import { ROOT_LINK } from "../../../util/Constants";
-import Index from "./Index";
-import Add from "./Add";
+import ScrollToTop from "../../part/ScrollToTop";
 import Home from "./Home";
 
-export default function DokumenSPMI() {
+export default function MasterKategoriDokumen() {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
@@ -55,7 +52,7 @@ export default function DokumenSPMI() {
           element={<Add />}
         /> */}
 
-        <Route path=":jenis" element={<Home />} />
+        <Route path="/kategori_dokumen" element={<Home />} />
       </Routes>
     </>
   );
