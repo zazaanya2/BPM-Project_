@@ -2,6 +2,7 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/backbone/Header";
 import Footer from "./components/backbone/Footer";
+import Beranda from "./components/page/1_Beranda/Root";
 import Tentang from "./components/page/2_Tentang/Root";
 import Berita from "./components/page/3_Berita/Root";
 import JadwalKegiatan from "./components/page/4_Kegiatan/ms_jadwalKegiatan/Root";
@@ -37,6 +38,7 @@ function App() {
 
         <main className="flex-grow-1">
           <Routes>
+            <Route path="/" element={<Beranda />} />
             <Route path="/tentang/*" element={<Tentang />} />
             <Route path="/berita/*" element={<Berita />} />
             <Route path="/kegiatan/jadwal/*" element={<JadwalKegiatan />} />
