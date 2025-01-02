@@ -17,19 +17,24 @@ export default function Read({ onChangePage }) {
   const [pageSize] = useState(10);
   const isMobile = useIsMobile();
   const [pageCurrent, setPageCurrent] = useState(1);
-  const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]); // Data setelah difilter
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState(""); // Keyword pencarian
   const [selectedYear, setSelectedYear] = useState(""); // Filter tahun
+  const [totalData, setTotalData] = useState(0);
 
   useEffect(() => {
     const fetchBerita = async () => {
       try {
         const result = await useFetch(
           `${API_LINK}/MasterBerita/GetDataBerita`,
-          JSON.stringify({}),
+          {
+            param1: searchKeyword,
+            param2: selectedYear,
+            param3: pageSize,
+            param4: pageCurrent,
+          },
           "POST"
         );
 
@@ -52,6 +57,9 @@ export default function Read({ onChangePage }) {
               images: [],
             };
           }
+
+          setTotalData(item.TotalCount);
+
           if (item.fotoBerita) {
             acc[item.idBerita].images.push(item.fotoBerita);
           }
@@ -59,7 +67,6 @@ export default function Read({ onChangePage }) {
         }, {});
 
         const beritaArray = Object.values(groupedBerita);
-        setData(beritaArray);
         setFilteredData(beritaArray);
       } catch (err) {
         console.error("Fetch error:", err);
@@ -70,29 +77,10 @@ export default function Read({ onChangePage }) {
     };
 
     fetchBerita();
-  }, [searchKeyword, selectedYear]);
-
-  useEffect(() => {
-    let tempData = data;
-
-    if (searchKeyword) {
-      tempData = tempData.filter((item) =>
-        item.title.toLowerCase().includes(searchKeyword.toLowerCase())
-      );
-    }
-
-    if (selectedYear) {
-      tempData = tempData.filter(
-        (item) => item.year === parseInt(selectedYear)
-      );
-    }
-
-    setFilteredData(tempData);
-  }, [searchKeyword, selectedYear, data]);
+  }, [searchKeyword, selectedYear, pageCurrent]);
 
   const indexOfLastData = pageCurrent * pageSize;
   const indexOfFirstData = indexOfLastData - pageSize;
-  const currentData = filteredData.slice(indexOfFirstData, indexOfLastData);
 
   const handlePageNavigation = (page) => {
     setPageCurrent(page);
@@ -132,7 +120,9 @@ export default function Read({ onChangePage }) {
 
         SweetAlert("Berhasil", "Berita berhasil dihapus", "success");
 
-        setData((prevData) => prevData.filter((item) => item.id !== id));
+        setFilteredData((prevData) =>
+          prevData.filter((item) => item.id !== id)
+        );
       } catch (err) {
         console.error(err);
         SweetAlert("Gagal", "Terjadi kesalahan saat menghapus berita", "error");
@@ -208,7 +198,7 @@ export default function Read({ onChangePage }) {
 
             <Table
               arrHeader={["No", "Judul Berita", "Tanggal", "Foto"]}
-              data={currentData.map((item, index) => ({
+              data={filteredData.map((item, index) => ({
                 Key: item.id,
                 No: indexOfFirstData + index + 1,
                 "Judul Berita": item.title,
@@ -233,17 +223,17 @@ export default function Read({ onChangePage }) {
               }))}
               actions={["Detail", "Edit", "Delete"]}
               onEdit={(item) => {
-                onChangePage("edit", { state: { idData: item.Key } });
+                onChangePage("edit", { idData: item.Key });
               }}
               onDetail={(item) => {
-                onChangePage("detail", { state: { idData: item.Key } });
+                onChangePage("detail", { idData: item.Key });
               }}
               onDelete={(item) => handleDelete(item.Key)}
             />
             <Paging
               pageSize={pageSize}
               pageCurrent={pageCurrent}
-              totalData={filteredData.length}
+              totalData={totalData}
               navigation={handlePageNavigation}
             />
           </div>

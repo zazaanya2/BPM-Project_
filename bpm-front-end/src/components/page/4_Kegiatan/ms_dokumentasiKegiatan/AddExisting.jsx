@@ -38,7 +38,7 @@ export default function AddExisting({ onChangePage }) {
 
   const [formData, setFormData] = useState({
     id: "",
-    statusFileNotulen: 0,
+    statusFileNotulen: "Privat",
   });
 
   const [tempForm, settempForm] = useState({
@@ -73,7 +73,7 @@ export default function AddExisting({ onChangePage }) {
       try {
         const data = await useFetch(
           `${API_LINK}/MasterKegiatan/GetDataKegiatanByCategory`,
-          { kategori: 2 },
+          { kategori: "Terlewat" },
           "POST"
         );
         const formattedData = data.map((item) => ({
@@ -307,10 +307,10 @@ export default function AddExisting({ onChangePage }) {
                   label="Sifat File Notulensi"
                   name="options"
                   arrData={[
-                    { Value: 0, Text: "Privat" },
-                    { Value: 1, Text: "Publik" },
+                    { Value: "Privat", Text: "Privat" },
+                    { Value: "Publik", Text: "Publik" },
                   ]}
-                  value={Number(formData.statusFileNotulen) || 0}
+                  value={formData.statusFileNotulen || "Privat"}
                   onChange={(e) =>
                     setFormData((prev) => ({
                       ...prev,

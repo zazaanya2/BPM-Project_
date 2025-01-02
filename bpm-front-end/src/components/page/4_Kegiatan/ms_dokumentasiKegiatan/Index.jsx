@@ -7,12 +7,14 @@ import { useIsMobile } from "../../../util/useIsMobile";
 import { useLocation } from "react-router-dom";
 import { useFetch } from "../../../util/useFetch";
 import { decodeHtml } from "../../../util/DecodeHtml";
+import Cookies from "js-cookie";
 
 export default function Index({ onChangePage }) {
   const [groupedEvents, setGroupedEvents] = useState({});
   const [loading, setLoading] = useState(true);
   const [jenisKegiatan, setJenisKegiatan] = useState([]);
   const [selectedJenisKegiatan, setSelectedJenisKegiatan] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const isMobile = useIsMobile();
   const location = useLocation();
 
@@ -22,6 +24,19 @@ export default function Index({ onChangePage }) {
   }, [location.state?.idData]);
 
   useEffect(() => {
+    const activeUser = Cookies.get("activeUser");
+
+    if (activeUser) {
+      const parsedUser = JSON.parse(activeUser);
+      if (parsedUser.RoleID.trim() === "ROL01") {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    } else {
+      setIsLoggedIn(false);
+    }
+
     const fetchJenisKegiatan = async () => {
       try {
         const data = await useFetch(
@@ -48,7 +63,7 @@ export default function Index({ onChangePage }) {
     try {
       const data = await useFetch(
         `${API_LINK}/MasterKegiatan/GetDataKegiatanByCategory`,
-        { kategori: 3 },
+        { kategori: "Terlaksana" },
         "POST"
       );
 
@@ -70,6 +85,8 @@ export default function Index({ onChangePage }) {
           linkFolder: item.linkFolderKegiatan,
           image: item.fotoSampulKegiatan,
           jenisKegiatan: item.idJenisKegiatan,
+          fileNotulen: item.fileNotulenKegiatan,
+          statusFileNotulen: item.statusFileNotulenKegiatan,
         });
         return acc;
       }, {});
@@ -129,12 +146,14 @@ export default function Index({ onChangePage }) {
           marginRight: "3rem",
         }}
       >
-        <Button
-          classType="btn btn-primary"
-          title="Kelola Dokumentasi Kegiatan"
-          label="Kelola Dokumentasi Kegiatan"
-          onClick={() => onChangePage("read")}
-        />
+        {isLoggedIn && (
+          <Button
+            classType="btn btn-primary"
+            title="Kelola Dokumentasi Kegiatan"
+            label="Kelola Dokumentasi Kegiatan"
+            onClick={() => onChangePage("read")}
+          />
+        )}
       </div>
 
       {/* Filter jenis kegiatan */}

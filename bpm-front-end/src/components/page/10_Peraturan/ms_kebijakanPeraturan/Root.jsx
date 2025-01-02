@@ -3,25 +3,39 @@ import {
   Routes,
   Route,
   useNavigate,
+  useLocation,
 } from "react-router-dom";
-import Index from "./Index";
+import Index from "../Index";
 import ScrollToTop from "../../../part/ScrollToTop";
-import Add from "./Add";
-import Edit from "./Edit";
+import Add from "../Add";
+import Edit from "../Edit";
+import Detail from "../Detail";
+import ProtectedRoute from "../../../util/ProtectedRoute"; // Import the ProtectedRoute component
 
 export default function Peraturan() {
   const navigate = useNavigate();
-
+  const location = useLocation();
   const handlePageChange = (page, withState = {}) => {
     switch (page) {
       case "index":
-        navigate("/peraturan/kebijakan");
+        navigate("/peraturan/kebijakan", {
+          state: { mode: "index", ...withState },
+        });
         break;
       case "add":
-        navigate("/peraturan/kebijakan/tambah");
+        navigate("/peraturan/kebijakan", {
+          state: { mode: "add", ...withState },
+        });
         break;
       case "edit":
-        navigate("/peraturan/kebijakan/edit");
+        navigate("/peraturan/kebijakan", {
+          state: { mode: "edit", ...withState },
+        });
+        break;
+      case "detail":
+        navigate("/peraturan/kebijakan", {
+          state: { mode: "detail", ...withState },
+        });
         break;
 
       default:
@@ -30,18 +44,31 @@ export default function Peraturan() {
     }
   };
 
+  const { mode } = location.state || { mode: "index" };
+
   return (
     <>
       <ScrollToTop />
       <Routes>
-        <Route path="" element={<Index onChangePage={handlePageChange} />} />
+        {/* Protected Routes */}
         <Route
-          path="/tambah"
-          element={<Add onChangePage={handlePageChange} />}
-        />
-        <Route
-          path="/edit"
-          element={<Edit onChangePage={handlePageChange} />}
+          path="/"
+          element={
+            <ProtectedRoute>
+              {
+                // Berdasarkan mode, render komponen yang berbeda
+                mode === "add" ? (
+                  <Add onChangePage={handlePageChange} />
+                ) : mode === "edit" ? (
+                  <Edit onChangePage={handlePageChange} />
+                ) : mode === "detail" ? (
+                  <Detail onChangePage={handlePageChange} />
+                ) : (
+                  <Index onChangePage={handlePageChange} />
+                )
+              }
+            </ProtectedRoute>
+          }
         />
       </Routes>
     </>

@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from "react";
-import PageTitleNav from "../../../part/PageTitleNav";
-import TextField from "../../../part/TextField";
-import HeaderForm from "../../../part/HeaderText";
-import DropDown from "../../../part/Dropdown";
+import PageTitleNav from "../../part/PageTitleNav";
+import TextField from "../../part/TextField";
+import HeaderForm from "../../part/HeaderText";
+import DropDown from "../../part/Dropdown";
 import { useLocation } from "react-router-dom";
-import Button from "../../../part/Button";
+import { PERATURAN_FILE_LINK } from "../../util/Constants";
+import Button from "../../part/Button";
+import Loading from "../../part/Loading";
+
+// Dynamically set title and breadcrumbs based on idMenu
+let title = "";
+let titleHeader = "Formulir";
+let breadcrumbs = [];
 
 export default function Edit({ onChangePage, data }) {
   const location = useLocation();
+  const idMenu = location.state?.idMenu;
+  const [loading, setLoading] = useState(true); // New loading state
 
   const [formData, setFormData] = useState({
     JudulDokumen: "",
@@ -33,10 +42,52 @@ export default function Edit({ onChangePage, data }) {
     }
   }, [location.state, data]);
 
+  useEffect(() => {
+    if (idMenu === 39) {
+      title = "Edit Peraturan";
+      titleHeader = "Formulir Kebijakan Peraturan";
+      breadcrumbs = [
+        { label: "Peraturan", href: "/peraturan/kebijakan" },
+        {
+          label: "Kebijakan Peraturan",
+          href: "/peraturan/kebijakan/kelola",
+        },
+        { label: "Edit Kebijakan Peraturan" },
+      ];
+    } else if (idMenu === 40) {
+      title = "Edit Peraturan Eksternal";
+      titleHeader = "Formulir Peraturan Eksternal";
+      breadcrumbs = [
+        { label: "Peraturan", href: "/peraturan/eksternal" },
+        {
+          label: "Peraturan Eksternal",
+          href: "/peraturan/eksternal/kelola",
+        },
+        { label: "Edit Peraturan Eksternal" },
+      ];
+    } else if (idMenu === 41) {
+      title = "Edit Instrumen APS";
+      titleHeader = "Formulir Instrumen APS";
+      breadcrumbs = [
+        { label: "Peraturan", href: "/peraturan/aps" },
+        {
+          label: "instrumen APS",
+          href: "/peraturan/aps/kelola",
+        },
+        { label: "Edit Instrumen APS" },
+      ];
+    }
+
+    // Set loading to false once idMenu is determined
+    setLoading(false);
+  }, [idMenu]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   };
+
+  if (loading) return <Loading />;
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -44,21 +95,14 @@ export default function Edit({ onChangePage, data }) {
         <div className="d-flex flex-column">
           <div className="m-3 mb-0">
             <PageTitleNav
-              title="Edit Instrumen APS"
-              breadcrumbs={[
-                { label: "Peraturan", href: "/peraturan/aps" },
-                {
-                  label: "instrumen APS",
-                  href: "/peraturan/aps/kelola",
-                },
-                { label: "Edit Instrumen APS" },
-              ]}
+              title={title}
+              breadcrumbs={breadcrumbs}
               onClick={() => onChangePage("index")}
             />
           </div>
 
           <div className="shadow p-5 m-5 mt-0 bg-white rounded">
-            <HeaderForm label="Formulir Instrumen APS" />
+            <HeaderForm label={titleHeader} />
             <div className="row">
               <TextField
                 label="Judul Dokumen"

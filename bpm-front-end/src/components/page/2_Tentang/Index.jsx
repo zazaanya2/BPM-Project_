@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Orang from "../../../assets/element/orang.png";
 import Logo from "../../../assets/bpm-logo.png";
+import LogoAstra from "../../../assets/logo-astratech-putih.png";
 import Bangunan from "../../../assets/element/bangunan.png";
 import OrangLaptop from "../../../assets/element/orang-laptop.png";
 import OrangKerja from "../../../assets/element/orang-kerja.png";
@@ -15,14 +16,33 @@ import { useFetch } from "../../util/useFetch";
 import { API_LINK, TENTANGFILE_LINK } from "../../util/Constants";
 import Loading from "../../part/Loading";
 import { useIsMobile } from "../../util/useIsMobile";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 export default function Index({ onChangePage }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    const activeUser = Cookies.get("activeUser");
+
+    if (activeUser) {
+      const parsedUser = JSON.parse(activeUser);
+      if (parsedUser.RoleID.trim() === "ROL01") {
+        setIsAdmin(true);
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(true);
+      }
+    } else {
+      setIsLoggedIn(false);
+    }
+
     const fetchData = async () => {
       try {
         const result = await useFetch(
@@ -47,7 +67,11 @@ export default function Index({ onChangePage }) {
   if (error) return <p>{error}</p>;
 
   const handleDownloadClick = () => {
-    const url = `${TENTANGFILE_LINK}${data[7].ten_isi}`;
+    if (!isLoggedIn) {
+      navigate("/login");
+      return;
+    }
+    const url = `${TENTANGFILE_LINK}${data[7].isiTentang}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
@@ -58,12 +82,14 @@ export default function Index({ onChangePage }) {
           className="position-absolute top-0 end-0 p-5 mb-3"
           style={{ zIndex: 20 }}
         >
-          <Button
-            className="btn btn-primary"
-            title="Kelola Tentang"
-            label="Kelola Tentang"
-            onClick={() => onChangePage("read")}
-          />
+          {isAdmin && (
+            <Button
+              className="btn btn-primary"
+              title="Kelola Tentang"
+              label="Kelola Tentang"
+              onClick={() => onChangePage("read")}
+            />
+          )}
         </div>
 
         <img
@@ -88,7 +114,7 @@ export default function Index({ onChangePage }) {
             transform: "translateX(-50%)",
             width: "100%",
             maxWidth: "33vw",
-            minWidth: isMobile ? "50%" : "37%",
+            minWidth: isMobile ? "50vh" : "70vh",
             zIndex: 2,
           }}
         />
@@ -199,14 +225,14 @@ export default function Index({ onChangePage }) {
           fontWeight="700"
           marginBottom="20px"
         />
-        {["Pernyataan Mutu", "Kebijakan Mutu"].map((title, index) => (
+        {data.slice(8).map((item, index) => (
           <div className="shadow bg-white rounded-4 mb-4" key={index}>
             <div
               className="rounded-4 ps-3"
               style={{ backgroundColor: "#2654A1", padding: "0.1rem" }}
             >
               <HeaderText
-                label={title}
+                label={item.kategoriTentang}
                 warna="white"
                 ukuran="1.5rem"
                 alignText="left"
@@ -215,14 +241,12 @@ export default function Index({ onChangePage }) {
               />
             </div>
             <div className="rounded-4 p-3">
-              {data[index + 8] && (
-                <Text
-                  isi={data[index + 8].ten_isi}
-                  alignText="justify"
-                  ukuran="16px"
-                  warna="grey"
-                />
-              )}
+              <Text
+                isi={item.isiTentang}
+                alignText="justify"
+                ukuran="16px"
+                warna="grey"
+              />
             </div>
           </div>
         ))}
@@ -292,11 +316,10 @@ export default function Index({ onChangePage }) {
           className="d-flex flex-column align-items-center justify-content-start m-5 p-3"
           style={{ minHeight: "100vh", width: "800px" }}
         >
-          <Icon
-            name="book-open-cover"
-            cssClass="text-white"
-            ukuran="80px"
-            margin="10px"
+          <img
+            src={LogoAstra}
+            alt="LogoAstra"
+            style={{ width: "7rem", height: "auto", marginBottom: "25px" }}
           />
 
           {["Visi", "Misi"].map((title, index) => (
@@ -310,8 +333,8 @@ export default function Index({ onChangePage }) {
               />
               {data[index + 3] && (
                 <Text
-                  isi={data[index + 4].ten_isi}
-                  alignText="center"
+                  isi={data[index + 4].isiTentang}
+                  alignText={title === "Misi" ? "justify" : "center"}
                   ukuran="1rem"
                 />
               )}

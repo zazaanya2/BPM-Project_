@@ -5,6 +5,7 @@ export default function Table({
   arrHeader,
   data,
   actions = [],
+  onToggle = () => {},
   onDelete = () => {},
   onDetail = () => {},
   onEdit = () => {},
@@ -14,6 +15,7 @@ export default function Table({
   onUpdateHistory = () => {},
   onSurveyor = () => {},
   onResponden = () => {},
+  onUpload = () => {},
   onPreview = () => {}
 }) {
   function generateActionButton(actionType, id, status = "Aktif") {
@@ -141,6 +143,16 @@ export default function Table({
             onClick={() => onPreview(id)}
           />
         );
+      case "Upload":
+        return (
+          <Icon
+            type="Reguler"
+            name="upload"
+            cssClass="btn px-1 py-0 text-secondary"
+            title="Unduh File"
+            onClick={() => onUpload(id)}
+          />
+        );
       default:
         return null;
     }
@@ -201,7 +213,7 @@ export default function Table({
                         <React.Fragment
                           key={`${action}-${row.Key || rowIndex}`}
                         >
-                          {generateActionButton(action, row)}
+                          {generateActionButton(action, row, row.status)}
                         </React.Fragment>
                       ))
                     : Array.isArray(actions) && actions.length > 0
@@ -209,7 +221,7 @@ export default function Table({
                         <React.Fragment
                           key={`${action}-${row.Key || rowIndex}`}
                         >
-                          {generateActionButton(action, row)}
+                          {generateActionButton(action, row, row.status)}
                         </React.Fragment>
                       ))
                     : null}
