@@ -1,24 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
 import PageTitleNav from "../../part/PageTitleNav";
-import TextField from "../../part/TextField";
-import InputField from "../../part/InputField";
 import HeaderForm from "../../part/HeaderText";
-import Dropdown from "../../part/Dropdown";
 import { useLocation } from "react-router-dom";
-import { API_LINK } from "../../util/Constants";
+import { API_LINK, PERATURAN_FILE_LINK } from "../../util/Constants";
 import Button from "../../part/Button";
 import SweetAlert from "../../util/SweetAlert";
 import { useIsMobile } from "../../util/useIsMobile";
 import { useFetch } from "../../util/useFetch";
+import { uploadFile } from "../../util/UploadFile";
 import Loading from "../../part/Loading";
 import DetailData from "../../part/DetailData";
+import FileUpload from "../../part/FileUpload";
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   return date.toISOString().split("T")[0]; // Mengambil hanya bagian tanggal
 };
 
-export default function Detail({ onChangePage }) {
+export default function Edit({ onChangePage }) {
   const isMobile = useIsMobile();
   const [error, setError] = useState(null);
 
@@ -29,14 +28,24 @@ export default function Detail({ onChangePage }) {
   const [title, setTitle] = useState("");
   const [titleHeader, setTitleHeader] = useState("");
   const [breadcrumbs, setBreadcrumbs] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [formData, setFormData] = useState({
+    idMenu: idMenu,
     idDok: "",
     judulDokumen: "",
     nomorInduk: "",
     tahunDokumen: "",
     tahunKadaluarsa: "",
     jenisDokumen: "",
+    fileDokumen: "",
   });
+
+  // Refs for validation
+  const fileDokumenRef = useRef();
+
+  const handleFileChange = (file) => {
+    setSelectedFile(file);
+  };
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -57,22 +66,7 @@ export default function Detail({ onChangePage }) {
             tahunDokumen: formatDate(data[0].tahunDokumen) || "", // Memformat tanggal
             tahunKadaluarsa: formatDate(data[0].tahunKadaluarsa) || "", // Memformat tanggal
             jenisDokumen: data[0].jenisDokumen || "",
-            dibuatOleh: data[0].dibuatOleh,
-            dibuatTgl: new Date(data[0].dibuatTgl).toLocaleDateString("id-ID", {
-              weekday: "long",
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            }),
-            dimodifOleh: data[0].dimodifOleh ? data[0].dimodifOleh : "-",
-            dimodifTgl: data[0].dimodifTgl
-              ? new Date(data[0].dimodifTgl).toLocaleDateString("id-ID", {
-                  weekday: "long",
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })
-              : "-",
+            fileDokumen: data[0].fileDok || "",
           });
         }
       } catch (error) {
@@ -92,7 +86,7 @@ export default function Detail({ onChangePage }) {
     let newBreadcrumbs = [];
 
     if (idMenu === 39) {
-      newTitle = "Detail Peraturan";
+      newTitle = "Edit Peraturan";
       newTitleHeader = "Formulir Kebijakan Peraturan";
       newBreadcrumbs = [
         {
@@ -104,12 +98,12 @@ export default function Detail({ onChangePage }) {
           href: "/peraturan/kebijakan",
         },
         {
-          label: "Detail Kebijakan Peraturan",
+          label: "Edit Kebijakan Peraturan",
           href: "",
         },
       ];
     } else if (idMenu === 40) {
-      newTitle = "Detail Peraturan Eksternal";
+      newTitle = "Edit Peraturan Eksternal";
       newTitleHeader = "Formulir Peraturan Eksternal";
       newBreadcrumbs = [
         {
@@ -120,10 +114,10 @@ export default function Detail({ onChangePage }) {
           label: "Peraturan Eksternal",
           href: "/peraturan/eksternal",
         },
-        { label: "Detail Peraturan Eksternal", href: "" },
+        { label: "Edit Peraturan Eksternal", href: "" },
       ];
     } else if (idMenu === 41) {
-      newTitle = "Detail Instrumen APS";
+      newTitle = "Edit Instrumen APS";
       newTitleHeader = "Formulir Instrumen APS";
       newBreadcrumbs = [
         { label: "Peraturan", href: "/peraturan/aps" },
@@ -131,7 +125,7 @@ export default function Detail({ onChangePage }) {
           label: "instrumen APS",
           href: "/peraturan/aps",
         },
-        { label: "Detail Instrumen APS", href: "" },
+        { label: "Edit Instrumen APS", href: "" },
       ];
     }
 
@@ -141,6 +135,49 @@ export default function Detail({ onChangePage }) {
 
     setLoading(false);
   }, [idMenu]);
+
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+
+      let uploadedFilePeraturan = null;
+      if (selectedFile) {
+        const folderName = "Peraturan";
+        const filePrefix = `${idMenu}_${formData.judulDokumen}`;
+        uploadedFilePeraturan = await uploadFile(
+          selectedFile,
+          folderName,
+          filePrefix
+        );
+      }
+
+      const response = await useFetch(
+        `${API_LINK}/MasterPeraturan/EditPeraturanFile`,
+        {
+          idDok: idData,
+          fileDokumen: uploadedFilePeraturan
+            ? uploadedFilePeraturan[0]
+            : formData.fileDokumen,
+        },
+        "POST"
+      );
+
+      if (response === "ERROR") {
+        throw new Error("Gagal memperbarui data");
+      }
+
+      SweetAlert(
+        "Berhasil!",
+        "Dokumentasi kegiatan berhasil diEdit.",
+        "success",
+        "OK"
+      ).then(() => onChangePage("index", { idMenu: idMenu }));
+    } catch (error) {
+      SweetAlert("Gagal!", error.message, "error", "OK");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) return <Loading />;
 
@@ -190,19 +227,37 @@ export default function Detail({ onChangePage }) {
                 />
               </div>
             </div>
+
             <div className="row">
-              <div className="col-lg-6 col-md-6">
-                <DetailData label="Dibuat Oleh" isi={formData.dibuatOleh} />
-                <DetailData label="Dibuat Tanggal" isi={formData.dibuatTgl} />
-              </div>
-              <div className="col-lg-6 col-md-6">
-                <DetailData
-                  label="Dimodifikasi Oleh"
-                  isi={formData.dimodifOleh}
+              <FileUpload
+                ref={fileDokumenRef}
+                label="Dokumen"
+                forInput="fileDokumen"
+                formatFile=".pdf,.docx,.doc,.xlsx,.pptx"
+                onChange={(file) => handleFileChange(file)}
+                hasExisting={PERATURAN_FILE_LINK + formData.fileDokumen}
+                isRequired="true"
+              />
+            </div>
+            <div className="d-flex justify-content-between align-items-center mt-4">
+              <div className="flex-grow-1 m-2">
+                <Button
+                  classType="primary"
+                  type="submit"
+                  label="Simpan"
+                  width="100%"
+                  onClick={handleSubmit}
                 />
-                <DetailData
-                  label="Dimodifikasi Tanggal"
-                  isi={formData.dimodifTgl}
+              </div>
+              <div className="flex-grow-1 m-2">
+                <Button
+                  classType="danger"
+                  type="button"
+                  label="Batal"
+                  width="100%"
+                  onClick={() => {
+                    onChangePage("index", { idMenu: idMenu });
+                  }}
                 />
               </div>
             </div>

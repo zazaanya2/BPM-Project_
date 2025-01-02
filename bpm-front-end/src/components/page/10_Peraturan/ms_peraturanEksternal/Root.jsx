@@ -8,6 +8,8 @@ import {
 import Index from "../Index";
 import Add from "../Add";
 import Edit from "../Edit";
+import EditFile from "../EditFile";
+import ReadRevisi from "../ReadRevisi";
 import Detail from "../Detail";
 import ScrollToTop from "../../../part/ScrollToTop";
 import ProtectedRoute from "../../../util/ProtectedRoute"; // Import the ProtectedRoute component
@@ -30,6 +32,16 @@ export default function PeraturanEksternal() {
       case "edit":
         navigate("/peraturan/eksternal", {
           state: { mode: "edit", ...withState },
+        });
+        break;
+      case "editfile":
+        navigate("/peraturan/eksternal", {
+          state: { mode: "editfile", ...withState },
+        });
+        break;
+      case "readrevisi":
+        navigate("/peraturan/eksternal", {
+          state: { mode: "readrevisi", ...withState },
         });
         break;
       case "detail":
@@ -60,6 +72,10 @@ export default function PeraturanEksternal() {
                   <Add onChangePage={handlePageChange} />
                 ) : mode === "edit" ? (
                   <Edit onChangePage={handlePageChange} />
+                ) : mode === "editfile" ? (
+                  <EditFile onChangePage={handlePageChange} />
+                ) : mode === "readrevisi" ? (
+                  <ReadRevisi onChangePage={handlePageChange} />
                 ) : mode === "detail" ? (
                   <Detail onChangePage={handlePageChange} />
                 ) : (

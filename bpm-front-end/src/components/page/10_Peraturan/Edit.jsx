@@ -154,38 +154,29 @@ export default function Edit({ onChangePage }) {
       return;
     }
 
-    console.log("Jalan");
-    // setFormData((prevData) => {
-    //   const newFormData = {
-    //     ...prevData,
-    //     fileDokumen: uploadedFilePeraturan[0],
-    //   };
-    //   setLoading(true);
-    //   useFetch(
-    //     `${API_LINK}/MasterPeraturan/CreatePeraturan`,
-    //     newFormData,
-    //     "POST"
-    //   )
-    //     .then((response) => {
-    //       if (response === "ERROR") {
-    //         throw new Error("Gagal memperbarui data");
-    //       }
-    //       SweetAlert(
-    //         "Berhasil!",
-    //         "Dokumentasi kegiatan berhasil dibuat.",
-    //         "success",
-    //         "OK"
-    //       ).then(() => onChangePage("index", { idMenu: idMenu }));
-    //     })
-    //     .catch((error) => {
-    //       SweetAlert("Gagal!", error.message, "error", "OK");
-    //     })
-    //     .finally(() => {
-    //       setLoading(false);
-    //     });
+    setFormData((prevData) => {
+      setLoading(true);
+      useFetch(`${API_LINK}/MasterPeraturan/EditPeraturan`, formData, "POST")
+        .then((response) => {
+          if (response === "ERROR") {
+            throw new Error("Gagal memperbarui data");
+          }
+          SweetAlert(
+            "Berhasil!",
+            "Dokumentasi kegiatan berhasil diEdit.",
+            "success",
+            "OK"
+          ).then(() => onChangePage("index", { idMenu: idMenu }));
+        })
+        .catch((error) => {
+          SweetAlert("Gagal!", error.message, "error", "OK");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
 
-    //   return newFormData;
-    // });
+      return formData;
+    });
   };
 
   if (loading) return <Loading />;

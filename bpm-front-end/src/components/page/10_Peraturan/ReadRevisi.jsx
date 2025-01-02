@@ -17,6 +17,11 @@ import { useIsMobile } from "../../util/useIsMobile";
 let title = "Hallo";
 let breadcrumbs = [];
 
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toISOString().split("T")[0]; // Mengambil hanya bagian tanggal
+};
+
 const dataFilterSort = [
   { Value: "[Judul Peraturan] asc", Text: "Judul Proposal [↑]" },
   { Value: "[Judul Peraturan] desc", Text: "Judul Proposal [↓]" },
@@ -34,6 +39,7 @@ export default function Read({ onChangePage }) {
   const [error, setError] = useState(null);
   const location = useLocation();
   const idMenu = location.state?.idMenu;
+  const idData = location.state?.idData;
   const [pageCurrent, setPageCurrent] = useState(1);
   const [loading, setLoading] = useState(true);
 
@@ -64,10 +70,11 @@ export default function Read({ onChangePage }) {
         judul: selectedJudul,
         size: pageSize,
         page: pageCurrent,
+        idData: idData,
       });
       try {
         const data = await useFetch(
-          `${API_LINK}/MasterPeraturan/GetDataPeraturan`,
+          `${API_LINK}/MasterPeraturan/GetDataRiwayatRevisiPeraturan`,
           {
             idMenu: idMenu,
             search: searchKeyword,
@@ -76,6 +83,7 @@ export default function Read({ onChangePage }) {
             judul: selectedJudul,
             size: pageSize,
             page: pageCurrent,
+            idData: idData,
           },
           "POST"
         );
@@ -87,6 +95,10 @@ export default function Read({ onChangePage }) {
           return {
             id: item.idDok,
             judulDok: item.judulDok,
+            revisiDokFormatted: item.revisiDokFormatted,
+            fileDok: item.fileDok,
+            tglUnggah: formatDate(item.tglUnggah || ""),
+            createdBy: item.createdBy,
             status: item.statusDok,
           };
         });
@@ -113,19 +125,19 @@ export default function Read({ onChangePage }) {
 
   useEffect(() => {
     if (idMenu === 39) {
-      title = "Dokumen Peraturan";
+      title = "Riwayat Pembaruan Peraturan";
       breadcrumbs = [
         { label: "Peraturan", href: "/peraturan/kebijakan" },
         { label: "Dokumen Kebijakan Peraturan" },
       ];
     } else if (idMenu === 40) {
-      title = "Dokumen Peraturan Eksternal";
+      title = "Riwayat Pembaruan Peraturan Eksternal";
       breadcrumbs = [
         { label: "Peraturan", href: "/peraturan/eksternal" },
         { label: "Dokumen Kebijakan Eksternal" },
       ];
     } else if (idMenu === 41) {
-      title = "Instrumen APS";
+      title = "Riwayat Pembaruan Instrumen APS";
       breadcrumbs = [
         { label: "Instrumen APS", href: "/peraturan/aps" },
         { label: "Dokumen Instrumen APS" },
@@ -164,14 +176,6 @@ export default function Read({ onChangePage }) {
               title={title}
               breadcrumbs={breadcrumbs}
               onClick={() => onChangePage("index", { idMenu: idMenu })}
-            />
-          </div>
-          <div className="p-3 m-5 mt-2 mb-0" style={{ marginLeft: "50px" }}>
-            <Button
-              iconName="add"
-              classType="primary"
-              label="Tambah Data"
-              onClick={() => onChangePage("add", { idMenu: idMenu })}
             />
           </div>
           <div
@@ -236,38 +240,24 @@ export default function Read({ onChangePage }) {
             </div>
 
             <Table
-              arrHeader={["No", "Judul Dokumen"]}
+              arrHeader={[
+                "No",
+                "Revisi Ke",
+                "Judul Dokumen",
+                "Nama Berkas (File)",
+                "Tanggal Unggah",
+                "Di Unggah Oleh",
+              ]}
               data={filteredData.map((item, index) => ({
                 Key: item.id,
                 No: indexOfFirstData + index + 1,
+                "Revisi Ke": item.revisiDokFormatted,
                 "Judul Dokumen": item.judulDok,
+                "Nama Berkas (File)": item.fileDok,
+                "Tanggal Unggah": item.tglUnggah,
+                "Di Unggah Oleh": item.createdBy,
                 status: item.status,
               }))}
-              actions={[
-                "Detail",
-                "Edit",
-                "Upload",
-                "Print",
-                "UpdateHistory",
-                "PrintHistory",
-                "Toggle",
-              ]}
-              onEdit={(item) =>
-                onChangePage("edit", { idData: item.Key, idMenu: idMenu })
-              }
-              onDetail={(item) =>
-                onChangePage("detail", { idData: item.Key, idMenu: idMenu })
-              }
-              onUpload={(item) => {
-                onChangePage("editfile", { idData: item.Key, idMenu: idMenu });
-              }}
-              onUpdateHistory={(item) => {
-                onChangePage("readrevisi", {
-                  idData: item.Key,
-                  idMenu: idMenu,
-                });
-              }}
-              onToggle={(item) => handleToggle(item.Key)}
             />
 
             <Paging
