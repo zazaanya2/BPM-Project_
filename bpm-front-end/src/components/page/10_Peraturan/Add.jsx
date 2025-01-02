@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import PageTitleNav from "../../part/PageTitleNav";
-import TextField from "../../part/TextField";
 import InputField from "../../part/InputField";
 import HeaderForm from "../../part/HeaderText";
 import Button from "../../part/Button";
-import DocUpload from "../../part/DocUpload";
 import Dropdown from "../../part/Dropdown";
 import Loading from "../../part/Loading";
 import { useLocation } from "react-router-dom";
@@ -26,12 +24,13 @@ export default function Add({ onChangePage }) {
   const [loading, setLoading] = useState(true); // New loading state
   const [selectedFile, setSelectedFile] = useState(null);
   const [formData, setFormData] = useState({
+    idMenu: idMenu,
     judulDokumen: "",
     nomorInduk: "",
     tahunDokumen: "",
-    jenisDokumen: "",
     tahunKadaluarsa: "",
     fileDokumen: "",
+    jenisDokumen: "",
   });
 
   const handleFileChange = (file) => {
@@ -48,7 +47,7 @@ export default function Add({ onChangePage }) {
 
   useEffect(() => {
     if (idMenu === 39) {
-      title = "KEBIJAKAN PERATURAN";
+      title = "Kebijakan Peraturan";
       titleHeader = "Formulir Kebijakan Peraturan";
       breadcrumbs = [
         { label: "Peraturan", href: "/peraturan/kebijakan" },
@@ -59,7 +58,7 @@ export default function Add({ onChangePage }) {
         { label: "Tambah Kebijakan Peraturan" },
       ];
     } else if (idMenu === 40) {
-      title = "PERATURAN EKSTERNAL";
+      title = "Peraturan Eksternal";
       titleHeader = "Formulir Peraturan Eksternal";
       breadcrumbs = [
         { label: "Peraturan", href: "/peraturan/eksternal" },
@@ -111,56 +110,56 @@ export default function Add({ onChangePage }) {
       return;
     }
 
-    console.log(formData);
-    console.log(fileDokumenRef.current.value);
-
     let uploadedFilePeraturan = null;
 
-    // if (selectedFile) {
-    //   const folderName = "Kegiatan";
-    //   const filePrefix = "NOTULEN";
-    //   uploadedFileNotulen = await uploadFile(
-    //     selectedFile,
-    //     folderName,
-    //     filePrefix
-    //   );
-    // }
+    if (selectedFile) {
+      const folderName = "Peraturan";
 
-    // setFormData((prevData) => {
-    //   const newFormData = {
-    //     ...prevData,
-    //     fileNotulen: uploadedFileNotulen[0],
-    //     fotoSampul: uploadedFotoSampul[0],
-    //   };
+      // Pisahkan nama file dan ekstensi
+      //const fileExtension = selectedFile.name.split(".").pop(); // Ambil ekstensi
+      //const baseName = selectedFile.name.replace(`.${fileExtension}`, ""); // Nama tanpa ekstensi
 
-    //   console.log(newFormData);
+      // Gabungkan prefix dengan nama file
+      const filePrefix = idMenu + "_" + formData.judulDokumen;
+      uploadedFilePeraturan = await uploadFile(
+        selectedFile,
+        folderName,
+        filePrefix
+      );
+    }
 
-    //   setLoading(true);
-    //   useFetch(
-    //     `${API_LINK}/MasterKegiatan/CreateDokumentasiKegiatan`,
-    //     newFormData,
-    //     "POST"
-    //   )
-    //     .then((response) => {
-    //       if (response === "ERROR") {
-    //         throw new Error("Gagal memperbarui data");
-    //       }
-    //       SweetAlert(
-    //         "Berhasil!",
-    //         "Dokumentasi kegiatan berhasil dibuat.",
-    //         "success",
-    //         "OK"
-    //       ).then(() => onChangePage("read"));
-    //     })
-    //     .catch((error) => {
-    //       SweetAlert("Gagal!", error.message, "error", "OK");
-    //     })
-    //     .finally(() => {
-    //       setLoading(false);
-    //     });
+    setFormData((prevData) => {
+      const newFormData = {
+        ...prevData,
+        fileDokumen: uploadedFilePeraturan[0],
+      };
 
-    //   return newFormData;
-    // });
+      setLoading(true);
+      useFetch(
+        `${API_LINK}/MasterPeraturan/CreatePeraturan`,
+        newFormData,
+        "POST"
+      )
+        .then((response) => {
+          if (response === "ERROR") {
+            throw new Error("Gagal memperbarui data");
+          }
+          SweetAlert(
+            "Berhasil!",
+            "Dokumentasi kegiatan berhasil dibuat.",
+            "success",
+            "OK"
+          ).then(() => onChangePage("index", { idMenu: idMenu }));
+        })
+        .catch((error) => {
+          SweetAlert("Gagal!", error.message, "error", "OK");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+
+      return newFormData;
+    });
   };
 
   if (loading) return <Loading />;
@@ -207,9 +206,9 @@ export default function Add({ onChangePage }) {
               <div className="col-lg-6 col-md-6">
                 <InputField
                   ref={tahunDokumenRef}
-                  type="number"
+                  type="date"
                   label="Tahun Dokumen"
-                  value={formData.tahunDokumen || ""}
+                  value={formData.tahunDokumen}
                   onChange={(e) =>
                     setFormData({ ...formData, tahunDokumen: e.target.value })
                   }
@@ -236,9 +235,9 @@ export default function Add({ onChangePage }) {
               <div className="col-lg-6 col-md-6">
                 <InputField
                   ref={tahunKadaluarsaRef}
-                  type="number"
+                  type="date"
                   label="Tahun Kadaluarsa"
-                  value={formData.tahunKadaluarsa || ""}
+                  value={formData.tahunKadaluarsa}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
@@ -250,11 +249,13 @@ export default function Add({ onChangePage }) {
               </div>
             </div>
             <div className="row">
-              <DocUpload
+              <FileUpload
                 ref={fileDokumenRef}
                 label="Dokumen"
                 forInput="fileDokumen"
-                isRequired={true}
+                formatFile=".pdf,.docx,.doc,.xlsx,.pptx"
+                onChange={(file) => handleFileChange(file)}
+                isRequired="true"
               />
             </div>
 
@@ -274,6 +275,7 @@ export default function Add({ onChangePage }) {
                   type="button"
                   label="Batal"
                   width="100%"
+                  onClick={() => onChangePage("index", { idMenu: idMenu })}
                 />
               </div>
             </div>
