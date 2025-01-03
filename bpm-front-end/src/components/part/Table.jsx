@@ -19,6 +19,7 @@ export default function Table({
   onSurveyor = () => {},
   onResponden = () => {},
   onUpload = () => {},
+  onPreview = () => {}
 }) {
   function generateActionButton(actionType, id, status = "Aktif") {
     switch (actionType) {
@@ -132,7 +133,17 @@ export default function Table({
             name="users"
             cssClass="btn px-1 py-0 text-warning"
             title="Edit Responden"
-            onResponden={() => onResponden(id)}
+            onClick={() => onResponden(id)}
+          />
+        );
+      case "Preview":
+        return (
+          <Icon
+            type="Reguler"
+            name="search-alt"
+            cssClass="btn px-1 py-0 text-info"
+            title="Preview"
+            onClick={() => onPreview(id)}
           />
         );
       case "Upload":

@@ -50,6 +50,7 @@ export default function Index({ onChangePage }) {
           JSON.stringify({}),
           "POST"
         );
+        console.log(result);
         setData(result);
       } catch (err) {
         console.error("Fetch error:", err);

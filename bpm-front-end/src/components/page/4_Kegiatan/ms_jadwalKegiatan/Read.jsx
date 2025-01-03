@@ -48,7 +48,7 @@ export default function Read({ onChangePage }) {
       try {
         const data = await useFetch(
           `${API_LINK}/MasterKegiatan/GetDataJenisKegiatan`,
-          JSON.stringify({}),
+          JSON.stringify({}), 
           "POST"
         );
 
@@ -59,7 +59,6 @@ export default function Read({ onChangePage }) {
             Text: item.namaJenisKegiatan,
           })),
         ];
-
         setJenisKegiatan(formattedData);
       } catch (error) {
         setError(error.message);
@@ -109,7 +108,7 @@ export default function Read({ onChangePage }) {
         setFilteredData(formattedEvents);
       } catch (error) {
         setError("Gagal mengambil data kegiatan");
-        console.error(error);
+        // console.error(error);
       } finally {
         setLoading(false);
       }

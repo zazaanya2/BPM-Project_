@@ -205,7 +205,7 @@ export default function Add({ onChangePage }) {
                     type="button"
                     label="Simpan"
                     width="100%"
-                    onClick={handleSubmit}
+                    onClick={() => console.log(images)}
                   />
                 </div>
                 <div className="flex-grow-1 m-2">
