@@ -52,7 +52,7 @@ export default function MasterKategoriDokumen() {
           element={<Add />}
         /> */}
 
-        <Route path="/kategori_dokumen" element={<Home />} />
+        <Route path="/" element={<Home />} />
       </Routes>
     </>
   );

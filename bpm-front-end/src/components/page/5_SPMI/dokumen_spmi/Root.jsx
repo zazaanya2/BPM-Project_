@@ -1,8 +1,10 @@
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import ScrollToTop from "../../../part/ScrollToTop";
+import ProtectedRoute from "../../../util/ProtectedRoute";
 import { ROOT_LINK } from "../../../util/Constants";
 import Index from "./Index";
 import Add from "./Add";
+import Edit from "./Edit";
 import Home from "./Home";
 
 export default function DokumenSPMI() {
@@ -14,48 +16,42 @@ export default function DokumenSPMI() {
   const handlePageChange = (page, withState = {}) => {
     switch (page) {
       case "index":
-        navigate(`${currentPath}`, { state: withState });
+        navigate(`${currentPath}`, { state: { mode: "index", ...withState } });
         break;
-
       case "add":
-        navigate(`${currentPath}/add`, { state: withState });
+        navigate(`${currentPath}`, { state: { mode: "add", ...withState } });
         break;
 
       case "edit":
-        navigate("/spmi/siklus/penetapan/edit", { state: withState });
+        navigate(`${currentPath}`, { state: { mode: "edit", ...withState } });
         break;
-
-      case "editKonten":
-        navigate("/spmi/siklus/penetapan/editkonten", { state: withState });
-        break;
-
       default:
         console.warn(`Halaman "${page}" tidak dikenali.`);
         break;
     }
   };
 
+  const { mode } = location.state || { mode: "index" };
+
   return (
     <>
       <ScrollToTop />
       <Routes>
-        {/* <Route
+        {/* Public Route */}
+        <Route
           path=":jenis"
           element={
-            <Index
-              breadcrumbs={[
-                { label: "SPMI" },
-                { label: "Dokumen SPMI" },
-              ]}
-            />
+            <ProtectedRoute>
+              {mode === "add" ? (
+                <Add onChangePage={handlePageChange} />
+              ) : mode === "edit" ? (
+                <Edit onChangePage={handlePageChange} />
+              ) : (
+                <Index onChangePage={handlePageChange} />
+              )}
+            </ProtectedRoute>
           }
         />
-        <Route
-          path=":jenis/add"
-          element={<Add />}
-        /> */}
-
-        <Route path=":jenis" element={<Home />} />
       </Routes>
     </>
   );

@@ -30,6 +30,8 @@ const Pengendalian = lazy(() =>
   import("../page/5_SPMI/siklus_spmi/pengendalian/Root")
 );
 const Evaluasi = lazy(() => import("../page/5_SPMI/siklus_spmi/evaluasi/Root"));
+const Dokumen = lazy(() => import("../page/5_SPMI/dokumen_spmi/Root"));
+const KategoriDokumen = lazy(() => import("../page/MasterKategoriDokumen/Root"));
 const Peraturan = lazy(() =>
   import("../page/10_Peraturan/ms_kebijakanPeraturan/Root")
 );
@@ -109,6 +111,16 @@ const routeList = [
   {
     path: "/spmi/siklus/evaluasi/*",
     element: <Evaluasi />,
+    protected: true,
+  },
+  {
+    path: "/spmi/dokumen/*",
+    element: <Dokumen />,
+    protected: true,
+  },
+  {
+    path: "/spmi/kategori-dokumen/*",
+    element: <KategoriDokumen />,
     protected: true,
   },
   {

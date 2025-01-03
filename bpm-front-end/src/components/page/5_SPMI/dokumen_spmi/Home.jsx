@@ -23,7 +23,7 @@ export default function Home() {
         return (
           <Edit
             onChangePage={handleSetPageMode}
-            breadcrumbs={breadcrumbs}
+            breadcrumbs={breadcrumbs} 
             idData={dataID}
           />
         );

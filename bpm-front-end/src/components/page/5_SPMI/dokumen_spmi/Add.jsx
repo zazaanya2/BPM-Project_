@@ -17,9 +17,11 @@ const arrData = [
   { Value: "Controlled Copy", Text: "Controlled Copy" },
   { Value: "Uncontrolled Copy", Text: "Uncontrolled Copy" },
 ];
-export default function Add({ onChangePage, breadcrumbs }) {
+export default function Add({ onChangePage }) {
   const isMobile = useIsMobile();
   const title = "Tambah Data";
+  const location = useLocation();
+  const idMenu = location.state?.idMenu;
 
   const [file, setFile] = useState(null);
   const [formData, setFormData] = useState({
@@ -58,8 +60,6 @@ export default function Add({ onChangePage, breadcrumbs }) {
     const isJenisDokValid = jenisDokRef.current?.validate();
     const isFileValid = fileRef.current?.validate();
 
-    console.log("masuk sini");
-
     if (!isJudulDokValid) {
       judulDokRef.current?.focus();
       return;
@@ -76,7 +76,6 @@ export default function Add({ onChangePage, breadcrumbs }) {
       kadaluarsaDokRef.current?.focus();
       return;
     }
-    console.log("masuk sini 2");
     if (!isJenisDokValid) {
       jenisDokRef.current?.focus();
       return;
@@ -112,15 +111,14 @@ export default function Add({ onChangePage, breadcrumbs }) {
       const uploadedDokNames = await uploadResponse.json();
 
       const dokData = {
-        idKdo: 4,
+        idKdo: null,
+        idMen: idMenu,
         judulDok: judulDokRef.current.value,
         nomorDok: nomorDokRef.current.value,
         tanggalDok: tanggalDokRef.current.value,
         kadaluarsaDok: kadaluarsaDokRef.current.value,
         fileDok: uploadedDokNames[0],
         jenisDok: jenisDokRef.current.value,
-        prosDok: null,
-        createdBy: "User404",
       };
 
       const createResponse = await useFetch(
@@ -137,7 +135,11 @@ export default function Add({ onChangePage, breadcrumbs }) {
           "Data berhasil ditambahkan.",
           "success",
           "OK"
-        ).then(() => onChangePage("index"));
+        ).then(() =>
+          onChangePage("index", {
+            idMenu: idMenu,
+          })
+        );
       }
     } catch (error) {
       console.error("Error:", error.message);
@@ -153,8 +155,12 @@ export default function Add({ onChangePage, breadcrumbs }) {
           <div className="p-3">
             <PageTitleNav
               title={title}
-              breadcrumbs={breadcrumbs}
-              onClick={() => onChangePage("index")}
+              breadcrumbs={location.state.breadcrumbs}
+              onClick={() =>
+                onChangePage("index", {
+                  idMenu: idMenu,
+                })
+              }
             />
           </div>
           <div className={isMobile ? "m-0" : "m-3"}>
@@ -252,7 +258,11 @@ export default function Add({ onChangePage, breadcrumbs }) {
                     type="button"
                     label="Batal"
                     width="100%"
-                    onClick={() => onChangePage("index")}
+                    onClick={() =>
+                      onChangePage("index", {
+                        idMenu: idMenu,
+                      })
+                    }
                   />
                 </div>
               </div>

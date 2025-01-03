@@ -140,7 +140,7 @@ export default function Index({ onChangePage }) {
           />
 
           {data[0] && (
-            <Text isi={data[0].ten_isi} alignText="center" ukuran="18px" />
+            <Text isi={data[0].isiTentang} alignText="center" ukuran="18px" />
           )}
         </div>
       </div>
@@ -170,7 +170,7 @@ export default function Index({ onChangePage }) {
           <div className="col-lg-8 col-md-6">
             {data[1] && (
               <Text
-                isi={data[1].ten_isi}
+                isi={data[1].isiTentang}
                 alignText="justify"
                 ukuran="16px"
                 warna="grey"
@@ -283,7 +283,7 @@ export default function Index({ onChangePage }) {
                   />
                   {data[1] && (
                     <Text
-                      isi={data[index + 2].ten_isi}
+                      isi={data[index + 2].isiTentang}
                       alignText="justify"
                       ukuran="16px"
                       warna="white"
@@ -305,7 +305,7 @@ export default function Index({ onChangePage }) {
           marginBottom="50px"
         />
         <img
-          src={`${TENTANGFILE_LINK}${data[6].ten_isi}`}
+          src={`${TENTANGFILE_LINK}${data[6].isiTentang}`}
           alt="Logo"
           style={{ width: "100%", height: "auto", marginBottom: "25px" }}
         />

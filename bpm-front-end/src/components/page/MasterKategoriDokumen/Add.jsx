@@ -21,17 +21,8 @@ export default function Add({ onChangePage, breadcrumbs }) {
     namaKdo: "",
     deskripsiKdo: "",
     idMen: "",
-    urutanKdo: -1,
+    urutanKdo: '',
   });
-  // idMen: null,
-  //   namaKdo: null,
-  //   deskripsiKdo: null,
-  //   foto1Kdo: null,
-  //   foto2Kdo: null,
-  //   foto3Kdo: null,
-  //   urutanKdo: null,
-  //   statusKdo: null,
-  //   createdByKdo: null,
   const [listMenu, setListMenu] = useState([]);
 
   const [images, setImages] = useState([]);

@@ -19,24 +19,23 @@ const arrData = [
   { Value: "Controlled Copy", Text: "Controlled Copy" },
   { Value: "Uncontrolled Copy", Text: "Uncontrolled Copy" },
 ];
-export default function Edit({ onChangePage, breadcrumbs, idData }) {
+export default function Edit({ onChangePage }) {
   const isMobile = useIsMobile();
   const title = "Edit Data";
   const [loading, setLoading] = useState(true);
-
-  console.log(idData);
+  const location = useLocation();
+  const idMenu = location.state?.idMenu;
+  const idData = location.state?.idData;
+  const breadcrumbs = location.state?.breadcrumbs;
 
   const [file, setFile] = useState(null);
   const [formData, setFormData] = useState({
-    idKdo: 4,
+    idKdo: idData,
     judulDok: "",
     nomorDok: "",
     tanggalDok: "",
     kadaluarsaDok: "",
-    fileDok: "",
     jenisDok: "",
-    prosDok: null,
-    createdBy: "User404",
   });
 
   const judulDokRef = useRef();
@@ -86,7 +85,6 @@ export default function Edit({ onChangePage, breadcrumbs, idData }) {
           ),
           fileDok: dokumenArray[0].fileDok,
           jenisDok: dokumenArray[0].jenisDok,
-          prosDok: null,
           createdBy: dokumenArray[0].createdBy,
         });
       }
@@ -101,7 +99,6 @@ export default function Edit({ onChangePage, breadcrumbs, idData }) {
     const isTanggalDokValid = tanggalDokRef.current?.validate();
     const isKadaluarsaDokValid = kadaluarsaDokRef.current?.validate();
     const isJenisDokValid = jenisDokRef.current?.validate();
-    const isFileValid = fileRef.current?.validate();
 
     console.log("masuk sini");
 
@@ -126,50 +123,21 @@ export default function Edit({ onChangePage, breadcrumbs, idData }) {
       jenisDokRef.current?.focus();
       return;
     }
-    if (!isFileValid) {
-      fileRef.current?.focus();
-      return;
-    }
 
     // console.log("Successfully submited!");
     // console.log(dokData);
 
     // SweetAlert("Berhasil!", "Data berhasil ditambahkan.", "success", "OK");
     try {
-      const formData = new FormData();
-      formData.append("files", file);
-      const folderName = "Dokumen";
-
-      const uploadResponse = await fetch(
-        `${API_LINK}/Upload/UploadDokumen?folderName=${encodeURIComponent(
-          folderName
-        )}&idKdo=${encodeURIComponent(4)}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (!uploadResponse.ok) {
-        throw new Error("Gagal mengunggah dokumen");
-      }
-
-      const uploadedDokNames = await uploadResponse.json();
-
       const dokData = {
-        idKdo: 4,
+        idDok: idData,
         judulDok: judulDokRef.current.value,
-        nomorDok: nomorDokRef.current.value,
         tanggalDok: tanggalDokRef.current.value,
         kadaluarsaDok: kadaluarsaDokRef.current.value,
-        fileDok: uploadedDokNames[0],
-        jenisDok: jenisDokRef.current.value,
-        prosDok: null,
-        createdBy: "User404",
+        jenisDok: jenisDokRef.current.value ? jenisDokRef.current.value : null,
       };
-
       const createResponse = await useFetch(
-        `${API_LINK}/MasterDokumen/CreateDataDokumen`,
+        `${API_LINK}/MasterDokumen/EditDataDokumen`,
         dokData,
         "POST"
       );
@@ -177,7 +145,16 @@ export default function Edit({ onChangePage, breadcrumbs, idData }) {
       if (createResponse === "ERROR") {
         throw new Error("Gagal memperbarui data");
       } else {
-        SweetAlert("Berhasil!", "Data berhasil ditambahkan.", "success", "OK");
+        SweetAlert(
+          "Berhasil!",
+          "Data berhasil diperbarui.",
+          "success",
+          "OK"
+        ).then(() =>
+          onChangePage("index", {
+            idMenu: idMenu,
+          })
+        );
       }
     } catch (error) {
       console.error("Error:", error.message);
@@ -196,7 +173,11 @@ export default function Edit({ onChangePage, breadcrumbs, idData }) {
             <PageTitleNav
               title={title}
               breadcrumbs={breadcrumbs}
-              onClick={() => onChangePage("index")}
+              onClick={() =>
+                onChangePage("index", {
+                  idMenu: idMenu,
+                })
+              }
             />
           </div>
           <div className={isMobile ? "m-0" : "m-3"}>
@@ -269,16 +250,6 @@ export default function Edit({ onChangePage, breadcrumbs, idData }) {
                   />
                 </div>
               </div>
-              <div className="row">
-                <FileUpload
-                  label="Dokumen"
-                  forInput="fileDok"
-                  onChange={handleFileChange}
-                  name="fileDok"
-                  ref={fileRef}
-                  isRequired={true}
-                />
-              </div>
               <div className="d-flex justify-content-between align-items-center">
                 <div className="flex-grow-1 m-2">
                   <Button
@@ -295,7 +266,11 @@ export default function Edit({ onChangePage, breadcrumbs, idData }) {
                     type="button"
                     label="Batal"
                     width="100%"
-                    onClick={() => onChangePage("index")}
+                    onClick={() =>
+                      onChangePage("index", {
+                        idMenu: idMenu,
+                      })
+                    }
                   />
                 </div>
               </div>
