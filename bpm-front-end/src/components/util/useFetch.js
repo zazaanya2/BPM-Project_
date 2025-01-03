@@ -1,11 +1,16 @@
+import Cookies from "js-cookie";
+
 export const useFetch = async (url, param = {}, method = "POST") => {
   let response;
+  let activeUser = "";
+  const cookie = Cookies.get("activeUser");
+  if (cookie) activeUser = JSON.parse(cookie).username;
 
   try {
     if (method === "POST") {
       const paramToSend = {
         ...param,
-        // Di sini Anda bisa menambahkan parameter lain yang dibutuhkan
+        activeUser: activeUser,
       };
 
       response = await fetch(url, {
@@ -26,7 +31,7 @@ export const useFetch = async (url, param = {}, method = "POST") => {
       return "ERROR";
     }
   } catch (err) {
-    console.error("Fetch error:", err);
+    // console.error("Fetch error:", err);
     return "ERROR";
   }
 };

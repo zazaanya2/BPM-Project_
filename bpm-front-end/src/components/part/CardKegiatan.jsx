@@ -1,10 +1,19 @@
 import React, { useState } from "react";
 import Text from "./Text";
 import HeaderText from "./HeaderText";
-import { BERITAFOTO_LINK } from "../util/Constants";
+import { KEGIATANFILE_LINK } from "../util/Constants";
 import { useIsMobile } from "../util/useIsMobile";
 
-const CardKegiatan = ({ title, date, time, location, image, galleryLink }) => {
+const CardKegiatan = ({
+  title,
+  date,
+  time,
+  location,
+  image,
+  galleryLink,
+  fileNotulen,
+  statusFileNotulen,
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const isMobile = useIsMobile();
   const iconStyle = {
@@ -50,7 +59,7 @@ const CardKegiatan = ({ title, date, time, location, image, galleryLink }) => {
             style={{ height: "100%" }}
           >
             <img
-              src={BERITAFOTO_LINK + image}
+              src={KEGIATANFILE_LINK + image}
               alt="Kegiatan"
               className="img-fluid rounded mb-3"
               style={{
@@ -90,6 +99,16 @@ const CardKegiatan = ({ title, date, time, location, image, galleryLink }) => {
           >
             Galeri Selengkapnya
           </a>
+
+          {statusFileNotulen === "Publik" && (
+            <a
+              href={fileNotulen}
+              className="btn btn-danger btn-sm ms-3"
+              target="_blank"
+            >
+              File Notulen
+            </a>
+          )}
         </div>
       )}
     </div>

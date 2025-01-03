@@ -3,60 +3,91 @@ import {
   Routes,
   Route,
   useNavigate,
+  useLocation,
 } from "react-router-dom";
-import Index from "./Index";
+import Index from "../Index";
 import ScrollToTop from "../../../part/ScrollToTop";
-import Add from "./Add";
-import Edit from "./Edit";
-import Detail from "./Detail";
-import UpdateHistory from "./UpdateHistory";
+import Add from "../Add";
+import Edit from "../Edit";
+import EditFile from "../EditFile";
+import ReadRevisi from "../ReadRevisi";
+import ReadUnduhan from "../ReadUnduhan";
+import Detail from "../Detail";
+import ProtectedRoute from "../../../util/ProtectedRoute"; // Import the ProtectedRoute component
 
 export default function Peraturan() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handlePageChange = (page, withState = {}) => {
     switch (page) {
       case "index":
-        navigate("/peraturan/aps");
+        navigate("/peraturan/aps", {
+          state: { mode: "index", ...withState },
+        });
         break;
       case "add":
-        navigate("/peraturan/aps/tambah");
+        navigate("/peraturan/aps", { state: { mode: "add", ...withState } });
         break;
       case "edit":
-        navigate("/peraturan/aps/edit");
+        navigate("/peraturan/aps", { state: { mode: "edit", ...withState } });
+        break;
+      case "editfile":
+        navigate("/peraturan/aps", {
+          state: { mode: "editfile", ...withState },
+        });
+        break;
+      case "readrevisi":
+        navigate("/peraturan/aps", {
+          state: { mode: "readrevisi", ...withState },
+        });
+        break;
+      case "readunduhan":
+        navigate("/peraturan/aps", {
+          state: { mode: "readunduhan", ...withState },
+        });
         break;
       case "detail":
-        navigate("/peraturan/aps/detail");
+        navigate("/peraturan/aps", { state: { mode: "detail", ...withState } });
         break;
-      case "updateHistory":
-        navigate("/peraturan/aps/updateHistory");
-        break;
+
       default:
         console.warn(`Halaman "${page}" tidak dikenali.`);
         break;
     }
   };
 
+  const { mode } = location.state || { mode: "index" };
+
   return (
     <>
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<Index onChangePage={handlePageChange} />} />
+        {/* Protected Routes */}
         <Route
-          path="/tambah"
-          element={<Add onChangePage={handlePageChange} />}
-        />
-        <Route
-          path="/edit"
-          element={<Edit onChangePage={handlePageChange} />}
-        />
-        <Route
-          path="/detail"
-          element={<Detail onChangePage={handlePageChange} />}
-        />
-        <Route
-          path="/updateHistory"
-          element={<UpdateHistory onChangePage={handlePageChange} />}
+          path="/"
+          element={
+            <ProtectedRoute>
+              {
+                // Berdasarkan mode, render komponen yang berbeda
+                mode === "add" ? (
+                  <Add onChangePage={handlePageChange} />
+                ) : mode === "edit" ? (
+                  <Edit onChangePage={handlePageChange} />
+                ) : mode === "editfile" ? (
+                  <EditFile onChangePage={handlePageChange} />
+                ) : mode === "readrevisi" ? (
+                  <ReadRevisi onChangePage={handlePageChange} />
+                ) : mode === "readunduhan" ? (
+                  <ReadUnduhan onChangePage={handlePageChange} />
+                ) : mode === "detail" ? (
+                  <Detail onChangePage={handlePageChange} />
+                ) : (
+                  <Index onChangePage={handlePageChange} />
+                )
+              }
+            </ProtectedRoute>
+          }
         />
       </Routes>
     </>

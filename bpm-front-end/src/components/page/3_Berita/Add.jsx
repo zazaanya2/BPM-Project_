@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import PageTitleNav from "../../part/PageTitleNav";
 import InputField from "../../part/InputField";
 import TextArea from "../../part/TextArea";
@@ -9,6 +9,8 @@ import { API_LINK } from "../../util/Constants";
 import SweetAlert from "../../util/SweetAlert";
 import { useIsMobile } from "../../util/useIsMobile";
 import { useFetch } from "../../util/useFetch";
+import { useLocation } from "react-router-dom";
+import { decodeHtml } from "../../util/DecodeHtml";
 
 export default function Add({ onChangePage }) {
   const title = "Tambah Berita";
@@ -18,13 +20,14 @@ export default function Add({ onChangePage }) {
     { label: "Tambah Berita" },
   ];
   const isMobile = useIsMobile();
-  const [isiBerita, setIsiBerita] = useState("");
+  const location = useLocation();
 
   const [formData, setFormData] = useState({
-    judul: "",
+    judul: location.state?.judul ? location.state.judul : "",
     penulis: "",
     tanggal: "",
-    isi: "",
+    isi: location.state?.deskripsi ? decodeHtml(location.state.deskripsi) : "",
+    fotoList: [],
   });
 
   const [images, setImages] = useState([]);
@@ -33,14 +36,6 @@ export default function Add({ onChangePage }) {
   const tanggalRef = useRef();
   const isiRef = useRef();
   const fotoRef = useRef();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
 
   const handleUploadChange = (updatedFiles) => {
     setImages(updatedFiles);
@@ -76,8 +71,8 @@ export default function Add({ onChangePage }) {
 
     try {
       // Upload foto
-      const formData = new FormData();
-      images.forEach((file) => formData.append("files", file));
+      const formDataUpload = new FormData();
+      images.forEach((file) => formDataUpload.append("files", file));
 
       const folderName = "Berita";
       const filePrefix = "FOTO";
@@ -88,7 +83,7 @@ export default function Add({ onChangePage }) {
         )}&filePrefix=${encodeURIComponent(filePrefix)}`,
         {
           method: "POST",
-          body: formData,
+          body: formDataUpload,
         }
       );
 
@@ -98,12 +93,11 @@ export default function Add({ onChangePage }) {
 
       const uploadedFileNames = await uploadResponse.json();
       const beritaData = {
-        ber_judul: judulRef.current.value,
-        ber_tgl: tanggalRef.current.value,
-        ber_isi: isiBerita,
-        ber_penulis: penulisRef.current.value,
+        judul: formData.judul,
+        tgl: formData.tanggal,
+        isi: formData.isi,
+        penulis: formData.penulis,
         fotoList: uploadedFileNames,
-        ber_created_by: penulisRef.current.value,
       };
 
       const createResponse = await useFetch(
@@ -128,19 +122,18 @@ export default function Add({ onChangePage }) {
     }
   };
 
-  const handleIsiChange = (e) => {
-    setIsiBerita(e.target.value);
-  };
-
   return (
     <div className="d-flex flex-column min-vh-100">
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
         <div className="d-flex flex-column">
-          <PageTitleNav
-            title={title}
-            breadcrumbs={breadcrumbs}
-            onClick={() => onChangePage("read")}
-          />
+          <div className={isMobile ? "m-0 p-0" : "m-3 mb-0"}>
+            <PageTitleNav
+              title={title}
+              breadcrumbs={breadcrumbs}
+              onClick={() => onChangePage("read")}
+            />
+          </div>
+
           <div className={isMobile ? "m-0" : "m-3"}>
             <div
               className={
@@ -156,7 +149,9 @@ export default function Add({ onChangePage }) {
                     ref={judulRef}
                     label="Judul Berita"
                     value={formData.judul}
-                    onChange={handleChange}
+                    onChange={(e) =>
+                      setFormData({ ...formData, judul: e.target.value })
+                    }
                     isRequired={true}
                     name="judul"
                     maxChar="100"
@@ -165,7 +160,9 @@ export default function Add({ onChangePage }) {
                     ref={penulisRef}
                     label="Penulis"
                     value={formData.penulis}
-                    onChange={handleChange}
+                    onChange={(e) =>
+                      setFormData({ ...formData, penulis: e.target.value })
+                    }
                     isRequired={true}
                     name="penulis"
                     maxChar="50"
@@ -176,7 +173,9 @@ export default function Add({ onChangePage }) {
                     ref={tanggalRef}
                     label="Tanggal Berita"
                     value={formData.tanggal}
-                    onChange={handleChange}
+                    onChange={(e) =>
+                      setFormData({ ...formData, tanggal: e.target.value })
+                    }
                     isRequired={true}
                     name="tanggal"
                     type="date"
@@ -186,8 +185,10 @@ export default function Add({ onChangePage }) {
               <TextArea
                 ref={isiRef}
                 label="Isi Berita"
-                value={isiBerita}
-                onChange={handleIsiChange}
+                value={formData.isi}
+                onChange={(e) =>
+                  setFormData({ ...formData, isi: e.target.value })
+                }
                 isRequired={true}
               />
               <UploadFoto
@@ -204,7 +205,7 @@ export default function Add({ onChangePage }) {
                     type="button"
                     label="Simpan"
                     width="100%"
-                    onClick={handleSubmit}
+                    onClick={() => console.log(images)}
                   />
                 </div>
                 <div className="flex-grow-1 m-2">

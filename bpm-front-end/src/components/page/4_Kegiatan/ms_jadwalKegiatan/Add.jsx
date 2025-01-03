@@ -31,7 +31,6 @@ export default function Add({ onChangePage }) {
     endTime: "",
     place: "",
     jenisKegiatan: "",
-    createdBy: "Admin",
   });
 
   const [jenisKegiatan, setJenisKegiatan] = useState([]);
@@ -45,8 +44,8 @@ export default function Add({ onChangePage }) {
           "POST"
         );
         const formattedData = data.map((item) => ({
-          Value: item.jkg_id,
-          Text: item.jkg_nama,
+          Value: item.idJenisKegiatan,
+          Text: item.namaJenisKegiatan,
         }));
         setJenisKegiatan(formattedData);
       } catch (error) {

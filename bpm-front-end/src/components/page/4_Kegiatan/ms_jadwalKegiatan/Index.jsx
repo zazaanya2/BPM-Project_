@@ -10,44 +10,78 @@ import Loading from "../../../part/Loading";
 import "moment-timezone";
 import { useIsMobile } from "../../../util/useIsMobile";
 import { useFetch } from "../../../util/useFetch";
+import { useLocation, useNavigate } from "react-router-dom";
+import { decodeHtml } from "../../../util/DecodeHtml";
 const localizer = momentLocalizer(moment);
+import Cookies from "js-cookie";
 
 export default function Index({ onChangePage }) {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!location.state?.idData) return;
+
+    console.log("state", location.state?.idData);
+
+    const event = events.find((e) => e.id === location.state.idData);
+    if (event) {
+      setSelectedEvent(event);
+    }
+  }, [location.state?.idData, events]);
 
   const fetchEvents = async () => {
+    const activeUser = Cookies.get("activeUser");
+
+    if (activeUser) {
+      const parsedUser = JSON.parse(activeUser);
+      if (parsedUser.RoleID.trim() === "ROL01") {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    } else {
+      setIsLoggedIn(false);
+    }
+
     try {
       const data = await useFetch(
         `${API_LINK}/MasterKegiatan/GetDataKegiatan`,
-        JSON.stringify({}),
+        {
+          p1: "",
+          p2: "",
+          p3: "",
+          p4: "",
+        },
         "POST"
       );
-
-      if (!data || !Array.isArray(data)) {
+      console.log(data);
+      if (data === "ERROR" || !Array.isArray(data)) {
         throw new Error("Invalid data format or no data returned");
       }
 
       const formattedEvents = data.map((item) => {
-        const startDate = moment(item.keg_tgl_mulai).format("YYYY-MM-DD");
-        const endDate = moment(item.keg_tgl_selesai).format("YYYY-MM-DD");
+        const startDate = moment(item.tglMulaiKegiatan).format("YYYY-MM-DD");
+        const endDate = moment(item.tglSelesaiKegiatan).format("YYYY-MM-DD");
 
         return {
-          id: item.keg_id,
-          title: item.keg_nama,
-          description: item.keg_deskripsi,
-          category: item.keg_kategori,
-          start: moment(`${startDate}T${item.keg_jam_mulai}`).toDate(),
-          end: moment(`${endDate}T${item.keg_jam_selesai}`).toDate(),
-          location: item.keg_tempat,
+          id: item.idKegiatan,
+          title: decodeHtml(item.namaKegiatan),
+          description: item.deskripsiKegiatan,
+          category: item.kategoriKegiatan,
+          start: moment(`${startDate}T${item.jamMulaiKegiatan}`).toDate(),
+          end: moment(`${endDate}T${item.jamSelesaiKegiatan}`).toDate(),
+          location: item.tempatKegiatan,
         };
       });
       setEvents(formattedEvents);
     } catch (error) {
-      console.error("Error fetching events:", error);
+      // console.error("Error fetching events:", error);
     } finally {
       setLoading(false);
     }
@@ -80,11 +114,11 @@ export default function Index({ onChangePage }) {
   });
 
   const eventStyles = {
-    1: {
+    Rencana: {
       backgroundColor: "rgba(181, 202, 251, 0.3)",
       borderColor: "#4989C2",
     },
-    3: {
+    Terlaksana: {
       backgroundColor: "rgba(193, 232, 191, 0.3)",
       borderColor: "#08A500",
     },
@@ -197,12 +231,14 @@ export default function Index({ onChangePage }) {
           marginRight: "3rem",
         }}
       >
-        <Button
-          classType="btn btn-primary"
-          title="Kelola Jadwal Kegiatan"
-          label="Kelola Jadwal Kegiatan"
-          onClick={() => onChangePage("read")}
-        />
+        {isLoggedIn && (
+          <Button
+            classType="btn btn-primary"
+            title="Kelola Jadwal Kegiatan"
+            label="Kelola Jadwal Kegiatan"
+            onClick={() => onChangePage("read")}
+          />
+        )}
       </div>
 
       {/* Main Content */}
@@ -432,6 +468,53 @@ export default function Index({ onChangePage }) {
                   alignText="justify"
                   style={descriptionStyle}
                 ></Text>
+
+                {selectedEvent.category === "Terlaksana" && (
+                  <Button
+                    classType="btn btn-primary"
+                    title="Lihat Dokumentasi"
+                    label="Lihat Dokumentasi"
+                    onClick={() =>
+                      navigate("/kegiatan/dokumentasi", {
+                        state: {
+                          idData: selectedEvent.id,
+                        },
+                      })
+                    }
+                  />
+                )}
+
+                {isLoggedIn && selectedEvent.category === "Terlewat" && (
+                  <Button
+                    classType="btn btn-primary"
+                    title="Tambah Dokumentasi"
+                    label="Tambah Dokumentasi"
+                    onClick={() =>
+                      navigate("/kegiatan/dokumentasi/kelola", {
+                        state: { mode: "addExist", idData: selectedEvent.id },
+                      })
+                    }
+                  />
+                )}
+
+                {isLoggedIn &&
+                  (selectedEvent.category === "Terlaksana" ||
+                    selectedEvent.category === "Terlewat") && (
+                    <Button
+                      classType="btn btn-success ms-3"
+                      title="Tambah Berita"
+                      label="Tambah Berita"
+                      onClick={() =>
+                        navigate("/berita/kelola", {
+                          state: {
+                            mode: "add",
+                            judul: selectedEvent.title,
+                            deskripsi: selectedEvent.description,
+                          },
+                        })
+                      }
+                    />
+                  )}
               </div>
             </div>
           ) : (

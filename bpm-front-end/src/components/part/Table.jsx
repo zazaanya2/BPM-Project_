@@ -3,9 +3,12 @@ import Icon from "./Icon";
 
 export default function Table({
   arrHeader,
-  headerToDataMap,
   data,
+  linkColumns = [],
+  FILE_LINK = "",
+  aksiIs = true,
   actions = [],
+  onToggle = () => {},
   onDelete = () => {},
   onDetail = () => {},
   onEdit = () => {},
@@ -15,7 +18,8 @@ export default function Table({
   onUpdateHistory = () => {},
   onSurveyor = () => {},
   onResponden = () => {},
-  onToggle = () => {},
+  onUpload = () => {},
+  onPreview = () => {},
 }) {
   function generateActionButton(actionType, id, status = "Aktif") {
     switch (actionType) {
@@ -129,7 +133,27 @@ export default function Table({
             name="users"
             cssClass="btn px-1 py-0 text-warning"
             title="Edit Responden"
-            onResponden={() => onResponden(id)}
+            onClick={() => onResponden(id)}
+          />
+        );
+      case "Preview":
+        return (
+          <Icon
+            type="Reguler"
+            name="search-alt"
+            cssClass="btn px-1 py-0 text-info"
+            title="Preview"
+            onClick={() => onPreview(id)}
+          />
+        );
+      case "Upload":
+        return (
+          <Icon
+            type="Reguler"
+            name="upload"
+            cssClass="btn px-1 py-0 text-secondary"
+            title="Upload File"
+            onClick={() => onUpload(id)}
           />
         );
       default:
@@ -157,16 +181,18 @@ export default function Table({
                 {header}
               </th>
             ))}
-            <th
-              className="text-center align-middle"
-              style={{
-                backgroundColor: "#2654A1",
-                color: "#fff",
-                width: "250px",
-              }}
-            >
-              Aksi
-            </th>
+            {aksiIs && ( // Render kolom aksi hanya jika aksiIs adalah false
+              <th
+                className="text-center align-middle"
+                style={{
+                  backgroundColor: "#2654A1",
+                  color: "#fff",
+                  width: "250px",
+                }}
+              >
+                Aksi
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -175,36 +201,50 @@ export default function Table({
               <tr key={`row-${rowIndex}`}>
                 {arrHeader.map((column, colIndex) => (
                   <td
-                    key={`cell-${row.Key}-${colIndex}`}
+                    key={`cell-${rowIndex}-${colIndex}`}
                     className={`align-middle ${
                       column === "No" ? "text-center" : "text-start"
                     }`}
                   >
-                    {row[headerToDataMap[column]]}
+                    {/* Periksa apakah kolom ini harus memiliki hyperlink */}
+                    {linkColumns.includes(column) && row[column] ? (
+                      <a
+                        href={`${FILE_LINK}${row[column]}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary text-decoration-underline"
+                      >
+                        {row[column]}
+                      </a>
+                    ) : (
+                      row[column] || ""
+                    )}
                   </td>
                 ))}
-                <td
-                  className="text-center align-middle"
-                  style={{ width: "250px" }}
-                >
-                  {typeof actions === "function"
-                    ? actions(row).map((action, actionIndex) => (
-                        <React.Fragment
-                          key={`${action}-${row.Key || rowIndex}`}
-                        >
-                          {generateActionButton(action, row)}
-                        </React.Fragment>
-                      ))
-                    : Array.isArray(actions) && actions.length > 0
-                    ? actions.map((action, actionIndex) => (
-                        <React.Fragment
-                          key={`${action}-${row.Key || rowIndex}`}
-                        >
-                          {generateActionButton(action, row)}
-                        </React.Fragment>
-                      ))
-                    : null}
-                </td>
+                {aksiIs && ( // Render kolom aksi hanya jika aksiIs adalah false
+                  <td
+                    className="text-center align-middle"
+                    style={{ width: "250px" }}
+                  >
+                    {typeof actions === "function"
+                      ? actions(row).map((action, actionIndex) => (
+                          <React.Fragment
+                            key={`${action}-${row.Key || rowIndex}`}
+                          >
+                            {generateActionButton(action, row, row.status)}
+                          </React.Fragment>
+                        ))
+                      : Array.isArray(actions) && actions.length > 0
+                      ? actions.map((action, actionIndex) => (
+                          <React.Fragment
+                            key={`${action}-${row.Key || rowIndex}`}
+                          >
+                            {generateActionButton(action, row, row.status)}
+                          </React.Fragment>
+                        ))
+                      : null}
+                  </td>
+                )}
               </tr>
             ))
           ) : (
