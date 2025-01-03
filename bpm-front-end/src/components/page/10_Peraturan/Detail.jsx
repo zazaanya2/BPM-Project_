@@ -4,7 +4,7 @@ import TextField from "../../part/TextField";
 import InputField from "../../part/InputField";
 import HeaderForm from "../../part/HeaderText";
 import Dropdown from "../../part/Dropdown";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { API_LINK } from "../../util/Constants";
 import Button from "../../part/Button";
 import SweetAlert from "../../util/SweetAlert";
@@ -23,6 +23,7 @@ export default function Detail({ onChangePage }) {
   const [error, setError] = useState(null);
 
   const location = useLocation();
+  const navigate = useNavigate();
   const idMenu = location.state?.idMenu;
   const idData = location.state?.idData;
   const [loading, setLoading] = useState(true); // New loading state
@@ -37,6 +38,12 @@ export default function Detail({ onChangePage }) {
     tahunKadaluarsa: "",
     jenisDokumen: "",
   });
+
+  useEffect(() => {
+    if (!idMenu) {
+      navigate("*");
+    }
+  }, [location.state?.idMenu]);
 
   useEffect(() => {
     const fetchEvents = async () => {

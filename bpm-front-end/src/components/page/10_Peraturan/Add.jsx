@@ -80,7 +80,7 @@ export default function Add({ onChangePage }) {
         { label: "Tambah Instrumen APS" },
       ];
     }
-    // Set loading to false once idMenu is determined
+
     setLoading(false);
   }, [idMenu]);
 
@@ -115,11 +115,6 @@ export default function Add({ onChangePage }) {
     if (selectedFile) {
       const folderName = "Peraturan";
 
-      // Pisahkan nama file dan ekstensi
-      //const fileExtension = selectedFile.name.split(".").pop(); // Ambil ekstensi
-      //const baseName = selectedFile.name.replace(`.${fileExtension}`, ""); // Nama tanpa ekstensi
-
-      // Gabungkan prefix dengan nama file
       const filePrefix = idMenu + "_" + formData.judulDokumen;
       uploadedFilePeraturan = await uploadFile(
         selectedFile,
@@ -146,7 +141,7 @@ export default function Add({ onChangePage }) {
           }
           SweetAlert(
             "Berhasil!",
-            "Dokumentasi kegiatan berhasil dibuat.",
+            "Data berhasil ditambahkan.",
             "success",
             "OK"
           ).then(() => onChangePage("index", { idMenu: idMenu }));

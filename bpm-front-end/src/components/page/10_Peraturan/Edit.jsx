@@ -163,7 +163,7 @@ export default function Edit({ onChangePage }) {
           }
           SweetAlert(
             "Berhasil!",
-            "Dokumentasi kegiatan berhasil diEdit.",
+            "Data berhasil diperbarui.",
             "success",
             "OK"
           ).then(() => onChangePage("index", { idMenu: idMenu }));

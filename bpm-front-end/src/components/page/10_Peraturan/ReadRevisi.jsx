@@ -143,16 +143,6 @@ export default function Read({ onChangePage }) {
     setSelectedJudul("");
   };
 
-  const handleToggle = (id) => {
-    console.log("id hapus :", id);
-    const updatedData = filteredData.map((item) =>
-      item.id === id
-        ? { ...item, status: item.status === "Aktif" ? "Tidak Aktif" : "Aktif" }
-        : item
-    );
-    setFilteredData(updatedData);
-  };
-
   if (loading) return <Loading />;
 
   return (
