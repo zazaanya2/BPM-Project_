@@ -10,6 +10,7 @@ import Add from "../Add";
 import Edit from "../Edit";
 import EditFile from "../EditFile";
 import ReadRevisi from "../ReadRevisi";
+import ReadUnduhan from "../ReadUnduhan";
 import Detail from "../Detail";
 import ScrollToTop from "../../../part/ScrollToTop";
 import ProtectedRoute from "../../../util/ProtectedRoute"; // Import the ProtectedRoute component
@@ -44,6 +45,11 @@ export default function PeraturanEksternal() {
           state: { mode: "readrevisi", ...withState },
         });
         break;
+      case "readunduhan":
+        navigate("/peraturan/eksternal", {
+          state: { mode: "readunduhan", ...withState },
+        });
+        break;
       case "detail":
         navigate("/peraturan/eksternal", {
           state: { mode: "detail", ...withState },
@@ -76,6 +82,8 @@ export default function PeraturanEksternal() {
                   <EditFile onChangePage={handlePageChange} />
                 ) : mode === "readrevisi" ? (
                   <ReadRevisi onChangePage={handlePageChange} />
+                ) : mode === "readunduhan" ? (
+                  <ReadUnduhan onChangePage={handlePageChange} />
                 ) : mode === "detail" ? (
                   <Detail onChangePage={handlePageChange} />
                 ) : (
