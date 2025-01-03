@@ -10,8 +10,10 @@ import Loading from "../../part/Loading";
 import Filter from "../../part/Filter";
 import SearchField from "../../part/SearchField";
 import DropDown from "../../part/Dropdown";
+import SweetAlert from "../../util/SweetAlert";
 import moment from "moment";
 import { useIsMobile } from "../../util/useIsMobile";
+import Cookies from "js-cookie";
 
 // Dynamically set title and breadcrumbs based on idMenu
 let title = "Hallo";
@@ -29,6 +31,10 @@ const statusFilterSort = [
 const pageSize = 10;
 
 export default function Read({ onChangePage }) {
+  const activeUser = Cookies.get("activeUser");
+  let role = ""; // Jika undefined, gunakan nilai default
+  let roleNama = "";
+  let namaPengguna = "";
   const isMobile = useIsMobile();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -39,67 +45,63 @@ export default function Read({ onChangePage }) {
 
   const [filteredData, setFilteredData] = useState([]);
   const [totalData, setTotalData] = useState(0);
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("Aktif");
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedJudul, setSelectedJudul] = useState("");
 
-  const searchQuery = useRef();
-  const searchFilterSort = useRef();
-
   const indexOfLastData = pageCurrent * pageSize;
   const indexOfFirstData = indexOfLastData - pageSize;
+
+  if (activeUser) {
+    role = JSON.parse(activeUser).RoleID;
+    roleNama = JSON.parse(activeUser).Role;
+    namaPengguna = JSON.parse(activeUser).Nama;
+  }
 
   const handlePageNavigation = (page) => {
     setPageCurrent(page);
   };
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      console.log({
-        idMenu: idMenu,
-        search: searchKeyword,
-        year: selectedYear,
-        status: selectedStatus,
-        judul: selectedJudul,
-        size: pageSize,
-        page: pageCurrent,
-      });
-      try {
-        const data = await useFetch(
-          `${API_LINK}/MasterPeraturan/GetDataPeraturan`,
-          {
-            idMenu: idMenu,
-            search: searchKeyword,
-            year: selectedYear,
-            status: selectedStatus,
-            judul: selectedJudul,
-            size: pageSize,
-            page: pageCurrent,
-          },
-          "POST"
-        );
+  const fetchEvents = async () => {
+    try {
+      const data = await useFetch(
+        `${API_LINK}/MasterPeraturan/GetDataPeraturan`,
+        {
+          idMenu: idMenu,
+          search: searchKeyword,
+          year: selectedYear,
+          status: selectedStatus,
+          judul: selectedJudul,
+          size: pageSize,
+          page: pageCurrent,
+        },
+        "POST"
+      );
 
-        if (data.length > 0 && data[0].TotalCount !== undefined) {
-          setTotalData(data[0].TotalCount); // Set hanya sekali
-        }
-        const formattedEvents = data.map((item) => {
-          return {
-            id: item.idDok,
-            judulDok: item.judulDok,
-            status: item.statusDok,
-          };
-        });
-
-        setFilteredData(formattedEvents);
-      } catch (error) {
-        setError("Gagal mengambil data kegiatan");
-        console.error(error);
-      } finally {
-        setLoading(false);
+      if (data.length > 0 && data[0].TotalCount !== undefined) {
+        setTotalData(data[0].TotalCount); // Set hanya sekali
       }
-    };
+      const formattedEvents = data.map((item) => {
+        return {
+          id: item.idDok,
+          judulDok: item.judulDok,
+          controlDok: item.controlDok,
+          fileDok: item.fileDok,
+          referensiDok: item.refDok,
+          status: item.statusDok,
+        };
+      });
 
+      setFilteredData(formattedEvents);
+    } catch (error) {
+      setError("Gagal mengambil data kegiatan");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchEvents();
   }, [
     idMenu,
@@ -144,13 +146,125 @@ export default function Read({ onChangePage }) {
   };
 
   const handleToggle = (id) => {
-    console.log("id hapus :", id);
-    const updatedData = filteredData.map((item) =>
-      item.id === id
-        ? { ...item, status: item.status === "Aktif" ? "Tidak Aktif" : "Aktif" }
-        : item
-    );
-    setFilteredData(updatedData);
+    // Cari item dengan ID yang sesuai
+    const item = filteredData.find((data) => data.id === id);
+
+    if (!item) {
+      // Jika ID tidak ditemukan, tampilkan SweetAlert peringatan
+      SweetAlert("Peringatan", "ID file tidak tersedia.", "warning");
+      return;
+    }
+
+    // Tampilkan konfirmasi menggunakan SweetAlert sebelum toggle status
+    SweetAlert(
+      "Konfirmasi",
+      `Apakah Anda yakin ingin ${
+        item.status === "Aktif" ? "menonaktifkan" : "mengaktifkan"
+      } dokumen ini?`,
+      "question",
+      "Ya",
+      null,
+      "",
+      true // Tampilkan tombol batal
+    ).then((result) => {
+      if (result) {
+        // Jika pengguna mengonfirmasi, hanya simpan idDok dan status yang diperbarui
+        const updatedData = filteredData
+          .filter((data) => data.id === id)
+          .map((data) => ({
+            idDok: data.id,
+            status: data.status === "Aktif" ? "Tidak Aktif" : "Aktif",
+          }));
+
+        useFetch(
+          `${API_LINK}/MasterPeraturan/EditPeraturanToggle`,
+          updatedData[0]
+        )
+          .then((response) => {
+            if (response === "ERROR") {
+              throw new Error("Gagal memperbarui data");
+            }
+            SweetAlert(
+              "Berhasil!",
+              "Dokumentasi kegiatan berhasil diEdit.",
+              "success",
+              "OK"
+            ).then(() => {
+              // Panggil fetchEvents untuk memperbarui data tanpa reload halaman
+              fetchEvents();
+            });
+          })
+          .catch((error) => {
+            SweetAlert("Gagal!", error.message, "error", "OK");
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      }
+    });
+  };
+
+  const handleDownloadClick = async (id) => {
+    if (!id) {
+      SweetAlert("Peringatan", "ID file tidak tersedia.", "warning");
+      return;
+    }
+
+    try {
+      const foundItem = filteredData.find((item) => item.id === id);
+      const namaInformasi =
+        foundItem && foundItem["fileDok"] ? foundItem["fileDok"] : `file_${id}`;
+
+      const judulDok = foundItem.judulDok;
+      const controlDok = foundItem.controlDok;
+      const referensi = foundItem.referensiDok;
+      const tanggal = new Date().toLocaleString();
+
+      const response = await fetch(`${API_LINK}/MasterPeraturan/DownloadFile`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+          metadata: {
+            JudulDokumen: judulDok,
+            JenisDokumen: controlDok,
+            DiunduhOleh: namaPengguna,
+            Jabatan: roleNama,
+            TanggalUnduh: tanggal,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Gagal mengunduh file.");
+      } else {
+        const data = await useFetch(
+          `${API_LINK}/MasterPeraturan/CreateUnduhanPeraturan`,
+          {
+            idDok: id,
+            referensi: referensi,
+            role: role,
+            roleNama: roleNama,
+          },
+          "POST"
+        );
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = namaInformasi;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      SweetAlert("Error", error.message, "error");
+    }
   };
 
   if (loading) return <Loading />;
@@ -243,15 +357,22 @@ export default function Read({ onChangePage }) {
                 "Judul Dokumen": item.judulDok,
                 status: item.status,
               }))}
-              actions={[
-                "Detail",
-                "Edit",
-                "Upload",
-                "Print",
-                "UpdateHistory",
-                "PrintHistory",
-                "Toggle",
-              ]}
+              actions={(row) => {
+                // Jika status "Tidak Aktif", hanya tampilkan Toggle
+                if (row.status === "Tidak Aktif") {
+                  return ["Toggle"];
+                }
+                // Jika status selain "Tidak Aktif", tampilkan semua actions
+                return [
+                  "Detail",
+                  "Edit",
+                  "Upload",
+                  "Print",
+                  "UpdateHistory",
+                  "PrintHistory",
+                  "Toggle",
+                ];
+              }}
               onEdit={(item) =>
                 onChangePage("edit", { idData: item.Key, idMenu: idMenu })
               }
@@ -261,8 +382,17 @@ export default function Read({ onChangePage }) {
               onUpload={(item) => {
                 onChangePage("editfile", { idData: item.Key, idMenu: idMenu });
               }}
+              onPrint={(item) => {
+                handleDownloadClick(item.Key);
+              }}
               onUpdateHistory={(item) => {
                 onChangePage("readrevisi", {
+                  idData: item.Key,
+                  idMenu: idMenu,
+                });
+              }}
+              onPrintHistory={(item) => {
+                onChangePage("readunduhan", {
                   idData: item.Key,
                   idMenu: idMenu,
                 });

@@ -4,6 +4,7 @@ import Icon from "./Icon";
 export default function Table({
   arrHeader,
   data,
+  aksiIs = true,
   actions = [],
   onToggle = () => {},
   onDelete = () => {},
@@ -167,16 +168,18 @@ export default function Table({
                 {header}
               </th>
             ))}
-            <th
-              className="text-center align-middle"
-              style={{
-                backgroundColor: "#2654A1",
-                color: "#fff",
-                width: "250px",
-              }}
-            >
-              Aksi
-            </th>
+            {aksiIs && ( // Render kolom aksi hanya jika aksiIs adalah false
+              <th
+                className="text-center align-middle"
+                style={{
+                  backgroundColor: "#2654A1",
+                  color: "#fff",
+                  width: "250px",
+                }}
+              >
+                Aksi
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -193,28 +196,30 @@ export default function Table({
                     {row[column] || ""}
                   </td>
                 ))}
-                <td
-                  className="text-center align-middle"
-                  style={{ width: "250px" }}
-                >
-                  {typeof actions === "function"
-                    ? actions(row).map((action, actionIndex) => (
-                        <React.Fragment
-                          key={`${action}-${row.Key || rowIndex}`}
-                        >
-                          {generateActionButton(action, row, row.status)}
-                        </React.Fragment>
-                      ))
-                    : Array.isArray(actions) && actions.length > 0
-                    ? actions.map((action, actionIndex) => (
-                        <React.Fragment
-                          key={`${action}-${row.Key || rowIndex}`}
-                        >
-                          {generateActionButton(action, row, row.status)}
-                        </React.Fragment>
-                      ))
-                    : null}
-                </td>
+                {aksiIs && ( // Render kolom aksi hanya jika aksiIs adalah false
+                  <td
+                    className="text-center align-middle"
+                    style={{ width: "250px" }}
+                  >
+                    {typeof actions === "function"
+                      ? actions(row).map((action, actionIndex) => (
+                          <React.Fragment
+                            key={`${action}-${row.Key || rowIndex}`}
+                          >
+                            {generateActionButton(action, row, row.status)}
+                          </React.Fragment>
+                        ))
+                      : Array.isArray(actions) && actions.length > 0
+                      ? actions.map((action, actionIndex) => (
+                          <React.Fragment
+                            key={`${action}-${row.Key || rowIndex}`}
+                          >
+                            {generateActionButton(action, row, row.status)}
+                          </React.Fragment>
+                        ))
+                      : null}
+                  </td>
+                )}
               </tr>
             ))
           ) : (

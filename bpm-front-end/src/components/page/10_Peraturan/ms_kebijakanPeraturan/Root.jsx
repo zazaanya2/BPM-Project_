@@ -12,6 +12,7 @@ import Edit from "../Edit";
 import EditFile from "../EditFile";
 import Detail from "../Detail";
 import ReadRevisi from "../ReadRevisi";
+import ReadUnduhan from "../ReadUnduhan";
 import ProtectedRoute from "../../../util/ProtectedRoute"; // Import the ProtectedRoute component
 
 export default function Peraturan() {
@@ -42,6 +43,11 @@ export default function Peraturan() {
       case "readrevisi":
         navigate("/peraturan/kebijakan", {
           state: { mode: "readrevisi", ...withState },
+        });
+        break;
+      case "readunduhan":
+        navigate("/peraturan/kebijakan", {
+          state: { mode: "readunduhan", ...withState },
         });
         break;
       case "detail":
@@ -77,6 +83,8 @@ export default function Peraturan() {
                   <EditFile onChangePage={handlePageChange} />
                 ) : mode === "readrevisi" ? (
                   <ReadRevisi onChangePage={handlePageChange} />
+                ) : mode === "readunduhan" ? (
+                  <ReadUnduhan onChangePage={handlePageChange} />
                 ) : mode === "detail" ? (
                   <Detail onChangePage={handlePageChange} />
                 ) : (

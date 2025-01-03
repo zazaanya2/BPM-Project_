@@ -74,7 +74,7 @@ export default function Read({ onChangePage }) {
       });
       try {
         const data = await useFetch(
-          `${API_LINK}/MasterPeraturan/GetDataRiwayatRevisiPeraturan`,
+          `${API_LINK}/MasterPeraturan/GetDataUnduhanPeraturan`,
           {
             idMenu: idMenu,
             search: searchKeyword,
@@ -93,13 +93,14 @@ export default function Read({ onChangePage }) {
         }
         const formattedEvents = data.map((item) => {
           return {
-            id: item.idDok,
+            id: item.idUnduhan,
+            tglUnduhan: formatDate(item.tglUnduhan || ""),
             judulDok: item.judulDok,
-            revisiDokFormatted: item.revisiDokFormatted,
             fileDok: item.fileDok,
-            tglUnggah: formatDate(item.tglUnggah || ""),
-            createdBy: item.createdBy,
-            status: item.statusDok,
+            jenisDok: item.jenisDok,
+            namaKry: item.namaKry,
+            jabatan: item.jabatan,
+            status: item.status,
           };
         });
 
@@ -125,19 +126,19 @@ export default function Read({ onChangePage }) {
 
   useEffect(() => {
     if (idMenu === 39) {
-      title = "Riwayat Pembaruan Peraturan";
+      title = "Riwayat Pengunduhan Dokumen Peraturan";
       breadcrumbs = [
         { label: "Peraturan", href: "/peraturan/kebijakan" },
         { label: "Dokumen Kebijakan Peraturan" },
       ];
     } else if (idMenu === 40) {
-      title = "Riwayat Pembaruan Peraturan Eksternal";
+      title = "Riwayat Riwayat Pengunduhan Dokumen Peraturan Eksternal";
       breadcrumbs = [
         { label: "Peraturan", href: "/peraturan/eksternal" },
         { label: "Dokumen Kebijakan Eksternal" },
       ];
     } else if (idMenu === 41) {
-      title = "Riwayat Pembaruan Instrumen APS";
+      title = "Riwayat Riwayat Pengunduhan Dokumen Instrumen APS";
       breadcrumbs = [
         { label: "Instrumen APS", href: "/peraturan/aps" },
         { label: "Dokumen Instrumen APS" },
@@ -242,21 +243,24 @@ export default function Read({ onChangePage }) {
             <Table
               arrHeader={[
                 "No",
-                "Revisi Ke",
+                "Tanggal Unduh",
                 "Judul Dokumen",
                 "Nama Berkas (File)",
-                "Tanggal Unggah",
-                "Di Unggah Oleh",
+                "Jenis Penyalinan",
+                "Nama Pengunduh",
+                "Jabatan",
+                "Status",
               ]}
               data={filteredData.map((item, index) => ({
                 Key: item.id,
                 No: indexOfFirstData + index + 1,
-                "Revisi Ke": item.revisiDokFormatted,
+                "Tanggal Unduh": item.tglUnduhan,
                 "Judul Dokumen": item.judulDok,
                 "Nama Berkas (File)": item.fileDok,
-                "Tanggal Unggah": item.tglUnggah,
-                "Di Unggah Oleh": item.createdBy,
-                status: item.status,
+                "Jenis Penyalinan": item.jenisDok,
+                "Nama Pengunduh": item.namaKry,
+                Jabatan: item.jabatan,
+                Status: item.status,
               }))}
               aksiIs={false}
             />
