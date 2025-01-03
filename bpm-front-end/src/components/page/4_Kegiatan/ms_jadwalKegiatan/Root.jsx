@@ -58,7 +58,7 @@ export default function JadwalKegiatan() {
         <Route
           path="/kelola"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute isRole={true}>
               {mode === "add" ? (
                 <Add onChangePage={handlePageChange} />
               ) : mode === "edit" ? (

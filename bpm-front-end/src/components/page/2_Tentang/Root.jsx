@@ -52,7 +52,7 @@ export default function Tentang() {
         <Route
           path="/kelola"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute isRole={true}>
               {
                 // Berdasarkan mode, render komponen yang berbeda
                 mode === "edit" ? (
