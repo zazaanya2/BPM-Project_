@@ -14,6 +14,7 @@ import SweetAlert from "../../util/SweetAlert";
 import moment from "moment";
 import { useIsMobile } from "../../util/useIsMobile";
 import Cookies from "js-cookie";
+import PdfPreviewDownload from "../../part/PdfPreviewDownload";
 
 // Dynamically set title and breadcrumbs based on idMenu
 let title = "Hallo";
@@ -54,7 +55,7 @@ export default function Read({ onChangePage }) {
   const indexOfFirstData = indexOfLastData - pageSize;
 
   if (activeUser) {
-    role = JSON.parse(activeUser).RoleID;
+    role = JSON.parse(activeUser).RoleID.slice(0, 5);
     roleNama = JSON.parse(activeUser).Role;
     namaPengguna = JSON.parse(activeUser).Nama;
   }
@@ -141,7 +142,7 @@ export default function Read({ onChangePage }) {
   const resetFilter = () => {
     setSearchKeyword("");
     setSelectedYear("");
-    setSelectedStatus("");
+    setSelectedStatus("Aktif");
     setSelectedJudul("");
   };
 
@@ -280,14 +281,18 @@ export default function Read({ onChangePage }) {
               onClick={() => onChangePage("index", { idMenu: idMenu })}
             />
           </div>
-          <div className="p-3 m-5 mt-2 mb-0" style={{ marginLeft: "50px" }}>
-            <Button
-              iconName="add"
-              classType="primary"
-              label="Tambah Data"
-              onClick={() => onChangePage("add", { idMenu: idMenu })}
-            />
-          </div>
+          {role === "ROL01" ? (
+            <div className="p-3 m-5 mt-2 mb-0" style={{ marginLeft: "50px" }}>
+              <Button
+                iconName="add"
+                classType="primary"
+                label="Tambah Data"
+                onClick={() => onChangePage("add", { idMenu: idMenu })}
+              />
+            </div>
+          ) : (
+            ""
+          )}
           <div
             className={
               isMobile
@@ -329,15 +334,18 @@ export default function Read({ onChangePage }) {
                         max={new Date().getFullYear()}
                       />
                     </div>
-                    <div className="mb-3">
-                      <DropDown
-                        arrData={statusFilterSort}
-                        label="Status"
-                        value={selectedStatus}
-                        onChange={(e) => setSelectedStatus(e.target.value)}
-                      />
-                    </div>
-
+                    {role === "ROL01" ? (
+                      <div className="mb-3">
+                        <DropDown
+                          arrData={statusFilterSort}
+                          label="Status"
+                          value={selectedStatus}
+                          onChange={(e) => setSelectedStatus(e.target.value)}
+                        />
+                      </div>
+                    ) : (
+                      ""
+                    )}
                     <Button
                       classType="btn btn-secondary"
                       title="Reset Filter"
@@ -349,56 +357,69 @@ export default function Read({ onChangePage }) {
               </div>
             </div>
 
-            <Table
-              arrHeader={["No", "Judul Dokumen"]}
-              data={filteredData.map((item, index) => ({
-                Key: item.id,
-                No: indexOfFirstData + index + 1,
-                "Judul Dokumen": item.judulDok,
-                status: item.status,
-              }))}
-              actions={(row) => {
-                // Jika status "Tidak Aktif", hanya tampilkan Toggle
-                if (row.status === "Tidak Aktif") {
-                  return ["Toggle"];
+            {role === "ROL01" ? (
+              <Table
+                arrHeader={["No", "Judul Dokumen"]}
+                data={filteredData.map((item, index) => ({
+                  Key: item.id,
+                  No: indexOfFirstData + index + 1,
+                  "Judul Dokumen": item.judulDok,
+                  status: item.status,
+                }))}
+                actions={(row) => {
+                  // Jika status "Tidak Aktif", hanya tampilkan Toggle
+                  if (row.status === "Tidak Aktif") {
+                    return ["Toggle"];
+                  }
+                  // Jika status selain "Tidak Aktif", tampilkan semua actions
+                  return [
+                    "Detail",
+                    "Edit",
+                    "Upload",
+                    "Print",
+                    "UpdateHistory",
+                    "PrintHistory",
+                    "Toggle",
+                  ];
+                }}
+                onEdit={(item) =>
+                  onChangePage("edit", { idData: item.Key, idMenu: idMenu })
                 }
-                // Jika status selain "Tidak Aktif", tampilkan semua actions
-                return [
-                  "Detail",
-                  "Edit",
-                  "Upload",
-                  "Print",
-                  "UpdateHistory",
-                  "PrintHistory",
-                  "Toggle",
-                ];
-              }}
-              onEdit={(item) =>
-                onChangePage("edit", { idData: item.Key, idMenu: idMenu })
-              }
-              onDetail={(item) =>
-                onChangePage("detail", { idData: item.Key, idMenu: idMenu })
-              }
-              onUpload={(item) => {
-                onChangePage("editfile", { idData: item.Key, idMenu: idMenu });
-              }}
-              onPrint={(item) => {
-                handleDownloadClick(item.Key);
-              }}
-              onUpdateHistory={(item) => {
-                onChangePage("readrevisi", {
-                  idData: item.Key,
-                  idMenu: idMenu,
-                });
-              }}
-              onPrintHistory={(item) => {
-                onChangePage("readunduhan", {
-                  idData: item.Key,
-                  idMenu: idMenu,
-                });
-              }}
-              onToggle={(item) => handleToggle(item.Key)}
-            />
+                onDetail={(item) =>
+                  onChangePage("detail", { idData: item.Key, idMenu: idMenu })
+                }
+                onUpload={(item) => {
+                  onChangePage("editfile", {
+                    idData: item.Key,
+                    idMenu: idMenu,
+                  });
+                }}
+                onPrint={(item) => {
+                  handleDownloadClick(item.Key);
+                }}
+                onUpdateHistory={(item) => {
+                  onChangePage("readrevisi", {
+                    idData: item.Key,
+                    idMenu: idMenu,
+                  });
+                }}
+                onPrintHistory={(item) => {
+                  onChangePage("readunduhan", {
+                    idData: item.Key,
+                    idMenu: idMenu,
+                  });
+                }}
+                onToggle={(item) => handleToggle(item.Key)}
+              />
+            ) : (
+              filteredData.map((item) => (
+                <PdfPreviewDownload
+                  key={item.id} // Pastikan setiap item memiliki `key` unik
+                  judul={item.judulDok}
+                  handleClick={() => handleDownloadClick(item.id)}
+                />
+              ))
+            )}
 
             <Paging
               pageSize={pageSize}

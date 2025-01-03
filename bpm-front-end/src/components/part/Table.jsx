@@ -4,6 +4,8 @@ import Icon from "./Icon";
 export default function Table({
   arrHeader,
   data,
+  linkColumns = [],
+  FILE_LINK = "",
   aksiIs = true,
   actions = [],
   onToggle = () => {},
@@ -193,7 +195,19 @@ export default function Table({
                       column === "No" ? "text-center" : "text-start"
                     }`}
                   >
-                    {row[column] || ""}
+                    {/* Periksa apakah kolom ini harus memiliki hyperlink */}
+                    {linkColumns.includes(column) && row[column] ? (
+                      <a
+                        href={`${FILE_LINK}${row[column]}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary text-decoration-underline"
+                      >
+                        {row[column]}
+                      </a>
+                    ) : (
+                      row[column] || ""
+                    )}
                   </td>
                 ))}
                 {aksiIs && ( // Render kolom aksi hanya jika aksiIs adalah false

@@ -4,7 +4,7 @@ import Paging from "../../part/Paging";
 import PageTitleNav from "../../part/PageTitleNav";
 import Button from "../../part/Button";
 import { useLocation, useNavigate } from "react-router-dom";
-import { API_LINK } from "../../util/Constants";
+import { API_LINK, PERATURAN_FILE_LINK } from "../../util/Constants";
 import { useFetch } from "../../util/useFetch";
 import Loading from "../../part/Loading";
 import Filter from "../../part/Filter";
@@ -258,6 +258,8 @@ export default function Read({ onChangePage }) {
                 "Di Unggah Oleh": item.createdBy,
                 status: item.status,
               }))}
+              linkColumns={["Nama Berkas (File)"]}
+              FILE_LINK={PERATURAN_FILE_LINK}
               aksiIs={false}
             />
 

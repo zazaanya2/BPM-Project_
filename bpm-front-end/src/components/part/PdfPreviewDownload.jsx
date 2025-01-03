@@ -41,12 +41,15 @@ const PdfPreviewDownload = ({ judul, handleClick }) => {
   return (
     <div style={containerStyle}>
       <div>
-        <i class="fi fi-sr-file-pdf" style={iconStyle}></i>
+        <i className="fi fi-sr-file-pdf" style={iconStyle}></i>
       </div>
       <div>
         <h3 style={titleStyle}>{judul}</h3>
         <button
-          onClick={handleClick}
+          onClick={(e) => {
+            e.preventDefault(); // Tambahkan ini jika ingin mencegah default behavior
+            handleClick();
+          }}
           style={buttonStyle}
           onMouseOver={(e) =>
             (e.target.style.backgroundColor = buttonHoverStyle.backgroundColor)
