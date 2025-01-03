@@ -3,7 +3,6 @@ import PageTitleNav from "../../../../part/PageTitleNav";
 import TextField from "../../../../part/TextField";
 import HeaderForm from "../../../../part/HeaderText";
 import Button from "../../../../part/Button";
-import DocUpload from "../../../../part/DocUpload";
 import DropDown from "../../../../part/Dropdown";
 import FileUpload from "../../../../part/FileUpload";
 

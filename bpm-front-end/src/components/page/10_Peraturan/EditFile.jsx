@@ -67,6 +67,7 @@ export default function Edit({ onChangePage }) {
             tahunKadaluarsa: formatDate(data[0].tahunKadaluarsa) || "", // Memformat tanggal
             jenisDokumen: data[0].jenisDokumen || "",
             fileDokumen: data[0].fileDok || "",
+            idRef: data[0].referensiDokumen || "",
           });
         }
       } catch (error) {
@@ -138,6 +139,14 @@ export default function Edit({ onChangePage }) {
 
   const handleSubmit = async () => {
     try {
+      const isFileValid = fileDokumenRef.current?.validate();
+      if (!isFileValid) {
+        fileDokumenRef.current?.focus();
+        return;
+      }
+
+      console.log(formData.idRef);
+
       setLoading(true);
 
       let uploadedFilePeraturan = null;
@@ -158,6 +167,7 @@ export default function Edit({ onChangePage }) {
           fileDokumen: uploadedFilePeraturan
             ? uploadedFilePeraturan[0]
             : formData.fileDokumen,
+          idRefer: formData.idRef,
         },
         "POST"
       );
@@ -233,10 +243,10 @@ export default function Edit({ onChangePage }) {
                 ref={fileDokumenRef}
                 label="Dokumen"
                 forInput="fileDokumen"
-                formatFile=".pdf,.docx,.doc,.xlsx,.pptx"
+                formatFile=".pdf"
                 onChange={(file) => handleFileChange(file)}
                 hasExisting={PERATURAN_FILE_LINK + formData.fileDokumen}
-                isRequired="true"
+                isRequired={true}
               />
             </div>
             <div className="d-flex justify-content-between align-items-center mt-4">

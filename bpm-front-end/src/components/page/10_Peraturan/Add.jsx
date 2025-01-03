@@ -253,9 +253,8 @@ export default function Add({ onChangePage }) {
                 ref={fileDokumenRef}
                 label="Dokumen"
                 forInput="fileDokumen"
-                formatFile=".pdf,.docx,.doc,.xlsx,.pptx"
                 onChange={(file) => handleFileChange(file)}
-                isRequired="true"
+                isRequired={true}
               />
             </div>
 
