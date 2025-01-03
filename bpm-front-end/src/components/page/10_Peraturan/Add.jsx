@@ -224,8 +224,8 @@ export default function Add({ onChangePage }) {
                   label="Jenis Dokumen"
                   isRequired={true}
                   arrData={[
-                    { Text: "Controlled Copy", Value: "controlled" },
-                    { Text: "Uncontrolled Copy", Value: "uncontrolled" },
+                    { Text: "Controlled Copy", Value: "Controlled Copy" },
+                    { Text: "Uncontrolled Copy", Value: "Uncontrolled Copy" },
                   ]}
                   onChange={(e) =>
                     setFormData({ ...formData, jenisDokumen: e.target.value })

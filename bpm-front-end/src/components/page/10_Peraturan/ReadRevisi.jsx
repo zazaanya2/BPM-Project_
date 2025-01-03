@@ -50,9 +50,6 @@ export default function Read({ onChangePage }) {
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedJudul, setSelectedJudul] = useState("");
 
-  const searchQuery = useRef();
-  const searchFilterSort = useRef();
-
   const indexOfLastData = pageCurrent * pageSize;
   const indexOfFirstData = indexOfLastData - pageSize;
 
@@ -62,16 +59,6 @@ export default function Read({ onChangePage }) {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      console.log({
-        idMenu: idMenu,
-        search: searchKeyword,
-        year: selectedYear,
-        status: selectedStatus,
-        judul: selectedJudul,
-        size: pageSize,
-        page: pageCurrent,
-        idData: idData,
-      });
       try {
         const data = await useFetch(
           `${API_LINK}/MasterPeraturan/GetDataRiwayatRevisiPeraturan`,
@@ -91,6 +78,7 @@ export default function Read({ onChangePage }) {
         if (data.length > 0 && data[0].TotalCount !== undefined) {
           setTotalData(data[0].TotalCount); // Set hanya sekali
         }
+
         const formattedEvents = data.map((item) => {
           return {
             id: item.idDok,
