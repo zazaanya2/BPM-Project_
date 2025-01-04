@@ -19,6 +19,7 @@ let titleHeader = "Formulir";
 let breadcrumbs = [];
 
 export default function Add({ onChangePage }) {
+  const isMobile = useIsMobile();
   const location = useLocation();
   const idMenu = location.state?.idMenu;
   const [loading, setLoading] = useState(true); // New loading state
@@ -122,39 +123,30 @@ export default function Add({ onChangePage }) {
         filePrefix
       );
     }
-
-    setFormData((prevData) => {
-      const newFormData = {
-        ...prevData,
+    try {
+      setLoading(true);
+      const finalFormData = {
+        ...formData,
         fileDokumen: uploadedFilePeraturan[0],
       };
-
-      setLoading(true);
-      useFetch(
+      console.log(finalFormData);
+      const data = await useFetch(
         `${API_LINK}/MasterPeraturan/CreatePeraturan`,
-        newFormData,
-        "POST"
-      )
-        .then((response) => {
-          if (response === "ERROR") {
-            throw new Error("Gagal memperbarui data");
-          }
-          SweetAlert(
-            "Berhasil!",
-            "Data berhasil ditambahkan.",
-            "success",
-            "OK"
-          ).then(() => onChangePage("index", { idMenu: idMenu }));
-        })
-        .catch((error) => {
-          SweetAlert("Gagal!", error.message, "error", "OK");
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+        finalFormData
+      );
 
-      return newFormData;
-    });
+      if (data === "ERROR") {
+        throw new Error(
+          "Terjadi kesalahan: Gagal menyimpan data pengajuan proposal."
+        );
+      }
+      SweetAlert("Sukses", "Pengajuan proposal berhasil disimpan", "success");
+      onChangePage("index", { idMenu: idMenu });
+    } catch (error) {
+      SweetAlert("Gagal!", error.message, "error", "OK");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) return <Loading />;
@@ -164,7 +156,7 @@ export default function Add({ onChangePage }) {
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
         <div className="d-flex flex-column">
           {/* Breadcrumbs and Page Title */}
-          <div className="m-3">
+          <div className={isMobile ? "m-0 p-0" : "m-3 mb-0"}>
             <PageTitleNav
               title={title}
               breadcrumbs={breadcrumbs}
@@ -173,104 +165,111 @@ export default function Add({ onChangePage }) {
           </div>
 
           {/* Main Content Section */}
-          <div className="shadow p-5 m-5 mt-0 bg-white rounded">
-            <HeaderForm label={titleHeader} />
-            <div className="row">
-              <InputField
-                ref={judulDokumenRef}
-                label="Judul Dokumen"
-                value={formData.judulDokumen || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, judulDokumen: e.target.value })
-                }
-                isRequired={true}
-              />
-            </div>
-            <div className="row">
-              <div className="col-lg-6 col-md-6">
+          <div className={isMobile ? "m-0" : "m-3"}>
+            <div
+              className={
+                isMobile
+                  ? "shadow p-4 m-2 mt-0 bg-white rounded"
+                  : "shadow p-5 m-5 mt-0 bg-white rounded"
+              }
+            >
+              <HeaderForm label={titleHeader} />
+              <div className="row">
                 <InputField
-                  ref={nomorIndukRef}
-                  label="Nomor Induk Dokumen"
-                  value={formData.nomorInduk || ""}
+                  ref={judulDokumenRef}
+                  label="Judul Dokumen"
+                  value={formData.judulDokumen || ""}
                   onChange={(e) =>
-                    setFormData({ ...formData, nomorInduk: e.target.value })
+                    setFormData({ ...formData, judulDokumen: e.target.value })
                   }
                   isRequired={true}
                 />
               </div>
-              <div className="col-lg-6 col-md-6">
-                <InputField
-                  ref={tahunDokumenRef}
-                  type="date"
-                  label="Tahun Dokumen"
-                  value={formData.tahunDokumen}
-                  onChange={(e) =>
-                    setFormData({ ...formData, tahunDokumen: e.target.value })
-                  }
+              <div className="row">
+                <div className="col-lg-6 col-md-6">
+                  <InputField
+                    ref={nomorIndukRef}
+                    label="Nomor Induk Dokumen"
+                    value={formData.nomorInduk || ""}
+                    onChange={(e) =>
+                      setFormData({ ...formData, nomorInduk: e.target.value })
+                    }
+                    isRequired={true}
+                  />
+                </div>
+                <div className="col-lg-6 col-md-6">
+                  <InputField
+                    ref={tahunDokumenRef}
+                    type="date"
+                    label="Tahun Dokumen"
+                    value={formData.tahunDokumen}
+                    onChange={(e) =>
+                      setFormData({ ...formData, tahunDokumen: e.target.value })
+                    }
+                    isRequired={true}
+                  />
+                </div>
+                <div className="col-lg-6 col-md-6">
+                  <Dropdown
+                    ref={jenisDokumenRef}
+                    type="pilih"
+                    forInput="jenisDokumen"
+                    value={formData.jenisDokumen}
+                    label="Jenis Dokumen"
+                    isRequired={true}
+                    arrData={[
+                      { Text: "Controlled Copy", Value: "Controlled Copy" },
+                      { Text: "Uncontrolled Copy", Value: "Uncontrolled Copy" },
+                    ]}
+                    onChange={(e) =>
+                      setFormData({ ...formData, jenisDokumen: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="col-lg-6 col-md-6">
+                  <InputField
+                    ref={tahunKadaluarsaRef}
+                    type="date"
+                    label="Tahun Kadaluarsa"
+                    value={formData.tahunKadaluarsa}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        tahunKadaluarsa: e.target.value,
+                      })
+                    }
+                    isRequired={true}
+                  />
+                </div>
+              </div>
+              <div className="row">
+                <FileUpload
+                  ref={fileDokumenRef}
+                  label="Dokumen"
+                  forInput="fileDokumen"
+                  onChange={(file) => handleFileChange(file)}
                   isRequired={true}
                 />
               </div>
-              <div className="col-lg-6 col-md-6">
-                <Dropdown
-                  ref={jenisDokumenRef}
-                  type="pilih"
-                  forInput="jenisDokumen"
-                  value={formData.jenisDokumen}
-                  label="Jenis Dokumen"
-                  isRequired={true}
-                  arrData={[
-                    { Text: "Controlled Copy", Value: "Controlled Copy" },
-                    { Text: "Uncontrolled Copy", Value: "Uncontrolled Copy" },
-                  ]}
-                  onChange={(e) =>
-                    setFormData({ ...formData, jenisDokumen: e.target.value })
-                  }
-                />
-              </div>
-              <div className="col-lg-6 col-md-6">
-                <InputField
-                  ref={tahunKadaluarsaRef}
-                  type="date"
-                  label="Tahun Kadaluarsa"
-                  value={formData.tahunKadaluarsa}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      tahunKadaluarsa: e.target.value,
-                    })
-                  }
-                  isRequired={true}
-                />
-              </div>
-            </div>
-            <div className="row">
-              <FileUpload
-                ref={fileDokumenRef}
-                label="Dokumen"
-                forInput="fileDokumen"
-                onChange={(file) => handleFileChange(file)}
-                isRequired={true}
-              />
-            </div>
-
-            <div className="d-flex justify-content-between align-items-center mt-4">
-              <div className="flex-grow-1 m-2">
-                <Button
-                  classType="primary"
-                  type="button"
-                  label="Simpan"
-                  width="100%"
-                  onClick={handleSubmit}
-                />
-              </div>
-              <div className="flex-grow-1 m-2">
-                <Button
-                  classType="danger"
-                  type="button"
-                  label="Batal"
-                  width="100%"
-                  onClick={() => onChangePage("index", { idMenu: idMenu })}
-                />
+              <div className="d-flex justify-content-between align-items-center mt-4">
+                <div className="flex-grow-1 m-2">
+                  <Button
+                    classType="primary"
+                    type="button"
+                    label="Simpan"
+                    width="100%"
+                    onClick={handleSubmit}
+                  />
+                </div>
+                <div className="flex-grow-1 m-2">
+                  <Button
+                    classType="danger"
+                    type="button"
+                    label="Batal"
+                    width="100%"
+                    onClick={() => onChangePage("index", { idMenu: idMenu })}
+                  />
+                </div>
               </div>
             </div>
           </div>
