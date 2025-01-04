@@ -1,13 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import PageTitleNav from "../../part/PageTitleNav";
-import TextField from "../../part/TextField";
-import InputField from "../../part/InputField";
 import HeaderForm from "../../part/HeaderText";
-import Dropdown from "../../part/Dropdown";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { API_LINK } from "../../util/Constants";
-import Button from "../../part/Button";
-import SweetAlert from "../../util/SweetAlert";
 import { useIsMobile } from "../../util/useIsMobile";
 import { useFetch } from "../../util/useFetch";
 import Loading from "../../part/Loading";
@@ -23,6 +18,7 @@ export default function Detail({ onChangePage }) {
   const [error, setError] = useState(null);
 
   const location = useLocation();
+  const navigate = useNavigate();
   const idMenu = location.state?.idMenu;
   const idData = location.state?.idData;
   const [loading, setLoading] = useState(true); // New loading state
@@ -37,6 +33,12 @@ export default function Detail({ onChangePage }) {
     tahunKadaluarsa: "",
     jenisDokumen: "",
   });
+
+  useEffect(() => {
+    if (!idMenu) {
+      navigate("*");
+    }
+  }, [location.state?.idMenu]);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -148,7 +150,7 @@ export default function Detail({ onChangePage }) {
     <div className="d-flex flex-column min-vh-100">
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
         <div className="d-flex flex-column">
-          <div className="m-3 mb-0">
+          <div className={isMobile ? "m-0" : "m-3"}>
             <PageTitleNav
               title={title}
               breadcrumbs={breadcrumbs}
@@ -156,7 +158,13 @@ export default function Detail({ onChangePage }) {
             />
           </div>
 
-          <div className="shadow p-5 m-5 mt-0 bg-white rounded">
+          <div
+            className={
+              isMobile
+                ? "shadow p-4 m-2 mt-0 bg-white rounded"
+                : "shadow p-5 p-5 m-5 mt-0 bg-white rounded"
+            }
+          >
             <HeaderForm label={titleHeader} />
             <div className="row">
               <DetailData

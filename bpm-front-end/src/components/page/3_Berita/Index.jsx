@@ -53,10 +53,10 @@ export default function Index({ onChangePage }) {
             param2: selectedYear,
             param3: pageSize,
             param4: pageCurrent,
+            param5: "DESC",
           },
           "POST"
         );
-
         const groupedBerita = result.reduce((acc, item) => {
           if (!acc[item.idBerita]) {
             acc[item.idBerita] = {

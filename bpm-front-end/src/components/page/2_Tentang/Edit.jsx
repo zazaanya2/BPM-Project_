@@ -101,12 +101,14 @@ export default function Edit({ onChangePage }) {
 
     try {
       let isi = formData.Isi;
+      let ktg = formData.Kategori;
       if (selectedFile) {
         const formData = new FormData();
         formData.append("files", selectedFile);
 
         const folderName = "Tentang";
-        const filePrefix = "FILE";
+        const filePrefix = "FILE_" + ktg;
+        console.log(filePrefix);
 
         const uploadResult = await uploadFile(
           selectedFile,

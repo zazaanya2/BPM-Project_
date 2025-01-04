@@ -12,6 +12,12 @@ import { id } from "date-fns/locale";
 import { useIsMobile } from "../../util/useIsMobile";
 import SweetAlert from "../../util/SweetAlert";
 import { useFetch } from "../../util/useFetch";
+import DropDown from "../../part/Dropdown";
+
+const dataFilterSort = [
+  { Value: "ASC", Text: "Tanggal Terbit [↑]" },
+  { Value: "DESC", Text: "Tanggal Terbit [↓]" },
+];
 
 export default function Read({ onChangePage }) {
   const [pageSize] = useState(10);
@@ -22,7 +28,9 @@ export default function Read({ onChangePage }) {
   const [error, setError] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState(""); // Keyword pencarian
   const [selectedYear, setSelectedYear] = useState(""); // Filter tahun
+  const [selectedDate, setSelectedDate] = useState("DESC");
   const [totalData, setTotalData] = useState(0);
+  const [isBerita, setIsBerita] = useState(false);
 
   useEffect(() => {
     const fetchBerita = async () => {
@@ -34,6 +42,7 @@ export default function Read({ onChangePage }) {
             param2: selectedYear,
             param3: pageSize,
             param4: pageCurrent,
+            param5: selectedDate,
           },
           "POST"
         );
@@ -66,8 +75,15 @@ export default function Read({ onChangePage }) {
           return acc;
         }, {});
 
-        const beritaArray = Object.values(groupedBerita);
-        setFilteredData(beritaArray);
+        const sortedBerita = Object.values(groupedBerita).sort(
+          (a, b) => b.date - a.date
+        );
+
+        if (isBerita === false) {
+          setIsBerita(true);
+        }
+
+        setFilteredData(sortedBerita);
       } catch (err) {
         console.error("Fetch error:", err);
         setError("Gagal mengambil data");
@@ -77,7 +93,7 @@ export default function Read({ onChangePage }) {
     };
 
     fetchBerita();
-  }, [searchKeyword, selectedYear, pageCurrent]);
+  }, [searchKeyword, selectedYear, selectedDate, pageCurrent]);
 
   const indexOfLastData = pageCurrent * pageSize;
   const indexOfFirstData = indexOfLastData - pageSize;
@@ -89,6 +105,7 @@ export default function Read({ onChangePage }) {
   const resetFilter = () => {
     setSearchKeyword("");
     setSelectedYear("");
+    setSelectedDate("DESC");
   };
 
   const title = "Kelola Berita";
@@ -170,6 +187,15 @@ export default function Read({ onChangePage }) {
 
                 <div className="m-0">
                   <Filter>
+                    <div className="mb-3">
+                      <DropDown
+                        arrData={dataFilterSort}
+                        label="Urut Bedasarkan"
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                      />
+                    </div>
+
                     <div className="mb-3">
                       <label htmlFor="yearPicker" className="mb-1">
                         Berdasarkan Tahun

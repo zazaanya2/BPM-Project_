@@ -19,7 +19,11 @@ let breadcrumbs = [];
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  return date.toISOString().split("T")[0]; // Mengambil hanya bagian tanggal
+  return (
+    date.toISOString().split("T")[0] +
+    " " +
+    date.toISOString().split("T")[1].split(".")[0]
+  );
 };
 
 const dataFilterSort = [
@@ -143,23 +147,13 @@ export default function Read({ onChangePage }) {
     setSelectedJudul("");
   };
 
-  const handleToggle = (id) => {
-    console.log("id hapus :", id);
-    const updatedData = filteredData.map((item) =>
-      item.id === id
-        ? { ...item, status: item.status === "Aktif" ? "Tidak Aktif" : "Aktif" }
-        : item
-    );
-    setFilteredData(updatedData);
-  };
-
   if (loading) return <Loading />;
 
   return (
     <div className="d-flex flex-column min-vh-100">
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
         <div className="d-flex flex-column">
-          <div className="m-3 mb-0">
+          <div className={isMobile ? "m-0" : "m-3"}>
             <PageTitleNav
               title={title}
               breadcrumbs={breadcrumbs}

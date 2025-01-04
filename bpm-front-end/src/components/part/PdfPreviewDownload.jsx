@@ -3,30 +3,32 @@ import React from "react";
 const PdfPreviewDownload = ({ judul, handleClick }) => {
   const containerStyle = {
     display: "flex",
+    flexDirection: "column",
     alignItems: "center",
-    gap: "10px",
     border: "1px solid #ccc",
     borderRadius: "8px",
-    padding: "10px",
-    maxWidth: "300px",
+    padding: "1rem",
+    maxWidth: "100%",
     backgroundColor: "#f9f9f9",
   };
 
   const iconStyle = {
-    width: "50px",
-    height: "50px",
+    fontSize: "5rem", // Menggunakan fontSize untuk ikon besar
     color: "red",
+    marginBottom: "0rem", // Jarak ikon dengan elemen berikutnya
   };
 
   const titleStyle = {
-    fontSize: "14px",
+    fontSize: "0.8rem",
     fontWeight: "bold",
-    margin: "0 0 5px",
+    margin: "10px 0", // Jarak judul dengan elemen atas dan bawah
+    textAlign: "center",
+    marginTop: "0rem",
   };
 
   const buttonStyle = {
-    padding: "5px 10px",
-    fontSize: "12px",
+    padding: "10px 20px",
+    fontSize: "14px",
     color: "#fff",
     backgroundColor: "#007bff",
     border: "none",
@@ -39,15 +41,13 @@ const PdfPreviewDownload = ({ judul, handleClick }) => {
   };
 
   return (
-    <div style={containerStyle}>
-      <div>
+    <div className="col-lg-2 m-3">
+      <div style={containerStyle}>
         <i className="fi fi-sr-file-pdf" style={iconStyle}></i>
-      </div>
-      <div>
-        <h3 style={titleStyle}>{judul}</h3>
+        <p style={titleStyle}>{judul}</p>
         <button
           onClick={(e) => {
-            e.preventDefault(); // Tambahkan ini jika ingin mencegah default behavior
+            e.preventDefault(); // Mencegah default behavior
             handleClick();
           }}
           style={buttonStyle}

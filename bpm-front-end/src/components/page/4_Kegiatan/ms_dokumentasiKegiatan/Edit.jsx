@@ -203,7 +203,7 @@ export default function Edit({ onChangePage }) {
 
     if (selectedFile) {
       const folderName = "Kegiatan";
-      const filePrefix = "NOTULEN";
+      const filePrefix = "NOTULEN_" + formData.name;
       const uploadedFile = await uploadFile(
         selectedFile,
         folderName,
@@ -214,7 +214,7 @@ export default function Edit({ onChangePage }) {
 
     if (selectedFoto) {
       const folderName = "Kegiatan";
-      const filePrefix = "FOTO";
+      const filePrefix = "FOTO_SAMPUL_" + formData.name;
       const uploadedFoto = await uploadFile(
         selectedFoto,
         folderName,
@@ -228,8 +228,6 @@ export default function Edit({ onChangePage }) {
       fileNotulen: updatedFileNotulen,
       fotoSampul: updatedFotoSampul,
     };
-
-    console.log(updatedFormData);
 
     setLoading(true);
     try {
@@ -245,7 +243,7 @@ export default function Edit({ onChangePage }) {
 
       SweetAlert(
         "Berhasil!",
-        "Jadwal kegiatan berhasil dibuat.",
+        "Dokumentasi kegiatan berhasil diperbarui.",
         "success",
         "OK"
       ).then(() => onChangePage("read"));
@@ -327,6 +325,7 @@ export default function Edit({ onChangePage }) {
                   }
                   isRequired={true}
                   type="date"
+                  max={new Date().toISOString().split("T")[0]}
                 />
                 <InputField
                   ref={jamMulaiRef}
@@ -349,6 +348,7 @@ export default function Edit({ onChangePage }) {
                   }
                   isRequired={true}
                   type="date"
+                  max={new Date().toISOString().split("T")[0]}
                 />
                 <InputField
                   ref={jamSelesaiRef}

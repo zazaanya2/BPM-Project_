@@ -4,7 +4,7 @@ import Paging from "../../part/Paging";
 import PageTitleNav from "../../part/PageTitleNav";
 import Button from "../../part/Button";
 import { useLocation, useNavigate } from "react-router-dom";
-import { API_LINK } from "../../util/Constants";
+import { API_LINK, ROOT_LINK } from "../../util/Constants";
 import { useFetch } from "../../util/useFetch";
 import Loading from "../../part/Loading";
 import Filter from "../../part/Filter";
@@ -37,9 +37,9 @@ export default function Read({ onChangePage }) {
   let roleNama = "";
   let namaPengguna = "";
   const isMobile = useIsMobile();
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const location = useLocation();
+  const navigate = useNavigate();
   const idMenu = location.state?.idMenu;
   const [pageCurrent, setPageCurrent] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -103,6 +103,10 @@ export default function Read({ onChangePage }) {
   };
 
   useEffect(() => {
+    if (!idMenu) {
+      navigate("/");
+    }
+
     fetchEvents();
   }, [
     idMenu,
@@ -274,7 +278,7 @@ export default function Read({ onChangePage }) {
     <div className="d-flex flex-column min-vh-100">
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
         <div className="d-flex flex-column">
-          <div className="m-3 mb-0">
+          <div className={isMobile ? "m-0" : "m-3"}>
             <PageTitleNav
               title={title}
               breadcrumbs={breadcrumbs}
@@ -412,13 +416,15 @@ export default function Read({ onChangePage }) {
                 onToggle={(item) => handleToggle(item.Key)}
               />
             ) : (
-              filteredData.map((item) => (
-                <PdfPreviewDownload
-                  key={item.id} // Pastikan setiap item memiliki `key` unik
-                  judul={item.judulDok}
-                  handleClick={() => handleDownloadClick(item.id)}
-                />
-              ))
+              <div className="row">
+                {filteredData.map((item) => (
+                  <PdfPreviewDownload
+                    key={item.id} // Pastikan setiap item memiliki `key` unik
+                    judul={item.judulDok}
+                    handleClick={() => handleDownloadClick(item.id)}
+                  />
+                ))}
+              </div>
             )}
 
             <Paging

@@ -179,6 +179,7 @@ export default function Add({ onChangePage }) {
                     isRequired={true}
                     name="tanggal"
                     type="date"
+                    max={new Date().toISOString().split("T")[0]}
                   />
                 </div>
               </div>
@@ -205,7 +206,7 @@ export default function Add({ onChangePage }) {
                     type="button"
                     label="Simpan"
                     width="100%"
-                    onClick={() => console.log(images)}
+                    onClick={handleSubmit}
                   />
                 </div>
                 <div className="flex-grow-1 m-2">
