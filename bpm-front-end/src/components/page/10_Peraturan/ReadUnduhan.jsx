@@ -19,7 +19,11 @@ let breadcrumbs = [];
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  return date.toISOString().split("T")[0]; // Mengambil hanya bagian tanggal
+  return (
+    date.toISOString().split("T")[0] +
+    " " +
+    date.toISOString().split("T")[1].split(".")[0]
+  );
 };
 
 const dataFilterSort = [
