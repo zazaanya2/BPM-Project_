@@ -21,8 +21,8 @@ let title = "Hallo";
 let breadcrumbs = [];
 
 const dataFilterSort = [
-  { Value: "[Judul Peraturan] asc", Text: "Judul Proposal [↑]" },
-  { Value: "[Judul Peraturan] desc", Text: "Judul Proposal [↓]" },
+  { Value: "ASC", Text: "Judul Proposal [↑]" },
+  { Value: "DESC", Text: "Judul Proposal [↓]" },
 ];
 
 const statusFilterSort = [
@@ -191,7 +191,7 @@ export default function Read({ onChangePage }) {
             }
             SweetAlert(
               "Berhasil!",
-              "Dokumentasi kegiatan berhasil diEdit.",
+              "Dokumentasi kegiatan berhasil di Aktifkan.",
               "success",
               "OK"
             ).then(() => {
@@ -373,7 +373,7 @@ export default function Read({ onChangePage }) {
                 actions={(row) => {
                   // Jika status "Tidak Aktif", hanya tampilkan Toggle
                   if (row.status === "Tidak Aktif") {
-                    return ["Toggle"];
+                    return ["Detail", "UpdateHistory", "PrintHistory"];
                   }
                   // Jika status selain "Tidak Aktif", tampilkan semua actions
                   return [

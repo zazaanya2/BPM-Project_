@@ -152,6 +152,18 @@ export default function Edit({ onChangePage }) {
       tahunKadaluarsaRef.current?.focus();
       return;
     }
+    const dokumenDate = new Date(formData.tahunDokumen);
+    const kadaluarsaDate = new Date(formData.tahunKadaluarsa);
+    if (kadaluarsaDate <= dokumenDate) {
+      SweetAlert(
+        "Validasi Gagal",
+        "Tahun Kadaluarsa harus lebih besar dari Tahun Dokumen.",
+        "error",
+        "OK"
+      );
+      tahunKadaluarsaRef.current?.focus();
+      return;
+    }
 
     setFormData((prevData) => {
       setLoading(true);
@@ -221,6 +233,7 @@ export default function Edit({ onChangePage }) {
                     setFormData({ ...formData, nomorInduk: e.target.value })
                   }
                   isRequired={true}
+                  disabled
                 />
               </div>
               <div className="col-lg-6 col-md-6">
@@ -250,6 +263,7 @@ export default function Edit({ onChangePage }) {
                   onChange={(e) =>
                     setFormData({ ...formData, jenisDokumen: e.target.value })
                   }
+                  disabled
                 />
               </div>
               <div className="col-lg-6 col-md-6">

@@ -110,7 +110,18 @@ export default function Add({ onChangePage }) {
       fileDokumenRef.current?.focus();
       return;
     }
-
+    const dokumenDate = new Date(formData.tahunDokumen);
+    const kadaluarsaDate = new Date(formData.tahunKadaluarsa);
+    if (kadaluarsaDate <= dokumenDate) {
+      SweetAlert(
+        "Validasi Gagal",
+        "Tahun Kadaluarsa harus lebih besar dari Tahun Dokumen.",
+        "error",
+        "OK"
+      );
+      tahunKadaluarsaRef.current?.focus();
+      return;
+    }
     let uploadedFilePeraturan = null;
 
     if (selectedFile) {
@@ -129,7 +140,7 @@ export default function Add({ onChangePage }) {
         ...formData,
         fileDokumen: uploadedFilePeraturan[0],
       };
-      console.log(finalFormData);
+
       const data = await useFetch(
         `${API_LINK}/MasterPeraturan/CreatePeraturan`,
         finalFormData
@@ -247,6 +258,7 @@ export default function Add({ onChangePage }) {
                   ref={fileDokumenRef}
                   label="Dokumen"
                   forInput="fileDokumen"
+                  formatFile={".pdf,.docx,.xlsx"}
                   onChange={(file) => handleFileChange(file)}
                   isRequired={true}
                 />
