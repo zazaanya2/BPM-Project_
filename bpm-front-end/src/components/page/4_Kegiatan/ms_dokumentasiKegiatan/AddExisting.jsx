@@ -178,7 +178,7 @@ export default function AddExisting({ onChangePage }) {
 
     if (selectedFile) {
       const folderName = "Kegiatan";
-      const filePrefix = "NOTULEN";
+      const filePrefix = "NOTULEN_" + formData.name;
       uploadedFileNotulen = await uploadFile(
         selectedFile,
         folderName,
@@ -188,7 +188,7 @@ export default function AddExisting({ onChangePage }) {
 
     if (selectedFoto) {
       const folderName = "Kegiatan";
-      const filePrefix = "FOTO";
+      const filePrefix = "FOTO_SAMPUL_" + formData.name;
       uploadedFotoSampul = await uploadFile(
         selectedFoto,
         folderName,

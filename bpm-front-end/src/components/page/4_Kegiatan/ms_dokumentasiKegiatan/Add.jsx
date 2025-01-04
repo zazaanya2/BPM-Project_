@@ -90,131 +90,138 @@ export default function Add({ onChangePage }) {
   const statusFileNotulenRef = useRef();
 
   const handleSubmit = async () => {
-    if (!formData.name) {
-      SweetAlert("Error", "Nama kegiatan is required", "error", "OK");
-      return;
-    }
+    try {
+      console.log(formData);
 
-    if (!namaRef.current?.validate()) {
-      namaRef.current?.focus();
-      return;
-    }
-    if (!deskripsiRef.current?.validate()) {
-      deskripsiRef.current?.focus();
-      return;
-    }
-    if (!tempatRef.current?.validate()) {
-      tempatRef.current?.focus();
-      return;
-    }
-    if (!tglMulaiRef.current?.validate()) {
-      tglMulaiRef.current?.focus();
-      return;
-    }
-    if (!jamMulaiRef.current?.validate()) {
-      jamMulaiRef.current?.focus();
-      return;
-    }
-    if (!tglSelesaiRef.current?.validate()) {
-      tglSelesaiRef.current?.focus();
-      return;
-    }
-    if (!jamSelesaiRef.current?.validate()) {
-      jamSelesaiRef.current?.focus();
-      return;
-    }
+      if (!formData.name) {
+        SweetAlert("Error", "Nama kegiatan is required", "error", "OK");
+        return;
+      }
 
-    if (!jenisKegiatanRef.current?.validate()) {
-      jenisKegiatanRef.current?.focus();
-      return;
-    }
+      if (!namaRef.current?.validate()) {
+        namaRef.current?.focus();
+        return;
+      }
+      if (!deskripsiRef.current?.validate()) {
+        deskripsiRef.current?.focus();
+        return;
+      }
+      if (!tempatRef.current?.validate()) {
+        tempatRef.current?.focus();
+        return;
+      }
+      if (!tglMulaiRef.current?.validate()) {
+        tglMulaiRef.current?.focus();
+        return;
+      }
+      if (!jamMulaiRef.current?.validate()) {
+        jamMulaiRef.current?.focus();
+        return;
+      }
+      if (!tglSelesaiRef.current?.validate()) {
+        tglSelesaiRef.current?.focus();
+        return;
+      }
+      if (!jamSelesaiRef.current?.validate()) {
+        jamSelesaiRef.current?.focus();
+        return;
+      }
 
-    if (!folderLinkRef.current?.validate()) {
-      folderLinkRef.current?.focus();
-      return;
-    }
+      if (!jenisKegiatanRef.current?.validate()) {
+        jenisKegiatanRef.current?.focus();
+        return;
+      }
 
-    if (fileNotulenRef.current?.value === "") {
-      fileNotulenRef.current?.focus();
-      return;
-    }
+      if (!folderLinkRef.current?.validate()) {
+        folderLinkRef.current?.focus();
+        return;
+      }
 
-    console.log(formData);
+      if (fileNotulenRef.current?.value === "") {
+        fileNotulenRef.current?.focus();
+        return;
+      }
 
-    const startDate = new Date(
-      `${tglMulaiRef.current.value} ${jamMulaiRef.current.value}`
-    );
-    const endDate = new Date(
-      `${tglSelesaiRef.current.value} ${jamSelesaiRef.current.value}`
-    );
-
-    if (startDate >= endDate) {
-      SweetAlert(
-        "Gagal!",
-        "Tanggal dan waktu mulai harus lebih awal dari tanggal dan waktu selesai.",
-        "error",
-        "OK"
+      // Date validation
+      const startDate = new Date(
+        `${tglMulaiRef.current.value} ${jamMulaiRef.current.value}`
       );
-      return;
-    }
-    let uploadedFileNotulen = null;
-    let uploadedFotoSampul = null;
-
-    if (selectedFile) {
-      const folderName = "Kegiatan";
-      const filePrefix = "NOTULEN";
-      uploadedFileNotulen = await uploadFile(
-        selectedFile,
-        folderName,
-        filePrefix
+      const endDate = new Date(
+        `${tglSelesaiRef.current.value} ${jamSelesaiRef.current.value}`
       );
-    }
 
-    if (selectedFoto) {
-      const folderName = "Kegiatan";
-      const filePrefix = "FOTO";
-      uploadedFotoSampul = await uploadFile(
-        selectedFoto,
-        folderName,
-        filePrefix
-      );
-    }
+      if (startDate >= endDate) {
+        SweetAlert(
+          "Gagal!",
+          "Tanggal dan waktu mulai harus lebih awal dari tanggal dan waktu selesai.",
+          "error",
+          "OK"
+        );
+        return;
+      }
 
-    setFormData((prevData) => {
+      // File upload logic
+      let uploadedFileNotulen = null;
+      let uploadedFotoSampul = null;
+
+      if (selectedFile) {
+        const folderName = "Kegiatan";
+        const filePrefix = "NOTULEN_" + formData.name;
+        console.log(filePrefix);
+        uploadedFileNotulen = await uploadFile(
+          selectedFile,
+          folderName,
+          filePrefix
+        );
+      }
+
+      if (selectedFoto) {
+        const folderName = "Kegiatan";
+        const filePrefix = "FOTO_SAMPUL_" + formData.name;
+        uploadedFotoSampul = await uploadFile(
+          selectedFoto,
+          folderName,
+          filePrefix
+        );
+      }
+
+      // Prepare new form data with the uploaded files
       const newFormData = {
-        ...prevData,
-        fileNotulen: uploadedFileNotulen[0],
-        fotoSampul: uploadedFotoSampul[0],
+        ...formData,
+        fileNotulen: uploadedFileNotulen ? uploadedFileNotulen[0] : null,
+        fotoSampul: uploadedFotoSampul ? uploadedFotoSampul[0] : null,
       };
 
       console.log(newFormData);
 
+      // Set loading state and send API request
       setLoading(true);
-      useFetch(
+      const response = await useFetch(
         `${API_LINK}/MasterKegiatan/CreateDokumentasiKegiatan`,
         newFormData,
         "POST"
-      )
-        .then((response) => {
-          if (response === "ERROR") {
-            throw new Error("Gagal memperbarui data");
-          }
-          SweetAlert(
-            "Berhasil!",
-            "Dokumentasi kegiatan berhasil dibuat.",
-            "success",
-            "OK"
-          ).then(() => onChangePage("read"));
-        })
-        .catch((error) => {
-          SweetAlert("Gagal!", error.message, "error", "OK");
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+      );
 
-      return newFormData;
-    });
+      if (response === "ERROR") {
+        throw new Error("Gagal memperbarui data");
+      }
+
+      SweetAlert(
+        "Berhasil!",
+        "Dokumentasi kegiatan berhasil dibuat.",
+        "success",
+        "OK"
+      ).then(() => onChangePage("read"));
+    } catch (error) {
+      SweetAlert(
+        "Gagal!",
+        error.message || "An unexpected error occurred.",
+        "error",
+        "OK"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) return <Loading />;
@@ -338,7 +345,7 @@ export default function Add({ onChangePage }) {
                 <InputField
                   ref={folderLinkRef}
                   label="Link Folder Dokumentasi"
-                  value={formData.linkFolder || "Privat"} // Fallback ke string kosong
+                  value={formData.linkFolder || ""} // Fallback ke string kosong
                   onChange={(e) =>
                     setFormData((prev) => ({
                       ...prev,

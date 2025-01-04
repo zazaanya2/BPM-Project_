@@ -203,7 +203,7 @@ export default function Edit({ onChangePage }) {
 
     if (selectedFile) {
       const folderName = "Kegiatan";
-      const filePrefix = "NOTULEN";
+      const filePrefix = "NOTULEN_" + formData.name;
       const uploadedFile = await uploadFile(
         selectedFile,
         folderName,
@@ -214,7 +214,7 @@ export default function Edit({ onChangePage }) {
 
     if (selectedFoto) {
       const folderName = "Kegiatan";
-      const filePrefix = "FOTO";
+      const filePrefix = "FOTO_SAMPUL_" + formData.name;
       const uploadedFoto = await uploadFile(
         selectedFoto,
         folderName,
@@ -228,8 +228,6 @@ export default function Edit({ onChangePage }) {
       fileNotulen: updatedFileNotulen,
       fotoSampul: updatedFotoSampul,
     };
-
-    console.log(updatedFormData);
 
     setLoading(true);
     try {

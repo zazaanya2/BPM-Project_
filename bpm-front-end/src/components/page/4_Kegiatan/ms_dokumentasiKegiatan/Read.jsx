@@ -159,7 +159,9 @@ export default function Read({ onChangePage }) {
 
         SweetAlert("Berhasil", "Data Berhasil Dihapus", "success");
 
-        setEvents((prevData) => prevData.filter((item) => item.id !== id));
+        setFilteredData((prevData) =>
+          prevData.filter((item) => item.id !== id)
+        );
       } catch (err) {
         console.error(err);
         SweetAlert(
