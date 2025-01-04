@@ -243,7 +243,7 @@ export default function Edit({ onChangePage }) {
 
       SweetAlert(
         "Berhasil!",
-        "Jadwal kegiatan berhasil dibuat.",
+        "Dokumentasi kegiatan berhasil diperbarui.",
         "success",
         "OK"
       ).then(() => onChangePage("read"));
@@ -325,6 +325,7 @@ export default function Edit({ onChangePage }) {
                   }
                   isRequired={true}
                   type="date"
+                  max={new Date().toISOString().split("T")[0]}
                 />
                 <InputField
                   ref={jamMulaiRef}
@@ -347,6 +348,7 @@ export default function Edit({ onChangePage }) {
                   }
                   isRequired={true}
                   type="date"
+                  max={new Date().toISOString().split("T")[0]}
                 />
                 <InputField
                   ref={jamSelesaiRef}

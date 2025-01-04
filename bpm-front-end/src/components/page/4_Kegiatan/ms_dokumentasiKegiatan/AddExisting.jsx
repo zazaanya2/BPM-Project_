@@ -152,83 +152,87 @@ export default function AddExisting({ onChangePage }) {
   };
 
   const handleSubmit = async () => {
-    if (!namaRef.current?.validate()) {
-      namaRef.current?.focus();
-      return;
-    }
+    try {
+      // Form validation checks
+      if (!namaRef.current?.validate()) {
+        namaRef.current?.focus();
+        return;
+      }
 
-    if (!folderLinkRef.current?.validate()) {
-      folderLinkRef.current?.focus();
-      return;
-    }
+      if (!folderLinkRef.current?.validate()) {
+        folderLinkRef.current?.focus();
+        return;
+      }
 
-    if (!fotoSampulRef.current?.validate()) {
-      fotoSampulRef.current?.focus();
+      if (!fotoSampulRef.current?.validate()) {
+        fotoSampulRef.current?.focus();
+        return;
+      }
 
-      return;
-    }
+      if (!fileNotulenRef.current?.validate()) {
+        fileNotulenRef.current?.focus();
+        return;
+      }
 
-    if (!fileNotulenRef.current?.validate()) {
-      fileNotulenRef.current?.focus();
-      return;
-    }
+      let uploadedFileNotulen = formData.fileNotulen;
+      let uploadedFotoSampul = formData.fotoSampul;
 
-    let uploadedFileNotulen = formData.fileNotulen;
-    let uploadedFotoSampul = formData.fotoSampul;
+      // File upload logic
+      if (selectedFile) {
+        const folderName = "Kegiatan";
+        const filePrefix = "NOTULEN_" + formData.name;
+        uploadedFileNotulen = await uploadFile(
+          selectedFile,
+          folderName,
+          filePrefix
+        );
+      }
 
-    if (selectedFile) {
-      const folderName = "Kegiatan";
-      const filePrefix = "NOTULEN_" + formData.name;
-      uploadedFileNotulen = await uploadFile(
-        selectedFile,
-        folderName,
-        filePrefix
-      );
-    }
+      if (selectedFoto) {
+        const folderName = "Kegiatan";
+        const filePrefix = "FOTO_SAMPUL_" + formData.name;
+        uploadedFotoSampul = await uploadFile(
+          selectedFoto,
+          folderName,
+          filePrefix
+        );
+      }
 
-    if (selectedFoto) {
-      const folderName = "Kegiatan";
-      const filePrefix = "FOTO_SAMPUL_" + formData.name;
-      uploadedFotoSampul = await uploadFile(
-        selectedFoto,
-        folderName,
-        filePrefix
-      );
-    }
-
-    setFormData((prevData) => {
+      // Prepare the new form data without setFormData
       const newFormData = {
-        ...prevData,
-        fileNotulen: uploadedFileNotulen[0],
-        fotoSampul: uploadedFotoSampul[0],
+        ...formData,
+        fileNotulen: uploadedFileNotulen ? uploadedFileNotulen[0] : null,
+        fotoSampul: uploadedFotoSampul ? uploadedFotoSampul[0] : null,
       };
 
+      // Set loading state and make API request
       setLoading(true);
-      useFetch(
+      const response = await useFetch(
         `${API_LINK}/MasterKegiatan/EditDokumentasiKegiatan`,
         newFormData,
         "POST"
-      )
-        .then((response) => {
-          if (response === "ERROR") {
-            throw new Error("Gagal memperbarui data");
-          }
-          SweetAlert(
-            "Berhasil!",
-            "Dokumentasi kegiatan berhasil dibuat.",
-            "success",
-            "OK"
-          ).then(() => onChangePage("read"));
-        })
-        .catch((error) => {
-          SweetAlert("Gagal!", error.message, "error", "OK");
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+      );
 
-      return newFormData;
-    });
+      if (response === "ERROR") {
+        throw new Error("Gagal memperbarui data");
+      }
+
+      SweetAlert(
+        "Berhasil!",
+        "Dokumentasi kegiatan berhasil ditambahkan.",
+        "success",
+        "OK"
+      ).then(() => onChangePage("read"));
+    } catch (error) {
+      SweetAlert(
+        "Gagal!",
+        error.message || "An unexpected error occurred.",
+        "error",
+        "OK"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) return <Loading />;

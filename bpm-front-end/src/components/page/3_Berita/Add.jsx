@@ -179,6 +179,7 @@ export default function Add({ onChangePage }) {
                     isRequired={true}
                     name="tanggal"
                     type="date"
+                    max={new Date().toISOString().split("T")[0]}
                   />
                 </div>
               </div>
