@@ -1,13 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import PageTitleNav from "../../part/PageTitleNav";
-import TextField from "../../part/TextField";
-import InputField from "../../part/InputField";
 import HeaderForm from "../../part/HeaderText";
-import Dropdown from "../../part/Dropdown";
 import { useLocation, useNavigate } from "react-router-dom";
 import { API_LINK } from "../../util/Constants";
-import Button from "../../part/Button";
-import SweetAlert from "../../util/SweetAlert";
 import { useIsMobile } from "../../util/useIsMobile";
 import { useFetch } from "../../util/useFetch";
 import Loading from "../../part/Loading";
