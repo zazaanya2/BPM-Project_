@@ -6,52 +6,52 @@ import {
   useLocation,
 } from "react-router-dom";
 import Index from "../Index";
-import ScrollToTop from "../../../part/ScrollToTop";
 import Add from "../Add";
 import Edit from "../Edit";
 import EditFile from "../EditFile";
-import Detail from "../Detail";
 import ReadRevisi from "../ReadRevisi";
 import ReadUnduhan from "../ReadUnduhan";
+import Detail from "../Detail";
+import ScrollToTop from "../../../part/ScrollToTop";
 import ProtectedRoute from "../../../util/ProtectedRoute"; // Import the ProtectedRoute component
 
-export default function Peraturan() {
+export default function PeraturanEksternal() {
   const navigate = useNavigate();
   const location = useLocation();
   const handlePageChange = (page, withState = {}) => {
     switch (page) {
       case "index":
-        navigate("/peraturan/kebijakan", {
+        navigate("/peraturan/eksternal", {
           state: { mode: "index", ...withState },
         });
         break;
       case "add":
-        navigate("/peraturan/kebijakan", {
+        navigate("/peraturan/eksternal", {
           state: { mode: "add", ...withState },
         });
         break;
       case "edit":
-        navigate("/peraturan/kebijakan", {
+        navigate("/peraturan/eksternal", {
           state: { mode: "edit", ...withState },
         });
         break;
       case "editfile":
-        navigate("/peraturan/kebijakan", {
+        navigate("/peraturan/eksternal", {
           state: { mode: "editfile", ...withState },
         });
         break;
       case "readrevisi":
-        navigate("/peraturan/kebijakan", {
+        navigate("/peraturan/eksternal", {
           state: { mode: "readrevisi", ...withState },
         });
         break;
       case "readunduhan":
-        navigate("/peraturan/kebijakan", {
+        navigate("/peraturan/eksternal", {
           state: { mode: "readunduhan", ...withState },
         });
         break;
       case "detail":
-        navigate("/peraturan/kebijakan", {
+        navigate("/peraturan/eksternal", {
           state: { mode: "detail", ...withState },
         });
         break;
@@ -68,7 +68,6 @@ export default function Peraturan() {
     <>
       <ScrollToTop />
       <Routes>
-        {/* Protected Routes */}
         <Route
           path="/"
           element={

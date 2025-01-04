@@ -31,7 +31,9 @@ const Pengendalian = lazy(() =>
 );
 const Evaluasi = lazy(() => import("../page/5_SPMI/siklus_spmi/evaluasi/Root"));
 const Dokumen = lazy(() => import("../page/5_SPMI/dokumen_spmi/Root"));
-const KategoriDokumen = lazy(() => import("../page/MasterKategoriDokumen/Root"));
+const KategoriDokumen = lazy(() =>
+  import("../page/MasterKategoriDokumen/Root")
+);
 const Peraturan = lazy(() =>
   import("../page/10_Peraturan/ms_kebijakanPeraturan/Root")
 );
