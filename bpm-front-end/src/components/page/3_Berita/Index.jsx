@@ -273,46 +273,55 @@ export default function Index({ onChangePage }) {
 
             {/* Kartu Berita */}
             <div className="container">
-              <div className="row">
-                {currentData.map((newsItem, index) => (
-                  <div
-                    key={index}
-                    className={
-                      isMobile
-                        ? "col-lg-4 col-md-6 col-12 mb-4 p-0"
-                        : "col-lg-4 col-md-6 col-12 mb-4 ps-0 p-3"
-                    }
-                  >
-                    <CardBerita
-                      title={truncateAndHighlight(
-                        newsItem.title,
-                        searchKeyword,
-                        93
-                      )}
-                      author={newsItem.author}
-                      date={newsItem.formattedDate}
-                      description={highlightText(
-                        getSnippet(
-                          newsItem.description,
-                          searchKeyword,
-                          isMobile ? 50 : 100
-                        ),
-                        searchKeyword
-                      )}
-                      image={BERITAFOTO_LINK + newsItem.images[0]}
-                      onClick={() => onChangePage("news", { state: newsItem })}
-                    />
+              {currentData.length === 0 ? ( // Gunakan "===" untuk perbandingan
+                <div className="row">
+                  <p> Berita tidak ditemukan</p>
+                </div> // Gunakan kurung buka-tutup dengan benar untuk ternary operator
+              ) : (
+                <div className="container">
+                  <div className="row">
+                    {currentData.map((newsItem, index) => (
+                      <div
+                        key={index}
+                        className={
+                          isMobile
+                            ? "col-lg-4 col-md-6 col-12 mb-4 p-0"
+                            : "col-lg-4 col-md-6 col-12 mb-4 ps-0 p-3"
+                        }
+                      >
+                        <CardBerita
+                          title={truncateAndHighlight(
+                            newsItem.title,
+                            searchKeyword,
+                            93
+                          )}
+                          author={newsItem.author}
+                          date={newsItem.formattedDate}
+                          description={highlightText(
+                            getSnippet(
+                              newsItem.description,
+                              searchKeyword,
+                              isMobile ? 50 : 100
+                            ),
+                            searchKeyword
+                          )}
+                          image={BERITAFOTO_LINK + newsItem.images[0]}
+                          onClick={() =>
+                            onChangePage("news", { state: newsItem })
+                          }
+                        />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                  <Paging
+                    pageSize={pageSize}
+                    pageCurrent={pageCurrent}
+                    totalData={totalData}
+                    navigation={(page) => setPageCurrent(page)}
+                  />
+                </div>
+              )}
             </div>
-
-            <Paging
-              pageSize={pageSize}
-              pageCurrent={pageCurrent}
-              totalData={totalData}
-              navigation={(page) => setPageCurrent(page)}
-            />
           </div>
 
           {/* Sidebar (1 bagian dari total ruang) */}

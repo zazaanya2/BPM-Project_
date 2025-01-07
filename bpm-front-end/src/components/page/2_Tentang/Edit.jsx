@@ -108,7 +108,6 @@ export default function Edit({ onChangePage }) {
 
         const folderName = "Tentang";
         const filePrefix = "FILE_" + ktg;
-        console.log(filePrefix);
 
         const uploadResult = await uploadFile(
           selectedFile,

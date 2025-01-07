@@ -21,8 +21,8 @@ let title = "Hallo";
 let breadcrumbs = [];
 
 const dataFilterSort = [
-  { Value: "[Judul Peraturan] asc", Text: "Judul Proposal [↑]" },
-  { Value: "[Judul Peraturan] desc", Text: "Judul Proposal [↓]" },
+  { Value: "ASC", Text: "Judul Proposal [↑]" },
+  { Value: "DESC", Text: "Judul Proposal [↓]" },
 ];
 
 const statusFilterSort = [

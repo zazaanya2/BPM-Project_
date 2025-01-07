@@ -145,8 +145,6 @@ export default function Edit({ onChangePage }) {
         return;
       }
 
-      console.log(formData.idRef);
-
       setLoading(true);
 
       let uploadedFilePeraturan = null;

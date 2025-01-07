@@ -20,7 +20,6 @@ export default function Index({ onChangePage }) {
 
   useEffect(() => {
     if (!location.state?.idData) return;
-    console.log("state", location.state?.idData);
   }, [location.state?.idData]);
 
   useEffect(() => {

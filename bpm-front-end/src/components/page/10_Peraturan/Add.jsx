@@ -129,7 +129,7 @@ export default function Add({ onChangePage }) {
         ...formData,
         fileDokumen: uploadedFilePeraturan[0],
       };
-      console.log(finalFormData);
+
       const data = await useFetch(
         `${API_LINK}/MasterPeraturan/CreatePeraturan`,
         finalFormData

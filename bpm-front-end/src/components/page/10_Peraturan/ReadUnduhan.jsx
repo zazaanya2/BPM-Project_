@@ -66,16 +66,6 @@ export default function Read({ onChangePage }) {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      console.log({
-        idMenu: idMenu,
-        search: searchKeyword,
-        year: selectedYear,
-        status: selectedStatus,
-        judul: selectedJudul,
-        size: pageSize,
-        page: pageCurrent,
-        idData: idData,
-      });
       try {
         const data = await useFetch(
           `${API_LINK}/MasterPeraturan/GetDataUnduhanPeraturan`,
@@ -158,16 +148,6 @@ export default function Read({ onChangePage }) {
     setSelectedYear("");
     setSelectedStatus("");
     setSelectedJudul("");
-  };
-
-  const handleToggle = (id) => {
-    console.log("id hapus :", id);
-    const updatedData = filteredData.map((item) =>
-      item.id === id
-        ? { ...item, status: item.status === "Aktif" ? "Tidak Aktif" : "Aktif" }
-        : item
-    );
-    setFilteredData(updatedData);
   };
 
   if (loading) return <Loading />;

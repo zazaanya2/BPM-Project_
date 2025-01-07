@@ -43,10 +43,11 @@
     background-color: #d3e3ff;
   }
 
-  /* .nav-item:hover {
+  .nav-item:hover {
     background-color: #183667;
-    border-radius: 12px;
-  } */
+    border-radius: 10px;
+  }
+
   .top-nav-item:hover {
     background-color: #183667;
     border-radius: 12px;
