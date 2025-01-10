@@ -1,91 +1,146 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PageTitleNav from "../../part/PageTitleNav";
 import TextField from "../../part/TextField";
+import InputField from "../../part/InputField";
 import HeaderForm from "../../part/HeaderText";
-import DropDown from "../../part/Dropdown";
+import Dropdown from "../../part/Dropdown";
 import { useLocation } from "react-router-dom";
-import { PERATURAN_FILE_LINK } from "../../util/Constants";
+import { API_LINK } from "../../util/Constants";
 import Button from "../../part/Button";
+import SweetAlert from "../../util/SweetAlert";
+import { useIsMobile } from "../../util/useIsMobile";
+import { useFetch } from "../../util/useFetch";
 import Loading from "../../part/Loading";
+import DetailData from "../../part/DetailData";
 
-// Dynamically set title and breadcrumbs based on idMenu
-let title = "";
-let titleHeader = "Formulir";
-let breadcrumbs = [];
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toISOString().split("T")[0]; // Mengambil hanya bagian tanggal
+};
 
-export default function Edit({ onChangePage, data }) {
+export default function Detail({ onChangePage }) {
+  const isMobile = useIsMobile();
+  const [error, setError] = useState(null);
+
   const location = useLocation();
   const idMenu = location.state?.idMenu;
+  const idData = location.state?.idData;
   const [loading, setLoading] = useState(true); // New loading state
-
+  const [title, setTitle] = useState("");
+  const [titleHeader, setTitleHeader] = useState("");
+  const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [formData, setFormData] = useState({
-    JudulDokumen: "",
-    NomorIndukDokumen: "",
-    TahunDokumen: "",
-    JenisDokumen: "",
-    TahunKadaluarsa: "",
+    idDok: "",
+    judulDokumen: "",
+    nomorInduk: "",
+    tahunDokumen: "",
+    tahunKadaluarsa: "",
+    jenisDokumen: "",
   });
 
   useEffect(() => {
-    if (location.state?.editData) {
-      const editId = location.state.editData;
-      const selectedData = data.find((item) => item.Key === editId);
-      if (selectedData) {
-        setFormData({
-          JudulDokumen: selectedData.JudulDokumen,
-          NomorIndukDokumen: selectedData.NomorIndukDokumen,
-          TahunDokumen: selectedData.TahunDokumen,
-          JenisDokumen: selectedData.JenisDokumen,
-          TahunKadaluarsa: selectedData.TahunKadaluarsa,
-        });
+    const fetchEvents = async () => {
+      try {
+        const data = await useFetch(
+          `${API_LINK}/MasterPeraturan/GetDataPeraturanById`,
+          {
+            idData: idData,
+          },
+          "POST"
+        );
+        if (data.length > 0) {
+          // Mengubah format tanggal untuk tahunDokumen dan tahunKadaluarsa
+          setFormData({
+            idDok: data[0].idDok || "",
+            judulDokumen: data[0].judulDokumen || "",
+            nomorInduk: data[0].nomorInduk || "",
+            tahunDokumen: formatDate(data[0].tahunDokumen) || "", // Memformat tanggal
+            tahunKadaluarsa: formatDate(data[0].tahunKadaluarsa) || "", // Memformat tanggal
+            jenisDokumen: data[0].jenisDokumen || "",
+            dibuatOleh: data[0].dibuatOleh,
+            dibuatTgl: new Date(data[0].dibuatTgl).toLocaleDateString("id-ID", {
+              weekday: "long",
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            }),
+            dimodifOleh: data[0].dimodifOleh ? data[0].dimodifOleh : "-",
+            dimodifTgl: data[0].dimodifTgl
+              ? new Date(data[0].dimodifTgl).toLocaleDateString("id-ID", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })
+              : "-",
+          });
+        }
+      } catch (error) {
+        setError("Gagal mengambil data kegiatan");
+        console.error(error);
+      } finally {
+        setLoading(false);
       }
-    }
-  }, [location.state, data]);
+    };
+
+    fetchEvents();
+  }, [location.state]);
 
   useEffect(() => {
+    let newTitle = "";
+    let newTitleHeader = "";
+    let newBreadcrumbs = [];
+
     if (idMenu === 39) {
-      title = "Edit Peraturan";
-      titleHeader = "Formulir Kebijakan Peraturan";
-      breadcrumbs = [
-        { label: "Peraturan", href: "/peraturan/kebijakan" },
+      newTitle = "Detail Peraturan";
+      newTitleHeader = "Formulir Kebijakan Peraturan";
+      newBreadcrumbs = [
+        {
+          label: "Peraturan",
+          href: "/peraturan/kebijakan",
+        },
         {
           label: "Kebijakan Peraturan",
-          href: "/peraturan/kebijakan/kelola",
+          href: "/peraturan/kebijakan",
         },
-        { label: "Edit Kebijakan Peraturan" },
+        {
+          label: "Detail Kebijakan Peraturan",
+          href: "",
+        },
       ];
     } else if (idMenu === 40) {
-      title = "Edit Peraturan Eksternal";
-      titleHeader = "Formulir Peraturan Eksternal";
-      breadcrumbs = [
-        { label: "Peraturan", href: "/peraturan/eksternal" },
+      newTitle = "Detail Peraturan Eksternal";
+      newTitleHeader = "Formulir Peraturan Eksternal";
+      newBreadcrumbs = [
+        {
+          label: "Peraturan",
+          href: "/peraturan/eksternal",
+        },
         {
           label: "Peraturan Eksternal",
-          href: "/peraturan/eksternal/kelola",
+          href: "/peraturan/eksternal",
         },
-        { label: "Edit Peraturan Eksternal" },
+        { label: "Detail Peraturan Eksternal", href: "" },
       ];
     } else if (idMenu === 41) {
-      title = "Edit Instrumen APS";
-      titleHeader = "Formulir Instrumen APS";
-      breadcrumbs = [
+      newTitle = "Detail Instrumen APS";
+      newTitleHeader = "Formulir Instrumen APS";
+      newBreadcrumbs = [
         { label: "Peraturan", href: "/peraturan/aps" },
         {
           label: "instrumen APS",
-          href: "/peraturan/aps/kelola",
+          href: "/peraturan/aps",
         },
-        { label: "Edit Instrumen APS" },
+        { label: "Detail Instrumen APS", href: "" },
       ];
     }
 
-    // Set loading to false once idMenu is determined
+    setTitle(newTitle);
+    setTitleHeader(newTitleHeader);
+    setBreadcrumbs(newBreadcrumbs);
+
     setLoading(false);
   }, [idMenu]);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
-  };
 
   if (loading) return <Loading />;
 
@@ -97,81 +152,57 @@ export default function Edit({ onChangePage, data }) {
             <PageTitleNav
               title={title}
               breadcrumbs={breadcrumbs}
-              onClick={() => onChangePage("index")}
+              onClick={() => onChangePage("index", { idMenu: idMenu })}
             />
           </div>
 
           <div className="shadow p-5 m-5 mt-0 bg-white rounded">
             <HeaderForm label={titleHeader} />
             <div className="row">
-              <TextField
+              <DetailData
                 label="Judul Dokumen"
-                isRequired={true}
-                name="Judul Dokumen"
-                value={formData.JudulDokumen}
-                onChange={handleInputChange}
+                isi={formData.judulDokumen || ""}
               />
             </div>
             <div className="row">
               <div className="col-lg-6 col-md-6">
-                <TextField
+                <DetailData
                   label="Nomor Induk Dokumen"
-                  isRequired={true}
-                  name="Nomor Induk Dokumen"
-                  value={formData.NomorIndukDokumen}
-                  onChange={handleInputChange}
+                  isi={formData.nomorInduk || ""}
                 />
               </div>
               <div className="col-lg-6 col-md-6">
-                <TextField
+                <DetailData
                   label="Tahun Dokumen"
-                  isRequired={true}
-                  name="Tahun Dokumen"
-                  value={formData.TahunDokumen}
-                  onChange={handleInputChange}
+                  isi={formData.tahunDokumen || ""}
                 />
               </div>
               <div className="col-lg-6 col-md-6">
-                <DropDown
+                <DetailData
                   label="Jenis Dokumen"
-                  isRequired={true}
-                  name="Jenis Dokumen"
-                  value={formData.JenisDokumen}
-                  onChange={handleInputChange}
-                  arrData={[
-                    { Value: "controlled", Text: "Controlled Copy" },
-                    { Value: "uncontrolled", Text: "Uncontrolled Copy" },
-                  ]}
+                  isi={formData.jenisDokumen || ""}
                 />
               </div>
               <div className="col-lg-6 col-md-6">
-                <TextField
+                <DetailData
                   label="Tahun Kadaluarsa"
-                  isRequired={true}
-                  name="Tahun Kadaluarsa"
-                  value={formData.TahunKadaluarsa}
-                  onChange={handleInputChange}
+                  isi={formData.tahunKadaluarsa || ""}
                 />
               </div>
             </div>
-            <div className="d-flex justify-content-between align-items-center mt-4">
-              <div className="flex-grow-1 m-2">
-                <Button
-                  classType="primary"
-                  type="submit"
-                  label="Simpan"
-                  width="100%"
-                  onClick={() => {
-                    onChangePage("index");
-                  }}
-                />
+            <div className="row">
+              <div className="col-lg-6 col-md-6">
+                <DetailData label="Dibuat Oleh" isi={formData.dibuatOleh} />
+                <DetailData label="Dibuat Tanggal" isi={formData.dibuatTgl} />
               </div>
-              <div className="flex-grow-1 m-2">
-                <Button
-                  classType="danger"
-                  type="button"
-                  label="Batal"
-                  width="100%"
+              <div className="col-lg-6 col-md-6">
+                <DetailData
+                  label="Dimodifikasi Oleh"
+                  isi={formData.dimodifOleh}
+                />
+                <DetailData
+                  label="Dimodifikasi Tanggal"
+                  isi={formData.dimodifTgl}
                 />
               </div>
             </div>

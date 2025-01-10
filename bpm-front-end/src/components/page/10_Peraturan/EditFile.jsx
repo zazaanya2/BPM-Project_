@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import PageTitleNav from "../../part/PageTitleNav";
-import TextField from "../../part/TextField";
-import InputField from "../../part/InputField";
 import HeaderForm from "../../part/HeaderText";
-import Dropdown from "../../part/Dropdown";
 import { useLocation } from "react-router-dom";
-import { API_LINK } from "../../util/Constants";
+import { API_LINK, PERATURAN_FILE_LINK } from "../../util/Constants";
 import Button from "../../part/Button";
 import SweetAlert from "../../util/SweetAlert";
 import { useIsMobile } from "../../util/useIsMobile";
 import { useFetch } from "../../util/useFetch";
+import { uploadFile } from "../../util/UploadFile";
 import Loading from "../../part/Loading";
+import DetailData from "../../part/DetailData";
+import FileUpload from "../../part/FileUpload";
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -28,21 +28,24 @@ export default function Edit({ onChangePage }) {
   const [title, setTitle] = useState("");
   const [titleHeader, setTitleHeader] = useState("");
   const [breadcrumbs, setBreadcrumbs] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [formData, setFormData] = useState({
+    idMenu: idMenu,
     idDok: "",
     judulDokumen: "",
     nomorInduk: "",
     tahunDokumen: "",
     tahunKadaluarsa: "",
     jenisDokumen: "",
+    fileDokumen: "",
   });
 
   // Refs for validation
-  const judulDokumenRef = useRef();
-  const nomorIndukRef = useRef();
-  const tahunDokumenRef = useRef();
-  const jenisDokumenRef = useRef();
-  const tahunKadaluarsaRef = useRef();
+  const fileDokumenRef = useRef();
+
+  const handleFileChange = (file) => {
+    setSelectedFile(file);
+  };
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -63,6 +66,8 @@ export default function Edit({ onChangePage }) {
             tahunDokumen: formatDate(data[0].tahunDokumen) || "", // Memformat tanggal
             tahunKadaluarsa: formatDate(data[0].tahunKadaluarsa) || "", // Memformat tanggal
             jenisDokumen: data[0].jenisDokumen || "",
+            fileDokumen: data[0].fileDok || "",
+            idRef: data[0].referensiDokumen || "",
           });
         }
       } catch (error) {
@@ -133,50 +138,55 @@ export default function Edit({ onChangePage }) {
   }, [idMenu]);
 
   const handleSubmit = async () => {
-    if (!judulDokumenRef.current?.validate()) {
-      judulDokumenRef.current?.focus();
-      return;
-    }
-    if (!nomorIndukRef.current?.validate()) {
-      nomorIndukRef.current?.focus();
-      return;
-    }
-    if (!tahunDokumenRef.current?.validate()) {
-      tahunDokumenRef.current?.focus();
-      return;
-    }
-    if (!jenisDokumenRef.current?.validate()) {
-      jenisDokumenRef.current?.focus();
-      return;
-    }
-    if (!tahunKadaluarsaRef.current?.validate()) {
-      tahunKadaluarsaRef.current?.focus();
-      return;
-    }
+    try {
+      const isFileValid = fileDokumenRef.current?.validate();
+      if (!isFileValid) {
+        fileDokumenRef.current?.focus();
+        return;
+      }
 
-    setFormData((prevData) => {
+      console.log(formData.idRef);
+
       setLoading(true);
-      useFetch(`${API_LINK}/MasterPeraturan/EditPeraturan`, formData, "POST")
-        .then((response) => {
-          if (response === "ERROR") {
-            throw new Error("Gagal memperbarui data");
-          }
-          SweetAlert(
-            "Berhasil!",
-            "Dokumentasi kegiatan berhasil diEdit.",
-            "success",
-            "OK"
-          ).then(() => onChangePage("index", { idMenu: idMenu }));
-        })
-        .catch((error) => {
-          SweetAlert("Gagal!", error.message, "error", "OK");
-        })
-        .finally(() => {
-          setLoading(false);
-        });
 
-      return formData;
-    });
+      let uploadedFilePeraturan = null;
+      if (selectedFile) {
+        const folderName = "Peraturan";
+        const filePrefix = `${idMenu}_${formData.judulDokumen}`;
+        uploadedFilePeraturan = await uploadFile(
+          selectedFile,
+          folderName,
+          filePrefix
+        );
+      }
+
+      const response = await useFetch(
+        `${API_LINK}/MasterPeraturan/EditPeraturanFile`,
+        {
+          idDok: idData,
+          fileDokumen: uploadedFilePeraturan
+            ? uploadedFilePeraturan[0]
+            : formData.fileDokumen,
+          idRefer: formData.idRef,
+        },
+        "POST"
+      );
+
+      if (response === "ERROR") {
+        throw new Error("Gagal memperbarui data");
+      }
+
+      SweetAlert(
+        "Berhasil!",
+        "Dokumentasi kegiatan berhasil diEdit.",
+        "success",
+        "OK"
+      ).then(() => onChangePage("index", { idMenu: idMenu }));
+    } catch (error) {
+      SweetAlert("Gagal!", error.message, "error", "OK");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) return <Loading />;
@@ -196,72 +206,48 @@ export default function Edit({ onChangePage }) {
           <div className="shadow p-5 m-5 mt-0 bg-white rounded">
             <HeaderForm label={titleHeader} />
             <div className="row">
-              <InputField
-                ref={judulDokumenRef}
+              <DetailData
                 label="Judul Dokumen"
-                value={formData.judulDokumen || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, judulDokumen: e.target.value })
-                }
-                isRequired={true}
+                isi={formData.judulDokumen || ""}
               />
             </div>
             <div className="row">
               <div className="col-lg-6 col-md-6">
-                <InputField
-                  ref={nomorIndukRef}
+                <DetailData
                   label="Nomor Induk Dokumen"
-                  value={formData.nomorInduk || ""}
-                  onChange={(e) =>
-                    setFormData({ ...formData, nomorInduk: e.target.value })
-                  }
-                  isRequired={true}
+                  isi={formData.nomorInduk || ""}
                 />
               </div>
               <div className="col-lg-6 col-md-6">
-                <InputField
-                  ref={tahunDokumenRef}
-                  type="date"
+                <DetailData
                   label="Tahun Dokumen"
-                  value={formData.tahunDokumen}
-                  onChange={(e) =>
-                    setFormData({ ...formData, tahunDokumen: e.target.value })
-                  }
-                  isRequired={true}
+                  isi={formData.tahunDokumen || ""}
                 />
               </div>
               <div className="col-lg-6 col-md-6">
-                <Dropdown
-                  ref={jenisDokumenRef}
-                  type="pilih"
-                  forInput="jenisDokumen"
-                  value={formData.jenisDokumen}
+                <DetailData
                   label="Jenis Dokumen"
-                  isRequired={true}
-                  arrData={[
-                    { Text: "Controlled Copy", Value: "Controlled Copy" },
-                    { Text: "Uncontrolled Copy", Value: "Uncontrolled Copy" },
-                  ]}
-                  onChange={(e) =>
-                    setFormData({ ...formData, jenisDokumen: e.target.value })
-                  }
+                  isi={formData.jenisDokumen || ""}
                 />
               </div>
               <div className="col-lg-6 col-md-6">
-                <InputField
-                  ref={tahunKadaluarsaRef}
-                  type="date"
+                <DetailData
                   label="Tahun Kadaluarsa"
-                  value={formData.tahunKadaluarsa}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      tahunKadaluarsa: e.target.value,
-                    })
-                  }
-                  isRequired={true}
+                  isi={formData.tahunKadaluarsa || ""}
                 />
               </div>
+            </div>
+
+            <div className="row">
+              <FileUpload
+                ref={fileDokumenRef}
+                label="Dokumen"
+                forInput="fileDokumen"
+                formatFile=".pdf"
+                onChange={(file) => handleFileChange(file)}
+                hasExisting={PERATURAN_FILE_LINK + formData.fileDokumen}
+                isRequired={true}
+              />
             </div>
             <div className="d-flex justify-content-between align-items-center mt-4">
               <div className="flex-grow-1 m-2">

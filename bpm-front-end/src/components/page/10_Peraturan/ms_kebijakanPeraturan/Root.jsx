@@ -9,7 +9,10 @@ import Index from "../Index";
 import ScrollToTop from "../../../part/ScrollToTop";
 import Add from "../Add";
 import Edit from "../Edit";
+import EditFile from "../EditFile";
 import Detail from "../Detail";
+import ReadRevisi from "../ReadRevisi";
+import ReadUnduhan from "../ReadUnduhan";
 import ProtectedRoute from "../../../util/ProtectedRoute"; // Import the ProtectedRoute component
 
 export default function Peraturan() {
@@ -30,6 +33,21 @@ export default function Peraturan() {
       case "edit":
         navigate("/peraturan/kebijakan", {
           state: { mode: "edit", ...withState },
+        });
+        break;
+      case "editfile":
+        navigate("/peraturan/kebijakan", {
+          state: { mode: "editfile", ...withState },
+        });
+        break;
+      case "readrevisi":
+        navigate("/peraturan/kebijakan", {
+          state: { mode: "readrevisi", ...withState },
+        });
+        break;
+      case "readunduhan":
+        navigate("/peraturan/kebijakan", {
+          state: { mode: "readunduhan", ...withState },
         });
         break;
       case "detail":
@@ -61,6 +79,12 @@ export default function Peraturan() {
                   <Add onChangePage={handlePageChange} />
                 ) : mode === "edit" ? (
                   <Edit onChangePage={handlePageChange} />
+                ) : mode === "editfile" ? (
+                  <EditFile onChangePage={handlePageChange} />
+                ) : mode === "readrevisi" ? (
+                  <ReadRevisi onChangePage={handlePageChange} />
+                ) : mode === "readunduhan" ? (
+                  <ReadUnduhan onChangePage={handlePageChange} />
                 ) : mode === "detail" ? (
                   <Detail onChangePage={handlePageChange} />
                 ) : (

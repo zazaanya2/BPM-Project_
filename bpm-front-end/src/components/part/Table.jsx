@@ -4,6 +4,9 @@ import Icon from "./Icon";
 export default function Table({
   arrHeader,
   data,
+  linkColumns = [],
+  FILE_LINK = "",
+  aksiIs = true,
   actions = [],
   onToggle = () => {},
   onDelete = () => {},
@@ -149,7 +152,7 @@ export default function Table({
             type="Reguler"
             name="upload"
             cssClass="btn px-1 py-0 text-secondary"
-            title="Unggah File"
+            title="Upload File"
             onClick={() => onUpload(id)}
           />
         );
@@ -178,16 +181,18 @@ export default function Table({
                 {header}
               </th>
             ))}
-            <th
-              className="text-center align-middle"
-              style={{
-                backgroundColor: "#2654A1",
-                color: "#fff",
-                width: "250px",
-              }}
-            >
-              Aksi
-            </th>
+            {aksiIs && ( // Render kolom aksi hanya jika aksiIs adalah false
+              <th
+                className="text-center align-middle"
+                style={{
+                  backgroundColor: "#2654A1",
+                  color: "#fff",
+                  width: "250px",
+                }}
+              >
+                Aksi
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -201,31 +206,45 @@ export default function Table({
                       column === "No" ? "text-center" : "text-start"
                     }`}
                   >
-                    {row[column] || ""}
+                    {/* Periksa apakah kolom ini harus memiliki hyperlink */}
+                    {linkColumns.includes(column) && row[column] ? (
+                      <a
+                        href={`${FILE_LINK}${row[column]}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary text-decoration-underline"
+                      >
+                        {row[column]}
+                      </a>
+                    ) : (
+                      row[column] || ""
+                    )}
                   </td>
                 ))}
-                <td
-                  className="text-center align-middle"
-                  style={{ width: "250px" }}
-                >
-                  {typeof actions === "function"
-                    ? actions(row).map((action, actionIndex) => (
-                        <React.Fragment
-                          key={`${action}-${row.Key || rowIndex}`}
-                        >
-                          {generateActionButton(action, row, row.status)}
-                        </React.Fragment>
-                      ))
-                    : Array.isArray(actions) && actions.length > 0
-                    ? actions.map((action, actionIndex) => (
-                        <React.Fragment
-                          key={`${action}-${row.Key || rowIndex}`}
-                        >
-                          {generateActionButton(action, row, row.status)}
-                        </React.Fragment>
-                      ))
-                    : null}
-                </td>
+                {aksiIs && ( // Render kolom aksi hanya jika aksiIs adalah false
+                  <td
+                    className="text-center align-middle"
+                    style={{ width: "250px" }}
+                  >
+                    {typeof actions === "function"
+                      ? actions(row).map((action, actionIndex) => (
+                          <React.Fragment
+                            key={`${action}-${row.Key || rowIndex}`}
+                          >
+                            {generateActionButton(action, row, row.status)}
+                          </React.Fragment>
+                        ))
+                      : Array.isArray(actions) && actions.length > 0
+                      ? actions.map((action, actionIndex) => (
+                          <React.Fragment
+                            key={`${action}-${row.Key || rowIndex}`}
+                          >
+                            {generateActionButton(action, row, row.status)}
+                          </React.Fragment>
+                        ))
+                      : null}
+                  </td>
+                )}
               </tr>
             ))
           ) : (

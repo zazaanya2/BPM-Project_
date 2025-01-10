@@ -3,6 +3,7 @@ import React, {
   useState,
   useImperativeHandle,
   useCallback,
+  useRef,
 } from "react";
 
 const FileUpload = forwardRef(function FileUpload(
@@ -23,6 +24,7 @@ const FileUpload = forwardRef(function FileUpload(
   const [fileError, setFileError] = useState("");
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const inputRef = useRef(null);
 
   // Drag and drop handlers
   const handleDragOver = useCallback((e) => {
@@ -61,7 +63,8 @@ const FileUpload = forwardRef(function FileUpload(
 
   useImperativeHandle(ref, () => ({
     validate() {
-      if (isRequired == 0 || selectedFile == null) {
+      if (!isRequired || selectedFile == null) {
+        setFileError("Field ini wajib di isi");
         return false;
       }
       return true;
@@ -206,7 +209,11 @@ const FileUpload = forwardRef(function FileUpload(
           )}
         </div>
       )}
-      {fileError && <span className="text-danger">{fileError}</span>}
+      {fileError && (
+        <span className="text-danger">
+          {fileError || "Field ini wajib diisi."}
+        </span>
+      )}
     </div>
   );
 });
