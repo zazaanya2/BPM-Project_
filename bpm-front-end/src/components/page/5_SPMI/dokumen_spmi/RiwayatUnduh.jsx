@@ -15,8 +15,9 @@ import DropDown from "../../../part/Dropdown";
 import { useIsMobile } from "../../../util/useIsMobile";
 import Loading from "../../../part/Loading";
 import PageTitleNav from "../../../part/PageTitleNav";
+import { format } from "date-fns";
 
-export default function RiwayatEdit({ onChangePage }) {
+export default function RiwayatUnduh({ onChangePage }) {
   const location = useLocation();
   const isMobile = useIsMobile();
 
@@ -27,32 +28,32 @@ export default function RiwayatEdit({ onChangePage }) {
   const idMenu = location.state?.idMenu;
   const idData = location.state?.idData;
 
-  const [modalType, setModalType] = useState(""); // "add", "edit", "detail", "preview"
-  const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const ModalRef = useRef();
 
   useEffect(() => {
     const fetchDokumen = async () => {
       setLoading(true);
       try {
         const result = await useFetch(
-          `${API_LINK}/MasterDokumen/GetDataRiwayatPembaharuanDokumenById`,
+          `${API_LINK}/MasterDokumen/GetDataRiwayatUnduhanDokumenById`,
           {
             param1: idData,
-            param2: idMenu,
+            param2: pageSize,
+            param3: pageCurrent,
           },
           "POST"
         );
+
+        console.log(pageCurrent);
 
         if (result === "ERROR" || result === null || result.length === 0) {
           setFilteredData([]);
         } else {
           const dokumenArray = Object.values(result);
           setFilteredData(dokumenArray);
-          setTotalData(dokumenArray.length);
+          setTotalData(dokumenArray[0].TotalCount);
+          console.log(dokumenArray);
         }
       } catch (err) {
         setError("Gagal mengambil data: " + err);
@@ -61,7 +62,7 @@ export default function RiwayatEdit({ onChangePage }) {
       }
     };
     fetchDokumen();
-  }, [idData, idMenu]);
+  }, [idData, pageCurrent]);
 
   if (error)
     return (
@@ -76,7 +77,7 @@ export default function RiwayatEdit({ onChangePage }) {
         <div className="container">
           <div className="mb-3">
             <PageTitleNav
-              title="Riwayat Pembaruan"
+              title="Riwayat Unduhan"
               breadcrumbs={location.state?.breadcrumbs}
               onClick={() =>
                 onChangePage("index", {
@@ -94,24 +95,25 @@ export default function RiwayatEdit({ onChangePage }) {
                   <Table
                     arrHeader={[
                       "No",
-                      "Revisi Ke",
+                      "Tanggal Unduh",
                       "Judul Dokumen",
                       "Nama Berkas (File)",
-                      "Tanggal Unggah",
-                      "Di Unggah Oleh",
+                      "Jenis Penyalinan",
+                      "Nama Pengunduh",
+                      "Jabatan",
+                      "Status",
                     ]}
                     data={filteredData.map((item, index) => ({
-                      Key: item.idDok,
+                      Key: item.idUdo,
                       No: (pageCurrent - 1) * pageSize + index + 1,
-                      "Revisi Ke": item.revisiDok,
+                      "Tanggal Unduh": format(new Date(item.tglUdo), "EEEE, dd MMMM yyyy HH:mm:ss"),
                       "Judul Dokumen": item.judulDok,
                       "Nama Berkas (File)": item.fileDok,
-                      "Tanggal Unggah": item.createdDate,
-                      "Di Unggah Oleh": item.createdBy,
-                      status: item.statusDok,
+                      "Jenis Penyalinan": item.jenisDok,
+                      "Nama Pengunduh": item.namaKry,
+                      Jabatan: item.jabatan,
+                      Status: item.status,
                     }))}
-                    linkColumns={["Nama Berkas (File)"]}
-                    FILE_LINK={DOKUMEN_LINK}
                     aksiIs={false}
                   />
                   <Paging

@@ -412,13 +412,15 @@ export default function Read({ onChangePage }) {
                 onToggle={(item) => handleToggle(item.Key)}
               />
             ) : (
-              filteredData.map((item) => (
-                <PdfPreviewDownload
-                  key={item.id} // Pastikan setiap item memiliki `key` unik
-                  judul={item.judulDok}
-                  handleClick={() => handleDownloadClick(item.id)}
-                />
-              ))
+              <div className="row p-2 gap-3 mb-2">
+                {filteredData.map((item) => (
+                  <PdfPreviewDownload
+                    key={item.id} // Pastikan setiap item memiliki `key` unik
+                    judul={item.judulDok}
+                    handleClick={() => handleDownloadClick(item.id)}
+                  />
+                ))}
+              </div>
             )}
 
             <Paging

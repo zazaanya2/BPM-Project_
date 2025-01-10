@@ -30,7 +30,10 @@ const Pengendalian = lazy(() =>
   import("../page/5_SPMI/siklus_spmi/pengendalian/Root")
 );
 const Evaluasi = lazy(() => import("../page/5_SPMI/siklus_spmi/evaluasi/Root"));
+const SPMI_Dinamis = lazy(() => import("../page/5_SPMI/SPMI_Dinamis/Root"));
 const Dokumen = lazy(() => import("../page/5_SPMI/dokumen_spmi/Root"));
+const Kriteria = lazy(() => import("../page/8_Audit/Kriteria/Root"));
+const Auditee = lazy(() => import("../page/8_Audit/BagianAuditee/Root"));
 const KategoriDokumen = lazy(() => import("../page/MasterKategoriDokumen/Root"));
 const Peraturan = lazy(() =>
   import("../page/10_Peraturan/ms_kebijakanPeraturan/Root")
@@ -88,34 +91,49 @@ const routeList = [
     path: "/kegiatan/dokumentasi/*",
     element: <DokumentasiKegiatan />,
   },
+  // {
+  //   path: "/spmi/siklus/penetapan/*",
+  //   element: <Penetapan />,
+  //   protected: true,
+  // },
+  // {
+  //   path: "/spmi/siklus/pelaksanaan/*",
+  //   element: <Pelaksanaan />,
+  //   protected: true,
+  // },
   {
-    path: "/spmi/siklus/pelaksanaan/*",
-    element: <Pelaksanaan />,
+    path: "/spmi/siklus/*",
+    element: <SPMI_Dinamis />,
     protected: true,
   },
-  {
-    path: "/spmi/siklus/penetapan/*",
-    element: <Penetapan />,
-    protected: true,
-  },
-  {
-    path: "/spmi/siklus/peningkatan/*",
-    element: <Peningkatan />,
-    protected: true,
-  },
-  {
-    path: "/spmi/siklus/pengendalian/*",
-    element: <Pengendalian />,
-    protected: true,
-  },
-  {
-    path: "/spmi/siklus/evaluasi/*",
-    element: <Evaluasi />,
-    protected: true,
-  },
+  // {
+  //   path: "/spmi/siklus/peningkatan/*",
+  //   element: <Peningkatan />,
+  //   protected: true,
+  // },
+  // {
+  //   path: "/spmi/siklus/pengendalian/*",
+  //   element: <Pengendalian />,
+  //   protected: true,
+  // },
+  // {
+  //   path: "/spmi/siklus/evaluasi/*",
+  //   element: <Evaluasi />,
+  //   protected: true,
+  // },
   {
     path: "/spmi/dokumen/*",
     element: <Dokumen />,
+    protected: true,
+  },
+  {
+    path: "/evaluasi/kriteria/*",
+    element: <Kriteria />,
+    protected: true,
+  },
+  {
+    path: "/evaluasi/auditee/*",
+    element: <Auditee />,
     protected: true,
   },
   {

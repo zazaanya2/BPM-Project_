@@ -39,12 +39,12 @@ const PdfPreviewDownload = ({ judul, handleClick }) => {
   };
 
   return (
-    <div style={containerStyle}>
+    <div className="col" style={containerStyle}>
       <div>
         <i className="fi fi-sr-file-pdf" style={iconStyle}></i>
       </div>
       <div>
-        <h3 style={titleStyle}>{judul}</h3>
+        <h3 style={titleStyle}>{judul.toUpperCase()}</h3>
         <button
           onClick={(e) => {
             e.preventDefault(); // Tambahkan ini jika ingin mencegah default behavior
