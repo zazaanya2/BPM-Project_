@@ -27,7 +27,6 @@ const arrStatus = [
 
 const breadcrumbs = [{ label: "Evaluasi" }, { label: "Kriteria" }];
 
-
 export default function Index({ onChangePage }) {
   const activeUser = Cookies.get("activeUser");
   let role = ""; // Jika undefined, gunakan nilai default
@@ -179,9 +178,7 @@ export default function Index({ onChangePage }) {
           <h1 style={{ color: "#2654A1", margin: "0", fontWeight: "700" }}>
             Kriteria Pertanyaan
           </h1>
-          <Breadcrumbs
-            breadcrumbs={breadcrumbs}
-          />
+          <Breadcrumbs breadcrumbs={breadcrumbs} />
 
           <div className="mt-4">
             {role === "ROL01" ? (

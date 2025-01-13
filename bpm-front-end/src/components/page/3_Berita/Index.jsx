@@ -53,7 +53,7 @@ export default function Index({ onChangePage }) {
             param2: selectedYear,
             param3: pageSize,
             param4: pageCurrent,
-            param5: "DESC",
+            param5: "tglBerita DESC",
           },
           "POST"
         );

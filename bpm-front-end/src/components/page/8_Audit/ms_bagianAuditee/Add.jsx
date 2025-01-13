@@ -36,7 +36,7 @@ const arrStatus = [
   { Value: "Aktif", Text: "Aktif" },
   { Value: "Tidak Aktif", Text: "Tidak Aktif" },
 ];
-export default function Edit({ onChangePage }) {
+export default function Add({ onChangePage }) {
   const activeUser = Cookies.get("activeUser");
   let role = ""; // Jika undefined, gunakan nilai default
   let roleNama = "";
@@ -47,10 +47,9 @@ export default function Edit({ onChangePage }) {
     namaPengguna = JSON.parse(activeUser).Nama;
   }
   const isMobile = useIsMobile();
-  const title = "Edit Data";
+  const title = "Tambah Data";
   const location = useLocation();
   const idMenu = location.state?.idMenu;
-  const idData = location.state?.idData;
 
   const [pageSize] = useState(10);
   const [pageCurrent, setPageCurrent] = useState(1);
@@ -59,8 +58,22 @@ export default function Edit({ onChangePage }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [currentFilter, setCurrentFilter] = useState({
+    param1: "",
+    param2: "Aktif",
+    param3: "namaKry ASC",
+    param4: pageSize,
+    param5: pageCurrent,
+  });
+
+  useEffect(() => {
+    setCurrentFilter((prevFilter) => ({
+      ...prevFilter,
+      param5: pageCurrent,
+    }));
+  }, [pageCurrent]);
+
   const [formData, setFormData] = useState({
-    idBad: idData,
     kodeBad: "",
     namaBad: "",
     kadepBad: "",
@@ -79,22 +92,8 @@ export default function Edit({ onChangePage }) {
   const kadepBadRef = useRef(null);
   const pic1BadRef = useRef(null);
   const pic2BadRef = useRef(null);
+
   const activeModalFor = useRef();
-
-  const [currentFilter, setCurrentFilter] = useState({
-    param1: "",
-    param2: "Aktif",
-    param3: "namaKry ASC",
-    param4: pageSize,
-    param5: pageCurrent,
-  });
-
-  useEffect(() => {
-    setCurrentFilter((prevFilter) => ({
-      ...prevFilter,
-      param5: pageCurrent,
-    }));
-  }, [pageCurrent]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -122,48 +121,6 @@ export default function Edit({ onChangePage }) {
     };
     fetchUser();
   }, [currentFilter]);
-
-  useEffect(() => {
-    const fetchAuditee = async () => {
-      setLoading(true);
-      try {
-        const body = {
-          id: idData,
-        };
-        const result = await useFetch(
-          `${API_LINK}/MasterBagianAuditee/GetDataBagianAuditeeById`,
-          body,
-          "POST"
-        );
-
-        if (result === "ERROR" || result === null || result.length === 0) {
-        } else {
-          const arrResult = Object.values(result);
-          console.log(arrResult);
-          setFormData((prevData) => ({
-            ...prevData,
-            kodeBad: arrResult[0].kodeBad,
-            namaBad: arrResult[0].namaBad,
-            kadepBad: arrResult[0].kaDep,
-            pic1Bad: arrResult[0].pic1Bad,
-            pic2Bad: arrResult[0].pic2Bad,
-          }));
-          setDisplayLov((prevData) => ({
-            ...prevData,
-            kadepBad: arrResult[0].kadepBad,
-            pic1Bad: arrResult[0].pic1Bad,
-            pic2Bad: arrResult[0].pic2Bad,
-          }));
-          setTotalData(arrResult[0][0].TotalCount);
-        }
-      } catch (err) {
-        setError("Gagal mengambil data: " + err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAuditee();
-  }, [idData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -217,17 +174,17 @@ export default function Edit({ onChangePage }) {
 
     try {
       const createResponse = await useFetch(
-        `${API_LINK}/MasterBagianAuditee/EditBagianAuditee`,
+        `${API_LINK}/MasterBagianAuditee/CreateBagianAuditee`,
         formData,
         "POST"
       );
 
       if (createResponse === "ERROR") {
-        throw new Error("Gagal memperbarui data");
+        throw new Error("Gagal menambah data");
       } else {
         SweetAlert(
           "Berhasil!",
-          "Data berhasil diperbarui.",
+          "Data berhasil ditambahkan.",
           "success",
           "OK"
         ).then(() =>
@@ -245,9 +202,9 @@ export default function Edit({ onChangePage }) {
   return (
     <div className="d-flex flex-column min-vh-100">
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
-        <div className="d-flex flex-column mx-5">
+        <div className="d-flex flex-column">
           {/* Breadcrumbs and Page Title */}
-          <div className="p-3">
+          <div className={isMobile ? "m-0 p-0" : "m-3 mb-0"}>
             <PageTitleNav
               title={title}
               breadcrumbs={location.state.breadcrumbs}
@@ -304,7 +261,7 @@ export default function Edit({ onChangePage }) {
                 id="pic1Bad"
                 label="PIC 1"
                 placeholder="PIlih PIC 1"
-                isRequired={true}
+                isRequired={false}
                 modalTarget="#kadepModal"
                 type="text"
                 value={displayLov.pic1Bad}
@@ -316,7 +273,7 @@ export default function Edit({ onChangePage }) {
                 id="pic2Bad"
                 label="PIC 2"
                 placeholder="PIlih PIC 2"
-                isRequired={true}
+                isRequired={false}
                 modalTarget="#kadepModal"
                 value={displayLov.pic2Bad}
                 onChange={handleChange}

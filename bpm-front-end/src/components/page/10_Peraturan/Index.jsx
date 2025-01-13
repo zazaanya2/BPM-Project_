@@ -11,7 +11,6 @@ import Filter from "../../part/Filter";
 import SearchField from "../../part/SearchField";
 import DropDown from "../../part/Dropdown";
 import SweetAlert from "../../util/SweetAlert";
-import moment from "moment";
 import { useIsMobile } from "../../util/useIsMobile";
 import Cookies from "js-cookie";
 import PdfPreviewDownload from "../../part/PdfPreviewDownload";
@@ -286,7 +285,9 @@ export default function Read({ onChangePage }) {
             />
           </div>
           {role === "ROL01" ? (
-            <div className="p-3 m-5 mt-2 mb-0" style={{ marginLeft: "50px" }}>
+            <div
+              className={isMobile ? "p-2 m-2 mt-2 mb-0" : "p-3 m-5 mt-2 mb-0"}
+            >
               <Button
                 iconName="add"
                 classType="primary"

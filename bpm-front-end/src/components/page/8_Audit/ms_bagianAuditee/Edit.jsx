@@ -36,7 +36,7 @@ const arrStatus = [
   { Value: "Aktif", Text: "Aktif" },
   { Value: "Tidak Aktif", Text: "Tidak Aktif" },
 ];
-export default function Add({ onChangePage }) {
+export default function Edit({ onChangePage }) {
   const activeUser = Cookies.get("activeUser");
   let role = ""; // Jika undefined, gunakan nilai default
   let roleNama = "";
@@ -47,9 +47,10 @@ export default function Add({ onChangePage }) {
     namaPengguna = JSON.parse(activeUser).Nama;
   }
   const isMobile = useIsMobile();
-  const title = "Tambah Data";
+  const title = "Edit Data";
   const location = useLocation();
   const idMenu = location.state?.idMenu;
+  const idData = location.state?.idData;
 
   const [pageSize] = useState(10);
   const [pageCurrent, setPageCurrent] = useState(1);
@@ -57,6 +58,28 @@ export default function Add({ onChangePage }) {
   const [userData, setUserData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [formData, setFormData] = useState({
+    idBad: idData,
+    kodeBad: "",
+    namaBad: "",
+    kadepBad: "",
+    pic1Bad: "",
+    pic2Bad: "",
+  });
+
+  const [displayLov, setDisplayLov] = useState({
+    kadepBad: "",
+    pic1Bad: "",
+    pic2Bad: "",
+  });
+
+  const kodeBadRef = useRef(null);
+  const namaBadRef = useRef(null);
+  const kadepBadRef = useRef(null);
+  const pic1BadRef = useRef(null);
+  const pic2BadRef = useRef(null);
+  const activeModalFor = useRef();
 
   const [currentFilter, setCurrentFilter] = useState({
     param1: "",
@@ -72,28 +95,6 @@ export default function Add({ onChangePage }) {
       param5: pageCurrent,
     }));
   }, [pageCurrent]);
-
-  const [formData, setFormData] = useState({
-    kodeBad: "",
-    namaBad: "",
-    kadepBad: "",
-    pic1Bad: "",
-    pic2Bad: "",
-  });
-  
-  const [displayLov, setDisplayLov] = useState({
-    kadepBad: "",
-    pic1Bad: "",
-    pic2Bad: "",
-  });
-
-  const kodeBadRef = useRef(null);
-  const namaBadRef = useRef(null);
-  const kadepBadRef = useRef(null);
-  const pic1BadRef = useRef(null);
-  const pic2BadRef = useRef(null);
-
-  const activeModalFor = useRef();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -121,6 +122,48 @@ export default function Add({ onChangePage }) {
     };
     fetchUser();
   }, [currentFilter]);
+
+  useEffect(() => {
+    const fetchAuditee = async () => {
+      setLoading(true);
+      try {
+        const body = {
+          id: idData,
+        };
+        const result = await useFetch(
+          `${API_LINK}/MasterBagianAuditee/GetDataBagianAuditeeById`,
+          body,
+          "POST"
+        );
+
+        if (result === "ERROR" || result === null || result.length === 0) {
+        } else {
+          const arrResult = Object.values(result);
+          console.log(arrResult);
+          setFormData((prevData) => ({
+            ...prevData,
+            kodeBad: arrResult[0].kodeBad,
+            namaBad: arrResult[0].namaBad,
+            kadepBad: arrResult[0].kaDep,
+            pic1Bad: arrResult[0].pic1Bad,
+            pic2Bad: arrResult[0].pic2Bad,
+          }));
+          setDisplayLov((prevData) => ({
+            ...prevData,
+            kadepBad: arrResult[0].kadepBad,
+            pic1Bad: arrResult[0].pic1Bad,
+            pic2Bad: arrResult[0].pic2Bad,
+          }));
+          setTotalData(arrResult[0][0].TotalCount);
+        }
+      } catch (err) {
+        setError("Gagal mengambil data: " + err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAuditee();
+  }, [idData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -174,17 +217,17 @@ export default function Add({ onChangePage }) {
 
     try {
       const createResponse = await useFetch(
-        `${API_LINK}/MasterBagianAuditee/CreateBagianAuditee`,
+        `${API_LINK}/MasterBagianAuditee/EditBagianAuditee`,
         formData,
         "POST"
       );
 
       if (createResponse === "ERROR") {
-        throw new Error("Gagal menambah data");
+        throw new Error("Gagal memperbarui data");
       } else {
         SweetAlert(
           "Berhasil!",
-          "Data berhasil ditambahkan.",
+          "Data berhasil diperbarui.",
           "success",
           "OK"
         ).then(() =>
@@ -202,9 +245,9 @@ export default function Add({ onChangePage }) {
   return (
     <div className="d-flex flex-column min-vh-100">
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
-        <div className="d-flex flex-column mx-5">
+        <div className="d-flex flex-column">
           {/* Breadcrumbs and Page Title */}
-          <div className="p-3">
+          <div className={isMobile ? "m-0 p-0" : "m-3 mb-0"}>
             <PageTitleNav
               title={title}
               breadcrumbs={location.state.breadcrumbs}
@@ -254,30 +297,30 @@ export default function Add({ onChangePage }) {
                 modalTarget="#kadepModal"
                 value={displayLov.kadepBad}
                 onChange={handleChange}
-                onClick={() => activeModalFor.current = 'kadepBad'}
+                onClick={() => (activeModalFor.current = "kadepBad")}
               />
               <InputFieldLov
                 ref={pic1BadRef}
                 id="pic1Bad"
                 label="PIC 1"
                 placeholder="PIlih PIC 1"
-                isRequired={false}
+                isRequired={true}
                 modalTarget="#kadepModal"
                 type="text"
                 value={displayLov.pic1Bad}
                 onChange={handleChange}
-                onClick={() => activeModalFor.current = 'pic1Bad'}
+                onClick={() => (activeModalFor.current = "pic1Bad")}
               />
               <InputFieldLov
                 ref={pic2BadRef}
                 id="pic2Bad"
                 label="PIC 2"
                 placeholder="PIlih PIC 2"
-                isRequired={false}
+                isRequired={true}
                 modalTarget="#kadepModal"
                 value={displayLov.pic2Bad}
                 onChange={handleChange}
-                onClick={() => activeModalFor.current = 'pic2Bad'}
+                onClick={() => (activeModalFor.current = "pic2Bad")}
               />
               <div className="d-flex justify-content-between align-items-center">
                 <div className="flex-grow-1 m-2">

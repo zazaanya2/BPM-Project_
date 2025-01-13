@@ -15,8 +15,8 @@ import { useFetch } from "../../util/useFetch";
 import DropDown from "../../part/Dropdown";
 
 const dataFilterSort = [
-  { Value: "ASC", Text: "Tanggal Terbit [↑]" },
-  { Value: "DESC", Text: "Tanggal Terbit [↓]" },
+  { Value: "tglBerita ASC", Text: "Tanggal Terbit [↑]" },
+  { Value: "tglBerita DESC", Text: "Tanggal Terbit [↓]" },
 ];
 
 export default function Read({ onChangePage }) {
@@ -28,7 +28,7 @@ export default function Read({ onChangePage }) {
   const [error, setError] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState(""); // Keyword pencarian
   const [selectedYear, setSelectedYear] = useState(""); // Filter tahun
-  const [selectedDate, setSelectedDate] = useState("DESC");
+  const [selectedDate, setSelectedDate] = useState("tglBerita DESC");
   const [totalData, setTotalData] = useState(0);
   const [isBerita, setIsBerita] = useState(false);
 

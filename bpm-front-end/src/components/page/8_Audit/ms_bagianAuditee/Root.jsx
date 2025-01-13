@@ -6,7 +6,7 @@ import Index from "./Index";
 import Add from "./Add";
 import Edit from "./Edit";
 
-export default function DokumenSPMI() {
+export default function Auditee() {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
@@ -22,21 +22,6 @@ export default function DokumenSPMI() {
         break;
       case "edit":
         navigate(`${currentPath}`, { state: { mode: "edit", ...withState } });
-        break;
-      case "editFile":
-        navigate(`${currentPath}`, {
-          state: { mode: "editFile", ...withState },
-        });
-        break;
-      case "updHistory":
-        navigate(`${currentPath}`, {
-          state: { mode: "updHistory", ...withState },
-        });
-        break;
-      case "downHistory":
-        navigate(`${currentPath}`, {
-          state: { mode: "downHistory", ...withState },
-        });
         break;
       default:
         console.warn(`Halaman "${page}" tidak dikenali.`);
@@ -54,7 +39,7 @@ export default function DokumenSPMI() {
         <Route
           path="/"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute isRole={true}>
               {mode === "add" ? (
                 <Add onChangePage={handlePageChange} />
               ) : mode === "edit" ? (

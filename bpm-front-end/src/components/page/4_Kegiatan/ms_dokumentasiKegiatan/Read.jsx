@@ -11,9 +11,7 @@ import { API_LINK } from "../../../util/Constants";
 import Loading from "../../../part/Loading";
 import { useIsMobile } from "../../../util/useIsMobile";
 import SweetAlert from "../../../util/SweetAlert";
-import moment from "moment";
 import "moment-timezone";
-import { decodeHtml } from "../../../util/DecodeHtml";
 
 export default function Read({ onChangePage }) {
   const isMobile = useIsMobile();
@@ -86,29 +84,7 @@ export default function Read({ onChangePage }) {
         }
 
         if (data) {
-          const formattedEvents = data.map((item) => {
-            const startDate = moment(item.tglMulaiKegiatan).format(
-              "YYYY-MM-DD"
-            );
-            const endDate = moment(item.tglSelesaiKegiatan).format(
-              "YYYY-MM-DD"
-            );
-
-            return {
-              id: item.idKegiatan,
-              title: decodeHtml(item.namaKegiatan),
-              description: item.deskripsiKegiatan,
-              category: item.kategoriKegiatan,
-              start: moment(`${startDate}T${item.jamMulaiKegiatan}`).toDate(),
-              end: moment(`${endDate}T${item.jamSelesaiKegiatan}`).toDate(),
-              location: item.tempatKegiatan,
-              year: new Date(item.tglMulaiKegiatan).getFullYear(),
-              idJenisKegiatan: item.idJenisKegiatan,
-              jenisKegiatan: item.namaJenisKegiatan,
-            };
-          });
-
-          setFilteredData(formattedEvents);
+          setFilteredData(data);
         }
       } catch (error) {
         setError("Gagal mengambil data kegiatan");
@@ -284,20 +260,19 @@ export default function Read({ onChangePage }) {
                 "Tempat",
               ]}
               data={currentData.map((item, index) => ({
-                Key: item.id,
+                Key: item.idKegiatan,
                 No: indexOfFirstData + index + 1,
-                "Nama Kegiatan": item.title,
-                "Tanggal Mulai": new Date(item.start).toLocaleDateString(
-                  "id-ID",
-                  {
-                    weekday: "long",
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  }
-                ),
-                "Jenis Kegiatan": item.jenisKegiatan,
-                Tempat: item.location,
+                "Nama Kegiatan": item.namaKegiatan,
+                "Tanggal Mulai": new Date(
+                  item.tglMulaiKegiatan
+                ).toLocaleDateString("id-ID", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                }),
+                "Jenis Kegiatan": item.namaJenisKegiatan,
+                Tempat: item.tempatKegiatan,
               }))}
               actions={["Detail", "Edit", "Delete"]}
               onEdit={(item) => onChangePage("edit", { idData: item.Key })}

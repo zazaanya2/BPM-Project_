@@ -30,11 +30,23 @@ const Pengendalian = lazy(() =>
   import("../page/5_SPMI/siklus_spmi/pengendalian/Root")
 );
 const Evaluasi = lazy(() => import("../page/5_SPMI/siklus_spmi/evaluasi/Root"));
+
 const SPMI_Dinamis = lazy(() => import("../page/5_SPMI/SPMI_Dinamis/Root"));
+
 const Dokumen = lazy(() => import("../page/5_SPMI/dokumen_spmi/Root"));
-const Kriteria = lazy(() => import("../page/8_Audit/Kriteria/Root"));
-const Auditee = lazy(() => import("../page/8_Audit/BagianAuditee/Root"));
-const KategoriDokumen = lazy(() => import("../page/MasterKategoriDokumen/Root"));
+
+const Kriteria = lazy(() =>
+  import("../page/8_Audit/ms_kriteriaPertanyaan/Root")
+);
+const Auditee = lazy(() => import("../page/8_Audit/ms_bagianAuditee/Root"));
+
+const BankPertanyaan = lazy(() =>
+  import("../page/8_Audit/ms_bankPertanyaan/Root")
+);
+
+const KategoriDokumen = lazy(() =>
+  import("../page/MasterKategoriDokumen/Root")
+);
 const Peraturan = lazy(() =>
   import("../page/10_Peraturan/ms_kebijakanPeraturan/Root")
 );
@@ -134,6 +146,11 @@ const routeList = [
   {
     path: "/evaluasi/auditee/*",
     element: <Auditee />,
+    protected: true,
+  },
+  {
+    path: "/evaluasi/bankPertanyaan/*",
+    element: <BankPertanyaan />,
     protected: true,
   },
   {

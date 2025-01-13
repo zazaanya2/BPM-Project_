@@ -1,12 +1,11 @@
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import ScrollToTop from "../../../part/ScrollToTop";
 import ProtectedRoute from "../../../util/ProtectedRoute";
-import { ROOT_LINK } from "../../../util/Constants";
-import Index from "./Index";
+import Index from ".";
 import Add from "./Add";
 import Edit from "./Edit";
 
-export default function Auditee() {
+export default function bankPertanyaan() {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
@@ -22,21 +21,6 @@ export default function Auditee() {
         break;
       case "edit":
         navigate(`${currentPath}`, { state: { mode: "edit", ...withState } });
-        break;
-      case "editFile":
-        navigate(`${currentPath}`, {
-          state: { mode: "editFile", ...withState },
-        });
-        break;
-      case "updHistory":
-        navigate(`${currentPath}`, {
-          state: { mode: "updHistory", ...withState },
-        });
-        break;
-      case "downHistory":
-        navigate(`${currentPath}`, {
-          state: { mode: "downHistory", ...withState },
-        });
         break;
       default:
         console.warn(`Halaman "${page}" tidak dikenali.`);
@@ -54,7 +38,7 @@ export default function Auditee() {
         <Route
           path="/"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute isRole={true}>
               {mode === "add" ? (
                 <Add onChangePage={handlePageChange} />
               ) : mode === "edit" ? (
