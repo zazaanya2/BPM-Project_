@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import PageTitleNav from "../../../part/PageTitleNav";
-import InputField from "../../../part/InputField";
 import HeaderForm from "../../../part/HeaderText";
 import Button from "../../../part/Button";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -13,13 +12,14 @@ import TextArea from "../../../part/TextArea";
 import CheckBox from "../../../part/CheckBox";
 import { decodeHtml } from "../../../util/DecodeHtml";
 import Loading from "../../../part/Loading";
+import DetailData from "../../../part/DetailData";
 
 const butuhDokumen = [{ Value: "Ya", Text: "Ya, Butuh dokumen pendukung" }];
 const jenisIKT = [{ Value: "Ya", Text: "Ya, ini Jenis IKT" }];
 
-export default function Edit({ onChangePage }) {
+export default function Detail({ onChangePage }) {
   const isMobile = useIsMobile();
-  const title = "Edit Bank Pertanyaan";
+  const title = "Detail Bank Pertanyaan";
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -69,7 +69,7 @@ export default function Edit({ onChangePage }) {
           // Menangani pemetaan dan decode HTML
           setFormData({
             idBankPertanyaan: idData,
-            kriteria: fetchedData.kriteria,
+            kriteria: fetchedData.kriteriaNama,
             pertanyaan: decodeHtml(fetchedData.pertanyaan || ""),
             pertanyaanLanjutan: decodeHtml(
               fetchedData.pertanyaanLanjutan || ""
@@ -81,7 +81,28 @@ export default function Edit({ onChangePage }) {
             jenisIKT: [fetchedData.jenisIKT], // Sama seperti butuhDokumen
             bagianAuditee: fetchedData.bagianAuditee
               .split(",")
-              .map((id) => parseInt(id)), // Mengonversi string '1,2' menjadi array [1, 2]
+              .map((id) => parseInt(id)),
+            dibuatOleh: fetchedData.dibuatOleh,
+            dibuatTgl: new Date(fetchedData.dibuatTgl).toLocaleDateString(
+              "id-ID",
+              {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              }
+            ),
+            dimodifOleh: fetchedData.dimodifOleh
+              ? fetchedData.dimodifOleh
+              : "-",
+            dimodifTgl: fetchedData.dimodifTgl
+              ? new Date(fetchedData.dimodifTgl).toLocaleDateString("id-ID", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })
+              : "-",
           });
         }
       } catch (err) {
@@ -239,26 +260,15 @@ export default function Edit({ onChangePage }) {
             >
               <HeaderForm label="Formulir Bank Pertanyaan" />
 
-              <DropDown
-                ref={kriteriaRef}
-                arrData={kriteria}
-                label="Kriteria Pertanyaan"
-                type="pilih"
-                value={formData.kriteria}
-                name="kriteria"
-                onChange={handleChange}
-                isRequired={true}
-              />
+              <DetailData label="Kriteria Pertanyaan" isi={formData.kriteria} />
+              <DetailData label="Pertanyaan" isi={formData.pertanyaan} />
 
-              <TextArea
-                ref={pertanyaanRef}
-                label="Pertanyaan"
-                value={formData.pertanyaan || ""}
-                name="pertanyaan"
-                onChange={handleChange}
-                isRequired={true}
-              />
-
+              {formData.butuhDokumen && formData.butuhDokumen.length > 0 && (
+                <DetailData
+                  label="Pertanyaan Lanjutan"
+                  isi={formData.pertanyaanLanjutan}
+                />
+              )}
               <CheckBox
                 ref={bagianAuditeeRef}
                 arrData={auditee}
@@ -266,8 +276,8 @@ export default function Edit({ onChangePage }) {
                 name="bagianAuditee"
                 isRequired={true}
                 values={formData.bagianAuditee || []} // Set default selected values here
-                onChange={handleChange}
                 errorMessage="Please select at least one option."
+                onChange={undefined}
                 col="col-2"
               />
 
@@ -276,45 +286,32 @@ export default function Edit({ onChangePage }) {
                 label="Dokumen Pendukung"
                 name="butuhDokumen"
                 values={formData.butuhDokumen || []} // Set default selected values here
-                onChange={handleChange}
+                onChange={undefined}
                 col="col-12"
               />
-
-              {formData.butuhDokumen && formData.butuhDokumen.length > 0 && (
-                <TextArea
-                  value={formData.pertanyaanLanjutan || ""}
-                  name="pertanyaanLanjutan"
-                  onChange={handleChange}
-                  isRequired={true}
-                />
-              )}
 
               <CheckBox
                 arrData={jenisIKT}
                 label="Apakah berjenis IKT?"
                 name="jenisIKT"
                 values={formData.jenisIKT || []} // Set default selected values here
-                onChange={handleChange}
+                onChange={undefined}
                 col="col-12"
               />
 
-              <div className="d-flex justify-content-between align-items-center">
-                <div className="flex-grow-1 m-2">
-                  <Button
-                    classType="primary"
-                    type="submit"
-                    label="Simpan"
-                    width="100%"
-                    onClick={handleSubmit}
-                  />
+              <div className="row">
+                <div className="col-lg-6 col-md-6">
+                  <DetailData label="Dibuat Oleh" isi={formData.dibuatOleh} />
+                  <DetailData label="Dibuat Tanggal" isi={formData.dibuatTgl} />
                 </div>
-                <div className="flex-grow-1 m-2">
-                  <Button
-                    classType="danger"
-                    type="button"
-                    label="Batal"
-                    width="100%"
-                    onClick={() => onChangePage("index")}
+                <div className="col-lg-6 col-md-6">
+                  <DetailData
+                    label="Dimodifikasi Oleh"
+                    isi={formData.dimodifOleh}
+                  />
+                  <DetailData
+                    label="Dimodifikasi Tanggal"
+                    isi={formData.dimodifTgl}
                   />
                 </div>
               </div>

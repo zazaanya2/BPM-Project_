@@ -4,6 +4,7 @@ import ProtectedRoute from "../../../util/ProtectedRoute";
 import Index from ".";
 import Add from "./Add";
 import Edit from "./Edit";
+import Detail from "./Detail";
 
 export default function bankPertanyaan() {
   const navigate = useNavigate();
@@ -21,6 +22,9 @@ export default function bankPertanyaan() {
         break;
       case "edit":
         navigate(`${currentPath}`, { state: { mode: "edit", ...withState } });
+        break;
+      case "detail":
+        navigate(`${currentPath}`, { state: { mode: "detail", ...withState } });
         break;
       default:
         console.warn(`Halaman "${page}" tidak dikenali.`);
@@ -43,6 +47,8 @@ export default function bankPertanyaan() {
                 <Add onChangePage={handlePageChange} />
               ) : mode === "edit" ? (
                 <Edit onChangePage={handlePageChange} />
+              ) : mode === "detail" ? (
+                <Detail onChangePage={handlePageChange} />
               ) : (
                 <Index onChangePage={handlePageChange} />
               )}

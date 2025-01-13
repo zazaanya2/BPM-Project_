@@ -1,23 +1,14 @@
 import React, { useState, useRef } from "react";
-import { useEffect } from "react";
 import PageTitleNav from "../../../part/PageTitleNav";
 import InputField from "../../../part/InputField";
 import HeaderForm from "../../../part/HeaderText";
 import Button from "../../../part/Button";
-import DocUpload from "../../../part/DocUpload";
-import DropDown from "../../../part/Dropdown";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import SweetAlert from "../../../util/SweetAlert";
-import FileUpload from "../../../part/FileUpload";
 import { useIsMobile } from "../../../util/useIsMobile";
 import { API_LINK } from "../../../util/Constants";
 import { useFetch } from "../../../util/useFetch";
-import { uploadFile } from "../../../util/UploadFile";
 
-const arrData = [
-  { Value: "Controlled Copy", Text: "Controlled Copy" },
-  { Value: "Uncontrolled Copy", Text: "Uncontrolled Copy" },
-];
 export default function Add({ onChangePage }) {
   const isMobile = useIsMobile();
   const title = "Tambah Data";
@@ -25,7 +16,7 @@ export default function Add({ onChangePage }) {
   const idMenu = location.state?.idMenu;
 
   const [formData, setFormData] = useState({
-    namaKri: ""
+    namaKri: "",
   });
 
   const namaKriRef = useRef();
