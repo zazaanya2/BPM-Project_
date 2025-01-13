@@ -52,7 +52,7 @@ const DropDown = forwardRef(function DropDown(
       break;
     case "semua":
       placeholder = (
-        <option value="" disabled>
+        <option value="">
           -- Semua --
         </option>
       );

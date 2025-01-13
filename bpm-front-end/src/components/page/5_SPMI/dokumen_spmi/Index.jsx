@@ -1,5 +1,8 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
-import { useLocation, useParams, useNavigate } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import { API_LINK, DOKUMEN_LINK } from "../../../util/Constants";
+import { useFetch } from "../../../util/useFetch";
+import { SyncLoader } from "react-spinners";
 import Table from "../../../part/Table";
 import Paging from "../../../part/Paging";
 import SearchField from "../../../part/SearchField";
@@ -7,12 +10,12 @@ import Button from "../../../part/Button";
 import Filter from "../../../part/Filter";
 import Modal from "../../../part/Modal";
 import DetailData from "../../../part/DetailData";
-import { SyncLoader } from "react-spinners";
 import Breadcrumbs from "../../../part/Breadcrumbs";
-import { API_LINK, DOKUMEN_LINK } from "../../../util/Constants";
-import { useFetch } from "../../../util/useFetch";
 import DropDown from "../../../part/Dropdown";
 import Loading from "../../../part/Loading";
+import SweetAlert from "../../../util/SweetAlert";
+import PdfPreviewDownload from "../../../part/PdfPreviewDownload";
+import Cookies from "js-cookie";
 
 const arrSort = [
   { Value: "[judulDok] ASC", Text: "Judul Dokumen [↑]" },
@@ -25,6 +28,15 @@ const arrStatus = [
 ];
 
 export default function Index({ onChangePage }) {
+  const activeUser = Cookies.get("activeUser");
+  let role = ""; // Jika undefined, gunakan nilai default
+  let roleNama = "";
+  let namaPengguna = "";
+  if (activeUser) {
+    role = JSON.parse(activeUser).RoleID.slice(0, 5);
+    roleNama = JSON.parse(activeUser).Role;
+    namaPengguna = JSON.parse(activeUser).Nama;
+  }
   const location = useLocation();
 
   const [pageSize] = useState(10);
@@ -34,12 +46,12 @@ export default function Index({ onChangePage }) {
   const idMenu = location.state?.idMenu;
 
   const [currentFilter, setCurrentFilter] = useState({
-    param1: "",
+    param1: idMenu,
     param2: "Aktif",
     param3: "",
     param4: "",
-    param5: 10,
-    param6: 1,
+    param5: pageSize,
+    param6: pageCurrent,
     param7: "[judulDok] ASC",
   });
 
@@ -48,11 +60,32 @@ export default function Index({ onChangePage }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
+  const [arrTahun, setArrTahun] = useState([]);
 
   const { jenis } = useParams();
   const ModalRef = useRef();
 
   const title = jenis.toUpperCase();
+
+  useEffect(() => {
+    const fetchTahunDokumen = async () => {
+      setLoading(true);
+      const result = await useFetch(
+        `${API_LINK}/MasterDokumen/GetListTahunDokumen`,
+        {},
+        "POST"
+      ).finally(() => setLoading(false));
+
+      if (result === "ERROR") {
+        setArrTahun([]);
+      } else {
+        const tahunArr = Object.values(result);
+        setArrTahun(tahunArr);
+      }
+    };
+
+    fetchTahunDokumen();
+  }, []);
 
   useEffect(() => {
     if (location.state?.idMenu) {
@@ -64,29 +97,38 @@ export default function Index({ onChangePage }) {
   }, [location.state?.idMenu]);
 
   useEffect(() => {
-    const fetchDokumen = async () => {
-      setLoading(true);
-      try {
-        const result = await useFetch(
-          `${API_LINK}/MasterDokumen/GetDataDokumenByKategori`,
-          currentFilter,
-          "POST"
-        );
-        console.log(currentFilter);
+    setCurrentFilter((prevFilter) => ({
+      ...prevFilter,
+      param6: pageCurrent,
+    }));
+  }, [pageCurrent]);
 
-        if (result === "ERROR" || result === null || result.length === 0) {
-          setFilteredData([]);
-        } else {
-          const dokumenArray = Object.values(result);
-          setFilteredData(dokumenArray);
-          setTotalData(dokumenArray[0].TotalCount);
-        }
-      } catch (err) {
-        setError("Gagal mengambil data: " + err);
-      } finally {
-        setLoading(false);
+  const fetchDokumen = async () => {
+    setLoading(true);
+    try {
+      const result = await useFetch(
+        `${API_LINK}/MasterDokumen/GetDataDokumenByMenu`,
+        currentFilter,
+        "POST"
+      );
+      console.log(currentFilter);
+
+      if (result === "ERROR" || result === null || result.length === 0) {
+        setFilteredData([]);
+        setTotalData(0);
+      } else {
+        const dokumenArray = Object.values(result);
+        setFilteredData(dokumenArray);
+        setTotalData(dokumenArray[0].TotalCount);
       }
-    };
+    } catch (err) {
+      setError("Gagal mengambil data: " + err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchDokumen();
   }, [currentFilter]);
 
@@ -132,14 +174,141 @@ export default function Index({ onChangePage }) {
     });
   };
 
-  const handleDelete = (item) => {
-    const selected = filteredData.find((obj) => obj.idDok == item.Key);
-    console.log(selected.judulDok + " deleted");
+  const handleUpdateHistory = (item) => {
+    onChangePage("updHistory", {
+      idData: item.Key,
+      idMenu: idMenu,
+      breadcrumbs: breadcrumbs,
+    });
   };
 
-  const handleDownload = (item) => {
-    const selected = filteredData.find((obj) => obj.idDok == item.Key);
-    console.log(selected.judulDok + " downloaded");
+  const handleDownloadHistory = (item) => {
+    onChangePage("downHistory", {
+      idData: item.Key,
+      idMenu: idMenu,
+      breadcrumbs: breadcrumbs,
+    });
+  };
+
+  const handleUpload = (item) => {
+    onChangePage("editFile", {
+      idData: item.Key,
+      idMenu: idMenu,
+      breadcrumbs: breadcrumbs,
+    });
+  };
+
+  const handleToggle = (item) => {
+    // Tampilkan konfirmasi menggunakan SweetAlert sebelum toggle status
+    SweetAlert(
+      "Konfirmasi",
+      `Apakah Anda yakin ingin ${
+        item.status === "Aktif" ? "menonaktifkan" : "mengaktifkan"
+      } dokumen ini?`,
+      "question",
+      "Ya",
+      null,
+      "",
+      true // Tampilkan tombol batal
+    ).then((result) => {
+      if (result) {
+        // Jika pengguna mengonfirmasi, hanya simpan idDok dan status yang diperbarui
+        const updatedData = filteredData
+          .filter((data) => data.idDok === item.Key)
+          .map((data) => ({
+            idDok: data.idDok,
+            status: data.status === "Aktif" ? "Tidak Aktif" : "Aktif",
+          }));
+
+        useFetch(`${API_LINK}/MasterDokumen/EditStatusDokumen`, updatedData[0])
+          .then((response) => {
+            if (response === "ERROR") {
+              throw new Error("Gagal memperbarui data");
+            }
+            SweetAlert(
+              "Berhasil!",
+              updatedData[0].status === "Aktif"
+                ? "Data dokumen berhasil diaktifkan"
+                : "Data dokumen berhasil dinonaktifkan",
+              "success",
+              "OK"
+            ).then(() => {
+              // Panggil fetchEvents untuk memperbarui data tanpa reload halaman
+              fetchDokumen();
+            });
+          })
+          .catch((error) => {
+            SweetAlert("Gagal!", error.message, "error", "OK");
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      }
+    });
+  };
+
+  const handleDownload = async (item) => {
+    const id = item.Key;
+    if (!id) {
+      SweetAlert("Peringatan", "ID file tidak tersedia.", "warning");
+      return;
+    }
+
+    try {
+      const foundItem = filteredData.find((obj) => obj.idDok === id);
+      const namaInformasi =
+        foundItem && foundItem["fileDok"] ? foundItem["fileDok"] : `file_${id}`;
+
+      const judulDok = foundItem.judulDok;
+      const controlDok = foundItem.controlDok;
+      const referensi = foundItem.refDok;
+      const tanggal = new Date().toLocaleString();
+
+      const response = await fetch(`${API_LINK}/MasterDokumen/DownloadFile`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fileName: namaInformasi,
+          metadata: {
+            JudulDokumen: judulDok,
+            JenisDokumen: controlDok,
+            DiunduhOleh: namaPengguna,
+            Jabatan: roleNama,
+            TanggalUnduh: tanggal,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Gagal mengunduh file.");
+      } else {
+        const data = await useFetch(
+          `${API_LINK}/MasterDokumen/CreateUnduhDokumen`,
+          {
+            idDok: id,
+            referensi: referensi,
+            role: role,
+            roleNama: roleNama,
+          },
+          "POST"
+        );
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = namaInformasi;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      SweetAlert("Error", error.message, "error");
+    }
   };
 
   if (error)
@@ -159,17 +328,21 @@ export default function Index({ onChangePage }) {
           <Breadcrumbs breadcrumbs={breadcrumbs} />
 
           <div className="mt-4">
-            <Button
-              iconName="add"
-              classType="primary"
-              label="Tambah Data"
-              onClick={() =>
-                onChangePage("add", {
-                  idMenu: idMenu,
-                  breadcrumbs: breadcrumbs,
-                })
-              }
-            />
+            {role === "ROL01" ? (
+              <Button
+                iconName="add"
+                classType="primary"
+                label="Tambah Data"
+                onClick={() =>
+                  onChangePage("add", {
+                    idMenu: idMenu,
+                    breadcrumbs: breadcrumbs,
+                  })
+                }
+              />
+            ) : (
+              ""
+            )}
             <div className="row mt-3">
               <div className="col-lg-10">
                 <SearchField
@@ -201,6 +374,20 @@ export default function Index({ onChangePage }) {
                     }
                   />
                   <DropDown
+                    arrData={arrTahun}
+                    label="Tahun Dokumen"
+                    type="semua"
+                    forInput="yearFilter"
+                    onChange={(e) =>
+                      setCurrentFilter((prevFilter) => {
+                        return {
+                          ...prevFilter,
+                          param4: e.target.value,
+                        };
+                      })
+                    }
+                  />
+                  <DropDown
                     arrData={arrStatus}
                     label="Status"
                     type="pilih"
@@ -225,29 +412,56 @@ export default function Index({ onChangePage }) {
               <Loading />
             ) : (
               <div>
-                <Table
-                  arrHeader={["No", "Judul Dokumen"]}
-                  data={filteredData.map((item, index) => ({
-                    Key: item.idDok,
-                    No: (pageCurrent - 1) * pageSize + index + 1,
-                    "Judul Dokumen": item.judulDok,
-                  }))}
-                  actions={[
-                    "Detail",
-                    "Edit",
-                    "Upload",
-                    "Print",
-                    "Preview",
-                    "UpdateHistory",
-                    "PrintHistory",
-                    "Toggle",
-                  ]}
-                  onPreview={handlePreview}
-                  onEdit={handleEdit}
-                  onDetail={handleDetail}
-                  onPrint={handleDownload}
-                  onDelete={handleDelete}
-                />
+                {role === "ROL01" ? (
+                  <Table
+                    arrHeader={["No", "Judul Dokumen"]}
+                    data={filteredData.map((item, index) => ({
+                      Key: item.idDok,
+                      No: (pageCurrent - 1) * pageSize + index + 1,
+                      "Judul Dokumen": item.judulDok,
+                      status: item.status,
+                    }))}
+                    actions={(row) => {
+                      // Jika status "Tidak Aktif", hanya tampilkan Toggle
+                      if (row.status === "Tidak Aktif") {
+                        return ["Toggle"];
+                      }
+                      // Jika status selain "Tidak Aktif", tampilkan semua actions
+                      return [
+                        "Detail",
+                        "Preview",
+                        "Edit",
+                        "Upload",
+                        "Print",
+                        "UpdateHistory",
+                        "PrintHistory",
+                        "Toggle",
+                      ];
+                    }}
+                    onPreview={handlePreview}
+                    onEdit={handleEdit}
+                    onDetail={handleDetail}
+                    onPrint={handleDownload}
+                    onUpload={handleUpload}
+                    onUpdateHistory={handleUpdateHistory}
+                    onPrintHistory={handleDownloadHistory}
+                    onToggle={handleToggle}
+                  />
+                ) : (
+                  <div className="row p-3 gap-3 mb-2">
+                    {filteredData.length > 0 ? (
+                      filteredData.map((item) => (
+                        <PdfPreviewDownload
+                          key={item.id} // Pastikan setiap item memiliki `key` unik
+                          judul={item.judulDok}
+                          handleClick={() => handleDownload(item)}
+                        />
+                      ))
+                    ) : (
+                      <p className="text-center">No data available</p>
+                    )}
+                  </div>
+                )}
                 <Paging
                   pageSize={pageSize}
                   pageCurrent={pageCurrent}
@@ -369,11 +583,12 @@ export default function Index({ onChangePage }) {
               ) : (
                 <embed
                   src={DOKUMEN_LINK + detail.fileDok}
+                  type="application/pdf"
                   width="100%"
                   height="100%"
-                  type="application/pdf"
-                  title="PDF Preview"
-                  onLoad={() => setLoading(false)}
+                  style={{
+                    border: "none",
+                  }}
                 />
               )}
             </div>

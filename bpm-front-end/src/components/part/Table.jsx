@@ -19,7 +19,8 @@ export default function Table({
   onSurveyor = () => {},
   onResponden = () => {},
   onUpload = () => {},
-  onPreview = () => {}
+  onPreview = () => {},
+  onChoose = () => {},
 }) {
   function generateActionButton(actionType, id, status = "Aktif") {
     switch (actionType) {
@@ -155,6 +156,17 @@ export default function Table({
             title="Upload File"
             onClick={() => onUpload(id)}
           />
+        );
+      case "Choose":
+        return (
+          <button
+            className="btn btn-primary px-3"
+            title="Pilih"
+            onClick={() => onChoose(id)}
+          >
+            <span style={{ fontWeight: 600 }}>PILIH</span>
+            
+          </button>
         );
       default:
         return null;

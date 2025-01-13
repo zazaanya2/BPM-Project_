@@ -5,9 +5,6 @@ import { ROOT_LINK } from "../../../util/Constants";
 import Index from "./Index";
 import Add from "./Add";
 import Edit from "./Edit";
-import RiwayatEdit from "./RiwayatEdit";
-import RiwayatUnduh from "./RiwayatUnduh";
-import EditFile from "./EditFile";
 
 export default function DokumenSPMI() {
   const navigate = useNavigate();
@@ -27,13 +24,19 @@ export default function DokumenSPMI() {
         navigate(`${currentPath}`, { state: { mode: "edit", ...withState } });
         break;
       case "editFile":
-        navigate(`${currentPath}`, { state: { mode: "editFile", ...withState } });
+        navigate(`${currentPath}`, {
+          state: { mode: "editFile", ...withState },
+        });
         break;
       case "updHistory":
-        navigate(`${currentPath}`, { state: { mode: "updHistory", ...withState } });
+        navigate(`${currentPath}`, {
+          state: { mode: "updHistory", ...withState },
+        });
         break;
       case "downHistory":
-        navigate(`${currentPath}`, { state: { mode: "downHistory", ...withState } });
+        navigate(`${currentPath}`, {
+          state: { mode: "downHistory", ...withState },
+        });
         break;
       default:
         console.warn(`Halaman "${page}" tidak dikenali.`);
@@ -49,19 +52,13 @@ export default function DokumenSPMI() {
       <Routes>
         {/* Public Route */}
         <Route
-          path=":jenis"
+          path="/"
           element={
             <ProtectedRoute>
               {mode === "add" ? (
                 <Add onChangePage={handlePageChange} />
               ) : mode === "edit" ? (
                 <Edit onChangePage={handlePageChange} />
-              ) : mode === "updHistory" ? (
-                <RiwayatEdit onChangePage={handlePageChange} />
-              ) : mode === "downHistory" ? (
-                <RiwayatUnduh onChangePage={handlePageChange} />
-              ) : mode === "editFile" ? (
-                <EditFile onChangePage={handlePageChange} />
               ) : (
                 <Index onChangePage={handlePageChange} />
               )}

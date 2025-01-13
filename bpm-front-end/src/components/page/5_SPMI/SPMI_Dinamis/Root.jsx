@@ -1,15 +1,15 @@
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import ScrollToTop from "../../../part/ScrollToTop";
 import ProtectedRoute from "../../../util/ProtectedRoute";
-import { ROOT_LINK } from "../../../util/Constants";
 import Index from "./Index";
-import Add from "./Add";
-import Edit from "./Edit";
-import RiwayatEdit from "./RiwayatEdit";
-import RiwayatUnduh from "./RiwayatUnduh";
-import EditFile from "./EditFile";
+import IndexPelaksanaan from "./IndexPelaksanaan";
+import Add from "../dokumen_spmi/Add";
+import Edit from "../dokumen_spmi/Edit";
+import EditFile from "../dokumen_spmi/EditFile";
+import RiwayatEdit from "../dokumen_spmi/RiwayatEdit";
+import RiwayatUnduh from "../dokumen_spmi/RiwayatUnduh";
 
-export default function DokumenSPMI() {
+export default function SPMI_Dinamis() {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
@@ -27,13 +27,19 @@ export default function DokumenSPMI() {
         navigate(`${currentPath}`, { state: { mode: "edit", ...withState } });
         break;
       case "editFile":
-        navigate(`${currentPath}`, { state: { mode: "editFile", ...withState } });
+        navigate(`${currentPath}`, {
+          state: { mode: "editFile", ...withState },
+        });
         break;
       case "updHistory":
-        navigate(`${currentPath}`, { state: { mode: "updHistory", ...withState } });
+        navigate(`${currentPath}`, {
+          state: { mode: "updHistory", ...withState },
+        });
         break;
       case "downHistory":
-        navigate(`${currentPath}`, { state: { mode: "downHistory", ...withState } });
+        navigate(`${currentPath}`, {
+          state: { mode: "downHistory", ...withState },
+        });
         break;
       default:
         console.warn(`Halaman "${page}" tidak dikenali.`);
@@ -47,7 +53,6 @@ export default function DokumenSPMI() {
     <>
       <ScrollToTop />
       <Routes>
-        {/* Public Route */}
         <Route
           path=":jenis"
           element={
@@ -63,8 +68,16 @@ export default function DokumenSPMI() {
               ) : mode === "editFile" ? (
                 <EditFile onChangePage={handlePageChange} />
               ) : (
-                <Index onChangePage={handlePageChange} />
+                <IndexPelaksanaan onChangePage={handlePageChange} />
               )}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pelaksanaan"
+          element={
+            <ProtectedRoute>
+              <IndexPelaksanaan onChangePage={handlePageChange}  />
             </ProtectedRoute>
           }
         />

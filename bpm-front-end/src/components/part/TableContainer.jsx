@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { useFetch } from "../../../../util/useFetch";
+import { useFetch } from "../util/useFetch";
+import { API_LINK } from "../util/Constants";
+import Loading from "./Loading";
 
 const TabContainer = ({ idKategori }) => {
   const [tabs, setTabs] = useState([]);
   const [activeTab, setActiveTab] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
       const fetchKategori = async () => {
         setLoading(true);
         try {
           const result = await useFetch(
-            `${API_LINK}/MasterKategoriDokumen/GetDataKategoriDokumenHeaderByIdMenu`,
-            { idMenu: location.state?.idMenu },
+            `${API_LINK}/MasterKategoriDokumen/GetDataKategoriDokumenChildById`,
+            { idMenu: idKategori },
             "POST"
           );
   
@@ -41,7 +44,7 @@ const TabContainer = ({ idKategori }) => {
         }
       };
       fetchKategori();
-    }, [location.state?.idMenu]);
+    }, [idKategori]);
 
 
   return (

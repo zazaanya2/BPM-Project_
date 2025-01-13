@@ -12,6 +12,7 @@ import FileUpload from "../../../part/FileUpload";
 import { useIsMobile } from "../../../util/useIsMobile";
 import { API_LINK } from "../../../util/Constants";
 import { useFetch } from "../../../util/useFetch";
+import { uploadFile } from "../../../util/UploadFile";
 
 const arrData = [
   { Value: "Controlled Copy", Text: "Controlled Copy" },
@@ -22,6 +23,7 @@ export default function Add({ onChangePage }) {
   const title = "Tambah Data";
   const location = useLocation();
   const idMenu = location.state?.idMenu;
+  const idData = location.state?.idData;
 
   const [file, setFile] = useState(null);
   const [formData, setFormData] = useState({
@@ -85,33 +87,17 @@ export default function Add({ onChangePage }) {
       return;
     }
 
-    // console.log("Successfully submited!");
-    // console.log(dokData);
-
-    // SweetAlert("Berhasil!", "Data berhasil ditambahkan.", "success", "OK");
     try {
-      const formData = new FormData();
-      formData.append("files", file);
-      const folderName = "Dokumen";
-
-      const uploadResponse = await fetch(
-        `${API_LINK}/Upload/UploadDokumen?folderName=${encodeURIComponent(
-          folderName
-        )}&idKdo=${encodeURIComponent(4)}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (!uploadResponse.ok) {
-        throw new Error("Gagal mengunggah dokumen");
+      let uploadedDokNames = null;
+      if (file) {
+        const folderName = "Dokumen";
+        const filePrefix =
+          idData === null ? idMenu : idData + "_" + formData.judulDok;
+        uploadedDokNames = await uploadFile(file, folderName, filePrefix);
       }
 
-      const uploadedDokNames = await uploadResponse.json();
-
       const dokData = {
-        idKdo: null,
+        idKdo: idData,
         idMen: idMenu,
         judulDok: judulDokRef.current.value,
         nomorDok: nomorDokRef.current.value,
@@ -172,7 +158,6 @@ export default function Add({ onChangePage }) {
                   : "shadow p-5 m-5 mt-0 bg-white rounded"
               }
             >
-              {" "}
               <HeaderForm label="Formulir Dokumen" />
               <InputField
                 ref={judulDokRef}
