@@ -235,12 +235,12 @@ export default function Read({ onChangePage }) {
                   year: "numeric",
                 }),
                 Foto: (
-                  <div>
+                  <div style={{ minWidth: "200px", textAlign: "center" }}>
                     {item.images.length > 0 && (
                       <img
                         src={BERITAFOTO_LINK + item.images[0]}
                         alt={`Foto Berita 1`}
-                        width="100"
+                        width="180"
                         height="100"
                       />
                     )}

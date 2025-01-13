@@ -143,7 +143,6 @@ export default function Login() {
           borderRadius: "8px",
           zIndex: 2,
           padding: "3rem",
-          textAlign: "center", // Pastikan konten selaras di tengah
         }}
       >
         <img
