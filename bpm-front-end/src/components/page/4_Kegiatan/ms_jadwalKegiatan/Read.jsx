@@ -261,7 +261,13 @@ export default function Read({ onChangePage }) {
                   data={filteredData.map((item, index) => ({
                     Key: item.idKegiatan,
                     No: indexOfFirstData + index + 1,
-                    "Nama Kegiatan": item.namaKegiatan,
+                    "Nama Kegiatan": (
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: decodeHtml(item.namaKegiatan || ""),
+                        }}
+                      />
+                    ),
                     "Tanggal Mulai": new Date(
                       item.tglMulaiKegiatan
                     ).toLocaleDateString("id-ID", {

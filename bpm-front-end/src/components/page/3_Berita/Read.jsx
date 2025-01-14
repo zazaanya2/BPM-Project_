@@ -13,6 +13,7 @@ import { useIsMobile } from "../../util/useIsMobile";
 import SweetAlert from "../../util/SweetAlert";
 import { useFetch } from "../../util/useFetch";
 import DropDown from "../../part/Dropdown";
+import { decodeHtml } from "../../util/DecodeHtml";
 
 const dataFilterSort = [
   { Value: "tglBerita ASC", Text: "Tanggal Terbit [↑]" },
@@ -230,7 +231,13 @@ export default function Read({ onChangePage }) {
                   data={filteredData.map((item, index) => ({
                     Key: item.id,
                     No: indexOfFirstData + index + 1,
-                    "Judul Berita": item.title,
+                    "Judul Berita": (
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: decodeHtml(item.title || ""),
+                        }}
+                      />
+                    ),
                     Tanggal: new Date(item.date).toLocaleDateString("id-ID", {
                       weekday: "long",
                       day: "numeric",

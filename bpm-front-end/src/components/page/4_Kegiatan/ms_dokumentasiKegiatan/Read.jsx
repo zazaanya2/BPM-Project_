@@ -12,6 +12,7 @@ import Loading from "../../../part/Loading";
 import { useIsMobile } from "../../../util/useIsMobile";
 import SweetAlert from "../../../util/SweetAlert";
 import "moment-timezone";
+import { decodeHtml } from "../../../util/DecodeHtml";
 
 export default function Read({ onChangePage }) {
   const isMobile = useIsMobile();
@@ -266,7 +267,13 @@ export default function Read({ onChangePage }) {
                   data={currentData.map((item, index) => ({
                     Key: item.idKegiatan,
                     No: indexOfFirstData + index + 1,
-                    "Nama Kegiatan": item.namaKegiatan,
+                    "Nama Kegiatan": (
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: decodeHtml(item.namaKegiatan || ""),
+                        }}
+                      />
+                    ),
                     "Tanggal Mulai": new Date(
                       item.tglMulaiKegiatan
                     ).toLocaleDateString("id-ID", {
