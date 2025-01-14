@@ -70,6 +70,7 @@ export default function Read({ onChangePage }) {
 
   useEffect(() => {
     const fetchEvents = async () => {
+      setLoading(true);
       try {
         const data = await useFetch(
           `${API_LINK}/MasterKegiatan/GetDataKegiatanPage`,
@@ -92,7 +93,7 @@ export default function Read({ onChangePage }) {
         setFilteredData(data);
       } catch (error) {
         setError("Gagal mengambil data kegiatan");
-        // console.error(error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -159,7 +160,6 @@ export default function Read({ onChangePage }) {
     }
   };
 
-  if (loading) return <Loading />;
   if (error) return <p>{error}</p>;
 
   return (
@@ -245,47 +245,55 @@ export default function Read({ onChangePage }) {
               </div>
             </div>
 
-            <Table
-              arrHeader={[
-                "No",
-                "Nama Kegiatan",
-                "Tanggal Mulai",
-                "Jenis Kegiatan",
-                "Tempat",
-                "Status",
-              ]}
-              data={filteredData.map((item, index) => ({
-                Key: item.idKegiatan,
-                No: indexOfFirstData + index + 1,
-                "Nama Kegiatan": item.namaKegiatan,
-                "Tanggal Mulai": new Date(
-                  item.tglMulaiKegiatan
-                ).toLocaleDateString("id-ID", {
-                  weekday: "long",
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                }),
-                "Jenis Kegiatan": item.namaJenisKegiatan,
-                Tempat: item.tempatKegiatan,
-                Status: item.kategoriKegiatan,
-              }))}
-              actions={(item) => {
-                return item.Status === "Terlaksana"
-                  ? ["Detail"]
-                  : ["Detail", "Edit", "Delete"];
-              }}
-              onEdit={(item) => onChangePage("edit", { idData: item.Key })}
-              onDetail={(item) => onChangePage("detail", { idData: item.Key })}
-              onDelete={(item) => handleDelete(item.Key)}
-            />
+            {loading ? (
+              <Loading />
+            ) : (
+              <div>
+                <Table
+                  arrHeader={[
+                    "No",
+                    "Nama Kegiatan",
+                    "Tanggal Mulai",
+                    "Jenis Kegiatan",
+                    "Tempat",
+                    "Status",
+                  ]}
+                  data={filteredData.map((item, index) => ({
+                    Key: item.idKegiatan,
+                    No: indexOfFirstData + index + 1,
+                    "Nama Kegiatan": item.namaKegiatan,
+                    "Tanggal Mulai": new Date(
+                      item.tglMulaiKegiatan
+                    ).toLocaleDateString("id-ID", {
+                      weekday: "long",
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    }),
+                    "Jenis Kegiatan": item.namaJenisKegiatan,
+                    Tempat: item.tempatKegiatan,
+                    Status: item.kategoriKegiatan,
+                  }))}
+                  actions={(item) => {
+                    return item.Status === "Terlaksana"
+                      ? ["Detail"]
+                      : ["Detail", "Edit", "Delete"];
+                  }}
+                  onEdit={(item) => onChangePage("edit", { idData: item.Key })}
+                  onDetail={(item) =>
+                    onChangePage("detail", { idData: item.Key })
+                  }
+                  onDelete={(item) => handleDelete(item.Key)}
+                />
 
-            <Paging
-              pageSize={pageSize}
-              pageCurrent={pageCurrent}
-              totalData={totalData}
-              navigation={handlePageNavigation}
-            />
+                <Paging
+                  pageSize={pageSize}
+                  pageCurrent={pageCurrent}
+                  totalData={totalData}
+                  navigation={handlePageNavigation}
+                />
+              </div>
+            )}
           </div>
         </div>
       </main>

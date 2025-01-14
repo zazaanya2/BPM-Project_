@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Icon from "./Icon";
 
 export default function Table({
@@ -7,6 +7,7 @@ export default function Table({
   linkColumns = [],
   FILE_LINK = "",
   aksiIs = true,
+  enableCheckbox = false,
   actions = [],
   onToggle = () => {},
   onDelete = () => {},
@@ -21,7 +22,24 @@ export default function Table({
   onUpload = () => {},
   onPreview = () => {},
   onChoose = () => {},
+  onSelect = () => {},
 }) {
+  const [selectedKeys, setSelectedKeys] = useState([]);
+
+  const handleCheckboxChange = (key, isChecked) => {
+    const updatedKeys = isChecked
+      ? [...selectedKeys, key]
+      : selectedKeys.filter((k) => k !== key);
+    setSelectedKeys(updatedKeys);
+    onSelect(updatedKeys); // Kirim daftar key yang dipilih ke parent
+  };
+
+  const handleSelectAll = (isChecked) => {
+    const allKeys = isChecked ? data.map((row) => row.Key) : [];
+    setSelectedKeys(allKeys);
+    onSelect(allKeys); // Kirim daftar key yang dipilih ke parent
+  };
+
   function generateActionButton(actionType, id, status = "Aktif") {
     switch (actionType) {
       case "Toggle": {
@@ -165,7 +183,6 @@ export default function Table({
             onClick={() => onChoose(id)}
           >
             <span style={{ fontWeight: 600 }}>PILIH</span>
-            
           </button>
         );
       default:
@@ -181,6 +198,25 @@ export default function Table({
       >
         <thead>
           <tr>
+            {enableCheckbox && (
+              <th
+                className="text-center align-middle"
+                style={{
+                  backgroundColor: "#2654A1",
+                  color: "#fff",
+                  maxWidth: "70px",
+                  minWidth: "50px",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={
+                    selectedKeys.length === data.length && data.length > 0
+                  }
+                  onChange={(e) => handleSelectAll(e.target.checked)}
+                />
+              </th>
+            )}
             {arrHeader.map((header, index) => (
               <th
                 key={header}
@@ -188,6 +224,8 @@ export default function Table({
                 style={{
                   backgroundColor: "#2654A1",
                   color: "#fff",
+                  maxWidth: index === 0 ? "70px" : "none",
+                  minWidth: index === 0 ? "50px" : "none",
                 }}
               >
                 {header}
@@ -211,6 +249,17 @@ export default function Table({
           {data.length > 0 ? (
             data.map((row, rowIndex) => (
               <tr key={`row-${rowIndex}`}>
+                {enableCheckbox && (
+                  <td className="text-center align-middle">
+                    <input
+                      type="checkbox"
+                      checked={selectedKeys.includes(row.Key)}
+                      onChange={(e) =>
+                        handleCheckboxChange(row.Key, e.target.checked)
+                      }
+                    />
+                  </td>
+                )}
                 {arrHeader.map((column, colIndex) => (
                   <td
                     key={`cell-${rowIndex}-${colIndex}`}

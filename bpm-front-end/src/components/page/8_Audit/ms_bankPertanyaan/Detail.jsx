@@ -157,83 +157,6 @@ export default function Detail({ onChangePage }) {
     fetchAuditee();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData((prevData) => {
-      const updatedData = {
-        ...prevData,
-        [name]: value,
-      };
-
-      // Reset pertanyaanLanjutan jika butuhDokumen kosong
-      if (name === "butuhDokumen" && value.length === 0) {
-        updatedData.pertanyaanLanjutan = ""; // Reset ke nilai default
-      }
-
-      return updatedData;
-    });
-
-    console.log("Updated formData:", { [name]: value });
-  };
-
-  const kriteriaRef = useRef();
-  const pertanyaanRef = useRef();
-  const bagianAuditeeRef = useRef();
-
-  const handleSubmit = async () => {
-    const isKriteriaValid = kriteriaRef.current?.validate();
-    const isPertanyaanValid = pertanyaanRef.current?.validate();
-    const isAuditeeValid = bagianAuditeeRef.current?.validate();
-
-    if (!isKriteriaValid) {
-      kriteriaRef.current?.focus();
-      return;
-    }
-
-    if (!isPertanyaanValid) {
-      pertanyaanRef.current?.focus();
-      return;
-    }
-
-    if (!isAuditeeValid) {
-      bagianAuditeeRef.current?.focus();
-      return;
-    }
-    const butuhDokumenValue = formData.butuhDokumen[0] || "Tidak";
-    const jenisIKTValue = formData.jenisIKT[0] || "Tidak";
-
-    const dataToSend = {
-      ...formData,
-      butuhDokumen: butuhDokumenValue,
-      jenisIKT: jenisIKTValue,
-    };
-
-    console.log("Data to send:", dataToSend);
-
-    try {
-      const createResponse = await useFetch(
-        `${API_LINK}/MasterBankPertanyaanAudit/EditBankPertanyaanAudit`,
-        dataToSend,
-        "POST"
-      );
-
-      if (createResponse === "ERROR") {
-        throw new Error("Gagal menambah data");
-      } else {
-        SweetAlert(
-          "Berhasil!",
-          "Data berhasil diperbarui.",
-          "success",
-          "OK"
-        ).then(() => onChangePage("index"));
-      }
-    } catch (error) {
-      console.error("Error:", error.message);
-      SweetAlert("Gagal!", error.message, "error", "OK");
-    }
-  };
-
   if (loading) return <Loading />;
   if (error) return <p>{error}</p>;
 
@@ -270,7 +193,6 @@ export default function Detail({ onChangePage }) {
                 />
               )}
               <CheckBox
-                ref={bagianAuditeeRef}
                 arrData={auditee}
                 label="Bagian Auditee"
                 name="bagianAuditee"

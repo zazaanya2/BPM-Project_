@@ -34,6 +34,7 @@ export default function Read({ onChangePage }) {
 
   useEffect(() => {
     const fetchBerita = async () => {
+      setLoading(true);
       try {
         const result = await useFetch(
           `${API_LINK}/MasterBerita/GetDataBerita`,
@@ -147,7 +148,6 @@ export default function Read({ onChangePage }) {
     }
   };
 
-  if (loading) return <Loading />;
   if (error) return <p>{error}</p>;
 
   return (
@@ -221,47 +221,52 @@ export default function Read({ onChangePage }) {
                 </div>
               </div>
             </div>
-
-            <Table
-              arrHeader={["No", "Judul Berita", "Tanggal", "Foto"]}
-              data={filteredData.map((item, index) => ({
-                Key: item.id,
-                No: indexOfFirstData + index + 1,
-                "Judul Berita": item.title,
-                Tanggal: new Date(item.date).toLocaleDateString("id-ID", {
-                  weekday: "long",
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                }),
-                Foto: (
-                  <div style={{ minWidth: "200px", textAlign: "center" }}>
-                    {item.images.length > 0 && (
-                      <img
-                        src={BERITAFOTO_LINK + item.images[0]}
-                        alt={`Foto Berita 1`}
-                        width="180"
-                        height="100"
-                      />
-                    )}
-                  </div>
-                ),
-              }))}
-              actions={["Detail", "Edit", "Delete"]}
-              onEdit={(item) => {
-                onChangePage("edit", { idData: item.Key });
-              }}
-              onDetail={(item) => {
-                onChangePage("detail", { idData: item.Key });
-              }}
-              onDelete={(item) => handleDelete(item.Key)}
-            />
-            <Paging
-              pageSize={pageSize}
-              pageCurrent={pageCurrent}
-              totalData={totalData}
-              navigation={handlePageNavigation}
-            />
+            {loading ? (
+              <Loading />
+            ) : (
+              <div>
+                <Table
+                  arrHeader={["No", "Judul Berita", "Tanggal", "Foto"]}
+                  data={filteredData.map((item, index) => ({
+                    Key: item.id,
+                    No: indexOfFirstData + index + 1,
+                    "Judul Berita": item.title,
+                    Tanggal: new Date(item.date).toLocaleDateString("id-ID", {
+                      weekday: "long",
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    }),
+                    Foto: (
+                      <div style={{ minWidth: "200px", textAlign: "center" }}>
+                        {item.images.length > 0 && (
+                          <img
+                            src={BERITAFOTO_LINK + item.images[0]}
+                            alt={`Foto Berita 1`}
+                            width="180"
+                            height="100"
+                          />
+                        )}
+                      </div>
+                    ),
+                  }))}
+                  actions={["Detail", "Edit", "Delete"]}
+                  onEdit={(item) => {
+                    onChangePage("edit", { idData: item.Key });
+                  }}
+                  onDetail={(item) => {
+                    onChangePage("detail", { idData: item.Key });
+                  }}
+                  onDelete={(item) => handleDelete(item.Key)}
+                />
+                <Paging
+                  pageSize={pageSize}
+                  pageCurrent={pageCurrent}
+                  totalData={totalData}
+                  navigation={handlePageNavigation}
+                />
+              </div>
+            )}
           </div>
         </div>
       </main>

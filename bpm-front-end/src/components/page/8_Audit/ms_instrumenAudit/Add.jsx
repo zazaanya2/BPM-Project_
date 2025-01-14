@@ -13,48 +13,19 @@ import TextArea from "../../../part/TextArea";
 import CheckBox from "../../../part/CheckBox";
 import Loading from "../../../part/Loading";
 
-const butuhDokumen = [{ Value: "Ya", Text: "Ya, Butuh dokumen pendukung" }];
-const jenisIKT = [{ Value: "Ya", Text: "Ya, ini Jenis IKT" }];
-
 export default function Add({ onChangePage }) {
   const isMobile = useIsMobile();
-  const title = "Tambah Bank Pertanyaan";
+  const title = "Tambah Instrumen Audit";
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const [formData, setFormData] = useState({
-    kriteria: "",
-    pertanyaan: "",
-    pertanyaanLanjutan: "",
-    butuhDokumen: [],
-    jenisIKT: [],
+    nama: "",
     bagianAuditee: [],
   });
 
-  const [kriteria, setKriteria] = useState([]);
   const [auditee, setAuditee] = useState([]);
-
-  useEffect(() => {
-    const fetchKriteria = async () => {
-      setLoading(true);
-      try {
-        const data = await useFetch(
-          `${API_LINK}/MasterBankPertanyaanAudit/GetAllKriteriaAktif`,
-          {},
-          "POST"
-        );
-
-        setKriteria(data);
-      } catch (err) {
-        setError("Gagal mengambil data: " + err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchKriteria();
-  }, []);
 
   useEffect(() => {
     const fetchAuditee = async () => {
@@ -93,26 +64,17 @@ export default function Add({ onChangePage }) {
 
       return updatedData;
     });
-
-    console.log("Updated formData:", { [name]: value });
   };
 
-  const kriteriaRef = useRef();
-  const pertanyaanRef = useRef();
+  const namaRef = useRef();
   const bagianAuditeeRef = useRef();
 
   const handleSubmit = async () => {
-    const isKriteriaValid = kriteriaRef.current?.validate();
-    const isPertanyaanValid = pertanyaanRef.current?.validate();
+    const isPertanyaanValid = namaRef.current?.validate();
     const isAuditeeValid = bagianAuditeeRef.current?.validate();
 
-    if (!isKriteriaValid) {
-      kriteriaRef.current?.focus();
-      return;
-    }
-
     if (!isPertanyaanValid) {
-      pertanyaanRef.current?.focus();
+      namaRef.current?.focus();
       return;
     }
 
@@ -121,21 +83,10 @@ export default function Add({ onChangePage }) {
       return;
     }
 
-    const butuhDokumenValue = formData.butuhDokumen[0] || "Tidak";
-    const jenisIKTValue = formData.jenisIKT[0] || "Tidak";
-
-    const dataToSend = {
-      ...formData,
-      butuhDokumen: butuhDokumenValue,
-      jenisIKT: jenisIKTValue,
-    };
-
-    console.log("Data to send:", dataToSend);
-
     try {
       const createResponse = await useFetch(
-        `${API_LINK}/MasterBankPertanyaanAudit/CreateBankPertanyaanAudit`,
-        dataToSend,
+        `${API_LINK}/MasterInstrumenAudit/CreateDataInstrumenAudit`,
+        formData,
         "POST"
       );
 
@@ -157,6 +108,7 @@ export default function Add({ onChangePage }) {
 
   if (loading) return <Loading />;
   if (error) return <p>{error}</p>;
+
   return (
     <div className="d-flex flex-column min-vh-100">
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
@@ -178,26 +130,17 @@ export default function Add({ onChangePage }) {
                   : "shadow p-5 m-5 mt-0 bg-white rounded"
               }
             >
-              <HeaderForm label="Formulir Bank Pertanyaan" />
+              <HeaderForm label="Formulir Instrumen Audit" />
 
-              <DropDown
-                ref={kriteriaRef}
-                arrData={kriteria}
-                label="Kriteria Pertanyaan"
-                type="pilih"
-                value={formData.kriteria}
-                name="kriteria"
+              <InputField
+                ref={namaRef}
+                label="Nama Instrumen"
+                value={formData.nama || ""}
                 onChange={handleChange}
                 isRequired={true}
-              />
-
-              <TextArea
-                ref={pertanyaanRef}
-                label="Pertanyaan"
-                value={formData.pertanyaan || ""}
-                name="pertanyaan"
-                onChange={handleChange}
-                isRequired={true}
+                name="nama"
+                type="text"
+                maxChar="100"
               />
 
               <CheckBox
@@ -210,33 +153,6 @@ export default function Add({ onChangePage }) {
                 onChange={handleChange}
                 errorMessage="Please select at least one option."
                 col="col-2"
-              />
-
-              <CheckBox
-                arrData={butuhDokumen}
-                label="Dokumen Pendukung"
-                name="butuhDokumen"
-                values={formData.butuhDokumen || []} // Set default selected values here
-                onChange={handleChange}
-                col="col-12"
-              />
-
-              {formData.butuhDokumen && formData.butuhDokumen.length > 0 && (
-                <TextArea
-                  value={formData.pertanyaanLanjutan || ""}
-                  name="pertanyaanLanjutan"
-                  onChange={handleChange}
-                  isRequired={true}
-                />
-              )}
-
-              <CheckBox
-                arrData={jenisIKT}
-                label="Apakah berjenis IKT?"
-                name="jenisIKT"
-                values={formData.jenisIKT || []} // Set default selected values here
-                onChange={handleChange}
-                col="col-12"
               />
 
               <div className="d-flex justify-content-between align-items-center">

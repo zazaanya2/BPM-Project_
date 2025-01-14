@@ -16,10 +16,8 @@ import { decodeHtml } from "../../../util/DecodeHtml";
 import Loading from "../../../part/Loading";
 
 const arrSort = [
-  { Value: "namaKriteria ASC", Text: "Nama Kriteria [↑]" },
-  { Value: "namaKriteria DESC", Text: "Nama Kriteria [↓]" },
-  { Value: "tanggalBuat ASC", Text: "Waktu Dibuat [↑]" },
-  { Value: "tanggalBuat DESC", Text: "Waktu Dibuat [↓]" },
+  { Value: "namaInstrumen ASC", Text: "Nama Kriteria [↑]" },
+  { Value: "namaInstrumen DESC", Text: "Nama Kriteria [↓]" },
 ];
 
 const arrStatus = [
@@ -27,18 +25,16 @@ const arrStatus = [
   { Value: "Tidak Aktif", Text: "Tidak Aktif" },
 ];
 
-const breadcrumbs = [{ label: "Evaluasi" }, { label: "Bank Pertanyaan" }];
+const breadcrumbs = [{ label: "Evaluasi" }, { label: "Instrumen Audit" }];
 
 export default function Index({ onChangePage }) {
   const isMobile = useIsMobile();
-  const activeUser = Cookies.get("activeUser");
-  const location = useLocation();
 
   const [pageSize] = useState(10);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [pageCurrent, setPageCurrent] = useState(1);
   const [totalData, setTotalData] = useState(0);
-  const [selectedSort, setSelectedSort] = useState("namaKriteria ASC");
+  const [selectedSort, setSelectedSort] = useState("namaInstrumen ASC");
   const [filteredData, setFilteredData] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("Aktif");
   const [selectedKriteria, setSelectedKriteria] = useState("");
@@ -50,40 +46,11 @@ export default function Index({ onChangePage }) {
     setPageCurrent(page);
   };
 
-  const [kriteria, setKriteria] = useState();
-
-  useEffect(() => {
-    const fetchKriteria = async () => {
-      setLoading(true);
-      try {
-        const data = await useFetch(
-          `${API_LINK}/MasterBankPertanyaanAudit/GetAllKriteriaAktif`,
-          {}
-        );
-
-        const formattedData = [
-          { Value: "", Text: "Semua" }, // Opsi default
-          ...data.map((item) => ({
-            Value: item.Value,
-            Text: item.Text,
-          })),
-        ];
-        setKriteria(formattedData);
-      } catch (err) {
-        setError("Gagal mengambil data: " + err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchKriteria();
-  }, []);
-
   const fetchData = async () => {
     setLoading(true);
     try {
       const result = await useFetch(
-        `${API_LINK}/MasterBankPertanyaanAudit/GetDataBankPertanyaanAudit`,
+        `${API_LINK}/MasterInstrumenAudit/GetDataInstrumenAudit`,
         {
           param1: searchKeyword,
           param2: selectedSort,
@@ -120,7 +87,6 @@ export default function Index({ onChangePage }) {
   ]);
 
   const handleToggle = (item) => {
-    console.log(item);
     SweetAlert(
       "Konfirmasi",
       `Apakah Anda yakin ingin ${
@@ -134,15 +100,13 @@ export default function Index({ onChangePage }) {
     ).then((result) => {
       if (result) {
         const updatedData = filteredData
-          .filter((data) => data.idBankPertanyaan === item.Key)
+          .filter((data) => data.id === item.Key)
           .map((data) => ({
-            idData: data.idBankPertanyaan,
-            status: data.statusPertanyaan === "Aktif" ? "Tidak Aktif" : "Aktif",
+            idData: data.id,
+            status: data.status === "Aktif" ? "Tidak Aktif" : "Aktif",
           }));
-
-        console.log(updatedData);
         useFetch(
-          `${API_LINK}/MasterBankPertanyaanAudit/SetStatusBankPertanyaanAudit`,
+          `${API_LINK}/MasterInstrumenAudit/setStatusInstrumenAudit`,
           updatedData[0]
         )
           .then((response) => {
@@ -178,7 +142,7 @@ export default function Index({ onChangePage }) {
         <div className="d-flex flex-column">
           <div className={isMobile ? "m-0 p-0" : "m-3 ms-5 mb-0"}>
             <h1 style={{ color: "#2654A1", margin: "0", fontWeight: "700" }}>
-              Bank Pertanyaan
+              Instrumen Audit
             </h1>
             <Breadcrumbs breadcrumbs={breadcrumbs} />
           </div>
@@ -227,44 +191,22 @@ export default function Index({ onChangePage }) {
                       forInput="statusFilter"
                       onChange={(e) => setSelectedStatus(e.target.value)}
                     />
-
-                    <DropDown
-                      arrData={kriteria}
-                      label="Berdasarkan Kriteria"
-                      value={selectedKriteria}
-                      forInput="kriteria"
-                      onChange={(e) => setSelectedKriteria(e.target.value)}
-                    />
                   </Filter>
                 </div>
               </div>
             </div>
+
             {loading ? (
               <Loading />
             ) : (
               <div>
                 <Table
-                  arrHeader={[
-                    "No",
-                    "Pertanyaan",
-                    "Butuh Dokumen?",
-                    "Jenis IKT?",
-                    "Kriteria",
-                  ]}
+                  arrHeader={["No", "Nama"]}
                   data={filteredData.map((item, index) => ({
-                    Key: item.idBankPertanyaan,
+                    Key: item.id,
                     No: (pageCurrent - 1) * pageSize + index + 1,
-                    Pertanyaan: (
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: decodeHtml(item.pertanyaan || ""),
-                        }}
-                      />
-                    ),
-                    "Butuh Dokumen?": item.isButuhDokumen,
-                    Kriteria: item.namaKriteria,
-                    "Jenis IKT?": item.isJenisIKT,
-                    status: item.statusPertanyaan,
+                    Nama: item.nama,
+                    status: item.status,
                   }))}
                   actions={(row) => {
                     if (row.status === "Tidak Aktif") {

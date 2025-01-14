@@ -44,6 +44,10 @@ const BankPertanyaan = lazy(() =>
   import("../page/8_Audit/ms_bankPertanyaan/Root")
 );
 
+const InstrumenAudit = lazy(() =>
+  import("../page/8_Audit/ms_instrumenAudit/Root")
+);
+
 const KategoriDokumen = lazy(() =>
   import("../page/MasterKategoriDokumen/Root")
 );
@@ -151,6 +155,11 @@ const routeList = [
   {
     path: "/evaluasi/bankPertanyaan/*",
     element: <BankPertanyaan />,
+    protected: true,
+  },
+  {
+    path: "/evaluasi/instrumen/*",
+    element: <InstrumenAudit />,
     protected: true,
   },
   {
