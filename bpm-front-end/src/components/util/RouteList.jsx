@@ -143,22 +143,22 @@ const routeList = [
     protected: true,
   },
   {
-    path: "/evaluasi/kriteria/*",
+    path: "/evaluasi/ami/kriteria/*",
     element: <Kriteria />,
     protected: true,
   },
   {
-    path: "/evaluasi/auditee/*",
+    path: "/evaluasi/ami/auditee/*",
     element: <Auditee />,
     protected: true,
   },
   {
-    path: "/evaluasi/bankPertanyaan/*",
+    path: "/evaluasi/ami/pertanyaan/*",
     element: <BankPertanyaan />,
     protected: true,
   },
   {
-    path: "/evaluasi/instrumen/*",
+    path: "/evaluasi/ami/instrumen/*",
     element: <InstrumenAudit />,
     protected: true,
   },

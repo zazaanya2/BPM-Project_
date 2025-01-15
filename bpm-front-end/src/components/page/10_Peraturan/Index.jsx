@@ -118,19 +118,19 @@ export default function Read({ onChangePage }) {
   ]);
 
   useEffect(() => {
-    if (idMenu === 39) {
+    if (idMenu === 38) {
       title = "Dokumen Peraturan";
       breadcrumbs = [
         { label: "Peraturan", href: "/peraturan/kebijakan" },
         { label: "Dokumen Kebijakan Peraturan" },
       ];
-    } else if (idMenu === 40) {
+    } else if (idMenu === 39) {
       title = "Dokumen Peraturan Eksternal";
       breadcrumbs = [
         { label: "Peraturan", href: "/peraturan/eksternal" },
         { label: "Dokumen Kebijakan Eksternal" },
       ];
-    } else if (idMenu === 41) {
+    } else if (idMenu === 40) {
       title = "Instrumen APS";
       breadcrumbs = [
         { label: "Instrumen APS", href: "/peraturan/aps" },
@@ -285,9 +285,7 @@ export default function Read({ onChangePage }) {
             />
           </div>
           {role === "ROL01" ? (
-            <div
-              className={isMobile ? "p-2 m-2 mt-2 mb-0" : "p-3 m-5 mt-2 mb-0"}
-            >
+            <div className={isMobile ? "p-2 m-2  mb-0" : "p-3 m-5 mt-0 mb-0"}>
               <Button
                 iconName="add"
                 classType="primary"

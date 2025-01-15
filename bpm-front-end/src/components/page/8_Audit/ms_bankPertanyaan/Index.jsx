@@ -176,7 +176,7 @@ export default function Index({ onChangePage }) {
     <div className="d-flex flex-column min-vh-100">
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
         <div className="d-flex flex-column">
-          <div className={isMobile ? "m-0 p-0" : "m-3 ms-5 mb-0"}>
+          <div className={isMobile ? "m-0 p-2" : "m-3 ms-5 mb-0"}>
             <h1 style={{ color: "#2654A1", margin: "0", fontWeight: "700" }}>
               Bank Pertanyaan
             </h1>

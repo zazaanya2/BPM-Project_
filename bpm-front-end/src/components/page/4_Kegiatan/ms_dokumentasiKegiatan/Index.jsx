@@ -82,7 +82,7 @@ export default function Index({ onChangePage }) {
           endTime: item.jamSelesaiKegiatan,
           location: item.tempatKegiatan,
           linkFolder: item.linkFolderKegiatan,
-          image: item.fotoSampulKegiatan,
+          image: decodeHtml(item.fotoSampulKegiatan),
           jenisKegiatan: item.idJenisKegiatan,
           fileNotulen: item.fileNotulenKegiatan,
           statusFileNotulen: item.statusFileNotulenKegiatan,
