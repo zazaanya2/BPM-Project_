@@ -500,6 +500,7 @@ export default function Edit({ onChangePage }) {
                   <div className="row">
                     <div className="col-3 mb-3">
                       <Button
+                        iconName="search"
                         classType="primary"
                         type="submit"
                         label="Dari Bank Pertanyaan"

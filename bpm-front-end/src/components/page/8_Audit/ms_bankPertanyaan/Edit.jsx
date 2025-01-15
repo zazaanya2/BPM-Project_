@@ -79,15 +79,20 @@ export default function Edit({ onChangePage }) {
                 ? [fetchedData.butuhDokumen]
                 : [], // Asumsi butuhDokumen adalah string yang bisa dikonversi menjadi array
             jenisIKT: [fetchedData.jenisIKT], // Sama seperti butuhDokumen
-            bagianAuditee: fetchedData.bagianAuditee
-              .split(",")
-              .map((id) => parseInt(id)), // Mengonversi string '1,2' menjadi array [1, 2]
+            bagianAuditee:
+              fetchedData.bagianAuditee &&
+              fetchedData.bagianAuditee.trim() !== ""
+                ? fetchedData.bagianAuditee
+                    .split(",")
+                    .map((id) => parseInt(id, 10))
+                : [],
           });
         }
       } catch (err) {
         console.error("Error fetching data:", err);
       } finally {
         setLoading(false);
+        console.log(formData);
       }
     };
 
@@ -152,8 +157,6 @@ export default function Edit({ onChangePage }) {
 
       return updatedData;
     });
-
-    console.log("Updated formData:", { [name]: value });
   };
 
   const kriteriaRef = useRef();

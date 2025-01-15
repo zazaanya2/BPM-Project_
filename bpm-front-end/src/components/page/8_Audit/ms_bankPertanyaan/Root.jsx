@@ -5,6 +5,7 @@ import Index from ".";
 import Add from "./Add";
 import Edit from "./Edit";
 import Detail from "./Detail";
+import AddExcel from "./AddExcel";
 
 export default function bankPertanyaan() {
   const navigate = useNavigate();
@@ -19,6 +20,11 @@ export default function bankPertanyaan() {
         break;
       case "add":
         navigate(`${currentPath}`, { state: { mode: "add", ...withState } });
+        break;
+      case "addExcel":
+        navigate(`${currentPath}`, {
+          state: { mode: "addExcel", ...withState },
+        });
         break;
       case "edit":
         navigate(`${currentPath}`, { state: { mode: "edit", ...withState } });
@@ -45,6 +51,8 @@ export default function bankPertanyaan() {
             <ProtectedRoute isRole={true}>
               {mode === "add" ? (
                 <Add onChangePage={handlePageChange} />
+              ) : mode === "addExcel" ? (
+                <AddExcel onChangePage={handlePageChange} />
               ) : mode === "edit" ? (
                 <Edit onChangePage={handlePageChange} />
               ) : mode === "detail" ? (

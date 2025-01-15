@@ -184,7 +184,7 @@ export default function Index({ onChangePage }) {
           </div>
 
           <div
-            className={isMobile ? "p-2 m-2 mt-2 mb-0" : "p-1 m-5 mt-2 mb-0"}
+            className={isMobile ? "p-2 m-2 mt-2 mb-0 " : "p-1 m-5 mt-2 mb-0"}
             style={{ marginLeft: "50px" }}
           >
             <Button
@@ -196,6 +196,18 @@ export default function Index({ onChangePage }) {
                   breadcrumbs: breadcrumbs,
                 })
               }
+            />
+
+            <Button
+              iconName="file"
+              classType="success"
+              label="Tambah Dari Excel"
+              onClick={() =>
+                onChangePage("addExcel", {
+                  breadcrumbs: breadcrumbs,
+                })
+              }
+              style={{ marginLeft: "2rem" }}
             />
           </div>
 

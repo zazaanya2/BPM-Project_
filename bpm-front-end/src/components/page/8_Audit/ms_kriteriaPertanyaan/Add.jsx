@@ -102,7 +102,7 @@ export default function Add({ onChangePage }) {
                 isRequired={true}
                 name="namaKri"
                 type="text"
-                maxChar="50"
+                maxChar="100"
               />
               <div className="d-flex justify-content-between align-items-center">
                 <div className="flex-grow-1 m-2">
