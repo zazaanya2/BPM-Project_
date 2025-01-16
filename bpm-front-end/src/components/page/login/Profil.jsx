@@ -17,12 +17,21 @@ export default function Profil() {
   if (cookie) activeUser = JSON.parse(cookie).Nama;
   if (cookie) username = JSON.parse(cookie).username;
   if (cookie) lastLogin = JSON.parse(cookie).lastLogin;
-  const formattedLastLogin = new Date(lastLogin).toLocaleDateString("id-ID", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  const lastLoginDate = new Date(lastLogin);
+
+  const formattedLastLogin =
+    lastLoginDate.toLocaleDateString("id-ID", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }) +
+    " " +
+    lastLoginDate.toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }) +
+    " WIB";
 
   const handleLogout = async () => {
     const result = await Swal.fire({

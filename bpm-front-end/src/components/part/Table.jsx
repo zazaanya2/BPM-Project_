@@ -23,6 +23,7 @@ export default function Table({
   onPreview = () => {},
   onChoose = () => {},
   onSelect = () => {},
+  onSend = () => {},
 }) {
   const [selectedKeys, setSelectedKeys] = useState([]);
 
@@ -177,13 +178,23 @@ export default function Table({
         );
       case "Choose":
         return (
-          <button
-            className="btn btn-primary px-3"
+          <Icon
+            type="full"
+            name="interactive"
+            cssClass="btn px-1 py-0 text-primary"
             title="Pilih"
             onClick={() => onChoose(id)}
-          >
-            <span style={{ fontWeight: 600 }}>PILIH</span>
-          </button>
+          />
+        );
+      case "Send":
+        return (
+          <Icon
+            type="Bold"
+            name="paper-plane-top"
+            cssClass="btn px-1 py-0 text-primary"
+            title="Kirim"
+            onClick={() => onSend(id)}
+          />
         );
       default:
         return null;

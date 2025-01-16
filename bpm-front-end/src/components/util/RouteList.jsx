@@ -35,6 +35,7 @@ const SPMI_Dinamis = lazy(() => import("../page/5_SPMI/SPMI_Dinamis/Root"));
 
 const Dokumen = lazy(() => import("../page/5_SPMI/dokumen_spmi/Root"));
 
+//AUDIT
 const Kriteria = lazy(() =>
   import("../page/8_Audit/ms_kriteriaPertanyaan/Root")
 );
@@ -47,6 +48,8 @@ const BankPertanyaan = lazy(() =>
 const InstrumenAudit = lazy(() =>
   import("../page/8_Audit/ms_instrumenAudit/Root")
 );
+
+const JadwalAMI = lazy(() => import("../page/8_Audit/tr_jadwalAMI/Root"));
 
 const KategoriDokumen = lazy(() =>
   import("../page/MasterKategoriDokumen/Root")
@@ -160,6 +163,11 @@ const routeList = [
   {
     path: "/evaluasi/ami/instrumen/*",
     element: <InstrumenAudit />,
+    protected: true,
+  },
+  {
+    path: "/evaluasi/ami/jadwal/*",
+    element: <JadwalAMI />,
     protected: true,
   },
   {
