@@ -93,8 +93,6 @@ export default function Add({ onChangePage }) {
 
       return updatedData;
     });
-
-    console.log("Updated formData:", { [name]: value });
   };
 
   const kriteriaRef = useRef();
@@ -129,8 +127,6 @@ export default function Add({ onChangePage }) {
       butuhDokumen: butuhDokumenValue,
       jenisIKT: jenisIKTValue,
     };
-
-    console.log("Data to send:", dataToSend);
 
     try {
       const createResponse = await useFetch(

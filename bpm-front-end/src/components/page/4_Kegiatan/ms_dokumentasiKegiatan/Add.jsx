@@ -69,6 +69,7 @@ export default function Add({ onChangePage }) {
 
   const handleFileChange = (file) => {
     setSelectedFile(file);
+    console.log(selectedFile);
   };
 
   const handleFotoChange = (file) => {

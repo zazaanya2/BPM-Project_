@@ -296,7 +296,7 @@ export default function Table({
                 {aksiIs && ( // Render kolom aksi hanya jika aksiIs adalah false
                   <td
                     className="text-center align-middle"
-                    style={{ width: "250px" }}
+                    style={{ minWidth: "5rem" }}
                   >
                     {typeof actions === "function"
                       ? actions(row).map((action, actionIndex) => (

@@ -51,6 +51,9 @@ const InstrumenAudit = lazy(() =>
 
 const JadwalAMI = lazy(() => import("../page/8_Audit/tr_jadwalAMI/Root"));
 
+const PelaksanaanAMI = lazy(() =>
+  import("../page/8_Audit/tr_pelaksanaanAMI/Root")
+);
 const KategoriDokumen = lazy(() =>
   import("../page/MasterKategoriDokumen/Root")
 );
@@ -169,6 +172,10 @@ const routeList = [
     path: "/evaluasi/ami/jadwal/*",
     element: <JadwalAMI />,
     protected: true,
+  },
+  {
+    path: "/evaluasi/ami/pelaksanaan/*",
+    element: <PelaksanaanAMI />,
   },
   {
     path: "/spmi/kategori-dokumen/*",
