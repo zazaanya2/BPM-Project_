@@ -43,7 +43,19 @@ const TabSelfAssessment = ({ header, pertanyaan, onDataChange }) => {
       // Inisialisasi files
       const initialFiles = pertanyaan.reduce((acc, item) => {
         if (item.berkasDokumen) {
-          acc[item.idPertanyaanSA] = item.berkasDokumen;
+          // Memisahkan berkas dokumen berdasarkan koma dan menghapus tanda kutip ekstra
+          const berkasArray = item.berkasDokumen
+            .split(",")
+            .map((file) => file.replace(/"/g, "").trim());
+
+          // Pastikan acc[item.idPertanyaanSA] adalah array
+          if (!acc[item.idPertanyaanSA]) {
+            acc[item.idPertanyaanSA] = []; // Jika belum ada, inisialisasi dengan array kosong
+          }
+
+          // Menambahkan berkasArray ke dalam array yang sesuai
+          acc[item.idPertanyaanSA] =
+            acc[item.idPertanyaanSA].concat(berkasArray);
         }
         return acc;
       }, {});
@@ -186,22 +198,28 @@ const TabSelfAssessment = ({ header, pertanyaan, onDataChange }) => {
                             />
                           </div>
 
-                          <FileUpload
-                            label="Berkas Pendukung"
-                            forInput="upload-file"
-                            formatFile=".pdf, .docx, .xlsx, .zip"
-                            initialFiles={
-                              formData[item.idPertanyaanSA]?.dokumenBerkas
-                                ? formData[item.idPertanyaanSA]?.dokumenBerkas
-                                : []
-                            }
-                            onChange={
-                              (newFiles) =>
-                                handleFileChange(item.idPertanyaanSA, newFiles) // Update parent state
-                            }
-                            isRequired="true"
-                            isInitialFilesProcessed
-                          />
+                          {item.isbutuhdokumen === "Ya" ? (
+                            <FileUpload
+                              label="Berkas Pendukung"
+                              forInput="upload-file"
+                              formatFile=".pdf, .docx, .xlsx, .zip"
+                              initialFiles={
+                                files[item.idPertanyaanSA]
+                                  ? [files[item.idPertanyaanSA]]
+                                  : []
+                              }
+                              onChange={
+                                (newFiles) =>
+                                  handleFileChange(
+                                    item.idPertanyaanSA,
+                                    newFiles
+                                  ) // Update parent state
+                              }
+                              isRequired="true"
+                            />
+                          ) : (
+                            "-"
+                          )}
                         </td>
                         <td
                           style={{

@@ -26,22 +26,37 @@ const UploadFileMulti = forwardRef(function UploadFileMulti(
   const isInitialFilesProcessed = useRef(false);
 
   useEffect(() => {
-    if (initialFiles?.length > 0 && !isInitialFilesProcessed.current) {
+    console.log(initialFiles);
+    if (
+      initialFiles &&
+      Object.keys(initialFiles).length > 0 &&
+      !isInitialFilesProcessed.current
+    ) {
       console.log("jalan");
       isInitialFilesProcessed.current = true;
 
-      // Memisahkan string yang berisi nama file dan menghilangkan tanda kutip
-      const filesArray = initialFiles[0]
-        .split(",") // Memisahkan berdasarkan koma
-        .map((file) => file.replace(/\"/g, "").trim()); // Menghilangkan tanda kutip dan spasi
+      // Mengambil seluruh file yang berupa string atau tipe File dari semua array dalam initialFiles
+      const allFiles = Object.values(initialFiles).flatMap((fileGroup) =>
+        fileGroup
+          .filter((file) => typeof file === "string" || file instanceof File) // Ambil string dan File
+          .map((file) => {
+            if (typeof file === "string") {
+              return {
+                type: "path",
+                value: file.replace(/\"/g, "").trim(), // Bersihkan tanda kutip dan spasi
+                name: file.split("/").pop(), // Ambil nama file dari path
+              };
+            } else if (file instanceof File) {
+              return {
+                type: "file",
+                value: file, // Simpan objek File
+                name: file.name, // Ambil nama file dari objek File
+              };
+            }
+          })
+      );
 
-      const mappedFiles = filesArray.map((file) => ({
-        type: "path",
-        value: file,
-        name: file.split("/").pop(), // Mengambil nama file dari path
-      }));
-
-      setFiles(mappedFiles);
+      setFiles(allFiles);
     }
   }, [initialFiles]);
 
