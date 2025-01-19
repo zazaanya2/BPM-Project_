@@ -24,14 +24,6 @@ export default function Detail({ onChangePage }) {
   const [error, setError] = useState(null);
   const idData = location.state?.idData;
 
-  const [currentFilter, setCurrentFilter] = useState({
-    param1: "",
-    param2: "Aktif",
-    param3: "namaKry ASC",
-    param4: pageSize,
-    param5: pageCurrent,
-  });
-
   const [formData, setFormData] = useState({});
 
   useEffect(() => {

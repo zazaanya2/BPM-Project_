@@ -5,6 +5,7 @@ import React, {
   useRef,
   useEffect,
 } from "react";
+import Button from "./Button";
 
 const UploadFileMulti = forwardRef(function UploadFileMulti(
   {
@@ -16,6 +17,7 @@ const UploadFileMulti = forwardRef(function UploadFileMulti(
     initialFiles = [],
     maxSizeFile = 10 * 1024 * 1024,
     allowedFormats = ".pdf,.docx",
+    mode = "aktif",
   },
   ref
 ) {
@@ -26,16 +28,13 @@ const UploadFileMulti = forwardRef(function UploadFileMulti(
   const isInitialFilesProcessed = useRef(false);
 
   useEffect(() => {
-    console.log(initialFiles);
     if (
       initialFiles &&
       Object.keys(initialFiles).length > 0 &&
       !isInitialFilesProcessed.current
     ) {
-      console.log("jalan");
       isInitialFilesProcessed.current = true;
 
-      // Mengambil seluruh file yang berupa string atau tipe File dari semua array dalam initialFiles
       const allFiles = Object.values(initialFiles).flatMap((fileGroup) =>
         fileGroup
           .filter((file) => typeof file === "string" || file instanceof File) // Ambil string dan File
@@ -43,14 +42,14 @@ const UploadFileMulti = forwardRef(function UploadFileMulti(
             if (typeof file === "string") {
               return {
                 type: "path",
-                value: file.replace(/\"/g, "").trim(), // Bersihkan tanda kutip dan spasi
-                name: file.split("/").pop(), // Ambil nama file dari path
+                value: file.replace(/\"/g, "").trim(),
+                name: file.split("/").pop(),
               };
             } else if (file instanceof File) {
               return {
                 type: "file",
-                value: file, // Simpan objek File
-                name: file.name, // Ambil nama file dari objek File
+                value: file,
+                name: file.name,
               };
             }
           })
@@ -136,6 +135,24 @@ const UploadFileMulti = forwardRef(function UploadFileMulti(
     });
   };
 
+  const handleDownload = (file) => {
+    if (file.type === "path") {
+      // Untuk file dengan tipe path, langsung navigasikan ke URL
+      const link = document.createElement("a");
+      link.href = file.value;
+      link.download = file.name; // Nama file yang diunduh
+      link.click();
+    } else if (file.type === "file") {
+      // Untuk file tipe File (Blob)
+      const url = URL.createObjectURL(file.value);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = file.name; // Nama file yang diunduh
+      link.click();
+      URL.revokeObjectURL(url); // Bersihkan URL Blob
+    }
+  };
+
   return (
     <div className="mb-3">
       {label && (
@@ -160,16 +177,23 @@ const UploadFileMulti = forwardRef(function UploadFileMulti(
             {files.map((item, index) => (
               <li
                 key={index}
-                className="file-item d-flex justify-content-between"
+                className="file-item d-flex justify-content-between align-items-center"
               >
                 <span>{item.name}</span>
-                <button
-                  className="btn btn-sm btn-danger"
-                  onClick={() => handleRemoveFile(index)}
-                  type="button"
-                >
-                  Hapus
-                </button>
+                <div className="d-flex justify-content-end gap-2">
+                  {mode === "aktif" && (
+                    <Button
+                      classType="danger"
+                      iconName="trash"
+                      onClick={() => handleRemoveFile(index)}
+                    />
+                  )}
+                  <Button
+                    classType="primary"
+                    iconName="download"
+                    onClick={() => handleDownload(item)}
+                  />
+                </div>
               </li>
             ))}
           </ul>
@@ -178,16 +202,19 @@ const UploadFileMulti = forwardRef(function UploadFileMulti(
         )}
       </div>
 
-      <input
-        type="file"
-        id={id}
-        name={id}
-        ref={inputRef}
-        className={`form-control mt-2 ${error ? "is-invalid" : ""}`}
-        accept={allowedFormats}
-        onChange={handleFileChange}
-        multiple
-      />
+      {mode === "aktif" && (
+        <input
+          type="file"
+          id={id}
+          name={id}
+          ref={inputRef}
+          className={`form-control mt-2 ${error ? "is-invalid" : ""}`}
+          accept={allowedFormats}
+          onChange={handleFileChange}
+          multiple
+        />
+      )}
+
       {error && <span className="text-danger small">{errorMsg}</span>}
 
       <style>

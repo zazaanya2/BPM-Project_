@@ -3,6 +3,9 @@ import ScrollToTop from "../../../part/ScrollToTop";
 import ProtectedRoute from "../../../util/ProtectedRoute";
 import Index from "./Index";
 import EditSelfAssessment from "./EditSelfAssessment";
+import DetailSelfAssessment from "./DetailSelfAssessment";
+import EditTemuan from "./EditTemuan";
+import DetailTemuan from "./DetailTemuan";
 
 export default function bankPertanyaan() {
   const navigate = useNavigate();
@@ -17,6 +20,21 @@ export default function bankPertanyaan() {
         break;
       case "editSA":
         navigate(`${currentPath}`, { state: { mode: "editSA", ...withState } });
+        break;
+      case "detailSA":
+        navigate(`${currentPath}`, {
+          state: { mode: "detailSA", ...withState },
+        });
+        break;
+      case "editTemuan":
+        navigate(`${currentPath}`, {
+          state: { mode: "editTemuan", ...withState },
+        });
+        break;
+      case "detailTemuan":
+        navigate(`${currentPath}`, {
+          state: { mode: "detailTemuan", ...withState },
+        });
         break;
 
       default:
@@ -38,6 +56,12 @@ export default function bankPertanyaan() {
             <ProtectedRoute>
               {mode === "editSA" ? (
                 <EditSelfAssessment onChangePage={handlePageChange} />
+              ) : mode === "detailSA" ? (
+                <DetailSelfAssessment onChangePage={handlePageChange} />
+              ) : mode === "editTemuan" ? (
+                <EditTemuan onChangePage={handlePageChange} />
+              ) : mode === "detailTemuan" ? (
+                <DetailTemuan onChangePage={handlePageChange} />
               ) : (
                 <Index onChangePage={handlePageChange} />
               )}

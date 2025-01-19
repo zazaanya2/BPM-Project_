@@ -9,10 +9,10 @@ import { useIsMobile } from "../../../util/useIsMobile";
 import { API_LINK } from "../../../util/Constants";
 import { useFetch } from "../../../util/useFetch";
 import Loading from "../../../part/Loading";
-import TabSelfAssesment from "./TabSelfAssessment";
+import TabTemuan from "./TabTemuan";
 import { uploadFile } from "../../../util/UploadFile";
 
-export default function EditSelfAssessment({ onChangePage }) {
+export default function EditTemuan({ onChangePage }) {
   const isMobile = useIsMobile();
 
   const location = useLocation();
@@ -73,65 +73,24 @@ export default function EditSelfAssessment({ onChangePage }) {
   const handleDataChange = (updatedFormData, updatedFiles) => {
     setFormData(updatedFormData);
     setFiles(updatedFiles);
+
+    console.log(updatedFormData);
   };
 
   const handleSubmit = async () => {
-    const folderName = "Audit";
-    const updatedFormData = { ...formData };
-
-    // Loop melalui objek files
-    for (const [key, fileArray] of Object.entries(files)) {
-      const dokumenBerkasArray = [];
-
-      for (const file of fileArray) {
-        if (typeof file === "string") {
-          // Jika file adalah string (path file yang sudah ada), langsung tambahkan ke array dokumen berkas
-          dokumenBerkasArray.push(file);
-        } else if (file instanceof File) {
-          // Jika file adalah File object, kirim ke API
-          const filePrefix = file.name
-            .replace(/\.[^/.]+$/, "")
-            .replace(/\s+/g, "_");
-
-          const fileFormData = new FormData();
-          fileFormData.append("file", file);
-
-          try {
-            const dokumenBerkas = await uploadFile(
-              file,
-              folderName,
-              filePrefix
-            );
-
-            if (Array.isArray(dokumenBerkas)) {
-              dokumenBerkasArray.push(...dokumenBerkas);
-            } else {
-              dokumenBerkasArray.push(dokumenBerkas);
-            }
-          } catch (error) {
-            console.error("Error uploading file:", error);
-          }
-        }
-      }
-
-      if (updatedFormData[key]) {
-        updatedFormData[key].dokumenBerkas = dokumenBerkasArray;
-      }
-    }
-
-    for (const [key, value] of Object.entries(updatedFormData)) {
+    for (const [key, value] of Object.entries(formData)) {
       const updatedObject = {
         id: Number(key),
-        jawaban: value.jawaban,
-        jawabanLanjutan: value.jawabanLanjutan,
+        namaTemuan: value.namaTemuan,
+        kategoriTemuan: value.kategoriTemuan,
+        saran: value.saran,
         idSea: idData,
-        dokumenBerkas: value.dokumenBerkas,
       };
 
       console.log(updatedObject);
 
       const createResponse = await useFetch(
-        `${API_LINK}/TransaksiSelfAssessment/EditSelfAssesment`,
+        `${API_LINK}/TransaksiTemuan/EditTemuan`,
         updatedObject
       );
       if (createResponse === "ERROR") {
@@ -167,7 +126,7 @@ export default function EditSelfAssessment({ onChangePage }) {
                   : "shadow p-5 m-5 mt-0 bg-white rounded"
               }
             >
-              <HeaderForm label="Formulir Self Assessment" />
+              <HeaderForm label="Formulir Temuan" />
 
               <div className="border bg-white rounded mt-5 p-3">
                 {pertanyaan && pertanyaan.length > 0 ? (
@@ -209,7 +168,7 @@ export default function EditSelfAssessment({ onChangePage }) {
                 )}
               </div>
 
-              <TabSelfAssesment
+              <TabTemuan
                 header={kriteria}
                 pertanyaan={pertanyaan}
                 onDataChange={handleDataChange}

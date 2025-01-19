@@ -66,7 +66,6 @@ export default function Index({ onChangePage }) {
         }
       );
 
-      console.log(role);
       if (result === "ERROR" || result === null || result.length === 0) {
         setFilteredData([]);
         setTotalData(0);
@@ -86,84 +85,66 @@ export default function Index({ onChangePage }) {
     fetchData();
   }, [searchKeyword, selectedSort, pageCurrent, selectedStatus]);
 
-  const handleDelete = async (id) => {
-    const confirm = await SweetAlert(
-      "Konfirmasi",
-      "Apakah Anda yakin ingin menghapus jadwal AMI ini?",
-      "warning",
-      "Ya, Hapus",
-      null,
-      "",
-      true
-    );
+  const handleFinal = async (id, status) => {
+    let apiCheck = "";
+    let apiFinal = "";
+    let pesan = "";
 
-    if (confirm) {
-      try {
-        const response = await useFetch(
-          `${API_LINK}/TransaksiJadwalAMI/DeleteJadwalAMIDraft`,
-          { idJad: id },
-          "POST"
-        );
-
-        if (response === "ERROR") throw new Error("Gagal menghapus kegiatan");
-
-        SweetAlert("Berhasil", "Data Berhasil Dihapus", "success");
-
-        setFilteredData((prevData) =>
-          prevData.filter((item) => item.idJadwal !== id)
-        );
-      } catch (err) {
-        console.error(err);
-        SweetAlert(
-          "Gagal",
-          "Terjadi kesalahan saat menghapus kegiatan",
-          "error"
-        );
-      }
+    if (status === "Self Assessment (Draft)") {
+      apiCheck = "TransaksiSelfAssessment/CheckSelfAssesment";
+      apiFinal = "TransaksiSelfAssessment/FinalSelfAssesment";
+      pesan = "Self Assessment";
+    } else if (status === "Temuan (Draft)") {
+      apiCheck = "TransaksiTemuan/CheckTemuan";
+      apiFinal = "TransaksiTemuan/FinalTemuan";
+      pesan = "Temuan";
+    } else {
+      return;
     }
-  };
+    const response = await useFetch(`${API_LINK}/${apiCheck}`, { idJad: id });
 
-  const handleFinal = async (id) => {
-    const confirm = await SweetAlert(
-      "Apakah Anda yakin ingin mengirim jadwal AMI ini?",
-      "Jika jadwal sudah dikirim maka tidak dapat di ubah kembali, dan akan dilanjutkan ke proses selanjutnya ",
-      "warning",
-      "Ya, Kirim",
-      null,
-      "",
-      true
-    );
+    if (response[0].hasil === true) {
+      const confirm = await SweetAlert(
+        "Apakah Anda yakin ingin Finalkan " + pesan + " ini?",
+        "Data tidak akan bisa diubah jika " +
+          pesan +
+          " Audit Mutu Internal sudah difinalkan",
+        "warning",
+        "Ya, Finalkan",
+        null,
+        "",
+        true
+      );
 
-    if (confirm) {
-      try {
-        const response = await useFetch(
-          `${API_LINK}/TransaksiJadwalAMI/FinalJadwalAMI`,
-          { idJad: id },
-          "POST"
-        );
+      if (confirm) {
+        try {
+          const response = await useFetch(
+            `${API_LINK}/${apiFinal}`,
+            { idSA: id },
+            "POST"
+          );
 
-        if (response === "ERROR") throw new Error("Gagal kirim kegiatan");
+          if (response === "ERROR")
+            throw new Error("Gagal kirim Self Assessment");
 
-        SweetAlert("Berhasil", "Data Berhasil dikirim", "success");
+          SweetAlert(
+            "Berhasil",
+            "Self Assement Berhasil difinalkan",
+            "success"
+          );
 
-        setFilteredData((prevData) =>
-          prevData.map(
-            (data) =>
-              data.idJadwal === id
-                ? {
-                    ...data, // Salin data lama
-                    status:
-                      data.status === "DRAFT"
-                        ? "Self Assesment (Belum)" // Ubah status jika kondisi terpenuhi
-                        : data.status, // Pertahankan status jika kondisi tidak terpenuhi
-                  }
-                : data // Pertahankan data lain yang tidak berubah
-          )
-        );
-      } catch (err) {
-        console.error(err);
-        SweetAlert("Gagal", "Terjadi kesalahan saat kirim jadwal", "error");
+          fetchData();
+        } catch (err) {
+          console.error(err);
+          SweetAlert("Gagal", "Terjadi kesalahan saat kirim jadwal", "error");
+        }
       }
+    } else {
+      SweetAlert(
+        "Data belum lengkap",
+        "Data Self Assesment belum lengkap, harap lakukan pengecekan dan lengkapi terlebih dahulu",
+        "warning"
+      );
     }
   };
 
@@ -258,13 +239,30 @@ export default function Index({ onChangePage }) {
                       : "-",
                     "Ada Temuan":
                       item.isTemuan === 0 || item.isTemuan === null
-                        ? "Belum"
-                        : "Ya",
+                        ? "Belum Audit"
+                        : "Ada Temuan",
 
-                    Status: item.status,
+                    Status: (() => {
+                      switch (item.status) {
+                        case "Self Assessment (Draft)":
+                          if (
+                            item.idLeadAuditor === activeUser ||
+                            item.idAuditor === activeUser
+                          ) {
+                            return "Self Assessment (Belum)";
+                          } else {
+                            return item.status;
+                          }
+
+                        default:
+                          return item.status;
+                      }
+                    })(),
                     kadep: item.kadep,
                     pic1: item.pic1,
                     pic2: item.pic2,
+                    idAuditor: item.idAuditor,
+                    idLeadAuditor: item.idLeadAuditor,
                     instrumen: item.namaInstrumen,
                   }))}
                   actions={(item) => {
@@ -275,7 +273,9 @@ export default function Index({ onChangePage }) {
                           item.pic1 === activeUser ||
                           item.pic2 === activeUser
                         ) {
-                          return ["Detail", "Edit"];
+                          return ["Self Assessment", "Edit"];
+                        } else {
+                          return ["Self Assessment"]; // Default return if the condition is not met
                         }
                       case "Self Assessment (Draft)":
                         if (
@@ -283,20 +283,86 @@ export default function Index({ onChangePage }) {
                           item.pic1 === activeUser ||
                           item.pic2 === activeUser
                         ) {
-                          return ["Detail", "Edit", "Send"];
+                          return ["Self Assessment", "Edit", "Send"];
+                        } else {
+                          return ["Self Assessment"]; // Default return if the condition is not met
+                        }
+
+                      case "Self Assessment (Selesai)":
+                        if (
+                          item.idAuditor === activeUser ||
+                          item.idLeadAuditor === activeUser
+                        ) {
+                          return ["Self Assessment", "Temuan", "Edit"];
+                        } else {
+                          return ["Self Assessment"]; // Default return if the condition is not met
+                        }
+
+                      case "Temuan (Draft)":
+                        if (
+                          item.idAuditor === activeUser ||
+                          item.idLeadAuditor === activeUser
+                        ) {
+                          return ["Self Assessment", "Temuan", "Edit", "Send"];
+                        } else {
+                          return ["Self Assessment"]; // Default return if the condition is not met
+                        }
+                      case "Menunggu Analisa Temuan":
+                        if (
+                          item.kadep === activeUser ||
+                          item.pic1 === activeUser ||
+                          item.pic2 === activeUser
+                        ) {
+                          return ["Self Assessment", "Temuan", "Edit", "Send"];
+                        } else {
+                          return ["Self Assessment", "Temuan"]; // Default return if the condition is not met
                         }
                       default:
-                        return ["Detail"];
+                        return ["Self Assessment"];
                     }
                   }}
-                  onEdit={(item) =>
-                    onChangePage("editSA", {
+                  onEdit={(item) => {
+                    if (
+                      item.Status === "Self Assessment (Belum)" ||
+                      item.Status === "Self Assessment (Draft)"
+                    ) {
+                      onChangePage("editSA", {
+                        idData: item.Key,
+                        instrumen: item.instrumen,
+                        breadcrumbs: breadcrumbs,
+                      });
+                    } else if (
+                      item.Status === "Self Assessment (Selesai)" ||
+                      item.Status === "Temuan (Draft)"
+                    ) {
+                      onChangePage("editTemuan", {
+                        idData: item.Key,
+                        instrumen: item.instrumen,
+                        breadcrumbs: breadcrumbs,
+                      });
+                    }
+                  }}
+                  onSelfAssessment={(item) =>
+                    onChangePage("detailSA", {
+                      idData: item.Key,
+                      instrumen: item.instrumen,
+                      breadcrumbs: breadcrumbs,
+                      isDraftandAuditor:
+                        (item.idAuditor === activeUser ||
+                          item.idLeadAuditor === activeUser) &&
+                        item.Status === "Self Assessment (Belum)"
+                          ? true
+                          : false,
+                    })
+                  }
+                  onRiwayatTemuan={(item) =>
+                    onChangePage("detailTemuan", {
                       idData: item.Key,
                       instrumen: item.instrumen,
                       breadcrumbs: breadcrumbs,
                     })
                   }
-                  onSend={(item) => handleFinal(item.Key)}
+                  onSend={(item) => handleFinal(item.Key, item.Status)}
                 />
 
                 <Paging

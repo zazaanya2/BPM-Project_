@@ -4,15 +4,13 @@ import InputField from "../../../part/InputField";
 import HeaderForm from "../../../part/HeaderText";
 import Button from "../../../part/Button";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import SweetAlert from "../../../util/SweetAlert";
 import { useIsMobile } from "../../../util/useIsMobile";
 import { API_LINK } from "../../../util/Constants";
 import { useFetch } from "../../../util/useFetch";
 import Loading from "../../../part/Loading";
 import TabSelfAssesment from "./TabSelfAssessment";
-import { uploadFile } from "../../../util/UploadFile";
 
-export default function EditSelfAssessment({ onChangePage }) {
+export default function DetailSelfAssessment({ onChangePage }) {
   const isMobile = useIsMobile();
 
   const location = useLocation();
@@ -20,6 +18,7 @@ export default function EditSelfAssessment({ onChangePage }) {
   const [error, setError] = useState(null);
   const idData = location.state?.idData;
   const title = location.state?.instrumen;
+  const isDraftandAuditor = location.state?.isDraftandAuditor;
 
   const [kriteria, setKriteria] = useState([]);
 
@@ -73,75 +72,6 @@ export default function EditSelfAssessment({ onChangePage }) {
   const handleDataChange = (updatedFormData, updatedFiles) => {
     setFormData(updatedFormData);
     setFiles(updatedFiles);
-  };
-
-  const handleSubmit = async () => {
-    const folderName = "Audit";
-    const updatedFormData = { ...formData };
-
-    // Loop melalui objek files
-    for (const [key, fileArray] of Object.entries(files)) {
-      const dokumenBerkasArray = [];
-
-      for (const file of fileArray) {
-        if (typeof file === "string") {
-          // Jika file adalah string (path file yang sudah ada), langsung tambahkan ke array dokumen berkas
-          dokumenBerkasArray.push(file);
-        } else if (file instanceof File) {
-          // Jika file adalah File object, kirim ke API
-          const filePrefix = file.name
-            .replace(/\.[^/.]+$/, "")
-            .replace(/\s+/g, "_");
-
-          const fileFormData = new FormData();
-          fileFormData.append("file", file);
-
-          try {
-            const dokumenBerkas = await uploadFile(
-              file,
-              folderName,
-              filePrefix
-            );
-
-            if (Array.isArray(dokumenBerkas)) {
-              dokumenBerkasArray.push(...dokumenBerkas);
-            } else {
-              dokumenBerkasArray.push(dokumenBerkas);
-            }
-          } catch (error) {
-            console.error("Error uploading file:", error);
-          }
-        }
-      }
-
-      if (updatedFormData[key]) {
-        updatedFormData[key].dokumenBerkas = dokumenBerkasArray;
-      }
-    }
-
-    for (const [key, value] of Object.entries(updatedFormData)) {
-      const updatedObject = {
-        id: Number(key),
-        jawaban: value.jawaban,
-        jawabanLanjutan: value.jawabanLanjutan,
-        idSea: idData,
-        dokumenBerkas: value.dokumenBerkas,
-      };
-
-      console.log(updatedObject);
-
-      const createResponse = await useFetch(
-        `${API_LINK}/TransaksiSelfAssessment/EditSelfAssesment`,
-        updatedObject
-      );
-      if (createResponse === "ERROR") {
-        throw new Error("Gagal menambah data");
-      }
-    }
-
-    SweetAlert("Berhasil!", "Data berhasil diperbarui.", "success", "OK").then(
-      () => onChangePage("index")
-    );
   };
 
   if (loading) return <Loading />;
@@ -213,29 +143,9 @@ export default function EditSelfAssessment({ onChangePage }) {
                 header={kriteria}
                 pertanyaan={pertanyaan}
                 onDataChange={handleDataChange}
+                mode="detailSA"
+                isDraftandAuditor={isDraftandAuditor}
               />
-
-              <div className="d-flex justify-content-between align-items-center">
-                <div className="flex-grow-1 m-2">
-                  <Button
-                    classType="primary"
-                    type="button"
-                    label="Simpan"
-                    width="100%"
-                    onClick={handleSubmit}
-                    isDisabled={Object.keys(formData).length === 0}
-                  />
-                </div>
-                <div className="flex-grow-1 m-2">
-                  <Button
-                    classType="danger"
-                    type="button"
-                    label="Batal"
-                    width="100%"
-                    onClick={() => onChangePage("index")}
-                  />
-                </div>
-              </div>
             </div>
           </div>
         </div>

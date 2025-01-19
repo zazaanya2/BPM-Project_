@@ -8,17 +8,19 @@ import RadioButton from "../../../part/RadioButton.jsx";
 import FileUpload from "../../../part/FileUploadMulti.jsx";
 import DetailData from "../../../part/DetailData.jsx";
 
-const arrJawaban = [
-  { Value: "Ya", Text: "Ya" },
-  { Value: "Tidak", Text: "Tidak" },
+const arrKategori = [
+  { Value: "Ketidaksesuaian (Observasi)", Text: "Ketidaksesuaian (Observasi)" },
+  { Value: "Ketidaksesuaian (Minor)", Text: "Ketidaksesuaian (Minor)" },
+  { Value: "Ketidaksesuaian (Major)", Text: "Ketidaksesuaian (Major)" },
+  { Value: "Kesesuaian (Memenuhi)", Text: "Kesesuaian (Memenuhi)" },
+  { Value: "Kesesuaian (Melampaui)", Text: "Kesesuaian (Melampaui)" },
 ];
 
-const TabSelfAssessment = ({
+const TabTemuan = ({
   header,
   pertanyaan,
   onDataChange,
-  mode = "editSA",
-  isDraftandAuditor = false,
+  mode = "editTemuan",
 }) => {
   const [expandedIndexes, setExpandedIndexes] = useState([]); // Mengubah state menjadi array
   const isMobile = useIsMobile();
@@ -37,9 +39,9 @@ const TabSelfAssessment = ({
     if (!isInitialized && pertanyaan.length > 0) {
       const initialFormData = pertanyaan.reduce((acc, item) => {
         acc[item.idPertanyaanSA] = {
-          jawaban: item.jawaban || "Ya",
-          jawabanLanjutan: decodeHtml(item.jawabanLanjutan) || "",
-          dokumenBerkas: item.berkasDokumen ? [item.berkasDokumen] : [],
+          namaTemuan: decodeHtml(item.namaTemuan) || "",
+          kategoriTemuan: item.kategoriTemuan || "",
+          saran: decodeHtml(item.saran) || "",
         };
         return acc;
       }, {});
@@ -179,87 +181,64 @@ const TabSelfAssessment = ({
                             </>
                           )}
 
-                          {isDraftandAuditor === false && (
-                            <>
-                              {" "}
-                              {mode === "editSA" && (
-                                <>
-                                  <div>
-                                    <TextArea
-                                      label="Jawaban"
-                                      value={
-                                        formData[item.idPertanyaanSA]
-                                          ?.jawabanLanjutan || ""
-                                      }
-                                      onChange={(e) =>
-                                        handleInputChange(
-                                          item.idPertanyaanSA,
-                                          "jawabanLanjutan",
-                                          e.target.value
-                                        )
-                                      }
-                                      isRequired={true}
-                                    />
-                                  </div>
-                                </>
-                              )}
-                              {mode === "detailSA" && (
-                                <>
-                                  <DetailData
-                                    label="Jawaban"
-                                    isi={
-                                      formData[item.idPertanyaanSA]
-                                        ?.jawabanLanjutan
-                                    }
-                                    colorIsi="text-black mb-4"
-                                  />
-                                </>
-                              )}
-                              {item.isbutuhdokumen === "Ya" ? (
-                                <FileUpload
-                                  label="Berkas Pendukung"
-                                  forInput="upload-file"
-                                  formatFile=".pdf, .docx, .xlsx, .zip"
-                                  initialFiles={
-                                    files[item.idPertanyaanSA]
-                                      ? [files[item.idPertanyaanSA]]
-                                      : []
-                                  }
-                                  onChange={(newFiles) =>
-                                    handleFileChange(
-                                      item.idPertanyaanSA,
-                                      newFiles
-                                    )
-                                  }
-                                  isRequired="true"
-                                  mode={mode === "editSA" ? "aktif" : "tidak"}
-                                />
-                              ) : (
-                                "-"
-                              )}
-                            </>
+                          <>
+                            <DetailData
+                              label="Jawaban"
+                              isi={item.jawabanLanjutan}
+                              colorIsi="text-black mb-4"
+                            />
+                          </>
+
+                          {item.isbutuhdokumen === "Ya" ? (
+                            <FileUpload
+                              label="Berkas Pendukung"
+                              forInput="upload-file"
+                              formatFile=".pdf, .docx, .xlsx, .zip"
+                              initialFiles={
+                                files[item.idPertanyaanSA]
+                                  ? [files[item.idPertanyaanSA]]
+                                  : []
+                              }
+                              onChange={(newFiles) =>
+                                handleFileChange(item.idPertanyaanSA, newFiles)
+                              }
+                              isRequired="true"
+                              mode="tidak"
+                            />
+                          ) : (
+                            ""
                           )}
-                        </td>
-                        <td
-                          style={{
-                            border: "1px solid #ddd",
-                            padding: "8px",
-                          }}
-                        >
-                          {mode === "editSA" && (
+
+                          {mode === "editTemuan" && (
                             <>
-                              <div style={{ marginBottom: "10px" }}>
-                                <RadioButton
-                                  label="Jawaban"
-                                  name={`options-${item.idPertanyaanSA}`}
-                                  arrData={arrJawaban}
+                              <div>
+                                <TextArea
+                                  label="Temuan"
                                   value={
-                                    formData[item.idPertanyaanSA]?.jawaban || ""
+                                    formData[item.idPertanyaanSA]?.namaTemuan ||
+                                    ""
                                   }
                                   onChange={(e) =>
                                     handleInputChange(
                                       item.idPertanyaanSA,
-                                      "jawaban",
+                                      "namaTemuan",
+                                      e.target.value
+                                    )
+                                  }
+                                  isRequired={true}
+                                />
+                              </div>
+
+                              <div>
+                                <TextArea
+                                  label="Saran"
+                                  value={
+                                    formData[item.idPertanyaanSA]?.saran || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      item.idPertanyaanSA,
+                                      "saran",
                                       e.target.value
                                     )
                                   }
@@ -269,12 +248,66 @@ const TabSelfAssessment = ({
                             </>
                           )}
 
-                          {mode === "detailSA" && (
+                          {mode == "detailTemuan" && (
                             <>
                               <DetailData
-                                label="Jawaban"
+                                label="Temuan"
+                                isi={formData[item.idPertanyaanSA]?.namaTemuan}
+                                colorIsi="text-black mb-4"
+                              />
+
+                              <DetailData
+                                label="Saran"
+                                isi={formData[item.idPertanyaanSA]?.saran}
+                                colorIsi="text-black mb-4"
+                              />
+                            </>
+                          )}
+                        </td>
+                        <td
+                          style={{
+                            border: "1px solid #ddd",
+                            padding: "8px",
+                            maxWidth: "15rem",
+                          }}
+                        >
+                          <DetailData
+                            label="Jawaban"
+                            isi={item.jawaban || ""}
+                            colorIsi="text-black mb-4"
+                          />
+
+                          {mode === "editTemuan" && (
+                            <>
+                              <div style={{ marginBottom: "10px" }}>
+                                <RadioButton
+                                  label="Kategori Temuan"
+                                  name={`options-${item.idPertanyaanSA}`}
+                                  arrData={arrKategori}
+                                  value={
+                                    formData[item.idPertanyaanSA]
+                                      ?.kategoriTemuan || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      item.idPertanyaanSA,
+                                      "kategoriTemuan",
+                                      e.target.value
+                                    )
+                                  }
+                                  isRequired={true}
+                                  col="col-12"
+                                />
+                              </div>
+                            </>
+                          )}
+
+                          {mode == "detailTemuan" && (
+                            <>
+                              <DetailData
+                                label="Temuan"
                                 isi={
-                                  formData[item.idPertanyaanSA]?.jawaban || ""
+                                  formData[item.idPertanyaanSA]?.kategoriTemuan
                                 }
                                 colorIsi="text-black mb-4"
                               />
@@ -293,4 +326,4 @@ const TabSelfAssessment = ({
   );
 };
 
-export default TabSelfAssessment;
+export default TabTemuan;

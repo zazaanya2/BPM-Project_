@@ -24,6 +24,8 @@ export default function Table({
   onChoose = () => {},
   onSelect = () => {},
   onSend = () => {},
+  onSelfAssessment = () => {},
+  onRiwayatTemuan = () => {},
 }) {
   const [selectedKeys, setSelectedKeys] = useState([]);
 
@@ -120,7 +122,7 @@ export default function Table({
         return (
           <Icon
             type="Reguler"
-            name="file-circle-info"
+            name="user-time"
             cssClass="btn px-1 py-0 text-warning"
             title="Riwayat Unduhan"
             onClick={() => onPrintHistory(id)}
@@ -130,7 +132,7 @@ export default function Table({
         return (
           <Icon
             type="Reguler"
-            name="user-time"
+            name="file-circle-info"
             cssClass="btn px-1 py-0 text-primary"
             title="Riwayat Pembaruan"
             onClick={() => onUpdateHistory(id)}
@@ -194,6 +196,26 @@ export default function Table({
             cssClass="btn px-1 py-0 text-primary"
             title="Kirim"
             onClick={() => onSend(id)}
+          />
+        );
+      case "Self Assessment":
+        return (
+          <Icon
+            type="Bold"
+            name="member-list"
+            cssClass="btn px-1 py-0 text-primary"
+            title="Self Assessment"
+            onClick={() => onSelfAssessment(id)}
+          />
+        );
+      case "Temuan":
+        return (
+          <Icon
+            type="Bold"
+            name="time-past"
+            cssClass="btn px-1 py-0 text-info"
+            title="Riwayat Temuan"
+            onClick={() => onRiwayatTemuan(id)}
           />
         );
       default:
