@@ -18,6 +18,7 @@ const UploadFileMulti = forwardRef(function UploadFileMulti(
     maxSizeFile = 10 * 1024 * 1024,
     allowedFormats = ".pdf,.docx",
     mode = "aktif",
+    baseURL = "http://localhost:5187/Audit/",
   },
   ref
 ) {
@@ -136,18 +137,22 @@ const UploadFileMulti = forwardRef(function UploadFileMulti(
   };
 
   const handleDownload = (file) => {
+    const baseURL = "http://localhost:5187/Audit/"; // Lokasi file di backend
+
     if (file.type === "path") {
-      // Untuk file dengan tipe path, langsung navigasikan ke URL
+      // Untuk file dengan tipe path, buka di tab baru
       const link = document.createElement("a");
-      link.href = file.value;
-      link.download = file.name; // Nama file yang diunduh
+      link.href = `${baseURL}${file.value}`; // Gabungkan base URL dengan nama file
+      link.target = "_blank"; // Buka di tab baru
+      link.rel = "noopener noreferrer"; // Tambahan untuk keamanan
       link.click();
     } else if (file.type === "file") {
-      // Untuk file tipe File (Blob)
+      // Untuk file tipe File (Blob), tetap gunakan cara lama (unduhan langsung)
       const url = URL.createObjectURL(file.value);
       const link = document.createElement("a");
       link.href = url;
-      link.download = file.name; // Nama file yang diunduh
+      link.target = "_blank"; // Buka di tab baru
+      link.rel = "noopener noreferrer"; // Tambahan untuk keamanan
       link.click();
       URL.revokeObjectURL(url); // Bersihkan URL Blob
     }
@@ -179,7 +184,7 @@ const UploadFileMulti = forwardRef(function UploadFileMulti(
                 key={index}
                 className="file-item d-flex justify-content-between align-items-center"
               >
-                <span>{item.name}</span>
+                <span>{item.name}</span> {/* Nama file di sini */}
                 <div className="d-flex justify-content-end gap-2">
                   {mode === "aktif" && (
                     <Button
@@ -219,21 +224,31 @@ const UploadFileMulti = forwardRef(function UploadFileMulti(
 
       <style>
         {`
-          .file-list-container:hover {
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-          }
-          .file-list {
-            list-style: none;
-            padding: 0;
-          }
-          .file-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #ddd;
-            padding: 4px 0;
-          }
-        `}
+        .file-list-container:hover {
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .file-list {
+          list-style: none;
+          padding: 0;
+          width: 100%;
+        }
+        .file-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid #ddd;
+          padding: 4px 0;
+        }
+        /* Tambahan CSS untuk menangani nama file panjang */
+        .file-item span {
+          word-wrap: break-word;
+          word-break: break-word;
+          max-width: 100%; /* Sesuaikan dengan lebar yang Anda inginkan */
+          overflow: hidden;
+          text-overflow: ellipsis;
+          
+        }
+      `}
       </style>
     </div>
   );

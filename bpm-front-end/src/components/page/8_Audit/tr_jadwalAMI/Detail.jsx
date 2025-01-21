@@ -190,7 +190,7 @@ export default function Detail({ onChangePage }) {
                     isi={formData.waktuAwal + " - " + formData.waktuAkhir}
                   />
                   <DetailData
-                    label="Waktu (Rencana)"
+                    label="Waktu (Aktual)"
                     isi={
                       formData.waktuAwalAktual +
                       " - " +

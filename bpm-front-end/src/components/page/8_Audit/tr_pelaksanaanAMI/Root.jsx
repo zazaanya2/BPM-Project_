@@ -6,6 +6,9 @@ import EditSelfAssessment from "./EditSelfAssessment";
 import DetailSelfAssessment from "./DetailSelfAssessment";
 import EditTemuan from "./EditTemuan";
 import DetailTemuan from "./DetailTemuan";
+import IndexAnalisaTemuan from "./IndexAnalisaTemuan";
+import EditAnalisaTemuan from "./EditAnalisaTemuan";
+import DetailAnalisaTemuan from "./DetailAnalisaTemuan";
 
 export default function bankPertanyaan() {
   const navigate = useNavigate();
@@ -36,6 +39,21 @@ export default function bankPertanyaan() {
           state: { mode: "detailTemuan", ...withState },
         });
         break;
+      case "analisaTemuan":
+        navigate(`${currentPath}`, {
+          state: { mode: "analisaTemuan", ...withState },
+        });
+        break;
+      case "editAnalisaTemuan":
+        navigate(`${currentPath}`, {
+          state: { mode: "editAnalisaTemuan", ...withState },
+        });
+        break;
+      case "detailAnalisaTemuan":
+        navigate(`${currentPath}`, {
+          state: { mode: "detailAnalisaTemuan", ...withState },
+        });
+        break;
 
       default:
         console.warn(`Halaman "${page}" tidak dikenali.`);
@@ -62,6 +80,12 @@ export default function bankPertanyaan() {
                 <EditTemuan onChangePage={handlePageChange} />
               ) : mode === "detailTemuan" ? (
                 <DetailTemuan onChangePage={handlePageChange} />
+              ) : mode === "analisaTemuan" ? (
+                <IndexAnalisaTemuan onChangePage={handlePageChange} />
+              ) : mode === "editAnalisaTemuan" ? (
+                <EditAnalisaTemuan onChangePage={handlePageChange} />
+              ) : mode === "detailAnalisaTemuan" ? (
+                <DetailAnalisaTemuan onChangePage={handlePageChange} />
               ) : (
                 <Index onChangePage={handlePageChange} />
               )}

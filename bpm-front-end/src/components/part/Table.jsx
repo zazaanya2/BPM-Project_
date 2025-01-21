@@ -26,6 +26,7 @@ export default function Table({
   onSend = () => {},
   onSelfAssessment = () => {},
   onRiwayatTemuan = () => {},
+  onAnalisaTemuan = () => {},
 }) {
   const [selectedKeys, setSelectedKeys] = useState([]);
 
@@ -216,6 +217,16 @@ export default function Table({
             cssClass="btn px-1 py-0 text-info"
             title="Riwayat Temuan"
             onClick={() => onRiwayatTemuan(id)}
+          />
+        );
+      case "AnalisaTemuan":
+        return (
+          <Icon
+            type="Bold"
+            name="bulb"
+            cssClass="btn px-1 py-0 text-warning"
+            title="Analisa Temuan"
+            onClick={() => onAnalisaTemuan(id)}
           />
         );
       default:

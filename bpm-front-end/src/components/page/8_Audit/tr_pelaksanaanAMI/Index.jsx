@@ -1,11 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
 import { API_LINK, DOKUMEN_LINK } from "../../../util/Constants";
 import { useFetch } from "../../../util/useFetch";
 import Table from "../../../part/Table";
 import Paging from "../../../part/Paging";
 import SearchField from "../../../part/SearchField";
-import Button from "../../../part/Button";
 import Filter from "../../../part/Filter";
 import Breadcrumbs from "../../../part/Breadcrumbs";
 import DropDown from "../../../part/Dropdown";
@@ -85,7 +83,7 @@ export default function Index({ onChangePage }) {
     fetchData();
   }, [searchKeyword, selectedSort, pageCurrent, selectedStatus]);
 
-  const handleFinal = async (id, status) => {
+  const handleFinal = async (idSA, idJadwal, status) => {
     let apiCheck = "";
     let apiFinal = "";
     let pesan = "";
@@ -98,10 +96,16 @@ export default function Index({ onChangePage }) {
       apiCheck = "TransaksiTemuan/CheckTemuan";
       apiFinal = "TransaksiTemuan/FinalTemuan";
       pesan = "Temuan";
+    } else if (status === "Menunggu Analisa Temuan") {
+      apiCheck = "TransaksiAnalisaTemuan/CheckAnalisaTemuan";
+      apiFinal = "TransaksiAnalisaTemuan/FinalAnalisaTemuan";
+      pesan = "Analisa Temuan";
     } else {
       return;
     }
-    const response = await useFetch(`${API_LINK}/${apiCheck}`, { idJad: id });
+    const response = await useFetch(`${API_LINK}/${apiCheck}`, {
+      id: idSA,
+    });
 
     if (response[0].hasil === true) {
       const confirm = await SweetAlert(
@@ -120,18 +124,14 @@ export default function Index({ onChangePage }) {
         try {
           const response = await useFetch(
             `${API_LINK}/${apiFinal}`,
-            { idSA: id },
+            { id: idJadwal },
             "POST"
           );
 
           if (response === "ERROR")
             throw new Error("Gagal kirim Self Assessment");
 
-          SweetAlert(
-            "Berhasil",
-            "Self Assement Berhasil difinalkan",
-            "success"
-          );
+          SweetAlert("Berhasil", pesan + "Berhasil difinalkan", "success");
 
           fetchData();
         } catch (err) {
@@ -142,7 +142,9 @@ export default function Index({ onChangePage }) {
     } else {
       SweetAlert(
         "Data belum lengkap",
-        "Data Self Assesment belum lengkap, harap lakukan pengecekan dan lengkapi terlebih dahulu",
+        "Data " +
+          pesan +
+          " belum lengkap, harap lakukan pengecekan dan lengkapi terlebih dahulu",
         "warning"
       );
     }
@@ -201,7 +203,7 @@ export default function Index({ onChangePage }) {
                   arrHeader={[
                     "No",
                     "Kode Bagian Auditee",
-                    "Nama Bagian Auditee",
+                    "Auditee",
                     "Lead Auditor",
                     "Auditor",
                     "Tanggal Audit (Rencana)",
@@ -213,9 +215,10 @@ export default function Index({ onChangePage }) {
                   ]}
                   data={filteredData.map((item, index) => ({
                     Key: item.idSA,
+                    idJadwal: item.idja,
                     No: (pageCurrent - 1) * pageSize + index + 1,
                     "Kode Bagian Auditee": item.kodebad,
-                    "Nama Bagian Auditee": item.namabad,
+                    Auditee: item.namaKadep,
                     "Lead Auditor": item.namaLeadAuditor,
                     Auditor: item.namaAuditor,
                     "Tanggal Audit (Rencana)": new Date(
@@ -305,18 +308,27 @@ export default function Index({ onChangePage }) {
                         ) {
                           return ["Self Assessment", "Temuan", "Edit", "Send"];
                         } else {
-                          return ["Self Assessment"]; // Default return if the condition is not met
+                          return ["Self Assessment"];
                         }
+
                       case "Menunggu Analisa Temuan":
                         if (
                           item.kadep === activeUser ||
                           item.pic1 === activeUser ||
                           item.pic2 === activeUser
                         ) {
-                          return ["Self Assessment", "Temuan", "Edit", "Send"];
+                          return [
+                            "Self Assessment",
+                            "Temuan",
+                            "AnalisaTemuan",
+                            "Send",
+                          ];
                         } else {
-                          return ["Self Assessment", "Temuan"]; // Default return if the condition is not met
+                          return ["Self Assessment", "Temuan"];
                         }
+                      case "Monitoring":
+                        return ["Self Assessment", "Temuan", "AnalisaTemuan"];
+
                       default:
                         return ["Self Assessment"];
                     }
@@ -362,7 +374,16 @@ export default function Index({ onChangePage }) {
                       breadcrumbs: breadcrumbs,
                     })
                   }
-                  onSend={(item) => handleFinal(item.Key, item.Status)}
+                  onAnalisaTemuan={(item) =>
+                    onChangePage("analisaTemuan", {
+                      idData: item.Key,
+                      instrumen: item.instrumen,
+                      breadcrumbs: breadcrumbs,
+                    })
+                  }
+                  onSend={(item) =>
+                    handleFinal(item.Key, item.idJadwal, item.Status)
+                  }
                 />
 
                 <Paging

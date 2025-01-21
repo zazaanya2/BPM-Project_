@@ -2,7 +2,7 @@ export default function Icon({
   type = "Reguler",
   name,
   cssClass = "",
-  ukuran = "16px", // default ukuran
+  ukuran = "1.2rem", // default ukuran
   margin = "0px", // default margin
   ...props
 }) {
@@ -17,6 +17,8 @@ export default function Icon({
       ? "fi fi-block"
       : type === "full"
       ? "fi fi-sr"
+      : type === "Solid"
+      ? "fi fi-ss"
       : "fi fi-rr";
 
   const iconClass = `${prefix}-${name} ${cssClass}`;
