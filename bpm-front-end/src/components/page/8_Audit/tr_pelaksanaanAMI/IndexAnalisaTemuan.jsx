@@ -11,6 +11,7 @@ import Loading from "../../../part/Loading";
 import HeaderText from "../../../part/HeaderText";
 import PageTitleNav from "../../../part/PageTitleNav";
 import DetailData from "../../../part/DetailData";
+import SweetAlert from "../../../util/SweetAlert";
 
 const breadcrumbs = [{ label: "Evaluasi" }, { label: "Audit Mutu Internal" }];
 
@@ -30,6 +31,7 @@ export default function Index({ onChangePage }) {
   const [filteredData, setFilteredData] = useState([]);
 
   const idData = location.state?.idData;
+  const idJadwal = location.state?.idJadwal;
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -69,6 +71,65 @@ export default function Index({ onChangePage }) {
   useEffect(() => {
     fetchData();
   }, [pageCurrent, idData]);
+
+  const handleFinal = async (idSead, status) => {
+    let apiCheck = "";
+    let apiFinal = "";
+    let pesan = "";
+
+    if (status === "Menunggu Monitoring") {
+      apiCheck = "TransaksiMonitoring/CheckMonitoring";
+      apiFinal = "TransaksiMonitoring/FinalMonitoring";
+      pesan = "Monitoring Temuan";
+    } else {
+      return;
+    }
+    const response = await useFetch(`${API_LINK}/${apiCheck}`, {
+      id: idSead,
+    });
+
+    if (response[0].hasil === true) {
+      const confirm = await SweetAlert(
+        "Apakah Anda yakin ingin Finalkan " + pesan + " ini?",
+        "Data tidak akan bisa diubah jika " +
+          pesan +
+          " Audit Mutu Internal sudah difinalkan",
+        "warning",
+        "Ya, Finalkan",
+        null,
+        "",
+        true
+      );
+
+      if (confirm) {
+        try {
+          const response = await useFetch(
+            `${API_LINK}/${apiFinal}`,
+            { id: idSead },
+            "POST"
+          );
+
+          if (response === "ERROR")
+            throw new Error("Gagal kirim Self Assessment");
+
+          SweetAlert("Berhasil", pesan + "Berhasil difinalkan", "success");
+
+          fetchData();
+        } catch (err) {
+          console.error(err);
+          SweetAlert("Gagal", "Terjadi kesalahan saat kirim jadwal", "error");
+        }
+      }
+    } else {
+      SweetAlert(
+        "Data belum lengkap",
+        "Data " +
+          pesan +
+          " belum diisi, harap lakukan pengecekan dan lengkapi terlebih dahulu",
+        "warning"
+      );
+    }
+  };
 
   if (error) return <p>{error}</p>;
   if (loading) return <Loading />;
@@ -243,12 +304,13 @@ export default function Index({ onChangePage }) {
                             item.idAuditor === activeUser ||
                             item.idLeadAuditor === activeUser
                           ) {
-                            return ["Edit"];
+                            return ["Edit", "Send"];
                           } else {
                             return ["Detail"]; // Default return if the condition is not met
                           }
+
                         default:
-                          return [""];
+                          return ["Detail"];
                       }
                     }}
                     onEdit={(item) => {
@@ -259,18 +321,33 @@ export default function Index({ onChangePage }) {
                           breadcrumbs: breadcrumbs,
                           idAnalisa: idData,
                         });
-                      } else {
-                        return;
+                      } else if (item.Status === "Menunggu Monitoring") {
+                        onChangePage("editMonitoring", {
+                          idData: item.Key,
+                          instrumen: item.instrumen,
+                          breadcrumbs: breadcrumbs,
+                          idAnalisa: idData,
+                        });
                       }
                     }}
-                    onDetail={(item) =>
-                      onChangePage("detailAnalisaTemuan", {
-                        idData: item.Key,
-                        instrumen: item.instrumen,
-                        breadcrumbs: breadcrumbs,
-                        idAnalisa: idData,
-                      })
-                    }
+                    onDetail={(item) => {
+                      if (item.Status === "Menunggu Monitoring") {
+                        onChangePage("detailAnalisaTemuan", {
+                          idData: item.Key,
+                          instrumen: item.instrumen,
+                          breadcrumbs: breadcrumbs,
+                          idAnalisa: idData,
+                        });
+                      } else if (item.Status === "Menunggu Verifikasi") {
+                        onChangePage("detailMonitoring", {
+                          idData: item.Key,
+                          instrumen: item.instrumen,
+                          breadcrumbs: breadcrumbs,
+                          idAnalisa: idData,
+                        });
+                      }
+                    }}
+                    onSend={(item) => handleFinal(item.Key, item.Status)}
                   />
 
                   <Paging

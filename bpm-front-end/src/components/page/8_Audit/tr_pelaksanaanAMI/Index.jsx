@@ -100,6 +100,10 @@ export default function Index({ onChangePage }) {
       apiCheck = "TransaksiAnalisaTemuan/CheckAnalisaTemuan";
       apiFinal = "TransaksiAnalisaTemuan/FinalAnalisaTemuan";
       pesan = "Analisa Temuan";
+    } else if (status === "Monitoring") {
+      apiCheck = "TransaksiMonitoring/CheckAllMonitoring";
+      apiFinal = "TransaksiMonitoring/FinalAllMonitoring";
+      pesan = "Monitoring";
     } else {
       return;
     }
@@ -327,7 +331,30 @@ export default function Index({ onChangePage }) {
                           return ["Self Assessment", "Temuan"];
                         }
                       case "Monitoring":
-                        return ["Self Assessment", "Temuan", "AnalisaTemuan"];
+                        if (
+                          item.idAuditor === activeUser ||
+                          item.idLeadAuditor === activeUser
+                        ) {
+                          return [
+                            "Self Assessment",
+                            "Temuan",
+                            "AnalisaTemuan",
+                            "Send",
+                          ];
+                        } else {
+                          return ["Self Assessment", "Temuan", "AnalisaTemuan"];
+                        }
+                      case "Menunggu Verifikasi Akhir":
+                        if (role === "ROL01") {
+                          return [
+                            "Self Assessment",
+                            "Temuan",
+                            "AnalisaTemuan",
+                            "Send",
+                          ];
+                        } else {
+                          return ["Self Assessment", "Temuan", "AnalisaTemuan"];
+                        }
 
                       default:
                         return ["Self Assessment"];

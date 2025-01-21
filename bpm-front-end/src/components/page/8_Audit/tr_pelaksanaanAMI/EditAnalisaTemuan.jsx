@@ -9,7 +9,6 @@ import { useIsMobile } from "../../../util/useIsMobile";
 import { API_LINK } from "../../../util/Constants";
 import { useFetch } from "../../../util/useFetch";
 import TextArea from "../../../part/TextArea";
-import { decodeHtml } from "../../../util/DecodeHtml";
 import Loading from "../../../part/Loading";
 import DetailData from "../../../part/DetailData";
 import FileUploadMulti from "../../../part/FileUploadMulti";
@@ -123,6 +122,7 @@ export default function EditAnalisaTemuan({ onChangePage }) {
     const updatedData = { ...formData, file: uploadedFile[0] };
     console.log(updatedData);
 
+    setLoading(true);
     try {
       const createResponse = await useFetch(
         `${API_LINK}/TransaksiAnalisaTemuan/EditAnalisaTemuan`,
@@ -148,6 +148,8 @@ export default function EditAnalisaTemuan({ onChangePage }) {
     } catch (error) {
       console.error("Error:", error.message);
       SweetAlert("Gagal!", error.message, "error", "OK");
+    } finally {
+      setLoading(false);
     }
   };
 

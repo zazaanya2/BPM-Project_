@@ -8,8 +8,6 @@ import SweetAlert from "../../../util/SweetAlert";
 import { useIsMobile } from "../../../util/useIsMobile";
 import { API_LINK } from "../../../util/Constants";
 import { useFetch } from "../../../util/useFetch";
-import DropDown from "../../../part/Dropdown";
-import TextArea from "../../../part/TextArea";
 import CheckBox from "../../../part/CheckBox";
 import Loading from "../../../part/Loading";
 
