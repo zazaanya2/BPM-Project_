@@ -152,18 +152,6 @@ export default function Edit({ onChangePage }) {
       tahunKadaluarsaRef.current?.focus();
       return;
     }
-    const dokumenDate = new Date(formData.tahunDokumen);
-    const kadaluarsaDate = new Date(formData.tahunKadaluarsa);
-    if (kadaluarsaDate <= dokumenDate) {
-      SweetAlert(
-        "Validasi Gagal",
-        "Tahun Kadaluarsa harus lebih besar dari Tahun Dokumen.",
-        "error",
-        "OK"
-      );
-      tahunKadaluarsaRef.current?.focus();
-      return;
-    }
 
     setFormData((prevData) => {
       setLoading(true);
@@ -221,6 +209,7 @@ export default function Edit({ onChangePage }) {
                   setFormData({ ...formData, judulDokumen: e.target.value })
                 }
                 isRequired={true}
+                disabled
               />
             </div>
             <div className="row">

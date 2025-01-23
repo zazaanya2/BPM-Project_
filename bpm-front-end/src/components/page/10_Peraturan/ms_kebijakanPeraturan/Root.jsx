@@ -15,43 +15,43 @@ import Detail from "../Detail";
 import ScrollToTop from "../../../part/ScrollToTop";
 import ProtectedRoute from "../../../util/ProtectedRoute"; // Import the ProtectedRoute component
 
-export default function PeraturanEksternal() {
+export default function PeraturanKebijakan() {
   const navigate = useNavigate();
   const location = useLocation();
   const handlePageChange = (page, withState = {}) => {
     switch (page) {
       case "index":
-        navigate("/peraturan/eksternal", {
+        navigate("/peraturan/kebijakan", {
           state: { mode: "index", ...withState },
         });
         break;
       case "add":
-        navigate("/peraturan/eksternal", {
+        navigate("/peraturan/kebijakan", {
           state: { mode: "add", ...withState },
         });
         break;
       case "edit":
-        navigate("/peraturan/eksternal", {
+        navigate("/peraturan/kebijakan", {
           state: { mode: "edit", ...withState },
         });
         break;
       case "editfile":
-        navigate("/peraturan/eksternal", {
+        navigate("/peraturan/kebijakan", {
           state: { mode: "editfile", ...withState },
         });
         break;
       case "readrevisi":
-        navigate("/peraturan/eksternal", {
+        navigate("/peraturan/kebijakan", {
           state: { mode: "readrevisi", ...withState },
         });
         break;
       case "readunduhan":
-        navigate("/peraturan/eksternal", {
+        navigate("/peraturan/kebijakan", {
           state: { mode: "readunduhan", ...withState },
         });
         break;
       case "detail":
-        navigate("/peraturan/eksternal", {
+        navigate("/peraturan/kebijakan", {
           state: { mode: "detail", ...withState },
         });
         break;

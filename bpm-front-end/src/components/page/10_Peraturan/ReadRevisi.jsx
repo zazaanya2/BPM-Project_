@@ -234,14 +234,22 @@ export default function Read({ onChangePage }) {
                 Key: item.id,
                 No: indexOfFirstData + index + 1,
                 "Revisi Ke": item.revisiDokFormatted,
-                "Judul Dokumen": item.judulDok,
+                "Judul Dokumen": (
+                  <a
+                    href={`${PERATURAN_FILE_LINK}/${item.fileDok}`} // URL untuk mengunduh file
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {item.judulDok}{" "}
+                    {/* Judul dokumen yang akan ditampilkan sebagai link */}
+                  </a>
+                ),
                 "Nama Berkas (File)": item.fileDok,
                 "Tanggal Unggah": item.tglUnggah,
                 "Di Unggah Oleh": item.createdBy,
                 status: item.status,
               }))}
-              linkColumns={["Nama Berkas (File)"]}
-              FILE_LINK={PERATURAN_FILE_LINK}
+              linkColumns={["Judul Dokumen"]}
               aksiIs={false}
             />
 

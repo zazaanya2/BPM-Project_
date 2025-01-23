@@ -4,7 +4,7 @@ import Paging from "../../part/Paging";
 import PageTitleNav from "../../part/PageTitleNav";
 import Button from "../../part/Button";
 import { useLocation, useNavigate } from "react-router-dom";
-import { API_LINK, ROOT_LINK } from "../../util/Constants";
+import { API_LINK, PERATURAN_FILE_LINK, ROOT_LINK } from "../../util/Constants";
 import { useFetch } from "../../util/useFetch";
 import Loading from "../../part/Loading";
 import Filter from "../../part/Filter";
@@ -31,6 +31,7 @@ const statusFilterSort = [
 ];
 const pageSize = 10;
 
+//read data
 export default function Read({ onChangePage }) {
   const activeUser = Cookies.get("activeUser");
   let role = ""; // Jika undefined, gunakan nilai default
@@ -50,9 +51,22 @@ export default function Read({ onChangePage }) {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedJudul, setSelectedJudul] = useState("");
+  const [sortOrder, setSortOrder] = useState(""); // Untuk menyimpan urutan yang dipilih
+  const [sortedData, setSortedData] = useState(filteredData); // Data yang sudah diurutkan
 
   const indexOfLastData = pageCurrent * pageSize;
   const indexOfFirstData = indexOfLastData - pageSize;
+
+  const sortData = (order) => {
+    let sorted = [...filteredData]; // Salin data asli
+
+    if (order === "ASC") {
+      sorted.sort((a, b) => a.judulDok.localeCompare(b.judulDok));
+    } else if (order === "DESC") {
+      sorted.sort((a, b) => b.judulDok.localeCompare(a.judulDok));
+    }
+    setSortedData(sorted); // Perbarui data yang sudah diurutkan
+  };
 
   if (activeUser) {
     role = JSON.parse(activeUser).RoleID.slice(0, 5);
@@ -62,6 +76,12 @@ export default function Read({ onChangePage }) {
 
   const handlePageNavigation = (page) => {
     setPageCurrent(page);
+  };
+
+  const handleSortChange = (e) => {
+    const selectedOrder = e.target.value;
+    setSortOrder(selectedOrder);
+    sortData(selectedOrder); // Memanggil fungsi sortData setelah perubahan urutan
   };
 
   const fetchEvents = async () => {
@@ -80,6 +100,9 @@ export default function Read({ onChangePage }) {
         "POST"
       );
 
+      console.log(selectedJudul);
+      console.log(data);
+
       if (data.length > 0 && data[0].TotalCount !== undefined) {
         setTotalData(data[0].TotalCount); // Set hanya sekali
       }
@@ -95,6 +118,7 @@ export default function Read({ onChangePage }) {
       });
 
       setFilteredData(formattedEvents);
+      setSortedData(formattedEvents);
     } catch (error) {
       setError("Gagal mengambil data kegiatan");
     } finally {
@@ -148,6 +172,7 @@ export default function Read({ onChangePage }) {
     setSelectedYear("");
     setSelectedStatus("Aktif");
     setSelectedJudul("");
+    sortData("");
   };
 
   const handleToggle = (id) => {
@@ -210,62 +235,65 @@ export default function Read({ onChangePage }) {
   };
 
   const handleDownloadClick = async (id) => {
+    console.log(id);
     if (!id) {
       SweetAlert("Peringatan", "ID file tidak tersedia.", "warning");
       return;
     }
 
     try {
+      // Mencari item yang sesuai dengan ID
       const foundItem = filteredData.find((item) => item.id === id);
-      const namaInformasi =
-        foundItem && foundItem["fileDok"] ? foundItem["fileDok"] : `file_${id}`;
 
+      // Jika tidak ditemukan, tampilkan peringatan
+      if (!foundItem) {
+        SweetAlert("Error", "Data tidak ditemukan.", "error");
+        return;
+      }
+
+      // Mendapatkan nama file dan informasi lainnya
+      const namaInformasi = foundItem.fileDok || `file_${id}`;
       const judulDok = foundItem.judulDok;
       const controlDok = foundItem.controlDok;
       const referensi = foundItem.referensiDok;
       const tanggal = new Date().toLocaleString();
 
-      const response = await fetch(`${API_LINK}/MasterPeraturan/DownloadFile`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id,
-          metadata: {
-            JudulDokumen: judulDok,
-            JenisDokumen: controlDok,
-            DiunduhOleh: namaPengguna,
-            Jabatan: roleNama,
-            TanggalUnduh: tanggal,
-          },
-        }),
-      });
+      // Membuat URL untuk file berdasarkan nama file
+      const fileUrl = PERATURAN_FILE_LINK + namaInformasi;
 
-      if (!response.ok) {
-        throw new Error("Gagal mengunduh file.");
-      } else {
-        const data = await useFetch(
-          `${API_LINK}/MasterPeraturan/CreateUnduhanPeraturan`,
-          {
-            idDok: id,
-            referensi: referensi,
-            role: role,
-            roleNama: roleNama,
-          },
-          "POST"
-        );
+      // Mengirim data ke server untuk mencatat unduhan
+      const response = await useFetch(
+        `${API_LINK}/MasterPeraturan/CreateUnduhanPeraturan`,
+        {
+          idDok: id,
+          referensi: referensi,
+          role: role,
+          roleNama: roleNama,
+        },
+        "POST"
+      );
+
+      // Mengambil file menggunakan fetch
+      const fileResponse = await fetch(fileUrl);
+      if (!fileResponse.ok) {
+        throw new Error("Gagal mendownload file.");
       }
 
-      const blob = await response.blob();
+      // Mendapatkan file dalam bentuk Blob
+      const blob = await fileResponse.blob();
+
+      // Membuat URL untuk file yang diunduh
       const url = window.URL.createObjectURL(blob);
 
+      // Membuat elemen link untuk memulai unduhan
       const link = document.createElement("a");
       link.href = url;
-      link.download = namaInformasi;
+      link.download = namaInformasi; // Menentukan nama file saat diunduh
       document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      link.click(); // Mengklik link untuk memulai unduhan
+      document.body.removeChild(link); // Menghapus elemen setelah selesai
+
+      // Membersihkan URL object
       window.URL.revokeObjectURL(url);
     } catch (error) {
       SweetAlert("Error", error.message, "error");
@@ -319,8 +347,8 @@ export default function Read({ onChangePage }) {
                       <DropDown
                         arrData={dataFilterSort}
                         label="Urut Bedasarkan"
-                        value={selectedJudul}
-                        onChange={(e) => setSelectedJudul(e.target.value)}
+                        value={sortOrder}
+                        onChange={handleSortChange}
                       />
                     </div>
 
@@ -364,11 +392,12 @@ export default function Read({ onChangePage }) {
             {role === "ROL01" ? (
               <Table
                 arrHeader={["No", "Judul Dokumen"]}
-                data={filteredData.map((item, index) => ({
+                data={sortedData.map((item, index) => ({
                   Key: item.id,
                   No: indexOfFirstData + index + 1,
                   "Judul Dokumen": item.judulDok,
                   status: item.status,
+                  fileDok: item.fileDok,
                 }))}
                 actions={(row) => {
                   // Jika status "Tidak Aktif", hanya tampilkan Toggle
