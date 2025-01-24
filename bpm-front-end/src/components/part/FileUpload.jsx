@@ -63,7 +63,11 @@ const FileUpload = forwardRef(function FileUpload(
 
   useImperativeHandle(ref, () => ({
     validate() {
-      if (!isRequired || selectedFile == null) {
+      /**
+       * dengan menggunakan kondisi ini (!isRequired || selectedFile == null)
+       * jika input not required dan file nya diisi tetap muncul error
+       */
+      if (isRequired && selectedFile == null) {
         setFileError("Field ini wajib di isi");
         return false;
       }

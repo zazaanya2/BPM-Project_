@@ -173,6 +173,25 @@ export default function Add({ onChangePage }) {
     console.log(formData);
 
     try {
+      const result = await useFetch(
+        `${API_LINK}/MasterBagianAuditee/CheckBagianAuditeeExist`,
+        {
+          param1: formData.kodeBad,
+          param2: formData.namaBad,
+        },
+        "POST"
+      );
+
+      if (result.length > 0) {
+        SweetAlert(
+          "Gagal!",
+          "Data bagian auditee sudah ada",
+          "error",
+          "OK"
+        );
+        return;
+      }
+
       const createResponse = await useFetch(
         `${API_LINK}/MasterBagianAuditee/CreateBagianAuditee`,
         formData,

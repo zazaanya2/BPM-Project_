@@ -183,7 +183,7 @@ export default function EditFile({ onChangePage }) {
                 </div>
                 <div className="col-lg-6 col-md-6">
                   <DetailData
-                    label="Tahun Kadaluarsa"
+                    label="Tahun Kadaluwarsa"
                     isi={formData.kadaluarsaDok || ""}
                   />
                 </div>
