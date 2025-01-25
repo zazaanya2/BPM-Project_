@@ -258,6 +258,9 @@ export default function Index({ onChangePage }) {
                         ? "Belum Audit"
                         : "Ada Temuan",
 
+                    "Jumlah Temuan": item.isTemuan || "0",
+                    "Temuan Closed": item.totaltemuanClosed || "0",
+
                     Status: (() => {
                       switch (item.status) {
                         case "Self Assessment (Draft)":

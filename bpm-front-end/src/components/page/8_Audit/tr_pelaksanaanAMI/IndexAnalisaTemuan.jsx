@@ -40,6 +40,9 @@ export default function Index({ onChangePage }) {
     setPageCurrent(page);
   };
 
+  const [temuanBelum, setTemuanBelum] = useState(0);
+  const [temuanClose, setTemuanClose] = useState(0);
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -59,6 +62,17 @@ export default function Index({ onChangePage }) {
         const arrResult = Object.values(result);
         setFilteredData(arrResult);
         setTotalData(arrResult[0].totalData);
+
+        const closedCount = arrResult.filter(
+          (data) => data.statusTemuan === "Closed"
+        ).length;
+
+        const belumCount = arrResult.filter(
+          (data) => data.statusTemuan !== "Closed"
+        ).length;
+
+        setTemuanClose(closedCount);
+        setTemuanBelum(belumCount);
       }
     } catch (err) {
       setError("Gagal mengambil data: " + err);
@@ -216,17 +230,23 @@ export default function Index({ onChangePage }) {
                               : "-"
                           }
                         />
-                        <DetailData label="Jumlah Terselesaikan" isi="-" />
+                        <DetailData
+                          label="Jumlah Terselesaikan"
+                          isi={temuanClose}
+                        />
                       </div>
                       <div className="col-4">
                         <DetailData
                           label="Waktu Awal"
                           isi={filteredData[0]?.waktuAwal + " WIB"}
                         />
-                        <DetailData label="Jumlah Temuan" isi="-" />
+                        <DetailData
+                          label="Jumlah Temuan"
+                          isi={filteredData[0]?.jumlahTemuan}
+                        />
                         <DetailData
                           label="Jumlah Belum Terselesaikan"
-                          isi="-"
+                          isi={temuanBelum}
                         />
                       </div>
                       <div className="col-4">
