@@ -27,9 +27,9 @@ export default function Add({ onChangePage }) {
     kriteria: "",
     pertanyaan: "",
     pertanyaanLanjutan: "",
-    butuhDokumen: [],
-    jenisIKT: [],
-    bagianAuditee: [],
+    butuhDokumen: "",
+    jenisIKT: "",
+    bagianAuditee: "",
   });
 
   const [kriteria, setKriteria] = useState([]);
@@ -212,7 +212,7 @@ export default function Add({ onChangePage }) {
                 arrData={butuhDokumen}
                 label="Dokumen Pendukung"
                 name="butuhDokumen"
-                values={formData.butuhDokumen || []} // Set default selected values here
+                values={formData.butuhDokumen || ""} // Set default selected values here
                 onChange={handleChange}
                 col="col-12"
               />
@@ -230,7 +230,7 @@ export default function Add({ onChangePage }) {
                 arrData={jenisIKT}
                 label="Apakah berjenis IKT?"
                 name="jenisIKT"
-                values={formData.jenisIKT || []} // Set default selected values here
+                values={formData.jenisIKT || ""} // Set default selected values here
                 onChange={handleChange}
                 col="col-12"
               />

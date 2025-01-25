@@ -120,7 +120,6 @@ export default function EditAnalisaTemuan({ onChangePage }) {
     }
 
     const updatedData = { ...formData, file: uploadedFile[0] };
-    console.log(updatedData);
 
     setLoading(true);
     try {
@@ -389,7 +388,12 @@ export default function EditAnalisaTemuan({ onChangePage }) {
                     type="button"
                     label="Batal"
                     width="100%"
-                    onClick={() => onChangePage("index")}
+                    onClick={() =>
+                      onChangePage("analisaTemuan", {
+                        idData: idAnalisa,
+                        breadcrumbs: location.state.breadcrumbs,
+                      })
+                    }
                   />
                 </div>
               </div>

@@ -52,7 +52,6 @@ export default function Index({ onChangePage }) {
         }
       );
 
-      console.log(result);
       if (result === "ERROR" || result === null || result.length === 0) {
         setFilteredData([]);
         setTotalData(0);
@@ -309,6 +308,13 @@ export default function Index({ onChangePage }) {
                             return ["Detail"]; // Default return if the condition is not met
                           }
 
+                        case "Menunggu Verifikasi":
+                          if (role === "ROL01") {
+                            return ["Edit"];
+                          } else {
+                            return ["Detail"];
+                          }
+
                         default:
                           return ["Detail"];
                       }
@@ -328,6 +334,13 @@ export default function Index({ onChangePage }) {
                           breadcrumbs: breadcrumbs,
                           idAnalisa: idData,
                         });
+                      } else if (item.Status === "Menunggu Verifikasi") {
+                        onChangePage("editVerifikasi", {
+                          idData: item.Key,
+                          instrumen: item.instrumen,
+                          breadcrumbs: breadcrumbs,
+                          idAnalisa: idData,
+                        });
                       }
                     }}
                     onDetail={(item) => {
@@ -340,6 +353,13 @@ export default function Index({ onChangePage }) {
                         });
                       } else if (item.Status === "Menunggu Verifikasi") {
                         onChangePage("detailMonitoring", {
+                          idData: item.Key,
+                          instrumen: item.instrumen,
+                          breadcrumbs: breadcrumbs,
+                          idAnalisa: idData,
+                        });
+                      } else if (item.Status === "Closed") {
+                        onChangePage("detailVerifikasi", {
                           idData: item.Key,
                           instrumen: item.instrumen,
                           breadcrumbs: breadcrumbs,

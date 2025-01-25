@@ -104,13 +104,19 @@ export default function Index({ onChangePage }) {
       apiCheck = "TransaksiMonitoring/CheckAllMonitoring";
       apiFinal = "TransaksiMonitoring/FinalAllMonitoring";
       pesan = "Monitoring";
+    } else if (status === "Menunggu Verifikasi Akhir") {
+      apiCheck = "TransaksiVerifikasi/CheckAllVerifikasi";
+      apiFinal = "TransaksiVerifikasi/FinalAllVerifikasi";
+      pesan = "Verifikasi";
     } else {
       return;
     }
+    setLoading(true);
     const response = await useFetch(`${API_LINK}/${apiCheck}`, {
       id: idSA,
     });
 
+    setLoading(false);
     if (response[0].hasil === true) {
       const confirm = await SweetAlert(
         "Apakah Anda yakin ingin Finalkan " + pesan + " ini?",
@@ -125,6 +131,7 @@ export default function Index({ onChangePage }) {
       );
 
       if (confirm) {
+        setLoading(true);
         try {
           const response = await useFetch(
             `${API_LINK}/${apiFinal}`,
@@ -135,12 +142,14 @@ export default function Index({ onChangePage }) {
           if (response === "ERROR")
             throw new Error("Gagal kirim Self Assessment");
 
-          SweetAlert("Berhasil", pesan + "Berhasil difinalkan", "success");
+          SweetAlert("Berhasil", pesan + " Berhasil difinalkan", "success");
 
           fetchData();
         } catch (err) {
           console.error(err);
           SweetAlert("Gagal", "Terjadi kesalahan saat kirim jadwal", "error");
+        } finally {
+          setLoading(false);
         }
       }
     } else {
@@ -355,6 +364,9 @@ export default function Index({ onChangePage }) {
                         } else {
                           return ["Self Assessment", "Temuan", "AnalisaTemuan"];
                         }
+
+                      case "Final":
+                        return ["Self Assessment", "Temuan", "AnalisaTemuan"];
 
                       default:
                         return ["Self Assessment"];

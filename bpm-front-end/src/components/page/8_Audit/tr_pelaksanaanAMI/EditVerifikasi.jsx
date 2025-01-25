@@ -9,24 +9,26 @@ import Loading from "../../../part/Loading";
 import DetailData from "../../../part/DetailData";
 import FileUploadMulti from "../../../part/FileUploadMulti";
 import Icon from "../../../part/Icon";
-import InputField from "../../../part/InputField";
-import Button from "../../../part/Button";
 import Table from "../../../part/Table";
+import TextArea from "../../../part/TextArea";
+import Button from "../../../part/Button";
+import FileUpload from "../../../part/FileUpload";
+import { uploadFile } from "../../../util/UploadFile";
 import SweetAlert from "../../../util/SweetAlert";
 
-export default function EditMonitoring({ onChangePage }) {
+export default function EditVerifikasi({ onChangePage }) {
   const isMobile = useIsMobile();
-  const title = "Detail Monitoring";
+  const title = "Detail Verifikasi";
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const idData = location.state?.idData;
   const idAnalisa = location.state?.idAnalisa;
   const [result, setResult] = useState("");
-
   const [formData, setFormData] = useState({
     id: idData,
-    monitoring: "",
+    verifikasi: "",
+    file: "",
   });
 
   useEffect(() => {
@@ -65,6 +67,7 @@ export default function EditMonitoring({ onChangePage }) {
           id: idData,
         }
       );
+
       if (result === "ERROR" || result === null || result.length === 0) {
         setFilteredData([]);
       } else {
@@ -95,69 +98,72 @@ export default function EditMonitoring({ onChangePage }) {
     });
   };
 
-  const handleDelete = async (id) => {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const handleFileChange = (file) => {
+    setSelectedFile(file);
+  };
+
+  const verifikasiRef = useRef();
+
+  const handleSubmit = async () => {
+    const isVerifikasi = verifikasiRef.current?.validate();
+
+    if (!isVerifikasi) {
+      verifikasiRef.current?.focus();
+      return;
+    }
+
     const confirm = await SweetAlert(
-      "Konfirmasi",
-      "Apakah Anda yakin ingin menghapus jadwal AMI ini?",
+      "Apakah Anda yakin ingin melakukan Verifikasi tindakan ini?",
+      "Data tidak akan bisa diubah jika Verifikasi Tindakan Audit Mutu Internal sudah difinalkan",
       "warning",
-      "Ya, Hapus",
+      "Ya, Finalkan",
       null,
       "",
       true
     );
 
     if (confirm) {
+      setLoading(true);
+      let uploadedFile = "";
+      if (selectedFile) {
+        const folderName = "Audit";
+        const filePrefix = selectedFile.name
+          .replace(/\.[^/.]+$/, "")
+          .replace(/\s+/g, "_");
+        uploadedFile = await uploadFile(selectedFile, folderName, filePrefix);
+      }
+
+      const updatedData = { ...formData, file: uploadedFile[0] || "" };
+
       try {
-        const response = await useFetch(
-          `${API_LINK}/TransaksiMonitoring/DeleteMonitoring`,
-          { idMonitor: id },
+        const createResponse = await useFetch(
+          `${API_LINK}/TransaksiVerifikasi/CreateVerifikasi`,
+          updatedData,
           "POST"
         );
 
-        if (response === "ERROR") throw new Error("Gagal menghapus kegiatan");
-
-        SweetAlert("Berhasil", "Data Berhasil Dihapus", "success");
-
-        setFilteredData((prevData) =>
-          prevData.filter((item) => item.idMonitoring !== id)
-        );
-      } catch (err) {
-        console.error(err);
-        SweetAlert(
-          "Gagal",
-          "Terjadi kesalahan saat menghapus kegiatan",
-          "error"
-        );
+        if (createResponse === "ERROR") {
+          throw new Error("Gagal menambah data");
+        } else {
+          SweetAlert(
+            "Berhasil!",
+            "Verifikasi Tindakan Berhasil, status temuan menjadi closed",
+            "success",
+            "OK"
+          ).then(() =>
+            onChangePage("analisaTemuan", {
+              idData: idAnalisa,
+              breadcrumbs: location.state.breadcrumbs,
+            })
+          );
+        }
+      } catch (error) {
+        console.error("Error:", error.message);
+        SweetAlert("Gagal!", error.message, "error", "OK");
+      } finally {
+        setLoading(false);
       }
-    }
-  };
-
-  const monitoringRef = useRef();
-
-  const handleSubmit = async () => {
-    setLoading(true);
-    try {
-      const createResponse = await useFetch(
-        `${API_LINK}/TransaksiMonitoring/CreateMonitoring`,
-        formData,
-        "POST"
-      );
-
-      if (createResponse === "ERROR") {
-        throw new Error("Gagal menambah data");
-      } else {
-        SweetAlert(
-          "Berhasil!",
-          "Monitoring berhasil ditambahkan.",
-          "success",
-          "OK"
-        );
-      }
-    } catch (error) {
-      console.error("Error:", error.message);
-    } finally {
-      fetchData();
-      setLoading(false);
     }
   };
 
@@ -357,29 +363,6 @@ export default function EditMonitoring({ onChangePage }) {
                 </div>
 
                 <div className="p-3">
-                  <div className="row">
-                    <div className="col-9">
-                      <InputField
-                        ref={monitoringRef}
-                        value={formData.monitoring}
-                        onChange={handleChange}
-                        isRequired={true}
-                        id="monitoring"
-                        type="text"
-                      />
-                    </div>
-                    <div className="col-3">
-                      <Button
-                        iconName="add"
-                        classType="primary"
-                        type="Tambahkan"
-                        label="Tambahkan Monitoring"
-                        width="100%"
-                        onClick={handleSubmit}
-                      />
-                    </div>
-                  </div>
-
                   <Table
                     arrHeader={["No", "Status", "Tanggal"]}
                     data={filteredData.map((item, index) => ({
@@ -398,9 +381,61 @@ export default function EditMonitoring({ onChangePage }) {
                           )
                         : "-",
                     }))}
-                    actions={["Delete"]}
-                    onDelete={(item) => handleDelete(item.Key)}
+                    aksiIs={false}
                   />
+                </div>
+              </div>
+
+              <div className="border bg-white rounded mt-5 mb-5">
+                <div
+                  className="ps-3 rounded"
+                  style={{ backgroundColor: "#2654A1", fontSize: "1.5rem" }}
+                >
+                  <strong className="text-white">Verifikasi Akhir</strong>
+                </div>
+
+                <div className="p-3">
+                  <TextArea
+                    ref={verifikasiRef}
+                    label="Verifikasi Tindakan"
+                    value={formData.verifikasi || ""}
+                    onChange={handleChange}
+                    isRequired={true}
+                    name="verifikasi"
+                  />
+
+                  <FileUpload
+                    label="Berkas Pendukung"
+                    forInput="upload-file"
+                    formatFile=".pdf, .xlsx, .zip, .word"
+                    onChange={(file) => handleFileChange(file)}
+                  />
+
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div className="flex-grow-1 m-2">
+                      <Button
+                        classType="primary"
+                        type="submit"
+                        label="Final"
+                        width="100%"
+                        onClick={handleSubmit}
+                      />
+                    </div>
+                    <div className="flex-grow-1 m-2">
+                      <Button
+                        classType="danger"
+                        type="button"
+                        label="Batal"
+                        width="100%"
+                        onClick={() =>
+                          onChangePage("analisaTemuan", {
+                            idData: idAnalisa,
+                            breadcrumbs: location.state.breadcrumbs,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
