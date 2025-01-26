@@ -12,6 +12,7 @@ import HeaderText from "../../../part/HeaderText";
 import PageTitleNav from "../../../part/PageTitleNav";
 import DetailData from "../../../part/DetailData";
 import SweetAlert from "../../../util/SweetAlert";
+import Button from "../../../part/Button";
 
 const breadcrumbs = [{ label: "Evaluasi" }, { label: "Audit Mutu Internal" }];
 
@@ -144,6 +145,50 @@ export default function Index({ onChangePage }) {
     }
   };
 
+  const handleDownload = async () => {
+    try {
+      const response = await fetch(
+        `${API_LINK}/ExportExcel/GenerateExcelFromTemplate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "*/*",
+          },
+          body: JSON.stringify({ id: idData }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to download file: ${response.statusText}`);
+      }
+
+      // Konversi response ke Blob
+      const blob = await response.blob();
+
+      const contentDisposition = response.headers.get("content-disposition");
+
+      const fileName = contentDisposition
+        ? contentDisposition
+            .split("filename=")[1]
+            ?.split(";")[0]
+            ?.replace(/"/g, "")
+        : "download.xlsx"; // Default jika nama file tidak ditemukan
+
+      // Buat URL dari Blob dan trigger download
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = decodeURIComponent(fileName); // Gunakan nama file dari server
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    }
+  };
+
   if (error) return <p>{error}</p>;
   if (loading) return <Loading />;
 
@@ -266,6 +311,18 @@ export default function Index({ onChangePage }) {
                 <Loading />
               ) : (
                 <div>
+                  <div className="row">
+                    <div className="p-3">
+                      <Button
+                        iconName="download"
+                        classType="success"
+                        type="submit"
+                        label="Ekspor Temuan"
+                        width="15rem"
+                        onClick={handleDownload}
+                      />
+                    </div>
+                  </div>
                   <Table
                     arrHeader={[
                       "No",
