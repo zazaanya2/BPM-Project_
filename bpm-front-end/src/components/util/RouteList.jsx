@@ -47,11 +47,6 @@ const IKUIKT = lazy(() => import("../page/7_IKU&IKT/IKUIKT/Root"));
 const IndikatorKinerja = lazy(() =>
   import("../page/7_IKU&IKT/IndikatorKinerja/Root")
 );
-const Kriteria = lazy(() => import("../page/8_Audit/Kriteria/Root"));
-const Auditee = lazy(() => import("../page/8_Audit/BagianAuditee/Root"));
-const KategoriDokumen = lazy(() =>
-  import("../page/MasterKategoriDokumen/Root")
-);
 
 //AUDIT
 const Kriteria = lazy(() =>

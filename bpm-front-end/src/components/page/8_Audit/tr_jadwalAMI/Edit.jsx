@@ -329,7 +329,6 @@ export default function Edit({ onChangePage }) {
     }
   };
 
-  if (loading) return <Loading />;
   if (error) return <p>{error}</p>;
   return (
     <div className="d-flex flex-column min-vh-100">

@@ -129,6 +129,27 @@ export default function Add({ onChangePage }) {
     };
 
     try {
+      const paData = {
+        pertanyaan: formData.pertanyaan,
+        namaKri: formData.kriteria,
+        id: "",
+      };
+
+      console.log(paData);
+
+      const result = await useFetch(
+        `${API_LINK}/MasterBankPertanyaanAudit/CheckBankPertanyaanAudit`,
+        paData,
+        "POST"
+      );
+
+      console.log(result);
+
+      if (result.length > 0) {
+        SweetAlert("Gagal!", "Data Pertanyaan sudah ada", "error", "OK");
+        return;
+      }
+
       const createResponse = await useFetch(
         `${API_LINK}/MasterBankPertanyaanAudit/CreateBankPertanyaanAudit`,
         dataToSend,

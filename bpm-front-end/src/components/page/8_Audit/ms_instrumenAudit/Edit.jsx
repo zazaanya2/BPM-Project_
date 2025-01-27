@@ -282,6 +282,23 @@ export default function Edit({ onChangePage }) {
     }
 
     try {
+      const paData = {
+        instrumen: formData.nama,
+        id: idData,
+      };
+
+      console.log(paData);
+      const result = await useFetch(
+        `${API_LINK}/MasterInstrumenAudit/CheckInstrumenAudit`,
+        paData,
+        "POST"
+      );
+
+      if (result.length > 0) {
+        SweetAlert("Gagal!", "Data Instrumen sudah ada", "error", "OK");
+        return;
+      }
+
       const createResponse = await useFetch(
         `${API_LINK}/MasterInstrumenAudit/EditDataInstrumenAudit`,
         formData,

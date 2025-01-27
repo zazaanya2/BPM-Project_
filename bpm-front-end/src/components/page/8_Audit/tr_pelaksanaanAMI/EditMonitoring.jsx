@@ -135,6 +135,13 @@ export default function EditMonitoring({ onChangePage }) {
   const monitoringRef = useRef();
 
   const handleSubmit = async () => {
+    const monitoringRef = monitoringRef.current?.validate();
+
+    if (!monitoringRef) {
+      monitoringRef.current?.focus();
+      return;
+    }
+
     setLoading(true);
     try {
       const createResponse = await useFetch(
