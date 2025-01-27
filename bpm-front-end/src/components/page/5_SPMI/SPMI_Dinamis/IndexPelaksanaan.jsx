@@ -389,7 +389,7 @@ export default function IndexPelaksanaan({ onChangePage, isIkuIkt }) {
       }
     });
   };
-
+ 
   const handleDownload = async (item) => {
     const id = item.Key;
     if (!id) {
@@ -460,9 +460,8 @@ export default function IndexPelaksanaan({ onChangePage, isIkuIkt }) {
     }
 
     return list.map(({ idKdo, namaKdo }, index) => (
-      <div className="nav-item mx-0">
+      <div className="nav-item mx-0" key={idKdo}>
         <button
-          key={idKdo || index}
           onClick={() => handleTabClick(idKdo, list[index])}
           className={`nav-link ${
             activeTab?.idKdo === idKdo ? " active" : ""
@@ -478,6 +477,7 @@ export default function IndexPelaksanaan({ onChangePage, isIkuIkt }) {
     setSideMenu(item?.children || []); // Set children of the clicked item as the new side menu
     setActiveTab(item); // Update the active tab
     setActiveSide(item?.children[0] || null);
+    console.log(item?.children[0]);
     setCurrentFilter((prevFilter) => ({
       ...prevFilter,
       param1: idKdo, // Update the filter with the clicked tab's ID
@@ -489,7 +489,6 @@ export default function IndexPelaksanaan({ onChangePage, isIkuIkt }) {
       return <p className="text-danger text-center">No data available</p>;
     return sideMenu.map((menu) => (
       <div key={menu.idKdo}>
-        {/* Main Menu Item */}
         <div
           className={`w-100 px-3 py-1 mt-1 d-flex ${
             activeSide?.idKdo === menu.idKdo
@@ -497,33 +496,52 @@ export default function IndexPelaksanaan({ onChangePage, isIkuIkt }) {
               : "bg-light text-dark"
           } ${menu.children?.length > 0 ? "justify-content-between" : ""}`}
           style={{ cursor: "pointer" }}
-          onClick={() => {
-            if (menu.children?.length > 0) {
-              // Toggle submenu visibility for items with children
-              setSideMenu((prevSideMenu) =>
-                prevSideMenu.map((item) =>
-                  item.idKdo === menu.idKdo
-                    ? { ...item, isExpanded: !item.isExpanded }
-                    : item
-                )
-              );
-            } else {
-              // Set the clicked menu as active for items without children
-              setActiveSide(menu);
-              setCurrentFilter((prevFilter) => ({
-                ...prevFilter,
-                param1: menu.idKdo,
-              }));
-            }
-          }}
         >
-          <span>{menu.namaKdo || "Unnamed Menu"}</span>
+          <span
+            onClick={() => {
+              if (menu.children?.length > 0) {
+                // Toggle submenu visibility for items with children
+                setActiveSide(menu);
+                setCurrentFilter((prevFilter) => ({
+                  ...prevFilter,
+                  param1: menu.idKdo,
+                }));
+                // setSideMenu((prevSideMenu) =>
+                //   prevSideMenu.map((item) =>
+                //     item.idKdo === menu.idKdo
+                //       ? { ...item, isExpanded: !item.isExpanded }
+                //       : item
+                //   )
+                // );
+              } else {
+                // Set the clicked menu as active for items without children
+                setActiveSide(menu);
+                setCurrentFilter((prevFilter) => ({
+                  ...prevFilter,
+                  param1: menu.idKdo,
+                }));
+              }
+            }}
+          >
+            {menu.namaKdo || "Unnamed Menu"}
+          </span>
           {menu.children?.length > 0 && (
             <Icon
               type="Bold"
               name={menu.isExpanded ? "angle-up" : "angle-down"}
               cssClass="me-2"
               style={{ marginTop: "2px" }}
+              onClick={() => {
+                if (menu.children?.length > 0) {
+                  setSideMenu((prevSideMenu) =>
+                    prevSideMenu.map((item) =>
+                      item.idKdo === menu.idKdo
+                        ? { ...item, isExpanded: !item.isExpanded }
+                        : item
+                    )
+                  );
+                }
+              }}
             />
           )}
         </div>
@@ -595,7 +613,7 @@ export default function IndexPelaksanaan({ onChangePage, isIkuIkt }) {
               <hr />
 
               <div className="mt-5">
-                <div className="nav nav-underline ms-2">
+                <div className="nav nav-underline ms-2" style={{ overflowX: "auto" }} >
                   {renderTab(tabMenu)}
                 </div>
                 <div className="container p-3 mb-5 bg-white rounded shadow">
@@ -625,7 +643,7 @@ export default function IndexPelaksanaan({ onChangePage, isIkuIkt }) {
                                 onClick={() => {
                                   onChangePage("add", {
                                     idData:
-                                      activeTab?.idKdo || activeSide?.idKdo,
+                                      activeSide?.idKdo || activeTab?.idKdo,
                                     idMenu: idMenu,
                                     breadcrumbs: breadcrumbs,
                                   });
@@ -817,7 +835,7 @@ export default function IndexPelaksanaan({ onChangePage, isIkuIkt }) {
                     }
                   />
                   <DetailData
-                    label="Tanggal Kadaluarsa"
+                    label="Tanggal Kadaluwarsa"
                     isi={
                       detail.expDok
                         ? new Date(detail.expDok).toLocaleDateString("id-ID", {

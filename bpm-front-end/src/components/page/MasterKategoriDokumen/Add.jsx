@@ -173,7 +173,7 @@ export default function Add({ onChangePage, breadcrumbs }) {
             <PageTitleNav
               title="Tambah Data"
               breadcrumbs={breadcrumbs}
-              onClick={() => onChangePage("index")}
+              onClick={() => onChangePage("read")}
             />
           </div>
           <div className={isMobile ? "m-0" : "m-3"}>
