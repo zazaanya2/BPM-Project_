@@ -126,7 +126,7 @@ export default function Index({ onChangePage }) {
           if (response === "ERROR")
             throw new Error("Gagal kirim Self Assessment");
 
-          SweetAlert("Berhasil", pesan + "Berhasil difinalkan", "success");
+          SweetAlert("Berhasil", pesan + " Berhasil difinalkan", "success");
 
           fetchData();
         } catch (err) {
@@ -375,6 +375,16 @@ export default function Index({ onChangePage }) {
                           } else {
                             return ["Detail"]; // Default return if the condition is not met
                           }
+                        case "Analisa Temuan (Draft)":
+                          if (
+                            item.kadep === activeUser ||
+                            item.pic1 === activeUser ||
+                            item.pic2 === activeUser
+                          ) {
+                            return ["Edit"];
+                          } else {
+                            return ["Detail"]; // Default return if the condition is not met
+                          }
                         case "Menunggu Monitoring":
                           if (
                             item.idAuditor === activeUser ||
@@ -397,7 +407,10 @@ export default function Index({ onChangePage }) {
                       }
                     }}
                     onEdit={(item) => {
-                      if (item.Status === "Belum Terselesaikan") {
+                      if (
+                        item.Status === "Belum Terselesaikan" ||
+                        item.Status === "Analisa Temuan (Draft)"
+                      ) {
                         onChangePage("editAnalisaTemuan", {
                           idData: item.Key,
                           instrumen: item.instrumen,

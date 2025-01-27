@@ -112,6 +112,15 @@ const UploadFileMulti = forwardRef(function UploadFileMulti(
       return;
     }
 
+    // Validasi nama file yang duplikat
+    const duplicateFiles = selectedFiles.filter((file) =>
+      files.some((existingFile) => existingFile.name === file.name)
+    );
+    if (duplicateFiles.length > 0) {
+      inputRef.current.value = ""; // Kosongkan input field
+      return;
+    }
+
     const validFiles = selectedFiles.map((file) => ({
       type: "file",
       value: file,
@@ -137,8 +146,6 @@ const UploadFileMulti = forwardRef(function UploadFileMulti(
   };
 
   const handleDownload = (file) => {
-    const baseURL = "http://localhost:5187/Audit/"; // Lokasi file di backend
-
     if (file.type === "path") {
       // Untuk file dengan tipe path, buka di tab baru
       const link = document.createElement("a");

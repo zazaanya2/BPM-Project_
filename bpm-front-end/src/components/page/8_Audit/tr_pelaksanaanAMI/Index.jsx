@@ -86,28 +86,35 @@ export default function Index({ onChangePage }) {
   const handleFinal = async (idSA, idJadwal, status) => {
     let apiCheck = "";
     let apiFinal = "";
-    let pesan = "";
+    let pesan1 = "";
+    let pesan2 = "";
 
     if (status === "Self Assessment (Draft)") {
       apiCheck = "TransaksiSelfAssessment/CheckSelfAssesment";
       apiFinal = "TransaksiSelfAssessment/FinalSelfAssesment";
-      pesan = "Self Assessment";
+      pesan1 = "Self Assessment belum lengkap";
+      pesan2 = "Self Assesment";
     } else if (status === "Temuan (Draft)") {
       apiCheck = "TransaksiTemuan/CheckTemuan";
       apiFinal = "TransaksiTemuan/FinalTemuan";
-      pesan = "Temuan";
+      pesan1 =
+        "Kolom yang memiliki temuan harus diisi secara lengkap, termasuk saran dan kategori temuan";
+      pesan2 = "Temuan";
     } else if (status === "Menunggu Analisa Temuan") {
       apiCheck = "TransaksiAnalisaTemuan/CheckAnalisaTemuan";
       apiFinal = "TransaksiAnalisaTemuan/FinalAnalisaTemuan";
-      pesan = "Analisa Temuan";
+      pesan1 = "Analisa Temuan belum lengkap";
+      pesan2 = "Analisa Temuan";
     } else if (status === "Monitoring") {
       apiCheck = "TransaksiMonitoring/CheckAllMonitoring";
       apiFinal = "TransaksiMonitoring/FinalAllMonitoring";
-      pesan = "Monitoring";
+      pesan1 = "Monitoring belum lengkap";
+      pesan2 = "Monitoring";
     } else if (status === "Menunggu Verifikasi Akhir") {
       apiCheck = "TransaksiVerifikasi/CheckAllVerifikasi";
       apiFinal = "TransaksiVerifikasi/FinalAllVerifikasi";
-      pesan = "Verifikasi";
+      pesan1 = "Verifikasi belum lengkap";
+      pesan2 = "Verifikasi";
     } else {
       return;
     }
@@ -119,9 +126,9 @@ export default function Index({ onChangePage }) {
     setLoading(false);
     if (response[0].hasil === true) {
       const confirm = await SweetAlert(
-        "Apakah Anda yakin ingin Finalkan " + pesan + " ini?",
+        "Apakah Anda yakin ingin Finalkan " + pesan2 + " ini?",
         "Data tidak akan bisa diubah jika " +
-          pesan +
+          pesan2 +
           " Audit Mutu Internal sudah difinalkan",
         "warning",
         "Ya, Finalkan",
@@ -135,14 +142,14 @@ export default function Index({ onChangePage }) {
         try {
           const response = await useFetch(
             `${API_LINK}/${apiFinal}`,
-            { id: idJadwal },
+            { id: idJadwal, id2: idSA },
             "POST"
           );
 
           if (response === "ERROR")
             throw new Error("Gagal kirim Self Assessment");
 
-          SweetAlert("Berhasil", pesan + " Berhasil difinalkan", "success");
+          SweetAlert("Berhasil", pesan2 + " Berhasil difinalkan", "success");
 
           fetchData();
         } catch (err) {
@@ -156,8 +163,8 @@ export default function Index({ onChangePage }) {
       SweetAlert(
         "Data belum lengkap",
         "Data " +
-          pesan +
-          " belum lengkap, harap lakukan pengecekan dan lengkapi terlebih dahulu",
+          pesan1 +
+          ". Harap lakukan pengecekan dan lengkapi terlebih dahulu",
         "warning"
       );
     }
@@ -343,30 +350,10 @@ export default function Index({ onChangePage }) {
                           return ["Self Assessment", "Temuan"];
                         }
                       case "Monitoring":
-                        if (
-                          item.idAuditor === activeUser ||
-                          item.idLeadAuditor === activeUser
-                        ) {
-                          return [
-                            "Self Assessment",
-                            "Temuan",
-                            "AnalisaTemuan",
-                            "Send",
-                          ];
-                        } else {
-                          return ["Self Assessment", "Temuan", "AnalisaTemuan"];
-                        }
+                        return ["Self Assessment", "Temuan", "AnalisaTemuan"];
+
                       case "Menunggu Verifikasi Akhir":
-                        if (role === "ROL01") {
-                          return [
-                            "Self Assessment",
-                            "Temuan",
-                            "AnalisaTemuan",
-                            "Send",
-                          ];
-                        } else {
-                          return ["Self Assessment", "Temuan", "AnalisaTemuan"];
-                        }
+                        return ["Self Assessment", "Temuan", "AnalisaTemuan"];
 
                       case "Final":
                         return ["Self Assessment", "Temuan", "AnalisaTemuan"];
