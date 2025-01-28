@@ -143,7 +143,6 @@ export default function Login() {
           borderRadius: "8px",
           zIndex: 2,
           padding: "3rem",
-          textAlign: "center", // Pastikan konten selaras di tengah
         }}
       >
         <img
@@ -165,6 +164,7 @@ export default function Login() {
             setFormData({ ...formData, username: e.target.value })
           }
           isRequired={true}
+          style={{ textAlign: "center" }}
         />
         <InputField
           type="password"
@@ -174,6 +174,7 @@ export default function Login() {
             setFormData({ ...formData, password: e.target.value })
           }
           isRequired={true}
+          style={{ textAlign: "center" }}
         />
         <div className="mt-5">
           <Button

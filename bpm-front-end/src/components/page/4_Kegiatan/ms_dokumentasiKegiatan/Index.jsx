@@ -20,7 +20,6 @@ export default function Index({ onChangePage }) {
 
   useEffect(() => {
     if (!location.state?.idData) return;
-    console.log("state", location.state?.idData);
   }, [location.state?.idData]);
 
   useEffect(() => {
@@ -83,7 +82,7 @@ export default function Index({ onChangePage }) {
           endTime: item.jamSelesaiKegiatan,
           location: item.tempatKegiatan,
           linkFolder: item.linkFolderKegiatan,
-          image: item.fotoSampulKegiatan,
+          image: decodeHtml(item.fotoSampulKegiatan),
           jenisKegiatan: item.idJenisKegiatan,
           fileNotulen: item.fileNotulenKegiatan,
           statusFileNotulen: item.statusFileNotulenKegiatan,

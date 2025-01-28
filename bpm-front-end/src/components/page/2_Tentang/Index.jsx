@@ -50,7 +50,6 @@ export default function Index({ onChangePage }) {
           JSON.stringify({}),
           "POST"
         );
-        console.log(result);
         setData(result);
       } catch (err) {
         console.error("Fetch error:", err);
@@ -153,7 +152,7 @@ export default function Index({ onChangePage }) {
         }}
       >
         <HeaderText
-          label="Sejarah BPM"
+          label={data[1].kategoriTentang}
           warna="#2654A1"
           alignText="left"
           fontWeight="700"
@@ -183,7 +182,7 @@ export default function Index({ onChangePage }) {
           <div className="col-lg-5 col-md-6 mt-5">
             <div className="shadow p-4 mt-5 bg-white rounded">
               <HeaderText
-                label="SK Pendirian BPM"
+                label={data[7].kategoriTentang}
                 warna="#2654A1"
                 alignText="left"
                 fontWeight="700"
@@ -218,13 +217,6 @@ export default function Index({ onChangePage }) {
             />
           </div>
         </div>
-        <HeaderText
-          label="Pernyataan dan Kebijakan Mutu"
-          warna="#2654A1"
-          alignText="left"
-          fontWeight="700"
-          marginBottom="20px"
-        />
         {data.slice(8).map((item, index) => (
           <div className="shadow bg-white rounded-4 mb-4" key={index}>
             <div
@@ -275,7 +267,7 @@ export default function Index({ onChangePage }) {
                   }}
                 >
                   <HeaderText
-                    label={title}
+                    label={data[index + 2].kategoriTentang}
                     warna="white"
                     alignText="center"
                     ukuran="25px"
@@ -298,7 +290,7 @@ export default function Index({ onChangePage }) {
 
       <div className="flex-grow-1 p-5">
         <HeaderText
-          label="Struktur BPM"
+          label={data[6].kategoriTentang}
           warna="#2654A1"
           alignText="center"
           fontWeight="700"
@@ -325,7 +317,7 @@ export default function Index({ onChangePage }) {
           {["Visi", "Misi"].map((title, index) => (
             <div key={index}>
               <HeaderText
-                label={title}
+                label={data[index + 4].kategoriTentang}
                 warna="white"
                 alignText="center"
                 ukuran="35px"

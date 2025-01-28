@@ -1,11 +1,12 @@
 import React from "react";
 import Mahasiswa from "../../assets/element/mahasiswa.png";
+import { DOKUMEN_LINK } from "../util/Constants";
 
-const ImagesCarousel = ({ images = [] }) => {
+const ImagesCarousel = ({ images = [], link = DOKUMEN_LINK }) => {
   const defaultImages = [Mahasiswa, Mahasiswa, Mahasiswa];
 
-  // Use provided images or fallback to default images
-  const carouselImages = images.length > 0 ? images : defaultImages;
+  const validImages = images.filter((item) => item !== ""); // Removes empty strings
+  const carouselImages = validImages.length > 0 ? validImages : defaultImages;
 
   const styles = {
     carouselContainer: {
@@ -71,7 +72,11 @@ const ImagesCarousel = ({ images = [] }) => {
             className={`carousel-item ${index === 0 ? "active" : ""}`}
           >
             <img
-              src={typeof image === "string" ? image : image.default}
+              src={
+                typeof image === "string" && validImages.length > 0
+                  ? link + image
+                  : image
+              }
               className="d-block w-100"
               alt={`Slide ${index + 1}`}
               style={{ objectFit: "cover", height: "50vh" }}

@@ -41,10 +41,12 @@ const PdfPreviewDownload = ({ judul, handleClick }) => {
   };
 
   return (
-    <div className="col-lg-2 m-3">
-      <div style={containerStyle}>
+    <div className="col" style={containerStyle}>
+      <div>
         <i className="fi fi-sr-file-pdf" style={iconStyle}></i>
-        <p style={titleStyle}>{judul}</p>
+      </div>
+      <div>
+        <h3 style={titleStyle}>{judul.toUpperCase()}</h3>
         <button
           onClick={(e) => {
             e.preventDefault(); // Mencegah default behavior

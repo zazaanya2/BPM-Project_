@@ -11,7 +11,6 @@ import Filter from "../../part/Filter";
 import SearchField from "../../part/SearchField";
 import DropDown from "../../part/Dropdown";
 import SweetAlert from "../../util/SweetAlert";
-import moment from "moment";
 import { useIsMobile } from "../../util/useIsMobile";
 import Cookies from "js-cookie";
 import PdfPreviewDownload from "../../part/PdfPreviewDownload";
@@ -143,19 +142,19 @@ export default function Read({ onChangePage }) {
   ]);
 
   useEffect(() => {
-    if (idMenu === 39) {
+    if (idMenu === 38) {
       title = "Dokumen Peraturan";
       breadcrumbs = [
         { label: "Peraturan", href: "/peraturan/kebijakan" },
         { label: "Dokumen Kebijakan Peraturan" },
       ];
-    } else if (idMenu === 40) {
+    } else if (idMenu === 39) {
       title = "Dokumen Peraturan Eksternal";
       breadcrumbs = [
         { label: "Peraturan", href: "/peraturan/eksternal" },
         { label: "Dokumen Kebijakan Eksternal" },
       ];
-    } else if (idMenu === 41) {
+    } else if (idMenu === 40) {
       title = "Instrumen APS";
       breadcrumbs = [
         { label: "Instrumen APS", href: "/peraturan/aps" },
@@ -314,7 +313,7 @@ export default function Read({ onChangePage }) {
             />
           </div>
           {role === "ROL01" ? (
-            <div className="p-3 m-5 mt-2 mb-0" style={{ marginLeft: "50px" }}>
+            <div className={isMobile ? "p-2 m-2  mb-0" : "p-3 m-5 mt-0 mb-0"}>
               <Button
                 iconName="add"
                 classType="primary"
@@ -445,7 +444,7 @@ export default function Read({ onChangePage }) {
                 onToggle={(item) => handleToggle(item.Key)}
               />
             ) : (
-              <div className="row">
+              <div className="row p-2 gap-3 mb-2">
                 {filteredData.map((item) => (
                   <PdfPreviewDownload
                     key={item.id} // Pastikan setiap item memiliki `key` unik

@@ -27,8 +27,6 @@ export default function Index({ onChangePage }) {
   useEffect(() => {
     if (!location.state?.idData) return;
 
-    console.log("state", location.state?.idData);
-
     const event = events.find((e) => e.id === location.state.idData);
     if (event) {
       setSelectedEvent(event);
@@ -60,7 +58,7 @@ export default function Index({ onChangePage }) {
         },
         "POST"
       );
-      console.log(data);
+
       if (data === "ERROR" || !Array.isArray(data)) {
         throw new Error("Invalid data format or no data returned");
       }

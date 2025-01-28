@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import PageTitleNav from "../../part/PageTitleNav";
 import TextArea from "../../part/TextArea";
@@ -14,12 +14,16 @@ import { useIsMobile } from "../../util/useIsMobile";
 import { decodeHtml } from "../../util/DecodeHtml";
 import { useFetch } from "../../util/useFetch";
 import { uploadFile } from "../../util/UploadFile";
+import InputField from "../../part/InputField";
 
 export default function Edit({ onChangePage }) {
   const location = useLocation();
   const isMobile = useIsMobile();
 
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    Kategori: "",
+    Isi: "",
+  });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -96,6 +100,8 @@ export default function Edit({ onChangePage }) {
     }
   };
 
+  const kategoriRef = useRef();
+
   const handleSubmit = async () => {
     setLoading(true);
 
@@ -108,7 +114,6 @@ export default function Edit({ onChangePage }) {
 
         const folderName = "Tentang";
         const filePrefix = "FILE_" + ktg;
-        console.log(filePrefix);
 
         const uploadResult = await uploadFile(
           selectedFile,
@@ -177,7 +182,16 @@ export default function Edit({ onChangePage }) {
           >
             <HeaderForm label="Formulir Tentang" />
             <div className="row">
-              <DetailData label="Kategori" isi={formData.Kategori} />
+              <InputField
+                label="Kategori"
+                value={formData.Kategori}
+                onChange={(e) =>
+                  setFormData({ ...formData, Kategori: e.target.value })
+                }
+                isRequired={true}
+                name="Kategori"
+                maxChar="100"
+              />
             </div>
             {renderContent()}
             <div className="d-flex justify-content-between align-items-center">

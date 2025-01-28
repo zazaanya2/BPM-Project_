@@ -48,7 +48,7 @@ export default function Read({ onChangePage }) {
       try {
         const data = await useFetch(
           `${API_LINK}/MasterKegiatan/GetDataJenisKegiatan`,
-          JSON.stringify({}), 
+          JSON.stringify({}),
           "POST"
         );
 
@@ -70,6 +70,7 @@ export default function Read({ onChangePage }) {
 
   useEffect(() => {
     const fetchEvents = async () => {
+      setLoading(true);
       try {
         const data = await useFetch(
           `${API_LINK}/MasterKegiatan/GetDataKegiatanPage`,
@@ -88,27 +89,11 @@ export default function Read({ onChangePage }) {
         if (data.length > 0 && data[0].TotalCount !== undefined) {
           setTotalData(data[0].TotalCount); // Set hanya sekali
         }
-        const formattedEvents = data.map((item) => {
-          const startDate = moment(item.tglMulaiKegiatan).format("YYYY-MM-DD");
-          const endDate = moment(item.tglSelesaiKegiatan).format("YYYY-MM-DD");
-          return {
-            id: item.idKegiatan,
-            title: decodeHtml(item.namaKegiatan),
-            description: item.deskripsiKegiatan,
-            category: item.kategoriKegiatan,
-            start: moment(`${startDate}T${item.jamMulaiKegiatan}`).toDate(),
-            end: moment(`${endDate}T${item.jamSelesaiKegiatan}`).toDate(),
-            location: item.tempatKegiatan,
-            year: new Date(item.tglMulaiKegiatan).getFullYear(),
-            idJenisKegiatan: item.idJenisKegiatan,
-            jenisKegiatan: item.namaJenisKegiatan,
-          };
-        });
 
-        setFilteredData(formattedEvents);
+        setFilteredData(data);
       } catch (error) {
         setError("Gagal mengambil data kegiatan");
-        // console.error(error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -175,7 +160,6 @@ export default function Read({ onChangePage }) {
     }
   };
 
-  if (loading) return <Loading />;
   if (error) return <p>{error}</p>;
 
   return (
@@ -261,48 +245,61 @@ export default function Read({ onChangePage }) {
               </div>
             </div>
 
-            <Table
-              arrHeader={[
-                "No",
-                "Nama Kegiatan",
-                "Tanggal Mulai",
-                "Jenis Kegiatan",
-                "Tempat",
-                "Status",
-              ]}
-              data={filteredData.map((item, index) => ({
-                Key: item.id,
-                No: indexOfFirstData + index + 1,
-                "Nama Kegiatan": item.title,
-                "Tanggal Mulai": new Date(item.start).toLocaleDateString(
-                  "id-ID",
-                  {
-                    weekday: "long",
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
+            {loading ? (
+              <Loading />
+            ) : (
+              <div>
+                <Table
+                  arrHeader={[
+                    "No",
+                    "Nama Kegiatan",
+                    "Tanggal Mulai",
+                    "Jenis Kegiatan",
+                    "Tempat",
+                    "Status",
+                  ]}
+                  data={filteredData.map((item, index) => ({
+                    Key: item.idKegiatan,
+                    No: indexOfFirstData + index + 1,
+                    "Nama Kegiatan": (
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: decodeHtml(item.namaKegiatan || ""),
+                        }}
+                      />
+                    ),
+                    "Tanggal Mulai": new Date(
+                      item.tglMulaiKegiatan
+                    ).toLocaleDateString("id-ID", {
+                      weekday: "long",
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    }),
+                    "Jenis Kegiatan": item.namaJenisKegiatan,
+                    Tempat: item.tempatKegiatan,
+                    Status: item.kategoriKegiatan,
+                  }))}
+                  actions={(item) => {
+                    return item.Status === "Terlaksana"
+                      ? ["Detail"]
+                      : ["Detail", "Edit", "Delete"];
+                  }}
+                  onEdit={(item) => onChangePage("edit", { idData: item.Key })}
+                  onDetail={(item) =>
+                    onChangePage("detail", { idData: item.Key })
                   }
-                ),
-                "Jenis Kegiatan": item.jenisKegiatan,
-                Tempat: item.location,
-                Status: item.category,
-              }))}
-              actions={(item) => {
-                return item.Status === "Terlaksana"
-                  ? ["Detail"]
-                  : ["Detail", "Edit", "Delete"];
-              }}
-              onEdit={(item) => onChangePage("edit", { idData: item.Key })}
-              onDetail={(item) => onChangePage("detail", { idData: item.Key })}
-              onDelete={(item) => handleDelete(item.Key)}
-            />
+                  onDelete={(item) => handleDelete(item.Key)}
+                />
 
-            <Paging
-              pageSize={pageSize}
-              pageCurrent={pageCurrent}
-              totalData={totalData}
-              navigation={handlePageNavigation}
-            />
+                <Paging
+                  pageSize={pageSize}
+                  pageCurrent={pageCurrent}
+                  totalData={totalData}
+                  navigation={handlePageNavigation}
+                />
+              </div>
+            )}
           </div>
         </div>
       </main>

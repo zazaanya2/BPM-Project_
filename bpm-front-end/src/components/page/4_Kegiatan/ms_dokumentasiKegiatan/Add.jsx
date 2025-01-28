@@ -69,6 +69,7 @@ export default function Add({ onChangePage }) {
 
   const handleFileChange = (file) => {
     setSelectedFile(file);
+    console.log(selectedFile);
   };
 
   const handleFotoChange = (file) => {
@@ -91,8 +92,6 @@ export default function Add({ onChangePage }) {
 
   const handleSubmit = async () => {
     try {
-      console.log(formData);
-
       if (!formData.name) {
         SweetAlert("Error", "Nama kegiatan is required", "error", "OK");
         return;
@@ -167,7 +166,6 @@ export default function Add({ onChangePage }) {
       if (selectedFile) {
         const folderName = "Kegiatan";
         const filePrefix = "NOTULEN_" + formData.name;
-        console.log(filePrefix);
         uploadedFileNotulen = await uploadFile(
           selectedFile,
           folderName,
@@ -191,8 +189,6 @@ export default function Add({ onChangePage }) {
         fileNotulen: uploadedFileNotulen ? uploadedFileNotulen[0] : null,
         fotoSampul: uploadedFotoSampul ? uploadedFotoSampul[0] : null,
       };
-
-      console.log(newFormData);
 
       // Set loading state and send API request
       setLoading(true);

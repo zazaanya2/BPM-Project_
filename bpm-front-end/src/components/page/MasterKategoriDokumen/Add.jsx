@@ -21,7 +21,7 @@ export default function Add({ onChangePage, breadcrumbs }) {
     namaKdo: "",
     deskripsiKdo: "",
     idMen: "",
-    urutanKdo: '',
+    urutanKdo: "",
   });
   const [listMenu, setListMenu] = useState([]);
 
@@ -106,27 +106,30 @@ export default function Add({ onChangePage, breadcrumbs }) {
     }
 
     try {
-      const folderName = "Dokumen";
-      const filePrefix = "FOTO";
+      let uploadedDokNames = [];
+      if (images.length > 0) {
+        const folderName = "Dokumen";
+        const filePrefix = "FOTO";
 
-      const photos = new FormData();
-      images.forEach((file) => photos.append("files", file));
+        const photos = new FormData();
+        images.forEach((file) => photos.append("files", file));
 
-      const uploadResponse = await fetch(
-        `${API_LINK}/Upload/UploadFiles?folderName=${encodeURIComponent(
-          folderName
-        )}&filePrefix=${encodeURIComponent(filePrefix)}`,
-        {
-          method: "POST",
-          body: photos,
+        const uploadResponse = await fetch(
+          `${API_LINK}/Upload/UploadFiles?folderName=${encodeURIComponent(
+            folderName
+          )}&filePrefix=${encodeURIComponent(filePrefix)}`,
+          {
+            method: "POST",
+            body: photos,
+          }
+        );
+
+        if (!uploadResponse.ok) {
+          throw new Error("Gagal mengunggah dokumen");
         }
-      );
 
-      if (!uploadResponse.ok) {
-        throw new Error("Gagal mengunggah dokumen");
+        uploadedDokNames = await uploadResponse.json();
       }
-
-      const uploadedDokNames = await uploadResponse.json();
 
       const dokData = {
         idMen: parseInt(idMenRef.current.value),
@@ -170,7 +173,7 @@ export default function Add({ onChangePage, breadcrumbs }) {
             <PageTitleNav
               title="Tambah Data"
               breadcrumbs={breadcrumbs}
-              onClick={() => onChangePage("index")}
+              onClick={() => onChangePage("read")}
             />
           </div>
           <div className={isMobile ? "m-0" : "m-3"}>
@@ -239,7 +242,7 @@ export default function Add({ onChangePage, breadcrumbs }) {
                       id="upload-foto1"
                       label="Masukkan Foto 1"
                       onChange={(file) => (images[0] = file)}
-                      isRequired={true}
+                      isRequired={false}
                     />
                   </div>
                   <div className="col-lg-4 col-md-4">

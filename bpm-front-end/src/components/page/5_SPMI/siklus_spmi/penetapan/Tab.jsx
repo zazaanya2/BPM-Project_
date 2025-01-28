@@ -1,7 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useFetch } from "../../../../util/useFetch";
 
-const TabContainer = ({ tabs }) => {
-  const [activeTab, setActiveTab] = useState(tabs[0]?.id || "");
+const TabContainer = ({ idKategori }) => {
+  const [tabs, setTabs] = useState([]);
+  const [activeTab, setActiveTab] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+      const fetchKategori = async () => {
+        setLoading(true);
+        try {
+          const result = await useFetch(
+            `${API_LINK}/MasterKategoriDokumen/GetDataKategoriDokumenHeaderByIdMenu`,
+            { idMenu: location.state?.idMenu },
+            "POST"
+          );
+  
+          if (result === "ERROR" || result.length === 0) {
+            setTabs([]);
+          } else {
+            const arrResult = Object.values(result);
+            setTabs({
+              idKdo: arrResult[0].idKdo,
+              idMen: arrResult[0].idMen,
+              namaKdo: arrResult[0].namaKdo,
+              urutanKdo: arrResult[0].urutanKdo,
+              parentKdo: arrResult[0].parentKdo,
+              statusKdo: arrResult[0].statusKdo,
+              createdByKdo: arrResult[0].createdByKdo,
+              createdDateKdo: arrResult[0].createdDateKdo,
+              modifByKdo: arrResult[0].modifByKdo,
+              modifDateKdo: arrResult[0].modifDateKdo,
+            });
+            setActiveTab(arrResult[0].idKdo);
+          }
+        } catch (err) {
+          setError("Gagal mengambil data: " + err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchKategori();
+    }, [location.state?.idMenu]);
+
 
   return (
     <div>

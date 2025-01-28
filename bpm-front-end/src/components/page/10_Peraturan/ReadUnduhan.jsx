@@ -66,16 +66,6 @@ export default function Read({ onChangePage }) {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      console.log({
-        idMenu: idMenu,
-        search: searchKeyword,
-        year: selectedYear,
-        status: selectedStatus,
-        judul: selectedJudul,
-        size: pageSize,
-        page: pageCurrent,
-        idData: idData,
-      });
       try {
         const data = await useFetch(
           `${API_LINK}/MasterPeraturan/GetDataUnduhanPeraturan`,
@@ -160,16 +150,6 @@ export default function Read({ onChangePage }) {
     setSelectedJudul("");
   };
 
-  const handleToggle = (id) => {
-    console.log("id hapus :", id);
-    const updatedData = filteredData.map((item) =>
-      item.id === id
-        ? { ...item, status: item.status === "Aktif" ? "Tidak Aktif" : "Aktif" }
-        : item
-    );
-    setFilteredData(updatedData);
-  };
-
   if (loading) return <Loading />;
 
   return (
@@ -190,60 +170,6 @@ export default function Read({ onChangePage }) {
                 : "table-container bg-white p-3 m-5 mt-0 rounded"
             }
           >
-            <div className="row mb-3">
-              <div className="col-12 d-flex flex-wrap align-items-center">
-                <div className="me-auto flex-grow-1 mt-3 me-3">
-                  <SearchField
-                    onChange={(value) => setSearchKeyword(value)}
-                    value={searchKeyword}
-                  />
-                </div>
-
-                <div className="m-0">
-                  <Filter>
-                    <div className="mb-3">
-                      <DropDown
-                        arrData={dataFilterSort}
-                        label="Urut Bedasarkan"
-                        value={selectedJudul}
-                        onChange={(e) => setSelectedJudul(e.target.value)}
-                      />
-                    </div>
-
-                    <div className="mb-3">
-                      <label htmlFor="yearPicker" className="mb-1 fw-bold">
-                        Berdasarkan Tahun
-                      </label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        placeholder="Masukkan Tahun"
-                        value={selectedYear}
-                        onChange={(e) => setSelectedYear(e.target.value)}
-                        min="2000"
-                        max={new Date().getFullYear()}
-                      />
-                    </div>
-                    <div className="mb-3">
-                      <DropDown
-                        arrData={statusFilterSort}
-                        label="Status"
-                        value={selectedStatus}
-                        onChange={(e) => setSelectedStatus(e.target.value)}
-                      />
-                    </div>
-
-                    <Button
-                      classType="btn btn-secondary"
-                      title="Reset Filter"
-                      label="Reset"
-                      onClick={resetFilter}
-                    />
-                  </Filter>
-                </div>
-              </div>
-            </div>
-
             <Table
               arrHeader={[
                 "No",
