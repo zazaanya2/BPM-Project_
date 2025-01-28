@@ -383,6 +383,7 @@ export default function EditAnalisaTemuan({ onChangePage }) {
                         onChange={handleChange}
                         id="deadline"
                         type="date"
+                        min={new Date().toISOString().split("T")[0]}
                       />
                     </div>
                     <div className="col-6">

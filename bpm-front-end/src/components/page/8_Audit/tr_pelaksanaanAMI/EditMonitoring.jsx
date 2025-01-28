@@ -135,9 +135,9 @@ export default function EditMonitoring({ onChangePage }) {
   const monitoringRef = useRef();
 
   const handleSubmit = async () => {
-    const monitoringRef = monitoringRef.current?.validate();
+    const isMonitor = monitoringRef.current?.validate();
 
-    if (!monitoringRef) {
+    if (!isMonitor) {
       monitoringRef.current?.focus();
       return;
     }

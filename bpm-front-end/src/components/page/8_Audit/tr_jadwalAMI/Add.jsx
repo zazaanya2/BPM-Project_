@@ -336,6 +336,7 @@ export default function Add({ onChangePage }) {
                     onChange={handleChange}
                     isRequired={true}
                     type="date"
+                    min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
                 <div className="col-lg-3 col-md-3">

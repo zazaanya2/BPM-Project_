@@ -187,7 +187,7 @@ const routeList = [
     protected: true,
   },
   {
-    path: "/evaluasi/ami/pelaksanaan/*",
+    path: "/evaluasi/ami/daftar/*",
     element: <PelaksanaanAMI />,
   },
   {

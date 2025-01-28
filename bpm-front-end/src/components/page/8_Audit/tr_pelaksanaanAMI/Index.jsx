@@ -279,6 +279,16 @@ export default function Index({ onChangePage }) {
                           } else {
                             return item.status;
                           }
+                        case "Temuan (Draft)":
+                          if (
+                            item.kadep === activeUser ||
+                            item.pic1 === activeUser ||
+                            item.pic2 === activeUser
+                          ) {
+                            return "Self Assessment (Selesai)";
+                          } else {
+                            return item.status;
+                          }
 
                         default:
                           return item.status;
