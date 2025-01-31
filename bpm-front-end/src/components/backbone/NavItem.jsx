@@ -22,30 +22,30 @@ export default function NavItem() {
   return (
     <>
       {/* Beranda */}
-      <li className="nav-item">
-        <Link className="nav-link" aria-current="page" to="/">
+      <li className="nav-item top-nav-item top-nav-item top-nav-item">
+        <Link className="nav-link top-nav-link" aria-current="page" to="/">
           Beranda
         </Link>
       </li>
 
       {/* Tentang */}
-      <li className="nav-item">
-        <Link className="nav-link" aria-current="page" to="/tentang">
+      <li className="nav-item top-nav-item">
+        <Link className="nav-link top-nav-link" aria-current="page" to="/tentang">
           Tentang
         </Link>
       </li>
 
       {/* Berita */}
-      <li className="nav-item">
-        <Link className="nav-link" aria-current="page" to="/berita">
+      <li className="nav-item top-nav-item">
+        <Link className="nav-link top-nav-link" aria-current="page" to="/berita">
           Berita
         </Link>
       </li>
 
       {/* Kegiatan */}
-      <li className="nav-item dropdown">
+      <li className="nav-item top-nav-item dropdown">
         <button
-          className="nav-link dropdown-toggle"
+          className="nav-link top-nav-link dropdown-toggle"
           onClick={() => toggleDropdown("kegiatan")}
         >
           Kegiatan
@@ -67,9 +67,9 @@ export default function NavItem() {
       </li>
 
       {/* SPMI */}
-      <li className="nav-item dropdown">
+      <li className="nav-item top-nav-item dropdown">
         <button
-          className="nav-link dropdown-toggle"
+          className="nav-link top-nav-link dropdown-toggle"
           aria-expanded={openDropdown === "spmi"}
           onClick={() => toggleDropdown("spmi")}
         >
@@ -186,9 +186,9 @@ export default function NavItem() {
       </li>
 
       {/* SPME */}
-      <li className="nav-item dropdown">
+      <li className="nav-item top-nav-item dropdown">
         <button
-          className="nav-link dropdown-toggle"
+          className="nav-link top-nav-link dropdown-toggle"
           onClick={() => toggleDropdown("spme")}
           aria-expanded={openDropdown === "spme"}
         >
@@ -243,9 +243,9 @@ export default function NavItem() {
       </li>
 
       {/* IKU & IKT */}
-      <li className="nav-item dropdown">
+      <li className="nav-item top-nav-item dropdown">
         <button
-          className="nav-link dropdown-toggle"
+          className="nav-link top-nav-link dropdown-toggle"
           aria-expanded={openDropdown === "iku-ikt"}
           onClick={() => toggleDropdown("iku-ikt")}
         >
@@ -268,16 +268,16 @@ export default function NavItem() {
       </li>
 
       {/* Audit */}
-      <li className="nav-item">
-        <Link className="nav-link" aria-current="page" to="/audit">
+      <li className="nav-item top-nav-item">
+        <Link className="nav-link top-nav-link" aria-current="page" to="/audit">
           Audit
         </Link>
       </li>
 
       {/* Survei */}
-      <li className="nav-item dropdown">
+      <li className="nav-item top-nav-item dropdown">
         <button
-          className="nav-link dropdown-toggle"
+          className="nav-link top-nav-link dropdown-toggle"
           onClick={() => toggleDropdown("survei")}
         >
           Survei
@@ -319,9 +319,9 @@ export default function NavItem() {
       </li>
 
       {/* Peraturan */}
-      <li className="nav-item dropdown">
+      <li className="nav-item top-nav-item dropdown">
         <button
-          className="nav-link dropdown-toggle"
+          className="nav-link top-nav-link dropdown-toggle"
           onClick={() => toggleDropdown("peraturan")}
         >
           Peraturan
@@ -348,7 +348,7 @@ export default function NavItem() {
       </li>
 
       {/* Masuk Button */}
-      <li className="nav-item ms-3">
+      <li className="nav-item top-nav-item ms-3">
         <button className="btn bg-white">Masuk</button>
       </li>
     </>

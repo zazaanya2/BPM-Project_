@@ -617,6 +617,11 @@ export default function Index({ onChangePage }) {
                     </div>
                   </div>
                   <div className="col-lg-10">
+                    {/* <div className="d-flex gap-3 p-2" style={{ overflow:"auto", maxWidth: 'cover' }}>
+                      <button className="btn btn-success shadow">Standar Pendidikan</button>
+                      <button className="btn shadow">Standar Penelitian</button>
+                      <button className="btn shadow">Standar Pengabdian Masyarakat</button>
+                    </div> */}
                     <div className="text-center">
                       <h3
                         style={{
@@ -628,7 +633,6 @@ export default function Index({ onChangePage }) {
                         Kategori {selectedDokRef}
                       </h3>
                     </div>
-                    <hr />
                     <div className="table-container bg-white mt-0 rounded">
                       <div className={isMobile ? "mb-3" : "row"}>
                         <div className="col-12 d-flex flex-wrap align-items-center gap-1">

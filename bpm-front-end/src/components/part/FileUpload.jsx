@@ -70,6 +70,42 @@ const FileUpload = forwardRef(function FileUpload(
     },
   }));
 
+  const handleFile = (file) => {
+    if (!file) return;
+
+    const error = validateFile(file);
+
+    if (error) {
+      setFileError(error);
+      setSelectedFile(null);
+    } else {
+      setFileError("");
+      setSelectedFile(file);
+
+      // Jika onChange diteruskan sebagai prop, panggil dan kirim file ke parent
+      if (onChange) {
+        onChange(file); // Mengirim file ke komponen parent
+      }
+    }
+  };
+
+  const handleDrop = useCallback(
+    (e) => {
+      e.preventDefault();
+      setDragActive(false);
+      if (isDisabled) return;
+
+      const file = e.dataTransfer.files[0];
+      handleFile(file);
+    },
+    [isDisabled, handleFile]
+  );
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    handleFile(file);
+  };
+
   return (
     <>
       <div className="mb-3">

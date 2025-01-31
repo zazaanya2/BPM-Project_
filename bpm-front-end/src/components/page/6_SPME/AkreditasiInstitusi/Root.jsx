@@ -9,6 +9,7 @@ import ScrollToTop from "../../../part/ScrollToTop";
 import Add from "./Add";
 import Edit from "./Edit";
 
+
 export default function AkreInstitusi() {
   const navigate = useNavigate();
 
@@ -18,13 +19,13 @@ export default function AkreInstitusi() {
         navigate("/spme/status/institusi");
         break;
       case "editKonten":
-        navigate("/spme/status/institusi/editkonten", withState);
+        navigate("/spme/status/institusi/editkonten", {state : withState});
         break;
       case "add":
         navigate("/spme/status/institusi/add");
         break;
       case "edit":
-        navigate("/spme/status/institusi/edit");
+        navigate("/spme/status/institusi/edit", withState);
         break;
       default:
         console.warn(`Halaman "${page}" tidak dikenali.`);
@@ -57,7 +58,7 @@ export default function AkreInstitusi() {
           element={<Add onChangePage={handlePageChange} />}
         />
         <Route
-          path="/spme/status/institusi/edit"
+          path="/edit"
           element={<Edit onChangePage={handlePageChange} />}
         />
       </Routes>

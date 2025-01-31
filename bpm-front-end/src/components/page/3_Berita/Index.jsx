@@ -26,7 +26,7 @@ export default function Index({ onChangePage }) {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const pageSize = 6;
-
+ 
   useEffect(() => {
     const fetchBerita = async () => {
       try {

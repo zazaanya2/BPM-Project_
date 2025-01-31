@@ -15,6 +15,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import DetailData from "../../../../part/DetailData";
 import SweetAlert from "../../../../util/SweetAlert";
 import { SyncLoader } from "react-spinners";
+import TabContainer from "./Tab";
+import DropDown from "../../../../part/Dropdown";
+
+const arrData = [
+  { Value: "Controlled Copy", Text: "Controlled Copy" },
+  { Value: "Uncontrolled Copy", Text: "Uncontrolled Copy" },
+];
 
 export default function Index({ onChangePage }) {
   const data = [
@@ -430,7 +437,6 @@ export default function Index({ onChangePage }) {
   const [sortedData, setSortedData] = useState(data);
   const [isLoading, setIsLoading] = useState(true);
 
-
   const uniqueDokRefs = data
     .filter(
       (item, index, self) =>
@@ -502,6 +508,11 @@ export default function Index({ onChangePage }) {
 
   const [pageSize] = useState(10);
   const [pageCurrent, setPageCurrent] = useState(1);
+  const tabs = Array.from({ length: 10 }, (_, i) => ({
+    id: `tab${i + 1}`,
+    title: `Tab Lorem Ipsum Dolor sit Amet Condectur Idcio  ${i + 1}`,
+    content: <p>Content for Tab {i + 1}</p>,
+  }));
 
   const title = "Penetapan";
   const breadcrumbs = [{ label: "Siklus SPMI" }, { label: "Penetapan" }];
@@ -638,11 +649,16 @@ export default function Index({ onChangePage }) {
 
               <div className="container shadow p-3 mt-5 mb-5 bg-white rounded">
                 <div className="row">
-                  <div className="col-lg-2 px-3">
+                  {/* <div className="container">
+                    <TabContainer tabs={tabs} />
+                  </div> */}
+                  <div className="col-lg-2">
                     <div
-                      className="row"
+                      className="row px-2"
                       style={{ overflow: "auto", maxHeight: "500px" }}
                     >
+                      <button className="btn btn-success mb-3">Tes Header</button>
+                      <hr />
                       {uniqueDokRefs.map((item) => (
                         <button
                           key={item.dok_ref}
@@ -670,7 +686,7 @@ export default function Index({ onChangePage }) {
                         {selectedDokRef.dok_ref_name}
                       </h3>
                     </div>
-                    <hr />
+                    {/* <hr /> */}
                     <div className="table-container bg-white mt-0 rounded">
                       <div className={isMobile ? "mb-3" : "row"}>
                         <div className="col-12 d-flex flex-wrap align-items-center gap-1">
@@ -720,14 +736,10 @@ export default function Index({ onChangePage }) {
                       </div>
                       <Table
                         arrHeader={["No", "Judul Dokumen"]}
-                        headerToDataMap={{
-                          No: "No",
-                          "Judul Dokumen": "JudulDokumen",
-                        }}
                         data={sortedData.map((item, index) => ({
                           key: item.dok_id,
                           No: indexOfFirstData + index + 1,
-                          JudulDokumen: item.dok_judul,
+                          "Judul Dokumen": item.dok_judul,
                         }))}
                         actions={[
                           "Preview",
@@ -783,7 +795,7 @@ export default function Index({ onChangePage }) {
               />
             }
           >
-            <div className="p-5 mt-0 bg-white rounded shadow"  >
+            <div className="p-5 mt-0 bg-white rounded shadow">
               {/* <HeaderText label="Detail Dokumen" /> */}
               <div className="row">
                 <div className="col-lg-12 col-md-12">
@@ -875,14 +887,16 @@ export default function Index({ onChangePage }) {
               <HeaderText label="Preview Dokumen" />
               <div style={{ width: "90vh", height: "50vh" }}>
                 {isLoading == true ? (
-                  <div style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center", 
-                    backgroundColor: "white", 
-                    minHeight: "50vh",
-                    margin: 0,
-                  }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "white",
+                      minHeight: "50vh",
+                      margin: 0,
+                    }}
+                  >
                     <SyncLoader color="#0d6efd" loading={true} />
                   </div>
                 ) : (

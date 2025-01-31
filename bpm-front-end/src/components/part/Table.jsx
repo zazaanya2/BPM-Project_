@@ -5,6 +5,7 @@ export default function Table({
   arrHeader,
   data,
   actions = [],
+  onToggle = () => {},
   onDelete = () => {},
   onDetail = () => {},
   onEdit = () => {},
