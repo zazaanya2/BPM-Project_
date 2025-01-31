@@ -227,7 +227,9 @@ export default function Edit({ onChangePage }) {
                     <InputField
                       ref={tanggalDokRef}
                       label="Tanggal Berlaku"
-                      value={formData.tanggalDok || ''}
+                      value={formData.tanggalDok
+                        ? formData.tanggalDok
+                        : ""}
                       onChange={handleChange}
                       isRequired={true}
                       name="tanggalDok"
@@ -250,7 +252,9 @@ export default function Edit({ onChangePage }) {
                     <InputField
                       ref={kadaluarsaDokRef}
                       label="Tanggal Kadaluwarsa"
-                      value={formData.kadaluarsaDok || ''}
+                      value={formData.kadaluarsaDok
+                        ? formData.kadaluarsaDok
+                        : ""}
                       onChange={handleChange}
                       isRequired={true}
                       name="kadaluarsaDok"

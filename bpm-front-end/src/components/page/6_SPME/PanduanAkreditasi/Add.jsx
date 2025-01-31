@@ -110,8 +110,8 @@ export default function Add({ onChangePage }) {
       }
 
       const dokData = {
-        idKdo: idData ? idData : "",
-        idMen: idMenu ? idMenu : "",
+        idKdo: idData,
+        idMen: idMenu,
         judulDok: judulDokRef.current.value,
         nomorDok: nomorDokRef.current.value,
         tanggalDok: tanggalDokRef.current.value,
@@ -151,7 +151,6 @@ export default function Add({ onChangePage }) {
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
         <div className="d-flex flex-column">
           <div className="container mb-3">
-            {/* Breadcrumbs and Page Title */}
             <div className="p-3">
               <PageTitleNav
                 title={title}
@@ -171,10 +170,10 @@ export default function Add({ onChangePage }) {
                     : "shadow p-5 m-5 mt-0 bg-white rounded"
                 }
               >
-                <HeaderForm label="Formulir Dokumen" />
+                <HeaderForm label="Formulir Panduan" />
                 <InputField
                   ref={judulDokRef}
-                  label="Judul Dokumen"
+                  label="Judul Panduan"
                   value={formData.judulDok}
                   onChange={handleChange}
                   isRequired={true}
@@ -229,6 +228,18 @@ export default function Add({ onChangePage }) {
                       type="date"
                     />
                   </div>
+                  <div className="col-lg-6 col-md-6">
+                    <InputField
+                      // ref={kadaluarsaDokRef}
+                      label="Jenjang Panduan"
+                      // value={formData.kadaluarsaDok}
+                      onChange={handleChange}
+                      isRequired={true}
+                      name="jenjangDok"
+                      type="text"
+                      // maxChar="50"
+                    />
+                  </div>
                 </div>
                 <div className="row">
                   <FileUpload
@@ -236,6 +247,7 @@ export default function Add({ onChangePage }) {
                     forInput="fileDok"
                     onChange={handleFileChange}
                     name="fileDok"
+                    formatFile=".pdf,.docx"
                     ref={fileRef}
                     isRequired={true}
                   />

@@ -15,11 +15,13 @@ import DropDown from "../../../part/Dropdown";
 import Loading from "../../../part/Loading";
 import SweetAlert from "../../../util/SweetAlert";
 import PdfPreviewDownload from "../../../part/PdfPreviewDownload";
-import pdf from "../MI_PRG4_M4_P2_XXX.pdf";
+// import pdf from "../MI_PRG4_M4_P2_XXX.pdf";
 import { useIsMobile } from "../../../util/useIsMobile";
 import Cookies from "js-cookie";
 import { Document, Page } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import Add from "./Add";
+import Edit from "./Edit";
 
 // import { Document, Page } from '@react-pdf-viewer/core';
 
@@ -78,7 +80,7 @@ export default function Index({ onChangePage }) {
   const { jenis } = useParams();
   const ModalRef = useRef();
 
-  const title = jenis.toUpperCase();
+  const title = "Panduan Akreditasi";
 
   useEffect(() => {
     const fetchTahunDokumen = async () => {
@@ -213,7 +215,6 @@ export default function Index({ onChangePage }) {
   };
 
   const handleToggle = (item) => {
-    // Tampilkan konfirmasi menggunakan SweetAlert sebelum toggle status
     SweetAlert(
       "Konfirmasi",
       `Apakah Anda yakin ingin ${
@@ -223,10 +224,9 @@ export default function Index({ onChangePage }) {
       "Ya",
       null,
       "",
-      true // Tampilkan tombol batal
+      true
     ).then((result) => {
       if (result) {
-        // Jika pengguna mengonfirmasi, hanya simpan idDok dan status yang diperbarui
         const updatedData = filteredData
           .filter((data) => data.idDok === item.Key)
           .map((data) => ({
@@ -247,7 +247,6 @@ export default function Index({ onChangePage }) {
               "success",
               "OK"
             ).then(() => {
-              // Panggil fetchEvents untuk memperbarui data tanpa reload halaman
               fetchDokumen();
             });
           })
@@ -338,7 +337,7 @@ export default function Index({ onChangePage }) {
         <div className="d-flex flex-column">
           <div className="p-3 m-5 mt-0 mb-0">
             <h1 style={{ color: "#2654A1", margin: "0", fontWeight: "700" }}>
-              {"DOKUMEN " + title}
+              {title}
             </h1>
             <Breadcrumbs breadcrumbs={breadcrumbs} />
           </div>
@@ -441,19 +440,18 @@ export default function Index({ onChangePage }) {
               <div>
                 {role === "ROL01" ? (
                   <Table
-                    arrHeader={["No", "Judul Dokumen"]}
+                    arrHeader={["No", "Judul Dokumen", "Jenjang"]}
                     data={filteredData.map((item, index) => ({
                       Key: item.idDok,
                       No: (pageCurrent - 1) * pageSize + index + 1,
                       "Judul Dokumen": item.judulDok,
+                      Jenjang: item.judulDok,
                       status: item.status,
                     }))}
                     actions={(row) => {
-                      // Jika status "Tidak Aktif", hanya tampilkan Toggle
                       if (row.status === "Tidak Aktif") {
                         return ["Toggle"];
                       }
-                      // Jika status selain "Tidak Aktif", tampilkan semua actions
                       return [
                         "Detail",
                         "Preview",
@@ -479,7 +477,7 @@ export default function Index({ onChangePage }) {
                     {filteredData.length > 0 ? (
                       filteredData.map((item) => (
                         <PdfPreviewDownload
-                          key={item.id} // Pastikan setiap item memiliki `key` unik
+                          key={item.id} 
                           judul={item.judulDok}
                           handleClick={() => handleDownload(item)}
                         />
@@ -614,7 +612,7 @@ export default function Index({ onChangePage }) {
             />
           }
         >
-          <div className="p-3 mt-0 bg-white">
+          <div className="p-3 mt-0 bg-white rounded shadow">
             <div style={{ width: "80vh", height: "70vh" }}>
               {loading == true ? (
                 <div
@@ -630,31 +628,20 @@ export default function Index({ onChangePage }) {
                   <SyncLoader color="#0d6efd" loading={true} />
                 </div>
               ) : (
-                <embed
-                  src={DOKUMEN_LINK + detail.fileDok}
-                  type="application/pdf"
-                  width="100%"
-                  height="100%"
-                  style={{
-                    border: "none",
-                  }}
-                />
-
-                // <Document
-                //   file={DOKUMEN_LINK + detail.fileDok}
-                //   onLoadSuccess={onDocumentLoadSuccess}
-                //   // className="pdf-document"
-                // >
-                //   {/* Render all pages */}
-                //   {Array.from(new Array(numPages), (el, index) => (
-                //     <Page
-                //       key={`page_${index + 1}`}
-                //       pageNumber={index + 1}
-                //       renderAnnotationLayer={false} // Disable annotations
-                //       renderTextLayer={false} // Disable text selection
-                //     />
-                //   ))}
-                // </Document>
+                <Document
+                  file={DOKUMEN_LINK + detail.fileDok}
+                  onLoadSuccess={onDocumentLoadSuccess}
+                  // className="pdf-document"
+                >
+                  {Array.from(new Array(numPages), (el, index) => (
+                    <Page
+                      key={`page_${index + 1}`}
+                      pageNumber={index + 1}
+                      renderAnnotationLayer={false} 
+                      renderTextLayer={false} 
+                    />
+                  ))}
+                </Document>
               )}
             </div>
           </div>

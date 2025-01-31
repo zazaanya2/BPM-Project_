@@ -12,21 +12,25 @@ import FileUpload from "../../../part/FileUpload";
 import { useIsMobile } from "../../../util/useIsMobile";
 import { API_LINK } from "../../../util/Constants";
 import { useFetch } from "../../../util/useFetch";
-import { uploadFile } from "../../../util/UploadFile";
+import Loading from "../../../part/Loading";
+import moment from "moment";
 
 const arrData = [
   { Value: "Controlled Copy", Text: "Controlled Copy" },
   { Value: "Uncontrolled Copy", Text: "Uncontrolled Copy" },
 ];
-export default function Add({ onChangePage }) {
+export default function Edit({ onChangePage }) {
   const isMobile = useIsMobile();
-  const title = "Tambah Data";
+  const title = "Edit Data";
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
   const idMenu = location.state?.idMenu;
   const idData = location.state?.idData;
+  const breadcrumbs = location.state?.breadcrumbs;
 
   const [file, setFile] = useState(null);
   const [formData, setFormData] = useState({
+    idKdo: idData,
     judulDok: "",
     nomorDok: "",
     tanggalDok: "",
@@ -54,13 +58,49 @@ export default function Add({ onChangePage }) {
     console.log(file);
   };
 
+  useEffect(() => {
+    const fetchDokumenById = async () => {
+      const body = {
+        idData: idData,
+      };
+      setLoading(true);
+      const result = await useFetch(
+        `${API_LINK}/MasterDokumen/GetDataDokumenById`,
+        body,
+        "POST"
+      ).finally(() => setLoading(false));
+
+      if (result === "ERROR" || result === null || result.length === 0) {
+        setFormData(null);
+      } else {
+        console.log(result);
+        const dokumenArray = Object.values(result);
+        setFormData({
+          idKdo: 4,
+          judulDok: dokumenArray[0].judulDok,
+          nomorDok: dokumenArray[0].noDok,
+          tanggalDok: moment(dokumenArray[0].tanggalDok).format("YYYY-MM-DD"),
+          kadaluarsaDok: moment(dokumenArray[0].kadaluarsaDok).format(
+            "YYYY-MM-DD"
+          ),
+          fileDok: dokumenArray[0].fileDok,
+          jenisDok: dokumenArray[0].jenisDok,
+          createdBy: dokumenArray[0].createdBy,
+        });
+      }
+    };
+
+    fetchDokumenById();
+  }, [idData]);
+
   const handleSubmit = async () => {
     const isJudulDokValid = judulDokRef.current?.validate();
     const isNomorDokValid = nomorDokRef.current?.validate();
     const isTanggalDokValid = tanggalDokRef.current?.validate();
     const isKadaluarsaDokValid = kadaluarsaDokRef.current?.validate();
     const isJenisDokValid = jenisDokRef.current?.validate();
-    const isFileValid = fileRef.current?.validate();
+
+    console.log("masuk sini");
 
     if (!isJudulDokValid) {
       judulDokRef.current?.focus();
@@ -82,10 +122,6 @@ export default function Add({ onChangePage }) {
       jenisDokRef.current?.focus();
       return;
     }
-    if (!isFileValid) {
-      fileRef.current?.focus();
-      return;
-    }
 
     const startDate = new Date(tanggalDokRef.current.value);
     const endDate = new Date(kadaluarsaDokRef.current.value);
@@ -101,27 +137,15 @@ export default function Add({ onChangePage }) {
     }
 
     try {
-      let uploadedDokNames = null;
-      if (file) {
-        const folderName = "Dokumen";
-        const filePrefix =
-          idData === null ? idMenu : idData + "_" + formData.judulDok;
-        uploadedDokNames = await uploadFile(file, folderName, filePrefix);
-      }
-
       const dokData = {
-        idKdo: idData ? idData : "",
-        idMen: idMenu ? idMenu : "",
+        idDok: idData,
         judulDok: judulDokRef.current.value,
-        nomorDok: nomorDokRef.current.value,
         tanggalDok: tanggalDokRef.current.value,
         kadaluarsaDok: kadaluarsaDokRef.current.value,
-        fileDok: uploadedDokNames[0],
-        jenisDok: jenisDokRef.current.value,
+        jenisDok: jenisDokRef.current.value ? jenisDokRef.current.value : null,
       };
-
       const createResponse = await useFetch(
-        `${API_LINK}/MasterDokumen/CreateDataDokumen`,
+        `${API_LINK}/MasterDokumen/EditDataDokumen`,
         dokData,
         "POST"
       );
@@ -131,7 +155,7 @@ export default function Add({ onChangePage }) {
       } else {
         SweetAlert(
           "Berhasil!",
-          "Data berhasil ditambahkan.",
+          "Data berhasil diperbarui.",
           "success",
           "OK"
         ).then(() =>
@@ -146,16 +170,17 @@ export default function Add({ onChangePage }) {
     }
   };
 
+  if (loading) return <Loading />;
+
   return (
     <div className="d-flex flex-column min-vh-100">
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
         <div className="d-flex flex-column">
           <div className="container mb-3">
-            {/* Breadcrumbs and Page Title */}
             <div className="p-3">
               <PageTitleNav
                 title={title}
-                breadcrumbs={location.state.breadcrumbs}
+                breadcrumbs={breadcrumbs}
                 onClick={() =>
                   onChangePage("index", {
                     idMenu: idMenu,
@@ -164,6 +189,7 @@ export default function Add({ onChangePage }) {
               />
             </div>
             <div className={isMobile ? "m-0" : "m-3"}>
+              {/* Main Content Section */}
               <div
                 className={
                   isMobile
@@ -171,35 +197,37 @@ export default function Add({ onChangePage }) {
                     : "shadow p-5 m-5 mt-0 bg-white rounded"
                 }
               >
+                {" "}
                 <HeaderForm label="Formulir Dokumen" />
                 <InputField
-                  ref={judulDokRef}
-                  label="Judul Dokumen"
-                  value={formData.judulDok}
+                  ref={nomorDokRef}
+                  label="Nomor Dokumen"
+                  value={formData.nomorDok || ''}
                   onChange={handleChange}
                   isRequired={true}
-                  name="judulDok"
+                  name="nomorDok"
                   type="text"
-                  maxChar="100"
+                  maxChar="50"
+                  isDisabled={true}
                 />
                 <div className="row">
                   <div className="col-lg-6 col-md-6 ">
                     <InputField
-                      ref={nomorDokRef}
-                      label="Nomor Dokumen"
-                      value={formData.nomorDok}
+                      ref={judulDokRef}
+                      label="Judul Dokumen"
+                      value={formData.judulDok || ''}
                       onChange={handleChange}
                       isRequired={true}
-                      name="nomorDok"
+                      name="judulDok"
                       type="text"
-                      maxChar="50"
+                      maxChar="100"
                     />
                   </div>
                   <div className="col-lg-6 col-md-6">
                     <InputField
                       ref={tanggalDokRef}
                       label="Tanggal Berlaku"
-                      value={formData.tanggalDok}
+                      value={formData.tanggalDok || ''}
                       onChange={handleChange}
                       isRequired={true}
                       name="tanggalDok"
@@ -222,23 +250,13 @@ export default function Add({ onChangePage }) {
                     <InputField
                       ref={kadaluarsaDokRef}
                       label="Tanggal Kadaluwarsa"
-                      value={formData.kadaluarsaDok}
+                      value={formData.kadaluarsaDok || ''}
                       onChange={handleChange}
                       isRequired={true}
                       name="kadaluarsaDok"
                       type="date"
                     />
                   </div>
-                </div>
-                <div className="row">
-                  <FileUpload
-                    label="Dokumen"
-                    forInput="fileDok"
-                    onChange={handleFileChange}
-                    name="fileDok"
-                    ref={fileRef}
-                    isRequired={true}
-                  />
                 </div>
                 <div className="d-flex justify-content-between align-items-center">
                   <div className="flex-grow-1 m-2">

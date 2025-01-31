@@ -17,6 +17,7 @@ import TextArea from "../../../part/TextArea";
 import Loading from "../../../part/Loading";
 import SweetAlert from "../../../util/SweetAlert";
 import { decodeHtml } from "../../../util/DecodeHtml";
+import InputArea from "../../../part/InputArea";
 
 const arrData = [
   { Value: "Mencapai", Text: "Mencapai" },
@@ -146,7 +147,7 @@ export default function Edit({ onChangePage }) {
     const body = {
       idIka: idData,
       staPelIka: formData.staPelIka || "",
-      namaIka: formData.namaIka || "",
+      namaIka: decodeHtml(formData.namaIka).replace(/<\/?[^>]+(>|$)/g, "") || "",
       urutanIka: formData.urutanIka || "",
       picIka: formData.picIka || "",
       parentIka: formData.parentIka || "",
@@ -226,7 +227,16 @@ export default function Edit({ onChangePage }) {
               <HeaderForm label="Formulir Standar" />
               <div className="row mb-3">
                 <div className="col-lg-12 col-md-12">
-                  <TextArea
+                <InputArea
+                    ref={namaIkaRef}
+                    label="Nama Indikator"
+                    value={formData.namaIka}
+                    onChange={(e) =>
+                      setFormData({ ...formData, namaIka: e.target.value })
+                    }
+                    isRequired={true}
+                  />
+                  {/* <TextArea
                     ref={namaIkaRef}
                     label="Nama Indikator"
                     value={decodeHtml(formData.namaIka)}
@@ -234,7 +244,7 @@ export default function Edit({ onChangePage }) {
                       setFormData({ ...formData, namaIka: e.target.value })
                     }
                     isRequired={true}
-                  />
+                  /> */}
                 </div>
                 <div className="col-lg-6 col-md-6">
                   <InputField
