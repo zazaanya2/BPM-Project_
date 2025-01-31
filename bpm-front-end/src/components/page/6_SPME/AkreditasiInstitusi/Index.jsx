@@ -16,9 +16,6 @@ import DetailData from "../../../part/DetailData";
 export default function Index({ onChangePage, title, breadcrumbs }) {
   const [data, setData] = useState([]);
   const [pageSize] = useState(10);
-  const ModalRef = useRef();
-  const [modalType, setModalType] = useState("");
-  const [detail, setDetail] = useState(null);
   const [selectedDokRef, setSelectedDokRef] = useState(data[0] || null);
   const [sortedData, setSortedData] = useState(data);
   const [pageCurrent, setPageCurrent] = useState(1);

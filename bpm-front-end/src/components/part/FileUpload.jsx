@@ -101,7 +101,7 @@ const FileUpload = forwardRef(function FileUpload(
     [isDisabled, handleFile]
   );
 
-  const handleFileChange = (e) => {
+ handleFileChange = (e) => {
     const file = e.target.files[0];
     handleFile(file);
   };

@@ -17,6 +17,7 @@ import InstrumenAps from "./components/page/10_Peraturan/ms_instrumenAps/Root";
 import KriteriaSurvei from "./components/page/9_Survei/Kriteria_Survei/Root";
 import SkalaSurvei from "./components/page/9_Survei/Skala_Penilaian/Root";
 import AkreProdi from "./components/page/6_SPME/AkreditasiProdi/Root";
+import ScrollToTop from "./components/part/ScrollToTop";
 import AkreInstitusi from "./components/page/6_SPME/AkreditasiInstitusi/Root";
 // import Survei from "./components/page/9_Survei/Survei/Root";
 function App() {
