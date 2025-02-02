@@ -93,7 +93,7 @@ export default function Detail({ onChangePage }) {
     let newTitleHeader = "";
     let newBreadcrumbs = [];
 
-    if (idMenu === 39) {
+    if (idMenu === 41) {
       newTitle = "Detail Peraturan";
       newTitleHeader = "Formulir Kebijakan Peraturan";
       newBreadcrumbs = [
@@ -110,7 +110,7 @@ export default function Detail({ onChangePage }) {
           href: "",
         },
       ];
-    } else if (idMenu === 40) {
+    } else if (idMenu === 42) {
       newTitle = "Detail Peraturan Eksternal";
       newTitleHeader = "Formulir Peraturan Eksternal";
       newBreadcrumbs = [
@@ -124,7 +124,7 @@ export default function Detail({ onChangePage }) {
         },
         { label: "Detail Peraturan Eksternal", href: "" },
       ];
-    } else if (idMenu === 41) {
+    } else if (idMenu === 43) {
       newTitle = "Detail Instrumen APS";
       newTitleHeader = "Formulir Instrumen APS";
       newBreadcrumbs = [

@@ -47,7 +47,7 @@ export default function Add({ onChangePage }) {
   const fileDokumenRef = useRef();
 
   useEffect(() => {
-    if (idMenu === 39) {
+    if (idMenu === 41) {
       title = "Kebijakan Peraturan";
       titleHeader = "Formulir Kebijakan Peraturan";
       breadcrumbs = [
@@ -58,7 +58,7 @@ export default function Add({ onChangePage }) {
         },
         { label: "Tambah Kebijakan Peraturan" },
       ];
-    } else if (idMenu === 40) {
+    } else if (idMenu === 42) {
       title = "Peraturan Eksternal";
       titleHeader = "Formulir Peraturan Eksternal";
       breadcrumbs = [
@@ -69,7 +69,7 @@ export default function Add({ onChangePage }) {
         },
         { label: "Tambah Peraturan Eksternal" },
       ];
-    } else if (idMenu === 41) {
+    } else if (idMenu === 43) {
       title = "Instrumen APS";
       titleHeader = "Formulir Instrumen APS";
       breadcrumbs = [

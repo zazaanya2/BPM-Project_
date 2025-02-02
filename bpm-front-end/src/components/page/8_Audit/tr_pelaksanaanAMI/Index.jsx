@@ -98,7 +98,7 @@ export default function Index({ onChangePage }) {
       apiCheck = "TransaksiTemuan/CheckTemuan";
       apiFinal = "TransaksiTemuan/FinalTemuan";
       pesan1 =
-        "Kolom yang memiliki temuan harus diisi secara lengkap, termasuk saran dan kategori temuan";
+        "Kategori temuan yang memiliki ketidaksesuaian harus dilengkapi temuannya";
       pesan2 = "Temuan";
     } else if (status === "Menunggu Analisa Temuan") {
       apiCheck = "TransaksiAnalisaTemuan/CheckAnalisaTemuan";
@@ -365,7 +365,7 @@ export default function Index({ onChangePage }) {
                       case "Menunggu Verifikasi Akhir":
                         return ["Self Assessment", "Temuan", "AnalisaTemuan"];
 
-                      case "Final":
+                      case "Selesai":
                         return ["Self Assessment", "Temuan", "AnalisaTemuan"];
 
                       default:

@@ -118,19 +118,19 @@ export default function Read({ onChangePage }) {
   ]);
 
   useEffect(() => {
-    if (idMenu === 38) {
+    if (idMenu === 41) {
       title = "Dokumen Peraturan";
       breadcrumbs = [
         { label: "Peraturan", href: "/peraturan/kebijakan" },
         { label: "Dokumen Kebijakan Peraturan" },
       ];
-    } else if (idMenu === 39) {
+    } else if (idMenu === 42) {
       title = "Dokumen Peraturan Eksternal";
       breadcrumbs = [
         { label: "Peraturan", href: "/peraturan/eksternal" },
         { label: "Dokumen Kebijakan Eksternal" },
       ];
-    } else if (idMenu === 40) {
+    } else if (idMenu === 43) {
       title = "Instrumen APS";
       breadcrumbs = [
         { label: "Instrumen APS", href: "/peraturan/aps" },
