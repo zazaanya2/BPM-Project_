@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { useState, useRef, useEffect } from "react";
 import Button from "../../../../part/Button";
+import HeaderText from "../../../../part/HeaderText";
 import Gedung from "../../../../../assets/element/gedung-astra-biru.png";
 import Mahasiswa from "../../../../../assets/element/mahasiswa.png";
 import SearchField from "../../../../part/SearchField";
@@ -9,9 +9,7 @@ import gedung from "../../../../../assets/element/gedung-astra.png";
 import Table from "../../../../part/Table";
 import Modal from "../../../../part/Modal";
 import Filter from "../../../../part/Filter";
-import Filter from "../../../../part/Filter";
 import pdf from "../../MI_PRG4_M4_P2_XXX.pdf";
-import { useIsMobile } from "../../../../util/useIsMobile";
 import { useIsMobile } from "../../../../util/useIsMobile";
 import { useLocation, useNavigate } from "react-router-dom";
 import SweetAlert from "../../../../util/SweetAlert";
@@ -526,7 +524,6 @@ export default function Index({ onChangePage }) {
     <>
       <div className="d-flex flex-column min-vh-100">
         <main className="flex-grow-1 p-3" style={{ marginTop: "60px" }}>
-        <main className="flex-grow-1 p-3" style={{ marginTop: "60px" }}>
           <div className="d-flex flex-column">
             <div className="container mb-3">
               {/* CAROUSEL */}
@@ -572,12 +569,6 @@ export default function Index({ onChangePage }) {
                 </nav>
               </div>
 
-              <div className="mt-3 mb-5">
-                <p style={{ textAlign: "justify" }}>
-                  {textContent != ""
-                    ? textContent
-                    : "Lorem Ipsum dolor sit amet..."}
-                </p>
               <div className="mt-3 mb-5">
                 <p style={{ textAlign: "justify" }}>
                   {textContent != ""
@@ -866,15 +857,6 @@ export default function Index({ onChangePage }) {
                         onDelete={(item) => handleDelete(item.key)}
                       />
 
-                      <Paging
-                        pageSize={pageSize}
-                        pageCurrent={pageCurrent}
-                        totalData={sortedData.length}
-                        navigation={handlePageNavigation}
-                      />
-                    </div>
-                  </div>
-                </div>
                       <Paging
                         pageSize={pageSize}
                         pageCurrent={pageCurrent}

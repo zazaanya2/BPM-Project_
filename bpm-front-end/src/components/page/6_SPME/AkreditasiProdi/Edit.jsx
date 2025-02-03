@@ -218,12 +218,6 @@ export default function Edit({ onChangePage }) {
     const isNomorSKAkrValid = nomorSKAkrRef.current?.validate();
     const isBerlakuAkrValid = berlakuAkrRef.current?.validate();
     const isKadaluarsaAkrValid = kadaluarsaAkrRef.current?.validate();
-    const isJudulDokSKAkrValid = judulDokSKAkrRef.current?.validate();
-    const isJenisDokSKAkrValid = jenisDokSKAkrRef.current?.validate();
-    const isJudulDokSertifAkrValid = judulDokSertifAkrRef.current?.validate();
-    const isJenisDokSertifAkrValid = jenisDokSertifAkrRef.current?.validate();
-    const isFileSKAkrValid = fileSKAkrRef.current?.validate();
-    const isFileSertifAkrValid = fileSertifAkrRef.current?.validate();
 
     if (!isKodeAkrValid) {
       kodeAkrRef.current?.focus();
@@ -256,24 +250,20 @@ export default function Edit({ onChangePage }) {
     }
 
     try {
-      let SKfile = null;
-      let Sertiffile = null;
-      const folderName = "Dokumen";
-
       const AkreData = {
         idAkr: idData,
         kodeAkr: formData.kodeAkr,
         namaAkr: formData.namaAkr,
         jenjangAkr: formData.jenjangAkr,
-        wilayahAkrRef: formData.wilayahAkr,
+        wilayahAkr: "",
         nomorSKAkr: formData.nomorSKAkr ? formData.nomorSKAkr : "",
         tahunAkr: formData.berlakuAkr
           ? new Date(formData.berlakuAkr).getFullYear()
           : "",
         peringkatAkr: formData.peringkatAkr ? formData.peringkatAkr : "",
         kadaluarsaAkr: formData.kadaluarsaAkr ? formData.kadaluarsaAkr : "",
-        SKAkr: formData.fileSkAkr ? formData.fileSkAkr : "",
-        SertifAkr: formData.fileSertifAkr ? formData.fileSertifAkr : "",
+        SKAkr: displayLov.fileSkAkr ? displayLov.fileSkAkr : "",
+        SertifAkr: displayLov.fileSertifAkr ? displayLov.fileSertifAkr : "",
       };
 
       console.log(AkreData);
@@ -332,7 +322,7 @@ export default function Edit({ onChangePage }) {
                     <InputField
                       ref={kodeAkrRef}
                       label="Kode Prodi"
-                      value={formData.kodeAkr}
+                      value={formData.kodeAkr || "-"}
                       onChange={handleChange}
                       isRequired={true}
                       name="kodeAkr"
@@ -344,7 +334,7 @@ export default function Edit({ onChangePage }) {
                     <InputField
                       ref={namaAkrRef}
                       label="Nama Prodi"
-                      value={formData.namaAkr}
+                      value={formData.namaAkr || "-"}
                       onChange={handleChange}
                       isRequired={true}
                       name="namaAkr"
@@ -356,12 +346,12 @@ export default function Edit({ onChangePage }) {
                     <InputField
                       ref={jenjangAkrRef}
                       label="Jenjang"
-                      value={formData.jenjangAkr}
+                      value={formData.jenjangAkr || "-"}
                       onChange={handleChange}
                       isRequired={true}
                       name="jenjangAkr"
                       type="text"
-                      maxChar="10"
+                      maxChar="20"
                     />
                   </div>
                 </div>
@@ -372,7 +362,7 @@ export default function Edit({ onChangePage }) {
                     <InputField
                       ref={peringkatAkrRef}
                       label="Peringkat"
-                      value={formData.peringkatAkr}
+                      value={formData.peringkatAkr || "-"}
                       onChange={handleChange}
                       isRequired={false}
                       name="peringkatAkr"
@@ -384,7 +374,7 @@ export default function Edit({ onChangePage }) {
                     <InputField
                       ref={nomorSKAkrRef}
                       label="Nomor SK"
-                      value={formData.nomorSKAkr}
+                      value={formData.nomorSKAkr || "-"}
                       onChange={handleChange}
                       isRequired={false}
                       name="nomorSKAkr"

@@ -44,7 +44,7 @@ export default function Akreditasi() {
       try {
         // Fetch data akreditasi institusi
         const responseInstitusi = await useFetch(
-          `${API_LINK}/MasterAkreditasi/GetAkreditasiInstitusi`,
+          `${API_LINK}/MasterAkreditasi/GetAkreditasiInstitusiLatest`,
           {},
           "POST"
         );

@@ -80,7 +80,7 @@ export default function Index({ onChangePage }) {
   const { jenis } = useParams();
   const ModalRef = useRef();
 
-  const title = "Panduan Akreditasi";
+  const title = "PANDUAN AKREDITASI";
 
   useEffect(() => {
     const fetchTahunDokumen = async () => {
@@ -445,7 +445,7 @@ export default function Index({ onChangePage }) {
                       Key: item.idDok,
                       No: (pageCurrent - 1) * pageSize + index + 1,
                       "Judul Dokumen": item.judulDok,
-                      Jenjang: item.judulDok,
+                      Jenjang: item.statusFileDok,
                       status: item.status,
                     }))}
                     actions={(row) => {

@@ -9,7 +9,6 @@ export default function Table({
   aksiIs = true,
   actions = [],
   onToggle = () => {},
-  onToggle = () => {},
   onDelete = () => {},
   onDetail = () => {},
   onEdit = () => {},

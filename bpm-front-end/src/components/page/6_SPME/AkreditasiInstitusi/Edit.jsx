@@ -2,166 +2,236 @@ import PageTitleNav from "../../../part/PageTitleNav";
 import HeaderForm from "../../../part/HeaderText";
 import Button from "../../../part/Button";
 import InputField from "../../../part/InputField";
-import React,{ useRef, useState,useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { API_LINK } from "../../../util/Constants";
 import SweetAlert from "../../../util/SweetAlert";
 import { useFetch } from "../../../util/useFetch";
 import moment from "moment";
+import InputFieldLov from "../../../part/InputFieldLov";
 import Loading from "../../../part/Loading";
 import { useLocation } from "react-router-dom";
+import SearchField from "../../../part/SearchField";
+import Filter from "../../../part/Filter";
+import DropDown from "../../../part/Dropdown";
+import Table from "../../../part/Table";
+import Paging from "../../../part/Paging";
+import Cookies from "js-cookie";
 
-  export default function Edit({ onChangePage, idAkreditasi }) {
-    const title = "Akreditasi Prodi";
-    const breadcrumbs = [
+const arrSort = [
+  { Value: "[judulDok] ASC", Text: "Judul Dokumen [↑]" },
+  { Value: "[judulDok] DESC", Text: "Judul Dokumen [↓]" },
+];
+
+export default function Edit({ onChangePage, idAkreditasi }) {
+  const activeUser = Cookies.get("activeUser");
+  let role = ""; // Jika undefined, gunakan nilai default
+  let roleNama = "";
+  let namaPengguna = "";
+  if (activeUser) {
+    role = JSON.parse(activeUser).RoleID.slice(0, 5);
+    roleNama = JSON.parse(activeUser).Role;
+    namaPengguna = JSON.parse(activeUser).Nama;
+  }
+  const title = "Akreditasi Prodi";
+  const breadcrumbs = [
     { label: "SPME" },
     { label: "Status Akreditasi" },
     { label: "Program Studi" },
     { label: "Edit" },
-    ];
+  ];
 
-    const [loading, setLoading] = useState(true);
-    const location = useLocation();
- 
-    const handleChange = (e) => {
+  const [loading, setLoading] = useState(true);
+  const [loading2, setLoading2] = useState(true);
+  const location = useLocation();
+
+  const [pageSize] = useState(10);
+  const [pageCurrent, setPageCurrent] = useState(1);
+  const [totalData, setTotalData] = useState(0);
+  const [filteredData, setFilteredData] = useState([]);
+  const [error, setError] = useState(null);
+
+  const [currentFilter, setCurrentFilter] = useState({
+    param1: 50,
+    param2: "Aktif",
+    param3: "",
+    param4: "",
+    param5: pageSize,
+    param6: pageCurrent,
+    param7: "[judulDok] ASC",
+  });
+
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-    };
+  };
 
-    const [formData, setFormData] = useState({
-      kodeProdi: "",
-      namaProdi: "",
-      jenjang: "",
-      wilayah: "",
-      noSK: "",
-      tahunSK: "",
-      peringkat: "",
-      tanggalBerlaku: "",
-      createdBy: "Unknown",
-    });
+  const [formData, setFormData] = useState({
+    kodeAkr: "",
+    namaAkr: "",
+    jenjangAkr: "",
+    wilayahAkr: "",
+    peringkatAkr: "",
+    nomorSkAkr: "",
+    berlakuAkr: "",
+    kadaluarsaAkr: "",
+    judulDokSKAkr: "",
+    jenisDokSKAkr: "",
+    judulDokSertifAkr: "",
+    jenisDokSertifAkr: "",
+  });
 
-   const kodeProdiRef = useRef();
-    const namaProdiRef = useRef();
-    const jenjangRef = useRef();
-    const wilayahRef = useRef();
-    const noSKRef = useRef();
-    const tahunSKRef = useRef();
-    const peringkatRef = useRef();
-    const tanggalBerlakuRef =  useRef();
-   
-    useEffect(() => {
-      if (!location.state?.idAkre) return;
+  const namaAkrRef = useRef();
+  const nomorSkAkrRef = useRef();
+  const peringkatAkrRef = useRef();
+  const berlakuAkrRef = useRef();
+  const kadaluarsaAkrRef = useRef();
+  const activeModalFor = useRef();
+  const fileSertifAkrRef = useRef();
+  const fileSKAkrRef = useRef();
+
+  const [displayLov, setDisplayLov] = useState({
+    fileSkAkr: "",
+    fileSertifAkr: "",
+  });
+
+  const handleChoose = (e) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [activeModalFor.current]: e.Key,
+    }));
+    setDisplayLov((prevData) => ({
+      ...prevData,
+      [activeModalFor.current]: e["Judul Dokumen"],
+    }));
+    console.log(e);
+    document.getElementById("dokModalClose").click();
+  };
+
+  useEffect(() => {
+    if (!location.state?.idAkre) return;
 
     const editId = location.state.idAkre;
     setLoading(true);
 
-      const fetchDokumenById = async () => {
-        const body = { idAkreditasi : editId };
-        setLoading(true);
+    const fetchDokumenById = async () => {
+      const body = { idAkreditasi: editId };
+      setLoading(true);
+      const result = await useFetch(
+        `${API_LINK}/MasterAkreditasi/GetAkreditasiProdiById`,
+        body,
+        "POST"
+      ).finally(() => setLoading(false));
+      console.log("API Response:", result); // Log the API response
+
+      if (result === "ERROR" || result === null || result.length === 0) {
+        setFormData(null);
+      } else {
+        console.log(result);
+        const dokumenArray = result;
+        setFormData({
+          kodeAkr: dokumenArray[0].kodeAkr,
+          namaAkr: dokumenArray[0].namaAkr,
+          jenjangAkr: dokumenArray[0].jenjangAkr,
+          wilayahAkr: dokumenArray[0].wilayahAkr,
+          peringkatAkr: dokumenArray[0].peringkatAkr,
+          nomorSkAkr: dokumenArray[0].noAkr,
+          berlakuAkr: dokumenArray[0].tahunAkr,
+          kadaluarsaAkr: moment(dokumenArray[0].expAkr).format("YYYY-MM-DD"),
+          judulDokSKAkr: dokumenArray[0].judulSkAkr,
+          fileSkAkr: dokumenArray[0].fileSkAkr,
+          judulDokSertifAkr: dokumenArray[0].judulSertifAkr,
+          fileSertifAkr: dokumenArray[0].fileSertifAkr,
+        });
+      }
+    };
+
+    fetchDokumenById();
+  }, [location.state?.idAkre]);
+
+  useEffect(() => {
+    const fetchDokumen = async () => {
+      setLoading2(true);
+      try {
         const result = await useFetch(
-          `${API_LINK}/MasterAkreditasi/GetDataAkreditasiById`,
-          body,
+          `${API_LINK}/MasterDokumen/GetDataDokumenByMenu`,
+          currentFilter,
           "POST"
-        ).finally(() => setLoading(false));
-        console.log("API Response:", result); // Log the API response
-  
+        );
+        console.log(currentFilter);
+
         if (result === "ERROR" || result === null || result.length === 0) {
-          setFormData(
-           null
-          );
+          setFilteredData([]);
+          setTotalData(0);
         } else {
-          console.log(result);
-          const dokumenArray = result;
-          setFormData({
-            kodeProdi: dokumenArray[0].kodeAkre,
-            namaProdi: dokumenArray[0].namaAkre,
-            jenjang: dokumenArray[0].strata,
-            wilayah: dokumenArray[0].wilayah,
-            noSK: dokumenArray[0].noSK,
-            tahunSK: dokumenArray[0].tahunSK,
-            peringkat: dokumenArray[0].peringkatAkre,
-            tanggalBerlaku: moment(dokumenArray[0].tanggalBerlaku).format("YYYY-MM-DD"),
-            createdBy: dokumenArray[0].createdBy,
-          });
-          
+          const dokumenArray = Object.values(result);
+          setFilteredData(dokumenArray);
+          setTotalData(dokumenArray[0].TotalCount);
         }
-      };
-  
-      fetchDokumenById();
-    }, [location.state?.idAkre]);
+      } catch (err) {
+        setError("Gagal mengambil data: " + err);
+      } finally {
+        setLoading2(false);
+      }
+    };
+    fetchDokumen();
+  }, [currentFilter]);
 
   const handleSubmit = async () => {
-    if(!formData){
+    if (!formData) {
       console.error("Form data is null");
       return;
     }
-    const iskodeProdiValid = kodeProdiRef.current?.validate();
-    const isNamaProdiValid = namaProdiRef.current?.validate();
-    const isjenjangValid = jenjangRef.current?.validate();
-    const iswilayahValid = wilayahRef.current?.validate();
-    const isnoSKValid = noSKRef.current?.validate();
-    const istahunSKValid = tahunSKRef.current?.validate();
-    const isperingkatValid = peringkatRef.current?.validate();
-    const istanggalBerlakuValid = tanggalBerlakuRef.current?.validate();
+    const isNamaAkrValid = namaAkrRef.current?.validate();
+    const isPeringkatAkrValid = peringkatAkrRef.current?.validate();
+    const isNomorSKAkrValid = nomorSkAkrRef.current?.validate();
+    const isBerlakuAkrValid = berlakuAkrRef.current?.validate();
+    const isKadaluarsaAkrValid = kadaluarsaAkrRef.current?.validate();
 
-    console.log("masuk sini");
-
-    if (!iskodeProdiValid) {
-      kodeProdiRef.current?.focus();
+    if (!isNamaAkrValid) {
+      namaAkrRef.current?.focus();
       return;
     }
-    if (!isNamaProdiValid) {
-      namaProdiRef.current?.focus();
+    if (!isPeringkatAkrValid) {
+      peringkatAkrRef.current?.focus();
       return;
     }
-    if (!isjenjangValid) {
-      jenjangRef.current?.focus();
+    if (!isNomorSKAkrValid) {
+      nomorSkAkrRef.current?.focus();
       return;
     }
-    if (!iswilayahValid) {
-      wilayahRef.current?.focus();
+    if (!isBerlakuAkrValid) {
+      berlakuAkrRef.current?.focus();
       return;
     }
-   
-    if (!isnoSKValid) {
-      noSKRef.current?.focus();
+    if (!isKadaluarsaAkrValid) {
+      kadaluarsaAkrRef.current?.focus();
       return;
     }
-    if (!istahunSKValid) {
-      tahunSKRef.current?.focus();
-      return;
-    }
-    if (!isperingkatValid) {
-      peringkatRef.current?.focus();
-      return;
-    }
-    if (!istanggalBerlakuValid) {
-      tanggalBerlakuRef.current?.focus();
-      return;
-    }
-  
-  
     try {
-    
-
-      const dokData = {
-        idAkreditasi: location.state?.idAkre,
-        kodeProdi: formData.kodeProdi,
-        namaProdi: formData.namaProdi,
-        jenjang: formData.jenjang,
-        wilayah: formData.wilayah,
-        noSK: formData.noSK,
-        tahunSK: formData.tahunSK,
-        peringkat: formData.peringkat,
-        tanggalBerlaku: formData.tanggalBerlaku,
-        createdBy: "Unknown",
+      const AkreData = {
+        idAkr: location.state?.idAkre,
+        kodeAkr: formData.kodeAkr || "",
+        namaAkr: formData.namaAkr || "",
+        jenjangAkr: formData.jenjangAkr || "",
+        wilayahAkrRef: formData.wilayahAkr || "",
+        nomorSKAkr: formData.nomorSkAkr ? formData.nomorSkAkr : "",
+        tahunAkr: formData.berlakuAkr
+          ? new Date(formData.berlakuAkr).getFullYear()
+          : "",
+        peringkatAkr: formData.peringkatAkr ? formData.peringkatAkr : "",
+        kadaluarsaAkr: formData.kadaluarsaAkr ? formData.kadaluarsaAkr : "",
+        SKAkr: formData.fileSkAkr ? formData.fileSkAkr : "",
+        SertifAkr: formData.fileSertifAkr ? formData.fileSertifAkr : "",
       };
+
+      console.log(AkreData);
 
       const createResponse = await useFetch(
         `${API_LINK}/MasterAkreditasi/EditDataAkreditasi`,
-        dokData,
+        AkreData,
         "POST"
       );
 
@@ -170,7 +240,7 @@ import { useLocation } from "react-router-dom";
       } else {
         SweetAlert(
           "Berhasil!",
-          "Data berhasil diperbarui.",
+          "Data berhasil ditambahkan.",
           "success",
           "OK"
         ).then(() => onChangePage("index"));
@@ -180,7 +250,8 @@ import { useLocation } from "react-router-dom";
       SweetAlert("Gagal!", error.message, "error", "OK");
     }
   };
-  if (loading) return <Loading />;  
+
+  if (loading) return <Loading />;
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -198,103 +269,96 @@ import { useLocation } from "react-router-dom";
 
             {/* Main Content Section */}
             <div className="shadow p-5 mt-0 bg-white rounded">
-              <HeaderForm label={"Formulir "+ title} />
-              <div className="row">
-                <InputField 
-                ref={kodeProdiRef}
-                label="Kode Prodi " isRequired={true}
-                value={formData.kodeProdi }
-                onChange={handleChange}
-                type="text"
-                name="kodeProdi"
-                maxChar="100"/>
-              </div>
+              <HeaderForm label={"Formulir " + title} />
+
               <div className="row">
                 <div className="col-lg-6 col-md-6 ">
-                  <InputField 
-                  ref={namaProdiRef}
-                  label="Nama Prodi"
-                  value={formData.namaProdi}
-                  onChange={handleChange} 
-                  isRequired="true" 
-                  name="namaProdi"
-                  type="text"
-                  maxChar="50"
-                  />
-                </div>
-               
-                <div className="col-lg-6 col-md-6">
                   <InputField
-                    label="Jenjang"
-                    isRequired={true}
+                    ref={namaAkrRef}
+                    label="Nama"
+                    value={formData.namaAkr || ""}
                     onChange={handleChange}
-                    value={formData.jenjang}
-                    ref={jenjangRef}
-                    name="jenjang"
+                    isRequired="true"
+                    name="namaAkr"
                     type="text"
-                  />
-                </div> 
-
-                <div className="col-lg-6 col-md-6">
-                  <InputField
-                    label="Wilayah"
-                    isRequired={true}
-                    onChange={handleChange}
-                    value= {formData.wilayah}
-                    ref={wilayahRef}
-                    name= "wilayah"
-                    type= "text"
-                    
+                    maxChar="100"
                   />
                 </div>
 
                 <div className="col-lg-6 col-md-6">
                   <InputField
-                    label="No SK"
+                    label="Peringkat"
                     isRequired={true}
                     onChange={handleChange}
-                    value= {formData.noSK}
-                    ref={noSKRef}
-                    name= "noSK"
-                    type= "text"
+                    value={formData.peringkatAkr || ""}
+                    ref={peringkatAkrRef}
+                    name="peringkatAkr"
+                    type="text"
+                    maxChar="20"
                   />
                 </div>
 
+                <div className="col-lg-12 col-md-12">
+                  <InputField
+                    label="Nomor SK"
+                    isRequired={true}
+                    onChange={handleChange}
+                    value={formData.nomorSkAkr || ""}
+                    ref={nomorSkAkrRef}
+                    name="nomorSkAkr"
+                    type="text"
+                    maxChar="50"
+                  />
+                </div>
                 <div className="col-lg-6 col-md-6">
                   <InputField
                     label="Tahun SK"
                     isRequired={true}
                     onChange={handleChange}
-                    value= {formData.tahunSK}
-                    ref={tahunSKRef}
-                    name= "tahunSK"
-                   type= "text"
+                    value={formData.berlakuAkr || ""}
+                    ref={berlakuAkrRef}
+                    name="berlakuAkr"
+                    type="number"
                   />
                 </div>
                 <div className="col-lg-6 col-md-6">
                   <InputField
-                    label="Peringkat"
+                    label="Tanggal Kadaluwarsa"
                     isRequired={true}
-                    onChange={handleChange}                   
-                    value= {formData.peringkat}
-                    ref={peringkatRef}
-                    name= "peringkat"
-                    type = "text"
-                  />
-                </div>
-              </div>
-              
-              <div className="col-lg-6 col-md-6">
-                  <InputField
-                    ref={tanggalBerlakuRef}
-                    label="Tanggal Berlaku"
-                    value={formData.tanggalBerlaku}
-                     onChange={handleChange}
-                    isRequired="true"
-                    name="tanggalBerlaku"
+                    onChange={handleChange}
+                    value={formData.kadaluarsaAkr || ""}
+                    ref={kadaluarsaAkrRef}
+                    name="kadaluarsaAkr"
                     type="date"
                   />
                 </div>
+                <div className="col-lg-12 col-md-12">
+                  <InputFieldLov
+                    ref={fileSKAkrRef}
+                    id="fileSkAkr"
+                    label="Dokumen SK"
+                    placeholder="PIlih Dokumen"
+                    isRequired={false}
+                    modalTarget="#dokModal"
+                    value={displayLov.fileSkAkr}
+                    onChange={handleChange}
+                    onClick={() => (activeModalFor.current = "fileSkAkr")}
+                  />
+                </div>
+                <div className="col-lg-12 col-md-12">
+                  <InputFieldLov
+                    ref={fileSertifAkrRef}
+                    id="fileSertifAkr"
+                    label="Dokumen Sertifikat"
+                    placeholder="PIlih Dokumen"
+                    isRequired={false}
+                    modalTarget="#dokModal"
+                    value={displayLov.fileSertifAkr}
+                    onChange={handleChange}
+                    onClick={() => (activeModalFor.current = "fileSertifAkr")}
+                  />
+                </div>
+              </div>
 
               <div className="d-flex justify-content-between align-items-center mt-4">
                 <div className="flex-grow-1 m-2">
@@ -312,7 +376,100 @@ import { useLocation } from "react-router-dom";
                     type="button"
                     label="Batal"
                     width="100%"
+                    onClick={() => onChangePage("index")}
                   />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          className="modal fade"
+          id="dokModal"
+          tabIndex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-xl modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="staticBackdropLabel">
+                  Pilih Dokumen
+                </h1>
+                <button
+                  type="button"
+                  className="btn-close rounded-5"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                  style={{ color: "white", backgroundColor: "white" }}
+                  id="dokModalClose"
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="container-fluid">
+                  <div className="row">
+                    <div className="col-lg-10">
+                      <SearchField
+                        onChange={(e) =>
+                          setCurrentFilter((prevFilter) => {
+                            return {
+                              ...prevFilter,
+                              param3: e,
+                            };
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="col-lg-2">
+                      <Filter>
+                        <DropDown
+                          arrData={arrSort}
+                          label="Urut Berdasarkan"
+                          type="pilih"
+                          defaultValue="[judulDok] ASC"
+                          forInput="sortFilter"
+                          onChange={(e) =>
+                            setCurrentFilter((prevFilter) => {
+                              return {
+                                ...prevFilter,
+                                param7: e.target.value,
+                              };
+                            })
+                          }
+                        />
+                      </Filter>
+                    </div>
+                  </div>
+                </div>
+                <div className="table-container bg-white rounded">
+                  {loading2 ? (
+                    <Loading />
+                  ) : (
+                    <div>
+                      {role === "ROL01" ? (
+                        <Table
+                          arrHeader={["No", "Judul Dokumen"]}
+                          data={filteredData.map((item, index) => ({
+                            Key: item.idDok,
+                            No: (pageCurrent - 1) * pageSize + index + 1,
+                            "Judul Dokumen": item.judulDok,
+                            status: item.status,
+                          }))}
+                          actions={["Choose"]}
+                          onChoose={handleChoose}
+                        />
+                      ) : (
+                        ""
+                      )}
+                      <Paging
+                        pageSize={pageSize}
+                        pageCurrent={pageCurrent}
+                        totalData={totalData}
+                        navigation={setPageCurrent}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

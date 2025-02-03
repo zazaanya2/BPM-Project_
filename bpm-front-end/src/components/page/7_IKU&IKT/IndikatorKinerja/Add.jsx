@@ -186,11 +186,7 @@ export default function Add({ onChangePage }) {
               }
             >
               <HeaderForm
-                label={
-                  modew === "utama"
-                    ? "Formulir Indikator Utama"
-                    : "Formulir Indikator Tambahan"
-                }
+                label="Indikator Kinerja"
               />
               <div className="row mb-3">
                 <div className="col-lg-12 col-md-12">

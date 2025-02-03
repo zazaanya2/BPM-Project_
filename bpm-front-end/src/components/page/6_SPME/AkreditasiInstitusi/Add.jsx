@@ -6,11 +6,10 @@ import DropDown from "../../../part/Dropdown";
 import DocUpload from "../../../part/DocUpload";
 import FileUpload from "../../../part/FileUpload";
 import InputField from "../../../part/InputField";
-import React,{ useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { API_LINK } from "../../../util/Constants";
 import SweetAlert from "../../../util/SweetAlert";
 import { useFetch } from "../../../util/useFetch";
-
 
 export default function Add({ onChangePage }) {
   const title = "Akreditasi Institusi";
@@ -21,20 +20,6 @@ export default function Add({ onChangePage }) {
     { label: "Tambah" },
   ];
 
-  const arrData = [
-    { Value: "Controlled Copy", Text: "Controlled Copy" },
-    { Value: "Uncontrolled Copy", Text: "Uncontrolled Copy" },
-  ];
-  
-  const arrAkre = [
-    { Value: "Unggul", Text: "Unggul" },
-    { Value: "Baik Sekali", Text: "Baik Sekali" },
-    { Value: "Baik", Text: "Baik" },
-    { Value: "A", Text: "A" },
-    { Value: "B", Text: "B" },
-    { Value: "C", Text: "C" },
-    { Value: "Belum Terakreditasi", Text: "Belum Terakreditasi" },
-  ];
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -43,94 +28,90 @@ export default function Add({ onChangePage }) {
     }));
   };
 
-    const [formData, setFormData] = useState({
-      kodeProdi: "",
-      namaProdi: "",
-      jenjang: "",
-      wilayah: "",
-      noSK: "",
-      tahunSK: "",
-      peringkat: "",
-      tanggalBerlaku: "",
-    });
+  const [formData, setFormData] = useState({
+    kodeAkr: "",
+    namaAkr: "",
+    jenjangAkr: "",
+    wilayahAkr: "",
+    peringkatAkr: "",
+    nomorSkAkr: "",
+    berlakuAkr: "",
+    kadaluarsaAkr: "",
+    judulDokSKAkr: "",
+    jenisDokSKAkr: "",
+    judulDokSertifAkr: "",
+    jenisDokSertifAkr: "",
+  });
 
-   const kodeProdiRef = useRef();
-    const namaProdiRef = useRef();
-    const jenjangRef = useRef();
-    const wilayahRef = useRef();
-    const noSKRef = useRef();
-    const tahunSKRef = useRef();
-    const peringkatRef = useRef();
-    const tanggalBerlakuRef =  useState();
-   
+  const namaAkrRef = useRef();
+  const nomorSkAkrRef = useRef();
+  const peringkatAkrRef = useRef();
+  const berlakuAkrRef = useRef();
+  const kadaluarsaAkrRef = useRef();
 
   const handleSubmit = async () => {
-    const iskodeProdiValid = kodeProdiRef.current?.validate();
-    const isNamaProdiValid = namaProdiRef.current?.validate();
-    const isjenjangValid = jenjangRef.current?.validate();
-    const iswilayahValid = wilayahRef.current?.validate();
-    const isnoSKValid = noSKRef.current?.validate();
-    const istahunSKValid = tahunSKRef.current?.validate();
-    const isperingkatValid = peringkatRef.current?.validate();
-    const istanggalBerlakuValid = tanggalBerlakuRef.current?.validate();
+    const isNamaAkrValid = namaAkrRef.current?.validate();
+    const isPeringkatAkrValid = peringkatAkrRef.current?.validate();
+    const isNomorSKAkrValid = nomorSkAkrRef.current?.validate();
+    const isBerlakuAkrValid = berlakuAkrRef.current?.validate();
+    const isKadaluarsaAkrValid = kadaluarsaAkrRef.current?.validate();
 
+    if (!isNamaAkrValid) {
+      namaAkrRef.current?.focus();
+      return;
+    }
+    if (!isPeringkatAkrValid) {
+      peringkatAkrRef.current?.focus();
+      return;
+    }
+    if (!isNomorSKAkrValid) {
+      nomorSkAkrRef.current?.focus();
+      return;
+    }
+    if (!isBerlakuAkrValid) {
+      berlakuAkrRef.current?.focus();
+      return;
+    }
+    if (!isKadaluarsaAkrValid) {
+      kadaluarsaAkrRef.current?.focus();
+      return;
+    }
     console.log("masuk sini");
 
-   
-
-    if (!iskodeProdiValid) {
-      kodeProdiRef.current?.focus();
-      return;
-    }
-    if (!isNamaProdiValid) {
-      namaProdiRef.current?.focus();
-      return;
-    }
-    if (!isjenjangValid) {
-      jenjangRef.current?.focus();
-      return;
-    }
-    if (!iswilayahValid) {
-      wilayahRef.current?.focus();
-      return;
-    }
-   
-    if (!isnoSKValid) {
-      noSKRef.current?.focus();
-      return;
-    }
-    if (!istahunSKValid) {
-      tahunSKRef.current?.focus();
-      return;
-    }
-    if (!isperingkatValid) {
-      peringkatRef.current?.focus();
-      return;
-    }
-    if (!istanggalBerlakuValid) {
-      tanggalBerlakuRef.current?.focus();
-      return;
-    }
-  
-  
     try {
-    
-
-      const dokData = {
-        kodeProdi: kodeProdiRef.current.value,
-        namaProdi: namaProdiRef.current.value,
-        jenjang: jenjangRef.current.value,
-        wilayah: wilayahRef.current.value,
-        noSK: noSKRef.current.value,
-        tahunSK: tahunSKRef.current.value,
-        peringkat: peringkatRef.current.value,
-        tanggalBerlaku: tanggalBerlakuRef.current.value,
-        createdBy: "Unknown",
+      const AkreData = {
+        kodeAkr: formData.kodeAkr,
+        namaAkr: formData.namaAkr,
+        jenjangAkr: formData.jenjangAkr,
+        wilayahAkrRef: "",
+        nomorSKAkr: formData.nomorSkAkr ? formData.nomorSkAkr : "",
+        tahunAkr: formData.berlakuAkr,
+        peringkatAkr: formData.peringkatAkr ? formData.peringkatAkr : "",
+        kadaluarsaAkr: formData.kadaluarsaAkr ? formData.kadaluarsaAkr : "",
+        SKAkr: "",
+        SertifAkr: "",
       };
+
+      console.log(AkreData);
+
+      const isExist = await useFetch(
+        `${API_LINK}/MasterAkreditasi/CheckDataAkreditasiExist`,
+        {
+          param1: formData.kodeAkr || "",
+          param2: formData.namaAkr || "",
+          param3: formData.jenjangAkr || "",
+        },
+        "POST"
+      );
+
+      if (isExist.length > 0) {
+        SweetAlert("Gagal!", "Data sudah ada.", "error", "OK");
+        return;
+      }
 
       const createResponse = await useFetch(
         `${API_LINK}/MasterAkreditasi/CreateDataAkreditasi`,
-        dokData,
+        AkreData,
         "POST"
       );
 
@@ -149,7 +130,6 @@ export default function Add({ onChangePage }) {
       SweetAlert("Gagal!", error.message, "error", "OK");
     }
   };
-  
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -167,107 +147,71 @@ export default function Add({ onChangePage }) {
 
             {/* Main Content Section */}
             <div className="shadow p-5 mt-0 bg-white rounded">
-              <HeaderForm label={"Formulir "+title} />
-              <div className="row">
-                <InputField 
-                ref={kodeProdiRef}
-                label="Kode Prodi " isRequired={true}
-                value={formData.kodeProdi}
-                onChange={handleChange}
-                type="text"
-                name="kodeProdi"
-                maxChar="100"/>
-              </div>
+              <HeaderForm label={"Formulir " + title} />
               <div className="row">
                 <div className="col-lg-6 col-md-6 ">
-                  <InputField 
-                  ref={namaProdiRef}
-                  label="Nama Prodi"
-                  value={formData.namaProdi}
-                  onChange={handleChange} 
-                  isRequired="true" 
-                  name="namaProdi"
-                  type="text"
-                  maxChar="50"
-                  />
-                </div>
-               
-                <div className="col-lg-6 col-md-6">
                   <InputField
-                    label="Jenjang"
-                    isRequired={true}
+                    ref={namaAkrRef}
+                    label="Nama"
+                    value={formData.namaAkr}
                     onChange={handleChange}
-                    errorMessage=""
-                    value={formData.jenjang}
-                    ref={jenjangRef}
-                    name="jenjang"
+                    isRequired="true"
+                    name="namaAkr"
                     type="text"
-                  />
-                </div> 
-
-                <div className="col-lg-6 col-md-6">
-                  <InputField
-                    label="Wilayah"
-                    isRequired={true}
-                    onChange={handleChange}
-                    errorMessage="" 
-                    value= {formData.wilayah}
-                    ref={wilayahRef}
-                    name= "wilayah"
-                    type= "text"
-                    
+                    maxChar="100"
                   />
                 </div>
 
-                <div className="col-lg-6 col-md-6">
-                  <InputField
-                    label="No SK"
-                    isRequired={true}
-                    onChange={handleChange}
-                    errorMessage="" 
-                    value= {formData.noSK}
-                    ref={noSKRef}
-                    name= "noSK"
-                    type= "text"
-                  />
-                </div>
-
-                <div className="col-lg-6 col-md-6">
-                  <InputField
-                    label="Tahun SK"
-                    isRequired={true}
-                    onChange={handleChange}
-                    value= {formData.tahunSK}
-                    ref={tahunSKRef}
-                    name= "tahunSK"
-                   type= "text"
-                  />
-                </div>
                 <div className="col-lg-6 col-md-6">
                   <InputField
                     label="Peringkat"
                     isRequired={true}
                     onChange={handleChange}
-                    errorMessage="" 
-                    value= {formData.peringkat}
-                    ref={peringkatRef}
-                    name= "peringkat"
-                    type = "text"
+                    errorMessage=""
+                    value={formData.peringkatAkr}
+                    ref={peringkatAkrRef}
+                    name="peringkatAkr"
+                    type="text"
+                    maxChar="20"
                   />
                 </div>
-              </div>
-              
-              <div className="col-lg-6 col-md-6">
+
+                <div className="col-lg-12 col-md-12">
                   <InputField
-                    ref={tanggalBerlakuRef}
-                    label="Tanggal Berlaku"
-                    value={formData.tanggalBerlaku}
+                    label="Nomor SK"
+                    isRequired={true}
                     onChange={handleChange}
-                    isRequired="true"
-                    name="tanggalBerlaku"
+                    errorMessage=""
+                    value={formData.nomorSkAkr}
+                    ref={nomorSkAkrRef}
+                    name="nomorSkAkr"
+                    type="text"
+                    maxChar="50"
+                  />
+                </div>
+                <div className="col-lg-6 col-md-6">
+                  <InputField
+                    label="Tahun SK"
+                    isRequired={true}
+                    onChange={handleChange}
+                    value={formData.berlakuAkr}
+                    ref={berlakuAkrRef}
+                    name="berlakuAkr"
+                    type="number"
+                  />
+                </div>
+                <div className="col-lg-6 col-md-6">
+                  <InputField
+                    label="Tanggal Kadaluwarsa"
+                    isRequired={true}
+                    onChange={handleChange}
+                    value={formData.kadaluarsaAkr}
+                    ref={kadaluarsaAkrRef}
+                    name="kadaluarsaAkr"
                     type="date"
                   />
                 </div>
+              </div>
 
               <div className="d-flex justify-content-between align-items-center mt-4">
                 <div className="flex-grow-1 m-2">
@@ -285,6 +229,7 @@ export default function Add({ onChangePage }) {
                     type="button"
                     label="Batal"
                     width="100%"
+                    onClick={() => onChangePage("index")}
                   />
                 </div>
               </div>
@@ -294,5 +239,4 @@ export default function Add({ onChangePage }) {
       </main>
     </div>
   );
-
 }
