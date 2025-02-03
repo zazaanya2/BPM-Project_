@@ -78,9 +78,6 @@ export default function IndexAlternate2({ onChangePage }) {
   const [modalType, setModalType] = useState(""); // "add", "edit", "detail"
   const [searchKeyword, setSearchKeyword] = useState(""); // Keyword pencarian
   const isMobile = useIsMobile();
-  //   const [selectedDokRef, setSelectedDokRef] = useState(data[0] || null); // Set initial dok_ref based on the first item in data
-  //   const [sortedData, setSortedData] = useState(data);
-  const [isLoading, setIsLoading] = useState(true);
 
   const [loading, setLoading] = useState(true);
   const [menuData, setMenuData] = useState(inisialisasiMenuData);
@@ -113,30 +110,6 @@ export default function IndexAlternate2({ onChangePage }) {
   }, [pageCurrent]);
 
   const images = [];
-
-  //   useEffect(() => {
-  //     if (selectedDokRef !== null) {
-  //       // Filter data by selected dok_ref and sort by dok_rev
-  //       const filteredData = data.filter(
-  //         (item) => item.dok_ref === selectedDokRef.dok_ref
-  //       );
-
-  //       let tempData = filteredData;
-
-  //       if (searchKeyword) {
-  //         tempData = tempData.filter((item) =>
-  //           item.dok_judul.toLowerCase().includes(searchKeyword.toLowerCase())
-  //         );
-  //       }
-
-  //       const sorted = tempData.sort(
-  //         (a, b) => a.dok_created_date - b.dok_created_date
-  //       );
-  //       if (JSON.stringify(sorted) !== JSON.stringify(sortedData)) {
-  //         setSortedData(sorted); // Update the sorted data only if it has changed
-  //       }
-  //     }
-  //   }, [selectedDokRef, data, sortedData]);
 
   const handleDelete = async (id) => {
     const confirm = await SweetAlert(
@@ -590,7 +563,7 @@ export default function IndexAlternate2({ onChangePage }) {
                     <div className="table-container bg-white mt-0 rounded">
                       <div className={isMobile ? "mb-3" : "row"}>
                         <div className="d-flex flex-wrap align-items-center gap-1">
-                          {role === "ROL01" ? (
+                          {/* {role === "ROL01" ? (
                             <div>
                               <Button
                                 iconName="add"
@@ -640,7 +613,7 @@ export default function IndexAlternate2({ onChangePage }) {
                             </div>
                           ) : (
                             ""
-                          )}
+                          )} */}
 
                           <div className="me-auto flex-grow-1 mt-3 me-3">
                             <SearchField
@@ -655,7 +628,7 @@ export default function IndexAlternate2({ onChangePage }) {
                             />
                           </div>
 
-                          <div className="">
+                          {/* <div className="">
                             <Filter>
                               <DropDown
                                 arrData={arrSort}
@@ -702,7 +675,7 @@ export default function IndexAlternate2({ onChangePage }) {
                                 }
                               />
                             </Filter>
-                          </div>
+                          </div> */}
                         </div>
                       </div>
                       {loading ? (
@@ -719,7 +692,7 @@ export default function IndexAlternate2({ onChangePage }) {
                                   /<\/?[^>]+(>|$)/g,
                                   ""
                                 ) || "-",
-                            //   PIC: item.picIka,
+                              //   PIC: item.picIka,
                               jenis: item.jenisIka,
                               status: item.status,
                             }))}

@@ -38,6 +38,9 @@ const DokumenE = lazy(() => import("../page/6_SPME/Dokumen/Root"));
 const AkreditasiProdi = lazy(() =>
   import("../page/6_SPME/AkreditasiProdi/Root")
 );
+const AkreditasiInstitusi = lazy(() =>
+  import("../page/6_SPME/AkreditasiInstitusi/Root")
+);
 const Ringkasan = lazy(() => import("../page/6_SPME/RIngkasanAkreditasi/Root"));
 const PanduanAkreditasi = lazy(() =>
   import("../page/6_SPME/PanduanAkreditasi/Root")
@@ -142,11 +145,11 @@ const routeList = [
     element: <SPMI_Dinamis />,
     protected: true,
   },
-  // {
-  //   path: "/spmi/siklus/peningkatan/*",
-  //   element: <Peningkatan />,
-  //   protected: true,
-  // },
+  {
+    path: "/spmi/siklus/peningkatan/*",
+    element: <Peningkatan />,
+    protected: true,
+  },
   // {
   //   path: "/spmi/siklus/pengendalian/*",
   //   element: <Pengendalian />,
@@ -207,6 +210,11 @@ const routeList = [
     protected: true,
   },
   {
+    path: "/spme/status/institusi/*",
+    element: <AkreditasiInstitusi />,
+    protected: true,
+  },
+  {
     path: "/spme/panduan/*",
     element: <PanduanAkreditasi />,
     protected: true,
@@ -218,12 +226,12 @@ const routeList = [
   },
   {
     path: "/iku/dashboard/*",
-    element: <Standar />,
+    element: <Capaian />,
     protected: true,
   },
   {
     path: "/iku/ikuikt/*",
-    element: <Capaian />,
+    element: <IndikatorKinerja />,
     protected: true,
   },
   {

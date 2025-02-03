@@ -20,10 +20,11 @@ import { decodeHtml } from "../../../util/DecodeHtml";
 import InputArea from "../../../part/InputArea";
 
 const arrData = [
-  { Value: "Mencapai", Text: "Mencapai" },
-  { Value: "Melampaui", Text: "Melampaui" },
-  { Value: "Belum Mencapai", Text: "Belum Mencapai" },
-  { Value: "Menyimpang", Text: "Menyimpang" },
+  { Value: "Kesesuaian Melampaui", Text: "Kesesuaian Melampaui" },
+  { Value: "Kesesuaian Memenuhi", Text: "Kesesuaian Memenuhi" },
+  { Value: "Ketidaksesuaian Observasi", Text: "Ketidaksesuaian Observasi" },
+  { Value: "Ketidaksesuaian Minor", Text: "Ketidaksesuaian Minor" },
+  { Value: "Ketidaksesuaian Major", Text: "Ketidaksesuaian Major" },
 ];
 
 export default function Edit({ onChangePage }) {
@@ -224,7 +225,7 @@ export default function Edit({ onChangePage }) {
                   : "shadow p-5 m-5 mt-0 bg-white rounded"
               }
             >
-              <HeaderForm label="Formulir Standar" />
+              <HeaderForm label="Indikator Kinerja" />
               <div className="row mb-3">
                 <div className="col-lg-12 col-md-12">
                 <InputArea
@@ -236,15 +237,6 @@ export default function Edit({ onChangePage }) {
                     }
                     isRequired={true}
                   />
-                  {/* <TextArea
-                    ref={namaIkaRef}
-                    label="Nama Indikator"
-                    value={decodeHtml(formData.namaIka)}
-                    onChange={(e) =>
-                      setFormData({ ...formData, namaIka: e.target.value })
-                    }
-                    isRequired={true}
-                  /> */}
                 </div>
                 <div className="col-lg-6 col-md-6">
                   <InputField
@@ -305,6 +297,7 @@ export default function Edit({ onChangePage }) {
                     ref={aktualIkaRef}
                     label="Aktual"
                     value={formData.aktualIka || ""}
+                    forInput="aktualIka"
                     onChange={handleChange}
                     isRequired={false}
                     type="text"

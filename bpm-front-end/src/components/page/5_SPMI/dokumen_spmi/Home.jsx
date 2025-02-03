@@ -1,12 +1,10 @@
 import { useState } from "react";
 import Index from "./Index";
 import Add from "./Add";
-import AddChild from "./AddChild";
 import Edit from "./Edit";
-import EditChild from "./EditChild";
 
 export default function Home() {
-  const [pageMode, setPageMode] = useState("read");
+  const [pageMode, setPageMode] = useState("index");
   const [dataID, setDataID] = useState("");
   const [breadcrumbs, setBreadcrumbs] = useState([
     { label: "SPMI" },
@@ -15,15 +13,11 @@ export default function Home() {
 
   function getPageMode() {
     switch (pageMode) {
-      case "read":
+      case "index":
         return <Index onChangePage={handleSetPageMode} />;
-      case "addKat":
+      case "add":
         return (
           <Add onChangePage={handleSetPageMode} breadcrumbs={breadcrumbs} />
-        );
-      case "addKatChild":
-        return (
-          <AddChild onChangePage={handleSetPageMode} breadcrumbs={breadcrumbs} />
         );
       case "edit":
         return (
@@ -33,18 +27,15 @@ export default function Home() {
             idData={dataID}
           />
         );
-      case "editChild":
-        return (
-          <EditChild
-            onChangePage={handleSetPageMode}
-            breadcrumbs={breadcrumbs}
-            idData={dataID}
-          />
-        );
     }
   }
 
   function handleSetPageMode(mode) {
+    setPageMode(mode);
+  }
+
+  function handleSetPageMode(mode, breadcrumb) {
+    setBreadcrumbs(breadcrumb);
     setPageMode(mode);
   }
 

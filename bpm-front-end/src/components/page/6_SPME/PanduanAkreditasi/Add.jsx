@@ -32,6 +32,7 @@ export default function Add({ onChangePage }) {
     tanggalDok: "",
     kadaluarsaDok: "",
     jenisDok: "",
+    jenjangDok: "",
   });
 
   const judulDokRef = useRef();
@@ -39,6 +40,7 @@ export default function Add({ onChangePage }) {
   const tanggalDokRef = useRef();
   const kadaluarsaDokRef = useRef();
   const jenisDokRef = useRef();
+  const jenjangDokRef = useRef();
   const fileRef = useRef();
 
   const handleChange = (e) => {
@@ -60,6 +62,7 @@ export default function Add({ onChangePage }) {
     const isTanggalDokValid = tanggalDokRef.current?.validate();
     const isKadaluarsaDokValid = kadaluarsaDokRef.current?.validate();
     const isJenisDokValid = jenisDokRef.current?.validate();
+    const isJenjangDokValid = jenjangDokRef.current?.validate();
     const isFileValid = fileRef.current?.validate();
 
     if (!isJudulDokValid) {
@@ -80,6 +83,10 @@ export default function Add({ onChangePage }) {
     }
     if (!isJenisDokValid) {
       jenisDokRef.current?.focus();
+      return;
+    }
+    if (!isJenjangDokValid) {
+      jenjangDokRef.current?.focus();
       return;
     }
     if (!isFileValid) {
@@ -110,24 +117,27 @@ export default function Add({ onChangePage }) {
       }
 
       const dokData = {
-        idKdo: idData,
-        idMen: idMenu,
+        idKdo: idData || "",
+        idMen: idMenu || "",
         judulDok: judulDokRef.current.value,
         nomorDok: nomorDokRef.current.value,
         tanggalDok: tanggalDokRef.current.value,
         kadaluarsaDok: kadaluarsaDokRef.current.value,
-        fileDok: uploadedDokNames[0],
+        fileDok: uploadedDokNames[0] || "UploadError"+ new Date().getTime(),
         jenisDok: jenisDokRef.current.value,
+        jenjangDok: jenjangDokRef.current.value,
       };
 
+      console.log(dokData);
+
       const createResponse = await useFetch(
-        `${API_LINK}/MasterDokumen/CreateDataDokumen`,
+        `${API_LINK}/MasterDokumen/CreateDataDokumenPanduan`,
         dokData,
         "POST"
       );
 
       if (createResponse === "ERROR") {
-        throw new Error("Gagal memperbarui data");
+        throw new Error("Gagal menambahkan data");
       } else {
         SweetAlert(
           "Berhasil!",
@@ -230,14 +240,14 @@ export default function Add({ onChangePage }) {
                   </div>
                   <div className="col-lg-6 col-md-6">
                     <InputField
-                      // ref={kadaluarsaDokRef}
-                      label="Jenjang Panduan"
-                      // value={formData.kadaluarsaDok}
+                      ref={jenjangDokRef}
+                      label="Jenjang Program Studi"
+                      value={formData.jenjangDok}
                       onChange={handleChange}
                       isRequired={true}
                       name="jenjangDok"
                       type="text"
-                      // maxChar="50"
+                      maxChar="20"
                     />
                   </div>
                 </div>
@@ -247,7 +257,6 @@ export default function Add({ onChangePage }) {
                     forInput="fileDok"
                     onChange={handleFileChange}
                     name="fileDok"
-                    formatFile=".pdf,.docx"
                     ref={fileRef}
                     isRequired={true}
                   />

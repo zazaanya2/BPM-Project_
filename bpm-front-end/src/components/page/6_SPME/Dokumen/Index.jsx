@@ -605,7 +605,7 @@ export default function Index({ onChangePage, isIkuIkt }) {
                   <h1
                     style={{ color: "#2654A1", margin: "0", fontWeight: "700" }}
                   >
-                    {menuData?.namaKdo ? menuData.namaKdo : "Page Title"}
+                    {menuData?.namaKdo ? menuData.namaKdo.toUpperCase() : "Page Title"}
                   </h1>
                 </div>
 
