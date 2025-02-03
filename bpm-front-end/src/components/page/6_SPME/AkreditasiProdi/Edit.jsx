@@ -14,14 +14,34 @@ import DocUpload from "../../../part/DocUpload";
 import { useIsMobile } from "../../../util/useIsMobile";
 import SweetAlert from "../../../util/SweetAlert";
 import Loading from "../../../part/Loading";
+import InputFieldLov from "../../../part/InputFieldLov";
+import SearchField from "../../../part/SearchField";
+import Filter from "../../../part/Filter";
+import Cookies from "js-cookie";
+import Table from "../../../part/Table";
+import Paging from "../../../part/Paging";
 import { DOKUMEN_LINK } from "../../../util/Constants";
 
-const arrData = [
-  { Value: "Controlled Copy", Text: "Controlled Copy" },
-  { Value: "Uncontrolled Copy", Text: "Uncontrolled Copy" },
+const arrSort = [
+  { Value: "[judulDok] ASC", Text: "Judul Dokumen [↑]" },
+  { Value: "[judulDok] DESC", Text: "Judul Dokumen [↓]" },
+];
+
+const arrStatus = [
+  { Value: "Aktif", Text: "Aktif" },
+  { Value: "Tidak Aktif", Text: "Tidak Aktif" },
 ];
 
 export default function Edit({ onChangePage }) {
+  const activeUser = Cookies.get("activeUser");
+  let role = ""; // Jika undefined, gunakan nilai default
+  let roleNama = "";
+  let namaPengguna = "";
+  if (activeUser) {
+    role = JSON.parse(activeUser).RoleID.slice(0, 5);
+    roleNama = JSON.parse(activeUser).Role;
+    namaPengguna = JSON.parse(activeUser).Nama;
+  }
   const title = "Edit Data";
   const breadcrumbs = [
     { label: "SPME" },
@@ -30,6 +50,7 @@ export default function Edit({ onChangePage }) {
   ];
   const isMobile = useIsMobile();
   const [loading, setLoading] = useState(true);
+  const [loading2, setLoading2] = useState(true);
 
   const location = useLocation();
   const idMenu = location.state?.idMenu;
@@ -37,7 +58,34 @@ export default function Edit({ onChangePage }) {
   console.log(idMenu);
   console.log(idData);
 
-  const [currentStep, setCurrentStep] = useState(1);
+  const [pageSize] = useState(10);
+  const [pageCurrent, setPageCurrent] = useState(1);
+  const [totalData, setTotalData] = useState(0);
+  const [filteredData, setFilteredData] = useState([]);
+  const [error, setError] = useState(null);
+
+  const [currentFilter, setCurrentFilter] = useState({
+    param1: 50,
+    param2: "Aktif",
+    param3: "",
+    param4: "",
+    param5: pageSize,
+    param6: pageCurrent,
+    param7: "[judulDok] ASC",
+  });
+
+  useEffect(() => {
+    setCurrentFilter((prevFilter) => ({
+      ...prevFilter,
+      param6: pageCurrent,
+    }));
+  }, [pageCurrent]);
+
+  const [displayLov, setDisplayLov] = useState({
+    fileSkAkr: "",
+    fileSertifAkr: "",
+  });
+
   const [formData, setFormData] = useState({
     kodeAkr: "",
     namaAkr: "",
@@ -47,8 +95,8 @@ export default function Edit({ onChangePage }) {
     nomorSKAkr: "",
     berlakuAkr: "",
     kadaluarsaAkr: "",
-    judulDokSKAkr: "",
-    jenisDokSKAkr: "",
+    fileSkAkr: "",
+    fileSertifAkr: "",
     judulDokSertifAkr: "",
     jenisDokSertifAkr: "",
   });
@@ -70,6 +118,21 @@ export default function Edit({ onChangePage }) {
   const jenisDokSertifAkrRef = useRef();
   const fileSertifAkrRef = useRef();
   const fileSKAkrRef = useRef();
+
+  const activeModalFor = useRef();
+
+  const handleChoose = (e) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [activeModalFor.current]: e.Key,
+    }));
+    setDisplayLov((prevData) => ({
+      ...prevData,
+      [activeModalFor.current]: e["Judul Dokumen"],
+    }));
+    console.log(e);
+    document.getElementById("dokModalClose").click();
+  };
 
   useEffect(() => {
     const fetchAkreProdi = async () => {
@@ -109,6 +172,34 @@ export default function Edit({ onChangePage }) {
     fetchAkreProdi();
   }, [location.state?.idData]);
 
+  useEffect(() => {
+    const fetchDokumen = async () => {
+      setLoading2(true);
+      try {
+        const result = await useFetch(
+          `${API_LINK}/MasterDokumen/GetDataDokumenByMenu`,
+          currentFilter,
+          "POST"
+        );
+        console.log(currentFilter);
+
+        if (result === "ERROR" || result === null || result.length === 0) {
+          setFilteredData([]);
+          setTotalData(0);
+        } else {
+          const dokumenArray = Object.values(result);
+          setFilteredData(dokumenArray);
+          setTotalData(dokumenArray[0].TotalCount);
+        }
+      } catch (err) {
+        setError("Gagal mengambil data: " + err);
+      } finally {
+        setLoading2(false);
+      }
+    };
+    fetchDokumen();
+  }, [currentFilter]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -123,7 +214,6 @@ export default function Edit({ onChangePage }) {
     const isKodeAkrValid = kodeAkrRef.current?.validate();
     const isNamaAkrValid = namaAkrRef.current?.validate();
     const isJenjangAkrValid = jenjangAkrRef.current?.validate();
-    const isWilayahAkrValid = wilayahAkrRef.current?.validate();
     const isPeringkatAkrValid = peringkatAkrRef.current?.validate();
     const isNomorSKAkrValid = nomorSKAkrRef.current?.validate();
     const isBerlakuAkrValid = berlakuAkrRef.current?.validate();
@@ -147,10 +237,7 @@ export default function Edit({ onChangePage }) {
       jenjangAkrRef.current?.focus();
       return;
     }
-    if (!isWilayahAkrValid) {
-      wilayahAkrRef.current?.focus();
-      return;
-    }
+    console.log("Mau ini");
     if (!isPeringkatAkrValid) {
       peringkatAkrRef.current?.focus();
       return;
@@ -185,8 +272,8 @@ export default function Edit({ onChangePage }) {
           : "",
         peringkatAkr: formData.peringkatAkr ? formData.peringkatAkr : "",
         kadaluarsaAkr: formData.kadaluarsaAkr ? formData.kadaluarsaAkr : "",
-        SKAkr: SKfile ? SKfile : "",
-        SertifAkr: Sertiffile ? Sertiffile : "",
+        SKAkr: formData.fileSkAkr ? formData.fileSkAkr : "",
+        SertifAkr: formData.fileSertifAkr ? formData.fileSertifAkr : "",
       };
 
       console.log(AkreData);
@@ -224,7 +311,6 @@ export default function Edit({ onChangePage }) {
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
         <div className="d-flex flex-column">
           <div className="container mb-3">
-            {/* Breadcrumbs and Page Title */}
             <div className="p-3">
               <PageTitleNav
                 title={title}
@@ -232,8 +318,6 @@ export default function Edit({ onChangePage }) {
                 onClick={() => onChangePage("index")}
               />
             </div>
-
-            {/* Main Content Section */}
             <div
               className={
                 isMobile
@@ -241,8 +325,6 @@ export default function Edit({ onChangePage }) {
                   : "shadow p-5 m-5 mt-0 bg-white rounded"
               }
             >
-              {/** Step 1: Personal Information */}
-              {/* {currentStep === 1 && ( */}
               <div>
                 <HeaderForm label="Formulir Akreditasi" />
                 <div className="row mb-3">
@@ -325,11 +407,41 @@ export default function Edit({ onChangePage }) {
                     <InputField
                       ref={kadaluarsaAkrRef}
                       label="Tanggal Kadaluwarsa SK"
-                      value={formData.kadaluarsaAkr ? formData.kadaluarsaAkr.toString().split('T')[0] : null}
+                      value={
+                        formData.kadaluarsaAkr
+                          ? formData.kadaluarsaAkr.toString().split("T")[0]
+                          : null
+                      }
                       onChange={handleChange}
                       isRequired={false}
                       name="kadaluarsaAkr"
                       type="date"
+                    />
+                  </div>
+                  <div className="col-lg-12 col-md-12">
+                    <InputFieldLov
+                      ref={fileSKAkrRef}
+                      id="fileSkAkr"
+                      label="Dokumen SK"
+                      placeholder="PIlih Dokumen"
+                      isRequired={false}
+                      modalTarget="#dokModal"
+                      value={displayLov.fileSkAkr}
+                      onChange={handleChange}
+                      onClick={() => (activeModalFor.current = "fileSkAkr")}
+                    />
+                  </div>
+                  <div className="col-lg-12 col-md-12">
+                    <InputFieldLov
+                      ref={fileSertifAkrRef}
+                      id="fileSertifAkr"
+                      label="Dokumen Sertifikat"
+                      placeholder="PIlih Dokumen"
+                      isRequired={false}
+                      modalTarget="#dokModal"
+                      value={displayLov.fileSertifAkr}
+                      onChange={handleChange}
+                      onClick={() => (activeModalFor.current = "fileSertifAkr")}
                     />
                   </div>
                 </div>
@@ -360,7 +472,98 @@ export default function Edit({ onChangePage }) {
                   </div>
                 </div>
               </div>
-              {/* )} */}
+            </div>
+          </div>
+        </div>
+
+        <div
+          className="modal fade"
+          id="dokModal"
+          tabIndex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-xl modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="staticBackdropLabel">
+                  Pilih Dokumen
+                </h1>
+                <button
+                  type="button"
+                  className="btn-close rounded-5"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                  style={{ color: "white", backgroundColor: "white" }}
+                  id="dokModalClose"
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="container-fluid">
+                  <div className="row">
+                    <div className="col-lg-10">
+                      <SearchField
+                        onChange={(e) =>
+                          setCurrentFilter((prevFilter) => {
+                            return {
+                              ...prevFilter,
+                              param3: e,
+                            };
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="col-lg-2">
+                      <Filter>
+                        <DropDown
+                          arrData={arrSort}
+                          label="Urut Berdasarkan"
+                          type="pilih"
+                          defaultValue="[judulDok] ASC"
+                          forInput="sortFilter"
+                          onChange={(e) =>
+                            setCurrentFilter((prevFilter) => {
+                              return {
+                                ...prevFilter,
+                                param7: e.target.value,
+                              };
+                            })
+                          }
+                        />
+                      </Filter>
+                    </div>
+                  </div>
+                </div>
+                <div className="table-container bg-white rounded">
+                  {loading2 ? (
+                    <Loading />
+                  ) : (
+                    <div>
+                      {role === "ROL01" ? (
+                        <Table
+                          arrHeader={["No", "Judul Dokumen"]}
+                          data={filteredData.map((item, index) => ({
+                            Key: item.idDok,
+                            No: (pageCurrent - 1) * pageSize + index + 1,
+                            "Judul Dokumen": item.judulDok,
+                            status: item.status,
+                          }))}
+                          actions={["Choose"]}
+                          onChoose={handleChoose}
+                        />
+                      ) : (
+                        ""
+                      )}
+                      <Paging
+                        pageSize={pageSize}
+                        pageCurrent={pageCurrent}
+                        totalData={totalData}
+                        navigation={setPageCurrent}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>

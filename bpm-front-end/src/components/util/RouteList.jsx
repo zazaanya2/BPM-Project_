@@ -44,6 +44,7 @@ const PanduanAkreditasi = lazy(() =>
 );
 const Standar = lazy(() => import("../page/7_IKU&IKT/Standar/Root"));
 const IKUIKT = lazy(() => import("../page/7_IKU&IKT/IKUIKT/Root"));
+const Capaian = lazy(() => import("../page/7_IKU&IKT/Capaian/Root"));
 const IndikatorKinerja = lazy(() =>
   import("../page/7_IKU&IKT/IndikatorKinerja/Root")
 );
@@ -146,11 +147,11 @@ const routeList = [
   //   element: <Peningkatan />,
   //   protected: true,
   // },
-  {
-    path: "/spmi/siklus/pengendalian/*",
-    element: <Pengendalian />,
-    protected: true,
-  },
+  // {
+  //   path: "/spmi/siklus/pengendalian/*",
+  //   element: <Pengendalian />,
+  //   protected: true,
+  // },
   // {
   //   path: "/spmi/siklus/evaluasi/*",
   //   element: <Evaluasi />,
@@ -222,7 +223,7 @@ const routeList = [
   },
   {
     path: "/iku/ikuikt/*",
-    element: <IKUIKT />,
+    element: <Capaian />,
     protected: true,
   },
   {
