@@ -19,8 +19,14 @@ const arrSort = [
 ];
 
 const arrStatus = [
-  { Value: "Aktif", Text: "Aktif" },
-  { Value: "Tidak Aktif", Text: "Tidak Aktif" },
+  { Value: "", Text: "Semua" },
+  { Value: "Self Assessment (Belum)", Text: "Self Assessment (Belum)" },
+  { Value: "Self Assessment (Draft)", Text: "Self Assessment (Draft)" },
+  { Value: "Self Assessment (Selesai)", Text: "Self Assessment (Selesai)" },
+  { Value: "Menunggu Analisa Temuan", Text: "Menunggu Analisa Temuan" },
+  { Value: "Monitoring", Text: "Monitoring" },
+  { Value: "Menunggu Verifikasi Akhir", Text: "Menunggu Verifikasi Akhir" },
+  { Value: "Selesai", Text: "Selesai" },
 ];
 
 const breadcrumbs = [{ label: "Evaluasi" }, { label: "Audit Mutu Internal" }];
@@ -61,6 +67,7 @@ export default function Index({ onChangePage }) {
           param4: pageCurrent,
           param5: selectedStatus,
           param6: activeUser,
+          param7: role,
         }
       );
 
