@@ -163,8 +163,10 @@ export default function Index({ onChangePage }) {
                     "Bukti Peningkatan": item.Bukti,
                   }))}
                   actions={["Detail", "Edit", "Print", "Delete", "PrintHistory", "UpdateHistory"]}
+                  actions={["Detail", "Edit", "Print", "Delete", "PrintHistory", "UpdateHistory"]}
                   onEdit={handleEdit}
                   onDetail={() => handleShowDetail()}
+                  onPrint={() => console.log("printed")}
                   onPrint={() => console.log("printed")}
                 />
 

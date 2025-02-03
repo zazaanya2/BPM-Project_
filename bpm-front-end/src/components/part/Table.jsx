@@ -9,6 +9,7 @@ export default function Table({
   aksiIs = true,
   actions = [],
   onToggle = () => {},
+  onToggle = () => {},
   onDelete = () => {},
   onDetail = () => {},
   onEdit = () => {},
@@ -156,6 +157,17 @@ export default function Table({
             title="Upload File"
             onClick={() => onUpload(id)}
           />
+        );
+      case "Choose":
+        return (
+          <button
+            className="btn btn-primary px-3"
+            title="Pilih"
+            onClick={() => onChoose(id)}
+          >
+            <span style={{ fontWeight: 600 }}>PILIH</span>
+            
+          </button>
         );
       case "Choose":
         return (
