@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import PageTitleNav from "../../../part/PageTitleNav";
-import TextField from "../../../part/TextField";
+import TextField from "../../../part/InputField";
 import HeaderForm from "../../../part/HeaderText";
 import InputField from "../../../part/InputField";
 import FileUpload from "../../../part/FileUpload";
@@ -18,6 +18,15 @@ import SweetAlert from "../../../util/SweetAlert";
 const arrData = [
   { Value: "Controlled Copy", Text: "Controlled Copy" },
   { Value: "Uncontrolled Copy", Text: "Uncontrolled Copy" },
+];
+
+const arrProdi = [
+  { Value: "min.png", Text: "Manajemen Informatika" },
+  { Value: "mk.png", Text: "Mekatronika" },
+  { Value: "mo.png", Text: "Mesin Otomotif" },
+  { Value: "p4.png", Text: "Pembuatan Peralatan dan Perkakas Produksi" },
+  { Value: "tkbg.png", Text: "Teknik Konstruksi Bangunan" },
+  { Value: "tpm.png", Text: "Teknik Produksi dan Manufaktur" },
 ];
 
 export default function Add({ onChangePage }) {
@@ -48,6 +57,7 @@ export default function Add({ onChangePage }) {
     jenisDokSKAkr: "",
     judulDokSertifAkr: "",
     jenisDokSertifAkr: "",
+    img: "",
   });
 
   const [fileSK, setFileSK] = useState(null);
@@ -106,10 +116,6 @@ export default function Add({ onChangePage }) {
       jenjangAkrRef.current?.focus();
       return;
     }
-    if (!isWilayahAkrValid) {
-      wilayahAkrRef.current?.focus();
-      return;
-    }
     if (!isPeringkatAkrValid) {
       peringkatAkrRef.current?.focus();
       return;
@@ -140,24 +146,25 @@ export default function Add({ onChangePage }) {
         kadaluarsaAkr: formData.kadaluarsaAkr ? formData.kadaluarsaAkr : "",
         SKAkr: "",
         SertifAkr: "",
+        img: formData.img,
       };
 
       console.log(AkreData);
 
-      const isExist = await useFetch(
-        `${API_LINK}/MasterAkreditasi/CheckDataAkreditasiExist`,
-        {
-          param1: formData.kodeAkr,
-          param2: formData.namaAkr,
-          param3: formData.jenjangAkr,
-        },
-        "POST"
-      );
+      // const isExist = await useFetch(
+      //   `${API_LINK}/MasterAkreditasi/CheckDataAkreditasiExist`,
+      //   {
+      //     param1: formData.kodeAkr,
+      //     param2: formData.namaAkr,
+      //     param3: formData.jenjangAkr,
+      //   },
+      //   "POST"
+      // );
 
-      if (isExist.length > 0) {
-        SweetAlert("Gagal!", "Data sudah ada.", "error", "OK");
-        return;
-      }
+      // if (isExist.length > 0) {
+      //   SweetAlert("Gagal!", "Data sudah ada.", "error", "OK");
+      //   return;
+      // }
 
       const createResponse = await useFetch(
         `${API_LINK}/MasterAkreditasi/CreateDataAkreditasi`,
@@ -246,6 +253,17 @@ export default function Add({ onChangePage }) {
                       name="jenjangAkr"
                       type="text"
                       maxChar="20"
+                    />
+                  </div>
+                  <div className="col-lg-6 col-md-6">
+                    <DropDown
+                      name="img"
+                      arrData={arrProdi}
+                      type="pilih"
+                      label="Image"
+                      value={formData.img || ""}
+                      onChange={handleChange}
+                      isRequired={true}
                     />
                   </div>
                 </div>
