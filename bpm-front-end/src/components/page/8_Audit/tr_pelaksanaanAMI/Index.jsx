@@ -112,16 +112,6 @@ export default function Index({ onChangePage }) {
       apiFinal = "TransaksiAnalisaTemuan/FinalAnalisaTemuan";
       pesan1 = "Analisa Temuan belum lengkap";
       pesan2 = "Analisa Temuan";
-    } else if (status === "Monitoring") {
-      apiCheck = "TransaksiMonitoring/CheckAllMonitoring";
-      apiFinal = "TransaksiMonitoring/FinalAllMonitoring";
-      pesan1 = "Monitoring belum lengkap";
-      pesan2 = "Monitoring";
-    } else if (status === "Menunggu Verifikasi Akhir") {
-      apiCheck = "TransaksiVerifikasi/CheckAllVerifikasi";
-      apiFinal = "TransaksiVerifikasi/FinalAllVerifikasi";
-      pesan1 = "Verifikasi belum lengkap";
-      pesan2 = "Verifikasi";
     } else {
       return;
     }

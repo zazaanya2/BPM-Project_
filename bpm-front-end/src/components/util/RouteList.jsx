@@ -77,9 +77,7 @@ const KategoriDokumen = lazy(() =>
 const Peraturan = lazy(() =>
   import("../page/10_Peraturan/ms_kebijakanPeraturan/Root")
 );
-const PeraturanEksternal = lazy(() =>
-  import("../page/10_Peraturan/ms_peraturanEksternal/Root")
-);
+
 const InstrumenAps = lazy(() =>
   import("../page/10_Peraturan/ms_instrumenAps/Root")
 );
@@ -235,13 +233,8 @@ const routeList = [
     protected: true,
   },
   {
-    path: "/peraturan/kebijakan/*",
+    path: "/peraturan/dokumen/*",
     element: <Peraturan />,
-    protected: true,
-  },
-  {
-    path: "/peraturan/eksternal/*",
-    element: <PeraturanEksternal />,
     protected: true,
   },
   {

@@ -21,6 +21,8 @@ export default function Edit({ onChangePage }) {
   const [error, setError] = useState(null);
 
   const location = useLocation();
+  const currentPath = location.pathname;
+  const rootPath = currentPath.split("/")[2];
   const idMenu = location.state?.idMenu;
   const idData = location.state?.idData;
   const [loading, setLoading] = useState(true); // New loading state
@@ -82,34 +84,20 @@ export default function Edit({ onChangePage }) {
 
     if (idMenu === 41) {
       newTitle = "Edit Peraturan";
-      newTitleHeader = "Formulir Kebijakan Peraturan";
+      newTitleHeader = "Formulir Dokumen Peraturan";
       newBreadcrumbs = [
         {
           label: "Peraturan",
-          href: "/peraturan/kebijakan",
+          href: "/peraturan/dokumen",
         },
         {
-          label: "Kebijakan Peraturan",
-          href: "/peraturan/kebijakan",
+          label: "dokumen Peraturan",
+          href: "/peraturan/dokumen",
         },
         {
-          label: "Edit Kebijakan Peraturan",
+          label: "Edit dokumen Peraturan",
           href: "",
         },
-      ];
-    } else if (idMenu === 42) {
-      newTitle = "Edit Peraturan Eksternal";
-      newTitleHeader = "Formulir Peraturan Eksternal";
-      newBreadcrumbs = [
-        {
-          label: "Peraturan",
-          href: "/peraturan/eksternal",
-        },
-        {
-          label: "Peraturan Eksternal",
-          href: "/peraturan/eksternal",
-        },
-        { label: "Edit Peraturan Eksternal", href: "" },
       ];
     } else if (idMenu === 43) {
       newTitle = "Edit Instrumen APS";
