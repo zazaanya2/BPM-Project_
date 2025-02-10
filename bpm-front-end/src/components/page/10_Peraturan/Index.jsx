@@ -104,10 +104,6 @@ export default function Read({ onChangePage }) {
   };
 
   useEffect(() => {
-    if (!idMenu) {
-      navigate("/");
-    }
-
     fetchEvents();
   }, [
     idMenu,

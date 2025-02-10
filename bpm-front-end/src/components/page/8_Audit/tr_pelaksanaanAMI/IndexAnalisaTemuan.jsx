@@ -230,13 +230,13 @@ export default function Index({ onChangePage }) {
                     />
 
                     <div className="row">
-                      <div className="col-4">
+                      <div className="col-md-4 col-sm-12">
                         <DetailData
                           label="Lead Auditor"
                           isi={filteredData[0].namaLeadAuditor || ""}
                         />
                       </div>
-                      <div className="col-4">
+                      <div className="col-md-4 col-sm-12">
                         <DetailData
                           label="Auditor"
                           isi={filteredData[0].namaAuditor || ""}
@@ -244,7 +244,7 @@ export default function Index({ onChangePage }) {
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col-4">
+                      <div className="col-md-4 col-sm-12">
                         <DetailData
                           label="Tanggal Konfirmasi"
                           isi={
@@ -280,7 +280,7 @@ export default function Index({ onChangePage }) {
                           isi={temuanClose}
                         />
                       </div>
-                      <div className="col-4">
+                      <div className="col-md-4 col-sm-12">
                         <DetailData
                           label="Waktu Awal"
                           isi={filteredData[0]?.waktuAwal + " WIB"}
@@ -294,7 +294,7 @@ export default function Index({ onChangePage }) {
                           isi={temuanBelum}
                         />
                       </div>
-                      <div className="col-4">
+                      <div className="col-md-4 col-sm-12">
                         <DetailData
                           label="Waktu Akhir"
                           isi={filteredData[0]?.waktuAkhir + " WIB"}

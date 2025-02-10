@@ -14,6 +14,7 @@ import DropDown from "../../../part/Dropdown";
 import Loading from "../../../part/Loading";
 import SweetAlert from "../../../util/SweetAlert";
 import Cookies from "js-cookie";
+import { useIsMobile } from "../../../util/useIsMobile";
 
 const arrSort = [
   { Value: "[namaKri] ASC", Text: "Nama Kriteria [↑]" },
@@ -28,6 +29,7 @@ const arrStatus = [
 const breadcrumbs = [{ label: "Evaluasi" }, { label: "Kriteria" }];
 
 export default function Index({ onChangePage }) {
+  const isMobile = useIsMobile();
   const activeUser = Cookies.get("activeUser");
   let role = ""; // Jika undefined, gunakan nilai default
   let roleNama = "";
@@ -174,13 +176,18 @@ export default function Index({ onChangePage }) {
   return (
     <div className="d-flex flex-column min-vh-100">
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
-        <div className="container">
-          <h1 style={{ color: "#2654A1", margin: "0", fontWeight: "700" }}>
-            Kriteria Pertanyaan
-          </h1>
-          <Breadcrumbs breadcrumbs={breadcrumbs} />
+        <div className="d-flex flex-column">
+          <div className={isMobile ? "m-0 p-2" : "m-3 ms-5 mb-0"}>
+            <h1 style={{ color: "#2654A1", margin: "0", fontWeight: "700" }}>
+              Kriteria Pertanyaan
+            </h1>
+            <Breadcrumbs breadcrumbs={breadcrumbs} />
+          </div>
 
-          <div className="mt-4">
+          <div
+            className={isMobile ? "p-2 m-2 mt-2 mb-0 " : "p-1 m-5 mt-2 mb-0"}
+            style={{ marginLeft: "50px" }}
+          >
             {role === "ROL01" ? (
               <Button
                 iconName="add"
@@ -246,7 +253,13 @@ export default function Index({ onChangePage }) {
             </div>
           </div>
 
-          <div className="table-container bg-white rounded">
+          <div
+            className={
+              isMobile
+                ? "table-container bg-white p-1 m-1 mt-0 rounded"
+                : "table-container bg-white p-2 pt-0 pb-0  m-5 mt-0 rounded"
+            }
+          >
             {loading ? (
               <Loading />
             ) : (

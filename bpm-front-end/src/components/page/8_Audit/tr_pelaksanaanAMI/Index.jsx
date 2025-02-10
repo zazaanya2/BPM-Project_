@@ -259,7 +259,9 @@ export default function Index({ onChangePage }) {
                       : "-",
                     "Ada Temuan":
                       item.isTemuan === 0 || item.isTemuan === null
-                        ? "Belum Audit"
+                        ? item.status && item.status.includes("Self Assessment")
+                          ? "Belum Audit"
+                          : "Tidak Ada Temuan"
                         : "Ada Temuan",
 
                     "Jumlah Temuan": item.isTemuan || "0",
