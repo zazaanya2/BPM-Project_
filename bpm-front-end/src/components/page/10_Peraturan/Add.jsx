@@ -35,8 +35,6 @@ export default function Add({ onChangePage }) {
     fileDokumen: "",
     jenisDokumen: "",
   });
-
-  console.log(rootPath);
   const handleFileChange = (file) => {
     setSelectedFile(file);
   };

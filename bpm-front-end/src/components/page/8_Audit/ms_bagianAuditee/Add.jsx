@@ -170,8 +170,6 @@ export default function Add({ onChangePage }) {
       return;
     }
 
-    console.log(formData);
-
     try {
       const result = await useFetch(
         `${API_LINK}/MasterBagianAuditee/CheckBagianAuditeeExist`,

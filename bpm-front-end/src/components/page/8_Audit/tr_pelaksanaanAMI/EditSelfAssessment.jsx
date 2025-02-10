@@ -115,8 +115,6 @@ export default function EditSelfAssessment({ onChangePage }) {
           dokumenBerkas: value.dokumenBerkas,
         };
 
-        console.log(updatedObject);
-
         const createResponse = await useFetch(
           `${API_LINK}/TransaksiSelfAssessment/EditSelfAssesment`,
           updatedObject

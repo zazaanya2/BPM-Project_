@@ -73,8 +73,6 @@ export default function EditTemuan({ onChangePage }) {
   const handleDataChange = (updatedFormData, updatedFiles) => {
     setFormData(updatedFormData);
     setFiles(updatedFiles);
-
-    console.log(updatedFormData);
   };
 
   const handleSubmit = async () => {
@@ -88,8 +86,6 @@ export default function EditTemuan({ onChangePage }) {
           saran: value.saran,
           idSea: idData,
         };
-
-        console.log(updatedObject);
 
         return useFetch(
           `${API_LINK}/TransaksiTemuan/EditTemuan`,

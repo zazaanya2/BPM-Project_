@@ -92,7 +92,6 @@ export default function Edit({ onChangePage }) {
         console.error("Error fetching data:", err);
       } finally {
         setLoading(false);
-        console.log(formData);
       }
     };
 

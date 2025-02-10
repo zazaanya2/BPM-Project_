@@ -82,7 +82,6 @@ export default function Index({ onChangePage }) {
         setTotalData(0);
       } else {
         const arrResult = Object.values(result);
-        // console.log(arrResult);
         setFilteredData(arrResult);
         setTotalData(arrResult[0].TotalCount);
       }
@@ -309,26 +308,41 @@ export default function Index({ onChangePage }) {
           }
         >
           <div className="p-5 mt-0 bg-white rounded shadow">
-            <DetailData label="Kepala Departemen" isi={detail.kadepBad || detail.kaDep || '-'} />
+            <DetailData
+              label="Kepala Departemen"
+              isi={detail.kadepBad || detail.kaDep || "-"}
+            />
             <div className="row">
               <div className="col-lg-6">
-                <DetailData label="PIC 1" isi={detail.pic1NamaBad || detail.pic1Bad || '-'} />
+                <DetailData
+                  label="PIC 1"
+                  isi={detail.pic1NamaBad || detail.pic1Bad || "-"}
+                />
               </div>
               <div className="col-lg-6">
-                <DetailData label="PIC 2" isi={detail.pic2NamaBad || detail.pic2Bad || '-'} />
+                <DetailData
+                  label="PIC 2"
+                  isi={detail.pic2NamaBad || detail.pic2Bad || "-"}
+                />
               </div>
             </div>
             <div className="row">
               <div className="col-lg-6">
-                <DetailData label="Kode Bagian Auditee" isi={detail.kodeBad || '-'} />
+                <DetailData
+                  label="Kode Bagian Auditee"
+                  isi={detail.kodeBad || "-"}
+                />
               </div>
               <div className="col-lg-6">
-                <DetailData label="Nama Bagian Auditee" isi={detail.namaBad || '-'} />
+                <DetailData
+                  label="Nama Bagian Auditee"
+                  isi={detail.namaBad || "-"}
+                />
               </div>
             </div>
             <div className="row">
               <div className="col-lg-6">
-                <DetailData label="Dibuat Oleh" isi={detail.createdBy || '-'} />
+                <DetailData label="Dibuat Oleh" isi={detail.createdBy || "-"} />
               </div>
               <div className="col-lg-6">
                 <DetailData

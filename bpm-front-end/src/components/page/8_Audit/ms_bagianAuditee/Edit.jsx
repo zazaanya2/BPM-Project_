@@ -139,7 +139,6 @@ export default function Edit({ onChangePage }) {
         if (result === "ERROR" || result === null || result.length === 0) {
         } else {
           const arrResult = Object.values(result);
-          console.log(arrResult);
           setFormData((prevData) => ({
             ...prevData,
             kodeBad: arrResult[0].kodeBad,
@@ -212,8 +211,6 @@ export default function Edit({ onChangePage }) {
       pic2BadRef.current?.focus();
       return;
     }
-
-    console.log(formData);
 
     try {
       const result = await useFetch(

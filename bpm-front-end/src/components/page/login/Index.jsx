@@ -28,7 +28,6 @@ export default function Login() {
       if (ipAddress === "ERROR")
         throw new Error("Terjadi kesalahan: Gagal mendapatkan alamat IP.");
       else {
-        console.log(formData);
         const data = await useFetch(
           `${API_LINK}/Utilities/Login`,
           formData,
