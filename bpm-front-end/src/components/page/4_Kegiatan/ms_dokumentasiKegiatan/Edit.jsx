@@ -116,8 +116,8 @@ export default function Edit({ onChangePage }) {
             place: data[0].tempatKegiatan,
             statusFileNotulen: data[0].statusFileNotulenKegiatan,
             linkFolder: data[0].linkFolderKegiatan,
-            fileNotulen: data[0].fileNotulenKegiatan,
-            fotoSampul: data[0].fotoSampulKegiatan,
+            fileNotulen: decodeHtml(data[0].fileNotulenKegiatan),
+            fotoSampul: decodeHtml(data[0].fotoSampulKegiatan),
           });
         }
       } catch (error) {
@@ -392,7 +392,9 @@ export default function Edit({ onChangePage }) {
                   forInput="upload-file"
                   formatFile=".pdf"
                   onChange={(file) => handleFileChange(file)}
-                  hasExisting={KEGIATANFILE_LINK + formData.fileNotulen}
+                  hasExisting={
+                    KEGIATANFILE_LINK + decodeHtml(formData.fileNotulen)
+                  }
                   isRequired="true"
                 />
                 <RadioButton
@@ -418,7 +420,9 @@ export default function Edit({ onChangePage }) {
                   id="upload-foto"
                   label="Foto Sampul"
                   onChange={(file) => handleFotoChange(file)}
-                  hasExisting={KEGIATANFILE_LINK + formData.fotoSampul}
+                  hasExisting={
+                    KEGIATANFILE_LINK + decodeHtml(formData.fotoSampul)
+                  }
                   isRequired="true"
                 />
               </div>

@@ -166,7 +166,13 @@ const FileUpload = forwardRef(function FileUpload(
             style={{ minHeight: "20vh" }}
             className="d-flex justify-content-center align-items-center"
           >
-            <h2>
+            <h2
+              style={{
+                wordWrap: "break-word",
+                overflowWrap: "break-word",
+                maxWidth: "100%",
+              }}
+            >
               {selectedFile ? (
                 selectedFile.name
               ) : (

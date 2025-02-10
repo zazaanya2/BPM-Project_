@@ -69,6 +69,7 @@ export default function Edit({ onChangePage }) {
     if (id === 7) {
       return (
         <UploadFoto
+          ref={isiRef}
           id="upload-foto"
           label="Upload Foto"
           onChange={(file) => handleFileChange(file)}
@@ -79,6 +80,7 @@ export default function Edit({ onChangePage }) {
     } else if (id === 8) {
       return (
         <FileUpload
+          ref={isiRef}
           label="Upload File"
           forInput="upload-file"
           formatFile=".pdf"
@@ -90,6 +92,7 @@ export default function Edit({ onChangePage }) {
     } else {
       return (
         <TextArea
+          ref={isiRef}
           label="Isi"
           name="Isi"
           initialValue={formData.Isi}
@@ -101,8 +104,22 @@ export default function Edit({ onChangePage }) {
   };
 
   const kategoriRef = useRef();
+  const isiRef = useRef();
 
   const handleSubmit = async () => {
+    const isKategoriValid = kategoriRef.current?.validate();
+    const isIsiValid = isiRef.current?.validate();
+
+    if (!isKategoriValid) {
+      kategoriRef.current?.focus();
+      return;
+    }
+
+    if (!isIsiValid) {
+      isiRef.current?.focus();
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -183,6 +200,7 @@ export default function Edit({ onChangePage }) {
             <HeaderForm label="Formulir Tentang" />
             <div className="row">
               <InputField
+                ref={kategoriRef}
                 label="Kategori"
                 value={formData.Kategori}
                 onChange={(e) =>

@@ -9,6 +9,7 @@ import { useIsMobile } from "../../../util/useIsMobile";
 import moment from "moment";
 import "moment-timezone";
 import { useFetch } from "../../../util/useFetch";
+import { decodeHtml } from "../../../util/DecodeHtml";
 
 export default function Detail({ onChangePage }) {
   const title = "Detail Dokumentasi Kegiatan";
@@ -38,7 +39,6 @@ export default function Detail({ onChangePage }) {
     ModifDate: "",
     status: "",
     jenisKegiatan: "",
-    fotoSampul: "",
   });
 
   useEffect(() => {
@@ -86,8 +86,8 @@ export default function Detail({ onChangePage }) {
             place: data[0].tempatKegiatan,
             statusFileNotulen: data[0].statusFileNotulenKegiatan,
             linkFolder: data[0].linkFolderKegiatan,
-            fileNotulen: data[0].fileNotulenKegiatan,
-            fotoSampul: data[0].fotoSampulKegiatan,
+            fileNotulen: decodeHtml(data[0].fileNotulenKegiatan),
+            fotoSampul: decodeHtml(data[0].fotoSampulKegiatan),
             Createby: data[0].dibuatOleh,
             CreateDate: new Date(data[0].dibuatTgl).toLocaleDateString(
               "id-ID",
@@ -190,7 +190,11 @@ export default function Detail({ onChangePage }) {
                   <label className="form-label fw-bold">File Notulensi</label>{" "}
                   <br></br>
                   <a
-                    href={`${KEGIATANFILE_LINK}${formData.fileNotulen}` || ""}
+                    href={
+                      `${KEGIATANFILE_LINK}${decodeHtml(
+                        formData.fileNotulen
+                      )}` || ""
+                    }
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -207,7 +211,13 @@ export default function Detail({ onChangePage }) {
                 <div>
                   <label className="form-label fw-bold">Foto Sampul</label>
                   <img
-                    src={`${KEGIATANFILE_LINK}${formData.fotoSampul}` || ""}
+                    src={
+                      formData.fotoSampul
+                        ? `${KEGIATANFILE_LINK}${decodeHtml(
+                            formData.fotoSampul
+                          )}`
+                        : ""
+                    }
                     alt="Uploaded"
                     className="img-fluid mb-3"
                     style={{ maxHeight: "80%" }}
