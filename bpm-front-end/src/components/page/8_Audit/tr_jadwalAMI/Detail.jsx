@@ -1,14 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import PageTitleNav from "../../../part/PageTitleNav";
-import InputField from "../../../part/InputField";
 import HeaderForm from "../../../part/HeaderText";
-import Button from "../../../part/Button";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import SweetAlert from "../../../util/SweetAlert";
 import { useIsMobile } from "../../../util/useIsMobile";
 import { API_LINK } from "../../../util/Constants";
 import { useFetch } from "../../../util/useFetch";
-import DropDown from "../../../part/Dropdown";
 import DetailData from "../../../part/DetailData";
 import Loading from "../../../part/Loading";
 import moment from "moment";
@@ -39,8 +35,6 @@ export default function Detail({ onChangePage }) {
           body,
           "POST"
         );
-
-        console.log(result);
 
         if (result === "ERROR" || result === null || result.length === 0) {
         } else {

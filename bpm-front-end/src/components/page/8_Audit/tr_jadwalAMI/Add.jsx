@@ -242,8 +242,6 @@ export default function Add({ onChangePage }) {
       return;
     }
 
-    console.log("Data to send:", formData);
-
     try {
       const createResponse = await useFetch(
         `${API_LINK}/TransaksiJadwalAMI/CreateJadwalAMIDraft`,

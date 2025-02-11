@@ -139,7 +139,6 @@ export default function Edit({ onChangePage }) {
         if (result === "ERROR" || result === null || result.length === 0) {
         } else {
           const arrResult = Object.values(result);
-          console.log(arrResult);
           setFormData((prevData) => ({
             ...prevData,
             kodeBad: arrResult[0].kodeBad,
@@ -213,8 +212,6 @@ export default function Edit({ onChangePage }) {
       return;
     }
 
-    console.log(formData);
-
     try {
       const result = await useFetch(
         `${API_LINK}/MasterBagianAuditee/CheckBagianAuditeeExistEdit`,
@@ -281,7 +278,7 @@ export default function Edit({ onChangePage }) {
                   : "shadow p-5 m-5 mt-0 bg-white rounded"
               }
             >
-              <HeaderForm label="Formulir Kriteria" />
+              <HeaderForm label="Formulir Bagian Auditee" />
               <InputField
                 ref={kodeBadRef}
                 label="Kode Bagian Auditee"

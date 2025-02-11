@@ -21,9 +21,9 @@ export default function Notifikasi() {
   const [loading, setLoading] = useState(true);
 
   // State untuk paging
-  const [pageCurrent, setPageCurrent] = useState(1); // Halaman saat ini
-  const [pageSize, setPageSize] = useState(5); // Jumlah data per halaman
-  const [totalData, setTotalData] = useState(0); // Total jumlah data
+  const [pageCurrent, setPageCurrent] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalData, setTotalData] = useState(0);
 
   let activeUser = "";
   const cookie = Cookies.get("activeUser");
@@ -31,28 +31,27 @@ export default function Notifikasi() {
 
   const fetchData = async () => {
     try {
-      setLoading(true); // Set loading saat memulai fetch
+      setLoading(true);
       const result = await useFetch(
         `${API_LINK}/Utilities/GetDataNotifikasi`,
         { id: activeUser, size: pageSize, page: pageCurrent },
         "POST"
       );
 
-      setData(result); // Data notifikasi
+      setData(result);
 
-      setTotalData(result[0].TotalCount); // Total data (didapat dari API)
+      setTotalData(result[0].TotalCount);
     } catch (err) {
       console.error("Fetch error:", err);
       setError("Gagal mengambil data");
     } finally {
-      setLoading(false); // Set loading selesai
+      setLoading(false);
     }
   };
 
-  // Panggil fetchData pertama kali saat komponen dimuat
   useEffect(() => {
     fetchData();
-  }, [pageCurrent]); // Fetch ulang jika pageCurrent berubah
+  }, [pageCurrent]);
 
   const handleUpdateStatusBaca = async (idNotifikasi) => {
     try {
@@ -62,8 +61,7 @@ export default function Notifikasi() {
         "POST"
       );
       if (result !== "ERROR") {
-        console.log("Status berhasil diperbarui");
-        await fetchData(pageCurrent); // Panggil fetchData ulang jika berhasil
+        await fetchData(pageCurrent);
       } else {
         console.error("Gagal memperbarui status:", result?.message);
       }

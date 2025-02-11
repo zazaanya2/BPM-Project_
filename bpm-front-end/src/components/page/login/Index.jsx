@@ -28,7 +28,6 @@ export default function Login() {
       if (ipAddress === "ERROR")
         throw new Error("Terjadi kesalahan: Gagal mendapatkan alamat IP.");
       else {
-        console.log(formData);
         const data = await useFetch(
           `${API_LINK}/Utilities/Login`,
           formData,
@@ -42,18 +41,18 @@ export default function Login() {
           const userData = data[0];
 
           const sent = {
-            username: userData.username,
-            role: userData.Role,
+            username: formData.username,
+            role: userData.RoleID.slice(0, 5),
             nama: userData.Nama,
           };
+
+          console.log(sent);
 
           const jwtToken = await useFetch(
             `${API_LINK}/Utilities/CreateJWTToken`,
             sent,
             "POST"
           );
-
-          console.log(jwtToken);
 
           const loginRecord = {
             username: formData.username,
@@ -62,8 +61,6 @@ export default function Login() {
             agent: navigator.userAgent,
             app: "APP14",
           };
-
-          console.log(loginRecord);
 
           const logRec = await useFetch(
             `${API_LINK}/Utilities/CreateLogLogin`,

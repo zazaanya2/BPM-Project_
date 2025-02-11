@@ -80,8 +80,6 @@ export default function Edit({ onChangePage }) {
           "POST"
         );
 
-        console.log(result);
-
         if (result === "ERROR" || result === null || result.length === 0) {
           setFormData({
             id: idData,
@@ -94,14 +92,11 @@ export default function Edit({ onChangePage }) {
             instrumen: "",
           });
         } else {
-          // Asumsi result adalah array
           const fetchedData = result[0];
-          console.log(fetchedData);
 
           const fetchedDate = new Date(fetchedData.tanggalKonfirmasi);
           const formattedDate = format(fetchedDate, "yyyy-MM-dd");
 
-          // Menangani pemetaan dan decode HTML
           setFormData({
             id: idData,
             auditee: fetchedData.idBA,
@@ -247,8 +242,6 @@ export default function Edit({ onChangePage }) {
   const instrumenRef = useRef(null);
 
   const handleSubmit = async () => {
-    console.log("Data to send:", formData);
-
     const isAuditee = auditeeRef.current?.validate();
     const isLeadAuditor = leadAuditorRef.current?.validate();
     const isAuditor = auditorRef.current?.validate();

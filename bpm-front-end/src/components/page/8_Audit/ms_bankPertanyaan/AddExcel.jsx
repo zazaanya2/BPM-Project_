@@ -147,8 +147,6 @@ export default function Add({ onChangePage }) {
           });
           return;
         }
-
-        console.log("Parsed Data:", parsedData);
       } catch (error) {
         console.error("Error saat membaca file Excel:", error.message);
         SweetAlert("Error", "Gagal membaca file Excel.", "error", "OK");
@@ -188,8 +186,6 @@ export default function Add({ onChangePage }) {
 
         if (createResponse === "ERROR") {
           throw new Error(`Gagal menambah data pada indeks ${index}`);
-        } else {
-          console.log(`Data pada indeks ${index} berhasil ditambahkan.`);
         }
       } catch (error) {
         console.error("Error pada indeks", index, ":", error.message);

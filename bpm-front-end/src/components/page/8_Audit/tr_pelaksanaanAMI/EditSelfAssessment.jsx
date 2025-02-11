@@ -111,6 +111,7 @@ export default function EditSelfAssessment({ onChangePage }) {
           jawaban: value.jawaban,
           jawabanLanjutan: value.jawabanLanjutan,
           idSea: idData,
+          kategoriTemuan: value.kategoriTemuan,
           dokumenBerkas: value.dokumenBerkas,
         };
 

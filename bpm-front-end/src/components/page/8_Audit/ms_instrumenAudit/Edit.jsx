@@ -287,7 +287,6 @@ export default function Edit({ onChangePage }) {
         id: idData,
       };
 
-      console.log(paData);
       const result = await useFetch(
         `${API_LINK}/MasterInstrumenAudit/CheckInstrumenAudit`,
         paData,
@@ -493,7 +492,6 @@ export default function Edit({ onChangePage }) {
       console.error("Error:", error.message);
       SweetAlert("Gagal!", error.message, "error", "OK");
     }
-    console.log(dataToSend);
   };
   if (error) return <p>{error}</p>;
 

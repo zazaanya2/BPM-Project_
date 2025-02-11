@@ -14,6 +14,7 @@ import DropDown from "../../../part/Dropdown";
 import Loading from "../../../part/Loading";
 import SweetAlert from "../../../util/SweetAlert";
 import Cookies from "js-cookie";
+import { useIsMobile } from "../../../util/useIsMobile";
 
 const arrSort = [
   { Value: "[kodeBad] ASC", Text: "Kode Bagian Auditee [↑]" },
@@ -30,6 +31,7 @@ const arrStatus = [
 const breadcrumbs = [{ label: "Evaluasi" }, { label: "Bagian Auditee" }];
 
 export default function Index({ onChangePage }) {
+  const isMobile = useIsMobile();
   const activeUser = Cookies.get("activeUser");
   let role = ""; // Jika undefined, gunakan nilai default
   let roleNama = "";
@@ -82,7 +84,6 @@ export default function Index({ onChangePage }) {
         setTotalData(0);
       } else {
         const arrResult = Object.values(result);
-        // console.log(arrResult);
         setFilteredData(arrResult);
         setTotalData(arrResult[0].TotalCount);
       }
@@ -177,13 +178,18 @@ export default function Index({ onChangePage }) {
   return (
     <div className="d-flex flex-column min-vh-100">
       <main className="flex-grow-1 p-3" style={{ marginTop: "80px" }}>
-        <div className="container">
-          <h1 style={{ color: "#2654A1", margin: "0", fontWeight: "700" }}>
-            Bagian Auditee
-          </h1>
-          <Breadcrumbs breadcrumbs={breadcrumbs} />
+        <div className="d-flex flex-column">
+          <div className={isMobile ? "m-0 p-2" : "m-3 ms-5 mb-0"}>
+            <h1 style={{ color: "#2654A1", margin: "0", fontWeight: "700" }}>
+              Bagian Auditee
+            </h1>
+            <Breadcrumbs breadcrumbs={breadcrumbs} />
+          </div>
 
-          <div className="mt-4">
+          <div
+            className={isMobile ? "p-2 m-2 mt-2 mb-0 " : "p-1 m-5 mt-2 mb-0"}
+            style={{ marginLeft: "50px" }}
+          >
             {role === "ROL01" ? (
               <Button
                 iconName="add"
@@ -249,7 +255,13 @@ export default function Index({ onChangePage }) {
             </div>
           </div>
 
-          <div className="table-container bg-white rounded">
+          <div
+            className={
+              isMobile
+                ? "table-container bg-white p-1 m-1 mt-0 rounded"
+                : "table-container bg-white p-2 pt-0 pb-0  m-5 mt-0 rounded"
+            }
+          >
             {loading ? (
               <Loading />
             ) : (
@@ -309,26 +321,41 @@ export default function Index({ onChangePage }) {
           }
         >
           <div className="p-5 mt-0 bg-white rounded shadow">
-            <DetailData label="Kepala Departemen" isi={detail.kadepBad || detail.kaDep || '-'} />
+            <DetailData
+              label="Kepala Departemen"
+              isi={detail.kadepBad || detail.kaDep || "-"}
+            />
             <div className="row">
               <div className="col-lg-6">
-                <DetailData label="PIC 1" isi={detail.pic1NamaBad || detail.pic1Bad || '-'} />
+                <DetailData
+                  label="PIC 1"
+                  isi={detail.pic1NamaBad || detail.pic1Bad || "-"}
+                />
               </div>
               <div className="col-lg-6">
-                <DetailData label="PIC 2" isi={detail.pic2NamaBad || detail.pic2Bad || '-'} />
+                <DetailData
+                  label="PIC 2"
+                  isi={detail.pic2NamaBad || detail.pic2Bad || "-"}
+                />
               </div>
             </div>
             <div className="row">
               <div className="col-lg-6">
-                <DetailData label="Kode Bagian Auditee" isi={detail.kodeBad || '-'} />
+                <DetailData
+                  label="Kode Bagian Auditee"
+                  isi={detail.kodeBad || "-"}
+                />
               </div>
               <div className="col-lg-6">
-                <DetailData label="Nama Bagian Auditee" isi={detail.namaBad || '-'} />
+                <DetailData
+                  label="Nama Bagian Auditee"
+                  isi={detail.namaBad || "-"}
+                />
               </div>
             </div>
             <div className="row">
               <div className="col-lg-6">
-                <DetailData label="Dibuat Oleh" isi={detail.createdBy || '-'} />
+                <DetailData label="Dibuat Oleh" isi={detail.createdBy || "-"} />
               </div>
               <div className="col-lg-6">
                 <DetailData

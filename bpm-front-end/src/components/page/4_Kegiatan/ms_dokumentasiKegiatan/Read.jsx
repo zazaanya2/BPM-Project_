@@ -138,7 +138,7 @@ export default function Read({ onChangePage }) {
         SweetAlert("Berhasil", "Data Berhasil Dihapus", "success");
 
         setFilteredData((prevData) =>
-          prevData.filter((item) => item.id !== id)
+          prevData.filter((item) => item.idKegiatan !== id)
         );
       } catch (err) {
         console.error(err);

@@ -170,8 +170,6 @@ export default function Add({ onChangePage }) {
       return;
     }
 
-    console.log(formData);
-
     try {
       const result = await useFetch(
         `${API_LINK}/MasterBagianAuditee/CheckBagianAuditeeExist`,
@@ -183,12 +181,7 @@ export default function Add({ onChangePage }) {
       );
 
       if (result.length > 0) {
-        SweetAlert(
-          "Gagal!",
-          "Data bagian auditee sudah ada",
-          "error",
-          "OK"
-        );
+        SweetAlert("Gagal!", "Data bagian auditee sudah ada", "error", "OK");
         return;
       }
 
@@ -243,7 +236,7 @@ export default function Add({ onChangePage }) {
                   : "shadow p-5 m-5 mt-0 bg-white rounded"
               }
             >
-              <HeaderForm label="Formulir Kriteria" />
+              <HeaderForm label="Formulir Bagian Auditee" />
               <InputField
                 ref={kodeBadRef}
                 label="Kode Bagian Auditee"

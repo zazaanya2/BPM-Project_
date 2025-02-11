@@ -49,7 +49,6 @@ export default function Edit({ onChangePage }) {
       if (result === "ERROR" || result === null || result.length === 0) {
         setFormData(null);
       } else {
-        console.log(result);
         const arrResult = Object.values(result);
         setFormData({
           idKdo: idData,
@@ -86,12 +85,7 @@ export default function Edit({ onChangePage }) {
       );
 
       if (result.length > 0) {
-        SweetAlert(
-          "Gagal!",
-          "Data kriteria sudah ada",
-          "error",
-          "OK"
-        );
+        SweetAlert("Gagal!", "Data kriteria sudah ada", "error", "OK");
         return;
       }
 

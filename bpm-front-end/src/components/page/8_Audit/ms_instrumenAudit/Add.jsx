@@ -87,7 +87,6 @@ export default function Add({ onChangePage }) {
         id: "",
       };
 
-      console.log(paData);
       const result = await useFetch(
         `${API_LINK}/MasterInstrumenAudit/CheckInstrumenAudit`,
         paData,

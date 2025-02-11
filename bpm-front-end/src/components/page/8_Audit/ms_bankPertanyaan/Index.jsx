@@ -120,7 +120,6 @@ export default function Index({ onChangePage }) {
   ]);
 
   const handleToggle = (item) => {
-    console.log(item);
     SweetAlert(
       "Konfirmasi",
       `Apakah Anda yakin ingin ${
@@ -140,7 +139,6 @@ export default function Index({ onChangePage }) {
             status: data.statusPertanyaan === "Aktif" ? "Tidak Aktif" : "Aktif",
           }));
 
-        console.log(updatedData);
         useFetch(
           `${API_LINK}/MasterBankPertanyaanAudit/SetStatusBankPertanyaanAudit`,
           updatedData[0]
