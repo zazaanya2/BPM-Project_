@@ -17,7 +17,7 @@ import SliderProgramStudi from "../../part/SliderProgramStudi";
 import Button from "../../part/Button";
 import { useNavigate } from "react-router-dom";
 
-export default function Index({ onChangePage }) {
+export default function Index() {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const [beritaData, setBeritaData] = useState([]);
