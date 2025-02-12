@@ -107,7 +107,7 @@ export default function Read({ onChangePage }) {
   const resetFilter = () => {
     setSearchKeyword("");
     setSelectedYear("");
-    setSelectedDate("DESC");
+    setSelectedDate("tglBerita DESC");
   };
 
   const title = "Kelola Berita";

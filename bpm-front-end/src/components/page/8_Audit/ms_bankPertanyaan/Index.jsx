@@ -9,6 +9,7 @@ import Button from "../../../part/Button";
 import Filter from "../../../part/Filter";
 import Breadcrumbs from "../../../part/Breadcrumbs";
 import DropDown from "../../../part/Dropdown";
+import AutoComplete from "../../../part/AutoComplete";
 import SweetAlert from "../../../util/SweetAlert";
 import Cookies from "js-cookie";
 import { useIsMobile } from "../../../util/useIsMobile";
@@ -238,7 +239,7 @@ export default function Index({ onChangePage }) {
                       onChange={(e) => setSelectedStatus(e.target.value)}
                     />
 
-                    <DropDown
+                    <AutoComplete
                       arrData={kriteria}
                       label="Berdasarkan Kriteria"
                       value={selectedKriteria}
